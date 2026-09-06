@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="./assets/logo-upc.png" alt="upc-logo" width="80px" height="80px"/>
+    <img src="./assets/upc-logo.png" alt="upc-logo" width="100px" height="100px"/>
 </p>
 
 <h1 align="center">
@@ -188,11 +188,97 @@ Las micro y pequeñas operaciones textiles e hidropónicas suelen depender de me
 
 #### 1.2.2.1. Lean UX Problem Statements
 
+El estado actual del monitoreo de temperatura y pH del agua en micro y pequeñas empresas textiles y en pequeños productores o microempresas hidropónicas del Perú, se ha centrado principalmente en instrumentos independientes, verificaciones manuales, registros dispersos y decisiones que dependen de la presencia del operario. Lo que los productos y servicios existentes no abordan suficientemente es una supervisión asequible que conecte lecturas, rangos configurables, alertas, historial y liberación segura del agua. HidroGuard atenderá esta brecha con un dispositivo IoT y aplicaciones web y móvil que supervisen el pH y temperatura, orienten la intervención manual, registren el proceso y controlen la válvula según reglas configuradas. El enfoque inicial serán las micro y pequeñas empresas textiles y las unidades hidropónicas pequeñas que realizan correcciones manuales y no cuentan con una plataforma integrada. Sabremos que la solución tiene éxito cuando los operarios consulten el estado antes de liberar el agua, atiendan las alertas, completen la corrección y verificación, y los administradores recuperen el historial necesario para revisar una incidencia.
+
 #### 1.2.2.2. Lean UX Assumptions
+
+
+#### Business Assumptions
+
+| ID | Supuesto | Impacto |
+|:--|:--|:--:|
+| BA-01 | Existe en ambos segmentos un grupo de micro  y pequeñas empresas con el problema que describimos, que además no cuentan con monitoreo integrado. | Alto | 
+| BA-02 | Un sistema común de medición de pH, temperatura, estados, alertas y válvula puede servir a ambos segmentos mediante perfiles configurables según sus necesidades. | Alto |
+| BA-03 | Los usuarios percibirán el valor en el monitoreo y trazabilidad. | Alto | 
+| BA-04 | La instalación y operación pueden mantenerse comprensibles para equipos con poca especialización IoT. | Alto | 
+| BA-05 | El costo total de implementación puede ser accesible para micro o pequeñas empresas. | Alto | 
+| BA-06 | El modelo de ingresos será aceptable para los compradores. | Alto |
+
+
+#### Business Outcome Assumptions
+
+| ID | Creencia sobre el resultado de negocio |
+|:--|:--|
+| BO-01 | Creemos que habrá interés real de prueba en los dos segmentos. | 
+| BO-02 | Creemos que el núcleo compartido cubrirá los flujos prioritarios. | 
+| BO-03 | Creemos que la solución reducirá el esfuerzo de supervisión y reconstrucción de incidencias. |
+| BO-04 | Creemos que se logrará uso recurrente durante una prueba piloto. | 
+
+
+#### User Assumptions
+
+| ID | Supuesto sobre el usuario |
+|:--|:--|
+| UA-01 | El operario textil mide o consulta temperatura y pH, realiza correcciones y participa en la decisión de liberar el agua. |
+| UA-02 | El responsable hidropónico prepara la solución y ajusta, verifica su estado antes de habilitar el riego. |
+| UA-03 | Un mismo tipo de cuenta de operario puede representar ambos contextos si su dispositivo tiene un perfil de operación. |
+| UA-04 | Cada operario puede trabajar con un dispositivo asignado sin impedir una futura relación de uno a varios. |
+| UA-05 | El administrador necesita gestionar cuentas, asignaciones, configuraciones y todos los dispositivos, pero no requiere un dispositivo propio. |
+| UA-06 | Los operarios y administradores podrán utilizar al menos un teléfono inteligente durante parte de su jornada. |
+
+
+#### User Outcome and Benefit Assumptions
+
+| ID | Resultado o beneficio esperado por el usuario |
+|:--|:--|
+| UB-01 | Conocer de forma rápida si el agua está fuera de rango, en corrección, lista o en fallo. |
+| UB-02 | Recibir una orientación clara sobre el tipo de intervención manual que debe realizar. |
+| UB-03 | Evitar aperturas de válvula cuando las lecturas sean inválidas o no cumplan el perfil configurado. |
+| UB-04 | Configurar rangos y reglas sin reprogramar el ESP32 ni modificar el backend. |
+| UB-05 | Consultar lecturas, ciclos, alertas y comandos pasados para explicar una incidencia. |
+| UB-06 | Supervisar a distancia y reducir inspecciones presenciales que no aportan una decisión nueva. |
+| UB-07 | Operar de manera diferenciada: liberación usualmente automática en el caso textil y usualmente manual en hidroponía, sin impedir el otro modo. |
+| UB-08 | Conservar control humano mediante cierre de emergencia y confirmación de acciones sensibles. |
+
+#### Feature Assumptions
+
+| ID | Supuesto de funcionalidad |
+|:--|:--|
+| FA-01 | Autenticación y autorización basada en roles permitirán separar las capacidades de operario y administrador. |
+| FA-02 | La asignación operario-dispositivo y la vista global del administrador harán comprensible la responsabilidad sobre cada equipo. | 
+| FA-03 | Los perfiles configurables permitirán usar el mismo producto en ambos segmentos. | Rangos, intervalo, máximo de ciclos y modo de liberación validados. |
+| FA-04 | Un panel de telemetría con estado visible facilitará detectar desviaciones sin interpretar datos crudos. |
+| FA-05 | Una máquina de estados evitará decisiones ambiguas durante lectura, corrección, espera, listo y fallo. |
+| FA-06 | La liberación manual o automática podrá compartir una misma regla de habilitación segura. | Apertura solo desde estado listo; cierre ante error. |
+| FA-07 | El cierre de emergencia y la política lógica de válvula cerrada ante fallos reducirán liberaciones no deseadas. |
+| FA-08 | Las alertas por máximo de ciclos sin cambio útil permitirán escalar una intervención que no surte efecto. | 
+| FA-09 | El historial de lecturas, estados, comandos y actor responsable brindará trazabilidad suficiente para la revisión operativa. |
+| FA-10 | Una aplicación móvil permitirá atender el flujo principal cuando el operario no esté frente a una computadora. |
+| FA-11 | El dispositivo físico y Wokwi podrán alimentar el mismo contrato de telemetría sin alterar las aplicaciones de usuario. | 
 
 #### 1.2.2.3. Lean UX Hypothesis Statements
 
+#### H-01. Perfiles configurables
+
+Creemos que lograremos **atender los dos segmentos con un núcleo común** si **administradores y operarios autorizados** alcanzan **adaptar las reglas a su contexto sin modificar software** con **perfiles configurables por dispositivo**.
+
+#### H-02. Panel de telemetría y estado
+
+Creemos que lograremos **reducir el tiempo de detección de desviaciones** si **los operarios** alcanzan **comprender el estado actual y el siguiente paso sin interpretar lecturas aisladas** con **un panel de pH, temperatura, vigencia, estado operativo y ciclos**.
+
+#### H-03. Estados, ciclos y alerta
+
+Creemos que lograremos **escalar oportunamente las correcciones ineficaces** si **los operarios** alcanzan **reconocer cuándo esperar, volver a medir o detener el proceso** con **una máquina de estados y una alerta al alcanzar el máximo absoluto de ciclos sin cambio útil**.
+
+#### H-04. Liberación segura y emergencia
+
+Creemos que lograremos **reducir las liberaciones no deseadas** si **los operarios de ambos segmentos** alcanzan **liberar agua solo cuando el proceso esté listo y detenerla ante una incidencia** con **liberación manual o automática condicionada por reglas, cierre ante error y control manual de emergencia**.
+
 #### 1.2.2.4. Lean UX Canvas
+
+<p align="center">
+  <img src="assets/Lean-UX-Canvas.jpg" alt="Lean-UX-Canvas" width="800">
+</p>
 
 ## 1.3. Segmentos objetivo
 
@@ -280,9 +366,17 @@ El precio, los canales comerciales y las alianzas con pequeñas empresas que pue
 7. Cuando ajustas la solución de manera manual, ¿cómo mezclas, cuánto esperas y cómo confirmas que el ajuste funcionó?
 8. ¿Cómo decides iniciar o detener el riego y qué información te sería útil consultar desde un teléfono o computadora?
 
+### 2.2.2 Registro de entrevistas
+### 2.2.3 análisis de entrevistas
 
 
-### 2.4. Big Picture EventStorming
+## 2.3. Needfinding
+### 2.3.1. User Personas
+### 2.3.2. User Task Matrix
+### 2.3.3. User Journey Mapping
+### 2.3.4. Empathy Mapping
+
+## 2.4. Big Picture EventStorming
 
 En esta sección, el equipo presenta el resultado de nuestra sesión colaborativa de **Big Picture EventStorming**, una práctica fundamental del diseño guiado por el dominio (*Domain-Driven Design* - DDD). El objetivo de esta dinámica fue construir un modelo visual unificado y de alto nivel sobre el flujo operativo de nuestro Sistema IoT de Monitoreo de Calidad de Agua.
 
@@ -296,7 +390,7 @@ Para estructurar este flujo transaccional, agrupamos las interacciones en cuatro
 
 Esta primera aproximación nos garantiza que tanto los perfiles técnicos como los de negocio compartamos un mismo **Lenguaje Ubicuo** sobre lo que realmente importa en la solución.
 
-### 2.5. Ubiquitous Language
+## 2.5. Ubiquitous Language
 
 El Ubiquitous Language establece un vocabulario común entre los integrantes del equipo y los stakeholders involucrados en el dominio del tratamiento y monitoreo de la calidad del agua. Su propósito es asegurar que los conceptos utilizados para describir el problema, los procesos del negocio y la solución propuesta tengan un significado único y compartido, evitando ambigüedades durante el análisis y desarrollo del proyecto.
 
