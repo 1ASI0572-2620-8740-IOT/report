@@ -153,7 +153,7 @@ La solución contempla dos roles. El operario tendrá asignado un dispositivo y 
 | Rodriguez Macedo, Sebastian |  |  |
 | Santur Tello, Andrea Elizabeth |  |  |
 | Prieto Mantari, Leonardo Fabrizzio Junior |  |  |
-| Rios Pacheco, Hector Javier |  |  |
+| Rios Pacheco, Hector Javier | Cuento con formación en desarrollo de software, incluyendo estructuras de datos, algoritmos y arquitecturas orientadas a servicios. Trabajo con lenguajes como Java, TypeScript, JavaScript, HTML5 y CSS3, y utilizo herramientas y frameworks como Angular, Spring Boot, Git/GitHub, Swagger y bases de datos relacionales. Soy responsable, me gusta involucrarme activamente en los proyectos, aportar ideas útiles | ![alt text](assets/FotoHector.png)  |
 | Olivera Barzola, Eric Marlon |  |  |
 
 ## 1.2. Solution Profile
