@@ -399,7 +399,7 @@ El Ubiquitous Language establece un vocabulario común entre los integrantes del
 | **Water Quality** | Calidad del agua | Condición del agua determinada a partir de características y parámetros que permiten establecer si es adecuada para el proceso o disposición correspondiente. |
 | **Wastewater** | Agua residual | Agua que ha sido utilizada durante un proceso productivo y que contiene sustancias o características que requieren evaluación antes de su descarga o reutilización. |
 | **Textile Wastewater** | Agua residual textil | Agua residual generada como consecuencia de procesos industriales textiles, especialmente actividades como teñido, lavado o acabado de tejidos. |
-| **Dyeing Process** | Proceso de teñido | Proceso industrial mediante el cual se modifica el color de un material textil utilizando sustancias y condiciones determinadas. |
+| **Dyeing Process** | Proceso de teñido | Proceso industrial donde se modifica el color de un textil, requiriendo homogenización del agua resultante. |
 | **Effluent** | Efluente | Flujo de agua proveniente de un proceso productivo que es conducido hacia una etapa de tratamiento, reutilización o disposición. |
 | **Treatment Process** | Proceso de tratamiento | Conjunto de actividades destinadas a modificar las condiciones del agua para alcanzar los parámetros de calidad establecidos antes de su disposición o reutilización. |
 | **Treatment Tank** | Tanque de tratamiento | Recipiente donde se concentra temporalmente el agua para realizar su monitoreo, tratamiento y posterior evaluación. |
