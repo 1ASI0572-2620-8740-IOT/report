@@ -372,6 +372,20 @@ El precio, los canales comerciales y las alianzas con pequeñas empresas que pue
 
 ## 2.3. Needfinding
 ### 2.3.1. User Personas
+
+En esta sección, el equipo presenta a los user persona de acuerdo a los segmentos objetivos
+
+### Segmento 1: 
+<p align="center">
+  <img src="assets/Marcelino Valencia.png" alt="Marcelino-Valencia" width="800">
+</p>
+
+### Segmento 2:
+
+<p align="center">
+  <img src="assets/Lucía Paredes.png" alt="Lucia-Paredes" width="800">
+</p>
+
 ### 2.3.2. User Task Matrix
 ### 2.3.3. User Journey Mapping
 ### 2.3.4. Empathy Mapping
