@@ -387,6 +387,35 @@ En esta sección, el equipo presenta a los user persona de acuerdo a los segment
 </p>
 
 ### 2.3.2. User Task Matrix
+
+En esta sección se detallan las tareas que realizan los diferentes segmentos de usuarios representados por los User Personas de HydroGuard, con el objetivo de cumplir sus metas relacionadas con la vigilancia y acondicionamiento oportuno del agua, ya sea para el control y cumplimiento normativo en descargas textiles o para la preparación y dosificación segura de soluciones de riego hidropónico.
+
+### Marcelino Valencia – Jefe de Planta / Operario Textil
+
+| Actividades | Frecuencia | Importancia |
+| :--- | :--- | :--- |
+| Monitorear lecturas de pH y temperatura de la poza de descarga | Frecuentemente | Alta |
+| Atender alertas por parámetros fuera de rango VMA antes del vertimiento | Frecuentemente | Alta |
+| Realizar la corrección química y mezcla manual según las indicaciones | Ocasionalmente | Alta |
+| Configurar los tiempos de espera y el límite de ciclos de corrección | Ocasionalmente | Media |
+| Accionar el cierre de emergencia ante desbordes o fallos en la poza | Rara vez | Alta |
+| Verificar la apertura y cierre de la válvula (modo automático) | Frecuentemente | Alta |
+| Consultar el historial de descargas y eventos para auditorías internas | Ocasionalmente | Media |
+
+---
+
+### Lucía Paredes – Productora y Operaria Hidropónica
+
+| Actividades | Frecuencia | Importancia |
+| :--- | :--- | :--- |
+| Verificar temperatura y pH de la solución nutritiva desde el móvil | Frecuentemente | Alta |
+| Configurar los perfiles de rango deseado según el cultivo (NFT) | Ocasionalmente | Alta |
+| Ajustar manualmente sales o correctores tras recibir notificación de desvío | Ocasionalmente | Alta |
+| Autorizar manualmente la apertura de la válvula para iniciar el riego | Frecuentemente | Alta |
+| Detener el riego o ejecutar el cierre de emergencia ante variaciones bruscas | Rara vez | Alta |
+| Supervisar el tiempo de estabilización tras mezclar la solución | Ocasionalmente | Media |
+| Revisar el historial de mediciones para evaluar el rendimiento del cultivo | Ocasionalmente | Media |
+
 ### 2.3.3. User Journey Mapping
 ### 2.3.4. Empathy Mapping
 
