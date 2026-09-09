@@ -375,6 +375,8 @@ El precio, los canales comerciales y las alianzas con pequeñas empresas que pue
 
 En esta sección, el equipo presenta a los user persona de acuerdo a los segmentos objetivos
 
+---
+
 ### Segmento 1: 
 <p align="center">
   <img src="assets/Marcelino Valencia.png" alt="Marcelino-Valencia" width="800">
@@ -420,19 +422,37 @@ En esta sección se detallan las tareas que realizan los diferentes segmentos de
 
 Un User Journey Map es una representación visual que detalla las acciones, pensamientos, emociones y puntos de contacto de un usuario a lo largo de su interacción con un producto o servicio para alcanzar un objetivo específico. En esta sección se presentan los Journey Maps desarrollados para HydroGuard, ilustrando la experiencia integral de nuestros dos segmentos clave —el sector textil y el sector hidropónico— a través de las etapas de descubrimiento, adopción, uso operativo, consolidación y potenciales fricciones en el monitoreo y control del agua.
 
-Segmento 1:
+---
+
+### Segmento 1:
 
 <p align="center">
   <img src="assets/Marcelino Valencia journey map.png" alt="Marcelino-Valencia-JM" width="800">
 </p>
 
-Segmento 2:
+### Segmento 2:
 
 <p align="center">
   <img src="assets/Lucia Paredes journey map.png" alt="Lucia-Paredes-JM" width="800">
 </p>
 
 ### 2.3.4. Empathy Mapping
+
+Un mapa de empatía es una herramienta visual y colaborativa que permite comprender a profundidad las necesidades, pensamientos, emociones, percepciones y comportamientos del usuario respecto a su entorno operativo y al uso de una solución tecnológica. En esta sección, el equipo presenta el Empathy Map desarrollado para cada User Persona de HydroGuard, permitiendo sintetizar las realidades cotidianas, frustraciones y motivaciones tanto del sector textil como del sector hidropónico frente al monitoreo y control de la calidad del agua.
+
+---
+
+### Segmento 1:
+
+<p align="center">
+  <img src="assets/Marcelino Valencia EM.png" alt="Marcelino-Valencia-EM" width="800">
+</p>
+
+### Segmento 2:
+
+<p align="center">
+  <img src="assets/Lucia Paredes EM.png" alt="Lucia-Paredes-EM" width="800">
+</p>
 
 ## 2.4. Big Picture EventStorming
 
