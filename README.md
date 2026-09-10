@@ -366,8 +366,35 @@ El precio, los canales comerciales y las alianzas con pequeñas empresas que pue
 7. Cuando ajustas la solución de manera manual, ¿cómo mezclas, cuánto esperas y cómo confirmas que el ajuste funcionó?
 8. ¿Cómo decides iniciar o detener el riego y qué información te sería útil consultar desde un teléfono o computadora?
 
-### 2.2.2 Registro de entrevistas
-### 2.2.3 análisis de entrevistas
+### 2.2.2. Registro de entrevistas
+
+En esta sección se documentan las entrevistas a profundidad realizadas a representantes de los segmentos objetivo de HydroGuard. El objetivo de estas entrevistas es recolectar información cualitativa de primera mano acerca de sus flujos de trabajo, prácticas operativas, herramientas de medición, puntos de dolor, toma de decisiones y requerimientos tecnológicos en relación con la vigilancia y acondicionamiento de la calidad del agua. Las evidencias audiovisuales fueron grabadas y cargadas en la plataforma de streaming institucional, permitiendo su revisión y análisis detallado.
+
+---
+
+#### Segmento 1: Micro y pequeñas empresas textiles con teñido o acabado
+
+El primer segmento de investigación comprende a dueños, supervisores de planta y operarios de micro y pequeñas empresas dedicadas a procesos textiles húmedos (teñido, lavado y acabado), responsables de verificar y liberar el agua residual hacia la red de alcantarillado público o reservorios de reúso.
+
+##### Entrevista 1 - Sector Textil
+
+| Entrevistado 1 | Oscar |
+| :--- | :--- |
+| **Edad** | 28 años |
+| **Distrito/Ciudad** | Lima |
+| <img src="assets/interviews/entrevista1-textil.jpg" alt="Entrevista 1 - Oscar (Sector Textil)" width="400"> | **Resumen:**<br>Oscar se desempeña como dueño y supervisor de planta de un taller textil en Lima. Es el responsable exclusivo de monitorear y validar la calidad del agua residual generada en los procesos de teñido y acabado antes de autorizar su descarga al desagüe o su trasvase a cisternas de reúso. Actualmente, realiza mediciones manuales y puntuales de pH y temperatura utilizando un pHímetro digital portátil y un termómetro independiente, sin contar con monitoreo continuo. Cuando detecta valores fuera de rango, aplica reactivos manualmente en la poza (cal para neutralizar acidez o ácido según corresponda), agitando con pala o mediante una bomba auxiliar, para luego esperar entre 15 y 30 minutos antes de repetir el muestreo manual.<br><br>**Características objetivas y subjetivas:**<br>• *Personalidad y actitud:* Práctico, resolutivo y multifuncional. Al concentrar responsabilidades directivas y operativas, experimenta una alta sobrecarga de trabajo y manifiesta preocupación por el tiempo perdido en esperas inciertas.<br>• *Tecnología y dispositivos de preferencia:* Utiliza intensivamente su smartphone como dispositivo primordial de consulta debido a que se desplaza constantemente por los ambientes productivos de la planta sin acceso permanente a una computadora de escritorio o navegador fijo. Opera con instrumentos de medición portátiles digitales básicos.<br>• *Puntos de dolor y frustraciones:* Incertidumbre operativa al no saber con certeza si la dosificación química fue suficiente hasta regresar a medir manualmente; riesgo de demoras en la descarga por atender otras urgencias de planta; y ausencia de un sistema formal de registro, dependiendo de anotaciones eventuales en cuadernos o de la memoria.<br>• *Canales y necesidades identificadas:* Demanda imperativa de un canal móvil para monitorear en tiempo real la evolución de los parámetros, recibir alertas oportunas sobre la efectividad de la corrección química y consultar un historial digital por lote que certifique el cumplimiento adecuado del vertimiento. |
+
+| Timing: 00:04 – 04:38 min (Duración: 04:34 min) | https://upcedupe-my.sharepoint.com/:v:/g/personal/u20231c540_upc_edu_pe/IQDGTYxD461cQ7sXqE9Rvq9zAdVXu2HARbohkL3_5sns7pM?e=Bo8Dj5&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D |
+
+---
+
+#### Segmento 2: Pequeños productores y microempresas hidropónicas
+
+El segundo segmento de investigación abarca a pequeños agricultores urbanos y periurbanos, técnicos y encargados de módulos de cultivo hidropónico (sistemas NFT o raíz flotante), responsables de la formulación, acondicionamiento y liberación de soluciones nutritivas para el riego.
+
+*(Las entrevistas correspondientes a este segmento se encuentran programadas y se incorporarán en las siguientes iteraciones del proyecto siguiendo la misma estructura y rigor metodológico).*
+
+### 2.2.3. Análisis de entrevistas
 
 
 ## 2.3. Needfinding
