@@ -386,6 +386,16 @@ El primer segmento de investigación comprende a dueños, supervisores de planta
 
 | Timing: 00:04 – 04:38 min (Duración: 04:34 min) | https://upcedupe-my.sharepoint.com/:v:/g/personal/u20231c540_upc_edu_pe/IQDGTYxD461cQ7sXqE9Rvq9zAdVXu2HARbohkL3_5sns7pM?e=Bo8Dj5&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D |
 
+##### Entrevista 2 - Sector Textil
+
+| Entrevistado 2 | David Ramírez |
+| :--- | :--- |
+| **Edad** | 23 años |
+| **Distrito/Ciudad** | Lima |
+| <img src="assets/interviews/entrevista2-textil.jpg" alt="Entrevista 2 - David Ramírez (Sector Textil)" width="400"> | **Resumen:**<br>David se desempeña como encargado del control de agua residual en una planta textil familiar en Lima dedicada al teñido de hilos. Su responsabilidad se concentra en verificar la temperatura y el pH del efluente tras la descarga de la caldera hacia una fosa al aire libre (aproximadamente 3 a 4 veces al día). Registra manualmente la fecha y los parámetros en un cuaderno y, en caso de hallar un pH elevado (el problema más habitual), estabiliza el agua agregando ácido de forma manual y mezclando con una herramienta antes de comprobar nuevamente los valores. Una vez confirmada la estabilización, acciona la válvula de salida hacia el alcantarillado bajo un procedimiento estandarizado y autónomo sin necesidad de autorización previa en cada ciclo.<br><br>**Características objetivas y subjetivas:**<br>• *Personalidad y actitud:* Metódico, organizado y autónomo. Asume con seriedad la rutina operativa y la responsabilidad sobre el vertimiento, recibiendo una supervisión periódica por parte de su jefe basada en la revisión del cuaderno físico.<br>• *Tecnología y dispositivos de preferencia:* Usuario habitual de smartphone. Destaca que una solución accesible desde el teléfono celular resultaría óptima para revisar mediciones e historial operativo sin tener que interrumpir otras tareas para ir presencialmente a la fosa.<br>• *Puntos de dolor y frustraciones:* Registro puramente manual en cuaderno físico, expuesto a deterioro o pérdida de trazabilidad; y la necesidad de desplazarse repetidamente hasta la fosa junto a la válvula para medir y revisar, restando tiempo a sus demás actividades en la planta.<br>• *Canales y necesidades identificadas:* Consulta remota y periódica de parámetros mediante dispositivo móvil, historial de datos para verificar la efectividad de las dosificaciones de ácido y facilidad para supervisar la condición del agua sin permanecer fijado al punto de descarga. |
+
+| Timing: 00:02 – 03:16 min (Duración: 03:14 min) | https://upcedupe-my.sharepoint.com/:v:/g/personal/u20231c540_upc_edu_pe/IQA4RAbLEK9TRJvZK0Ggjao4ARF8RjrLsGc5vLhZnt3-brA?e=ITGKYd&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D |
+
 ---
 
 #### Segmento 2: Pequeños productores y microempresas hidropónicas
