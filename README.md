@@ -640,7 +640,7 @@ El Ubiquitous Language establece un vocabulario común entre los integrantes del
 ## 3.2. Impact Mapping.
 
 <p align="center">
-  <img src="assets/ImpactmapHydrolinl.jpg" alt="Impact-Mapping-HydroGuard" width="800">
+  <img src="assets/ImpactmapHydrolinl.png" alt="Impact-Mapping-HydroGuard" width="800">
 </p>
 
 
