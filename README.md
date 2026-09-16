@@ -643,6 +643,64 @@ El Ubiquitous Language establece un vocabulario común entre los integrantes del
   <img src="assets/ImpactmapHydrolinl.png" alt="Impact-Mapping-HydroGuard" width="800">
 </p>
 
+## 3.3. Product Backlog.
+
+A continuación se detalla la lista de requerimientos priorizados por valor de negocio, comenzando con el sitio web estático y las funcionalidades principales de consolidación y flujos de intervención, dejando la autenticación para iteraciones posteriores.
+
+| # Orden | User Story Id | Título | Descripción | Story Points (1/2/3/5/8) |
+|:--:|:--|:--|:--|:--:|
+| 1 | US-34 | Comprensión de la propuesta de valor | Como visitante, quiero comprender el problema que enfrenta el control de calidad del agua en los procesos productivos, para conocer la necesidad que aborda HydroGuard. | 2 |
+| 2 | US-35 | Explicación del funcionamiento de la solución | Como visitante, quiero conocer cómo funciona la solución, para comprender su propuesta tecnológica y operativa. | 2 |
+| 3 | US-36 | Segmentos y casos de uso | Como visitante, quiero conocer los segmentos y casos de aplicación de la solución, para determinar si responde a una necesidad de mi organización. | 2 |
+| 4 | US-37 | Solicitud de contacto o demostración | Como visitante, quiero solicitar información o una demostración de la solución, para conocer con mayor detalle sus capacidades antes de adoptarla. | 3 |
+| 5 | US-38 | Acceso a la plataforma | Como visitante, quiero dirigirme desde el sitio web hacia el ingreso a mi cuenta operativa, para continuar hacia el proceso de autenticación. | 1 |
+| 6 | TS-03 | Adquisición y validación de mediciones | Como Developer, quiero que el dispositivo obtenga y valide las lecturas de pH y temperatura, para entregar únicamente mediciones utilizables por el proceso de calidad del agua. | 3 |
+| 7 | TS-04 | Ingesta de telemetría en el Edge API | Como Developer, quiero que el Edge API reciba las mediciones del dispositivo, para procesarlas y entregarlas a los servicios digitales. | 8 |
+| 8 | US-11 | Monitoreo de mediciones en tiempo real | Como operario, quiero observar las mediciones actuales de pH y temperatura de mi dispositivo, para conocer el estado del agua durante el proceso. | 3 |
+| 9 | US-06 | Configuración de rangos de calidad del dispositivo | Como operario, quiero configurar los rangos permitidos de pH y temperatura de mi dispositivo dentro del perfil habilitado para mi segmento, para establecer las condiciones que determinan la conformidad del agua en mi proceso. | 3 |
+| 10 | US-13 | Evaluación de conformidad | Como operario, quiero que el sistema evalúe cada medición respecto a los rangos configurados, para conocer si el agua es conforme (estado listo) o no conforme (estado de corrección). | 5 |
+| 11 | US-15 | Indicación de la acción correctiva | Como operario, quiero que el sistema me indique la acción correctiva correspondiente cuando el agua no es conforme, para representarla o ejecutarla de forma manual, dado que el dispositivo no dosifica ni mezcla de manera automática. | 5 |
+| 12 | TS-07 | Control del actuador de flujo | Como Developer, quiero emitir una orden de apertura o cierre hacia el actuador de la válvula (servomotor físico o representación en Wokwi), para ejecutar la decisión de liberación o retención del agua. | 5 |
+| 13 | US-19 | Liberación automática | Como operario, quiero que la válvula se abra automáticamente cuando el agua alcanza el estado listo y el modo automático está configurado, para agilizar el proceso sin intervención manual. | 5 |
+| 14 | US-20 | Liberación manual | Como operario, quiero confirmar manualmente la liberación del agua cuando esta se encuentra en estado listo y el modo manual está configurado, para decidir el momento adecuado de inicio del riego o la descarga. | 3 |
+| 15 | US-14 | Retención de agua no conforme | Como operario, quiero que el agua no conforme permanezca retenida, para evitar que continúe hacia la liberación antes de completar el tratamiento correspondiente. | 3 |
+| 16 | US-16 | Inicio de un ciclo de corrección | Como operario, quiero que el sistema registre el inicio de un nuevo ciclo de corrección cuando el agua no cumple los rangos configurados, para llevar un conteo de los intentos realizados. | 5 |
+| 17 | US-18 | Reevaluación posterior al tratamiento | Como operario, quiero que el sistema reevalúe el agua después de cada tiempo de espera, para comprobar si los parámetros cumplen las condiciones establecidas. | 3 |
+| 18 | US-07 | Configuración del límite de ciclos de corrección | Como operario, quiero establecer el número máximo de ciclos de corrección permitidos para mi dispositivo, para detectar correcciones que no producen un cambio útil. | 2 |
+| 19 | US-08 | Configuración del tiempo de espera entre ciclos | Como operario, quiero configurar el tiempo de espera antes de reevaluar el agua tras una corrección, para dar tiempo suficiente a que la intervención manual tenga efecto. | 2 |
+| 20 | US-17 | Bloqueo por límite de ciclos sin efecto | Como operario, quiero que el sistema detenga el proceso y pase al estado de fallo cuando se alcanza el límite de ciclos configurado sin lograr una variación útil de los valores, para evitar intentos indefinidos ante una posible falla. | 5 |
+| 21 | US-21 | Parada de emergencia | Como operario, quiero accionar una parada de emergencia en cualquier momento, para detener de inmediato cualquier liberación de agua ante errores o situaciones extraordinarias. | 5 |
+| 22 | TS-08 | Ejecución de la parada de emergencia en el dispositivo | Como Developer, quiero que el dispositivo priorice y ejecute de inmediato una orden de parada de emergencia, para garantizar el cierre de la válvula ante cualquier rutina en curso. | 3 |
+| 23 | US-09 | Configuración del modo de liberación | Como operario, quiero configurar el modo de liberación de mi dispositivo como manual o automático, para adaptar la operación a mi contexto sin quedar limitado a un único modo por segmento. | 2 |
+| 24 | US-22 | Alerta por parámetro fuera de rango | Como operario, quiero recibir una alerta cuando una medición se encuentre fuera del rango configurado, para actuar antes de una liberación no conforme. | 3 |
+| 25 | US-23 | Alerta por bloqueo del proceso | Como operario, quiero recibir una alerta crítica cuando el proceso pasa al estado de fallo por alcanzar el límite de ciclos sin efecto, para identificar una posible falla del sensor o del tratamiento. | 2 |
+| 26 | US-25 | Alerta por pérdida de monitoreo | Como administrador, quiero recibir una alerta cuando un dispositivo deje de enviar mediciones durante el intervalo esperado, para identificar oportunamente una interrupción del monitoreo. | 3 |
+| 27 | TS-10 | Estado de disponibilidad del dispositivo | Como Developer, quiero que el dispositivo comunique periódicamente su disponibilidad, para detectar interrupciones en el monitoreo. | 3 |
+| 28 | TS-11 | Integración con servicio externo de notificaciones | Como Developer, quiero integrar un servicio externo de notificaciones, para comunicar oportunamente las alertas generadas por el dominio de calidad del agua. | 5 |
+| 29 | US-24 | Registro de incidente de calidad | Como administrador, quiero registrar y consultar los incidentes relacionados con agua no conforme, para mantener trazabilidad de las situaciones que requirieron intervención. | 3 |
+| 30 | US-32 | Gestión de alertas operativas | Como operario, quiero consultar las alertas activas de mi dispositivo, para priorizar las situaciones que requieren atención. | 3 |
+| 31 | US-31 | Supervisión operativa | Como operario, quiero consultar el estado actual del proceso de mi dispositivo, para conocer si el agua requiere corrección, está en espera de reevaluación o puede continuar hacia la liberación. | 3 |
+| 32 | US-12 | Monitoreo desde aplicación móvil | Como operario, quiero consultar el estado de mi dispositivo desde una aplicación móvil, para supervisar el proceso cuando no me encuentro frente al panel principal. | 5 |
+| 33 | US-33 | Consulta de resultados desde la aplicación móvil | Como administrador, quiero consultar evaluaciones y alertas de todos los dispositivos desde una aplicación móvil, para supervisar el proceso de manera remota sin depender de inspecciones presenciales. | 5 |
+| 34 | US-01 | Registro de operario | Como administrador, quiero registrar operarios con sus datos básicos, para habilitar su participación en el monitoreo de un dispositivo asignado. | 2 |
+| 35 | US-02 | Autenticación de usuario | Como usuario, quiero autenticarme con mis credenciales, para acceder únicamente a las funciones correspondientes a mi rol (operario o administrador). | 3 |
+| 36 | US-03 | Asignación de dispositivo a operario | Como administrador, quiero asignar un dispositivo IoT a un operario, para delegar la responsabilidad de su monitoreo, dado que el alcance actual contempla un operario por dispositivo. | 2 |
+| 37 | US-39 | Asignación de roles de usuario | Como administrador, quiero asignar roles específicos (operario, administrador) a las cuentas, para controlar el nivel de acceso al sistema. | 2 |
+| 38 | US-04 | Supervisión de operarios y dispositivos | Como administrador, quiero consultar el estado de los operarios y los dispositivos del sistema, para mantener control sobre las asignaciones vigentes, dado que no cuento con un dispositivo propio. | 3 |
+| 39 | US-05 | Asignación de segmento y perfil base al dispositivo | Como administrador, quiero asignar un segmento (textil u hidropónico) y un perfil base de configuración a un dispositivo, para habilitar al operario a ajustar sus rangos dentro de un contexto válido. | 3 |
+| 40 | US-10 | Consulta de configuración de cualquier dispositivo | Como administrador, quiero consultar los rangos, el tiempo de espera, el límite de ciclos y el modo de liberación vigentes de cualquier dispositivo, para supervisar la configuración operativa establecida por cada operario. | 2 |
+| 41 | US-40 | Configuración de estrategia correctiva | Como operario, quiero configurar la estrategia de corrección (ej. reducir pH, enfriamiento activo), para definir qué acción aplicará el sistema ante una desviación. | 3 |
+| 42 | TS-01 | Registro y autenticación del dispositivo | Como Developer, quiero que el dispositivo se identifique ante el servicio Edge mediante credenciales únicas, para permitir únicamente la comunicación de dispositivos autorizados. | 3 |
+| 43 | TS-02 | Identificación del entorno de origen del dispositivo | Como Developer, quiero que el sistema identifique si una medición proviene del dispositivo físico (ESP32) o del entorno simulado (Wokwi), para mantener trazabilidad diferenciada bajo un mismo contrato de telemetría. | 2 |
+| 44 | TS-05 | Sincronización de parámetros vigentes | Como Developer, quiero que el dispositivo consulte los rangos, el tiempo de espera, el límite de ciclos y el modo de liberación vigentes, para operar según la configuración establecida por el operario. | 3 |
+| 45 | TS-06 | Exposición de servicios de consulta de mediciones y resultados | Como Developer, quiero exponer servicios RESTful para consultar mediciones, evaluaciones y reportes, para que las aplicaciones web y móvil consuman la información del dominio. | 5 |
+| 46 | TS-12 | Exposición de configuración mediante API RESTful | Como Developer, quiero disponer de servicios RESTful para consultar y modificar las configuraciones del dispositivo, para integrar las aplicaciones digitales con el dominio de calidad del agua. | 3 |
+| 47 | TS-09 | Almacenamiento temporal ante pérdida de conexión | Como Developer, quiero conservar temporalmente las mediciones cuando no exista comunicación con el servicio, para evitar la pérdida de información del proceso. | 8 |
+| 48 | US-26 | Consulta del historial de mi dispositivo | Como operario, quiero consultar el historial de lecturas, ciclos y liberaciones de mi dispositivo, para evaluar el rendimiento del proceso o sustentar una auditoría interna. | 3 |
+| 49 | US-27 | Consulta del historial de cualquier dispositivo | Como administrador, quiero consultar el historial completo de cualquier dispositivo, para conocer la evolución del proceso y las acciones realizadas por los operarios. | 3 |
+| 50 | US-30 | Trazabilidad de tratamiento y liberación | Como administrador, quiero consultar la relación entre mediciones, ciclos de corrección y liberaciones autorizadas, para verificar cómo se tomó cada decisión sobre el agua. | 8 |
+| 51 | US-28 | Generación de reporte de calidad | Como administrador, quiero generar un reporte del estado y evolución de la calidad del agua de un dispositivo, para utilizarlo en la toma de decisiones o en la sustentación de una auditoría. | 5 |
+| 52 | US-29 | Exportación de reporte | Como administrador, quiero exportar un reporte generado, para conservarlo o compartirlo con otros responsables autorizados. | 3 |
 
 # Bibliografía
 
