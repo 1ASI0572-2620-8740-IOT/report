@@ -839,7 +839,37 @@ Clases de transformación encargadas de mapear entre los DTOs/Resources de la ca
 
 #### 4.2.1.3. Application Layer
 
+##### A. Command Services & Handlers (Servicios de Comandos)
 
+Procesan las intenciones de cambio de estado recibiendo *Commands*, orquestando la lógica de negocio junto con los agregados del dominio y persistiendo los cambios mediante los repositorios.
+
+* **`UserCommandServiceImpl`**
+  * **Descripción:** Implementación principal de la interfaz `UserCommandService`. Coordina las mutaciones del dominio y la publicación de eventos tras cambios exitosos.
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(RegisterUserCommand command)`**: Verifica la no existencia previa del nombre de usuario, cifra la contraseña en texto plano, construye la entidad/agregado `User` con su rol inicial, lo persiste mediante el repositorio y dispara el evento `UserRegisteredEvent`.
+    * **`handle(SignInCommand command)`**: Recupera el usuario desde la capa de persistencia, valida la coincidencia de las credenciales mediante el servicio de hashing/seguridad, genera el token de acceso JWT y publica el evento `UserSignedInEvent`.
+    * **`handle(AssignRoleCommand command)`**: Busca al usuario objetivo por su `userId`, ejecuta el método del agregado `User` para agregar el nuevo `Role` garantizando las invariantes de negocio.
+
+---
+
+##### B. Query Services & Handlers (Servicios de Consulta)
+
+Atienden las lecturas de información recibiendo objetos *Query*, optimizando el acceso a los datos sin alterar el estado del dominio.
+
+* **`UserQueryServiceImpl`**
+  * **Descripción:** Implementación de la interfaz `UserQueryService` enfocada exclusivamente en la recuperación eficiente de datos.
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(GetUserByIdQuery query)`**: Consulta la persistencia para recuperar el agregado `User` correspondiente al identificador provisto.
+    * **`handle(GetUserByUsernameQuery query)`**: Busca y retorna el agregado `User` a partir de su nombre de usuario único.
+
+---
+
+##### C. Outbound Services / Ports (Servicios de Salida)
+
+Interfaces y abstracciones requeridas por la capa de aplicación para comunicarse con el exterior sin acoplarse a tecnologías específicas.
+
+* **`HashingService`**: Puerto para la delegación del cifrado y verificación de contraseñas de manera segura.
+* **`TokenVerificationService`**: Puerto para la generación y firma de tokens de autenticación (JWT).
 
 #### 4.2.1.4. Infrastructure Layer
 
