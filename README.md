@@ -1152,7 +1152,37 @@ Clases que configuran componentes del framework y la documentación del microser
 
 #### 4.2.3.3. Application Layer
 
+##### A. Command Services & Handlers (Servicios de Comandos)
+
+* **`TelemetryCommandServiceImpl`**
+  * **Descripción:** Implementa la lógica de procesamiento de telemetría proveniente del sensado de dispositivos.
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(RecordWaterMeasurementCommand command)`**: Valida la existencia del dispositivo, instancia el agregado `WaterMeasurement`, evalúa las métricas, persiste el registro y emite el evento de dominio `WaterMeasurementRecordedEvent`.
+
+---
+
+##### B. Query Services & Handlers (Servicios de Consulta)
+
+* **`TelemetryQueryServiceImpl`**
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(GetWaterMeasurementByIdQuery query)`**: Busca una medición por su identificador único.
+    * **`handle(GetWaterMeasurementsByDeviceIdQuery query)`**: Retorna la lista histórica de sensado para un dispositivo.
+    * **`handle(GetLatestWaterMeasurementByDeviceIdQuery query)`**: Recupera de manera optimizada el último registro ingresado.
+
 #### 4.2.3.4. Infrastructure Layer
+
+##### A. Persistence & Repositories (Persistencia y Repositorios)
+
+* **`WaterMeasurementRepository` (JPA Repository)**
+  * `List<WaterMeasurement> findByDeviceIdOrderByCreatedAtDesc(String deviceId)`
+  * `Optional<WaterMeasurement> findFirstByDeviceIdOrderByCreatedAtDesc(String deviceId)`
+
+---
+
+##### B. Messaging Adapters (Adaptadores de Mensajería)
+
+* **`MqttTelemetryListenerAdapter`**
+  * **Descripción:** Adaptador de infraestructura que se conecta al servidor MQTT, suscribe al tópico `telemetry/water/+` y canaliza las lecturas hacia la capa de interfaz.
 
 #### 4.2.3.5. Bounded Context Software Architecture Component Level Diagrams
 
