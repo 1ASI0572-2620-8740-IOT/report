@@ -1125,6 +1125,31 @@ Clases que configuran componentes del framework y la documentación del microser
 
 #### 4.2.3.2. Interface Layer
 
+##### A. Controllers & Consumers (Controladores REST y Consumidores)
+
+* **`WaterMeasurementsController`**
+  * **Endpoints:**
+    * `GET /api/v1/devices/{deviceId}/water-measurements`: Consulta el historial de mediciones de un dispositivo (`WaterMeasurementResource`).
+    * `GET /api/v1/devices/{deviceId}/water-measurements/latest`: Obtiene la última medición registrada.
+
+* **`TelemetryMqttConsumer` / `TelemetryMessageListener` (Inbound Adapter)**
+  * **Descripción:** Consumidor que escucha los mensajes provenientes del broker MQTT/RabbitMQ publicados por los dispositivos IoT en el tópico de sensado.
+  * **Acción:** Recibe la carga útil, llama al assembler para transformarla a `RecordWaterMeasurementCommand` e invoca `TelemetryCommandService`.
+
+---
+
+##### B. Resources / DTOs (Objetos de Transferencia de Datos)
+
+* **`RecordWaterMeasurementResource(String deviceId, Double ph, Double temperature, Double turbidity, Long timestamp)`**
+* **`WaterMeasurementResource(Long id, String deviceId, Double ph, Double temperature, Double turbidity, String recordedAt)`**
+
+---
+
+##### C. Transformers / Mappers
+
+* **`RecordWaterMeasurementCommandFromResourceAssembler`**: Transforma el payload recibido en la API REST/MQTT a `RecordWaterMeasurementCommand`.
+* **`WaterMeasurementResourceFromEntityAssembler`**: Mapea la entidad `WaterMeasurement` hacia `WaterMeasurementResource`.
+
 #### 4.2.3.3. Application Layer
 
 #### 4.2.3.4. Infrastructure Layer
