@@ -710,6 +710,42 @@ A continuación se detalla la lista de requerimientos priorizados por valor de n
 | 51 | US-28 | Generación de reporte de calidad | Como administrador, quiero generar un reporte del estado y evolución de la calidad del agua de un dispositivo, para utilizarlo en la toma de decisiones o en la sustentación de una auditoría. | 5 |
 | 52 | US-29 | Exportación de reporte | Como administrador, quiero exportar un reporte generado, para conservarlo o compartirlo con otros responsables autorizados. | 3 |
 
+# Capítulo IV: Solution Software Design
+
+## 4.1. Strategic-Level Domain-Driven Design
+
+### 4.1.1. Design-Level EventStorming
+
+#### 4.1.1.1 Candidate Context Discovery
+
+#### 4.1.1.2 Domain Message Flows Modeling
+
+#### 4.1.1.3 Bounded Context Canvases
+
+### 4.1.2. Context Mapping
+
+### 4.1.3. Software Architecture
+
+#### 4.1.3.1. Software Architecture System Landscape Diagram
+
+#### 4.1.3.2. Software Architecture Context Level Diagrams
+
+#### 4.1.3.3. Software Architecture Container Level Diagrams
+
+#### 4.1.3.4. Software Architecture Deployment Diagrams
+
+## 4.2. Tactical-Level Domain-Driven Design
+
+### 4.2.1. Bounded Context: Authentication
+
+### 4.2.2. Bounded Context: Configuration
+
+### 4.2.3. Bounded Context: IOT Telemetry
+
+### 4.2.4. Bounded Context: Quality
+
+### 4.2.5. Bounded Context: Monitoring
+
 # Bibliografía
 
 Autoridad Nacional del Agua. (s. f.). *Solicitar la autorización de vertimiento de aguas residuales tratadas a los cuerpos naturales de agua*. Plataforma Digital Única del Estado Peruano. Recuperado el 1 de septiembre de 2026, de <https://www.gob.pe/10822-solicitar-la-autorizacion-de-vertimiento-de-aguas-residuales-tratadas-a-los-cuerpos-naturales-de-agua>
