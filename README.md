@@ -1123,7 +1123,68 @@ CREATE TABLE user_roles
 
 ##### 4.2.2.6.1. Bounded Context Domain Layer Class Diagrams
 
+A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Configuración, detallando los agregados `IotDevice` y `DeviceConfiguration`, sus objetos de valor, comandos, consultas y servicios del patrón CQRS:
+
+---
+
+[![uml.png](https://i.postimg.cc/vmLxzZvV/uml.png)](https://postimg.cc/4Ky34Zqf)
+
+---
+
+* **`IotDevice`**: Encapsula el registro del hardware físico y su vinculación con el operario asignado.
+* **`DeviceConfiguration`**: Modela los parámetros dinámicos de operación, aplanando los objetos de valor (`OperatingRange`, `CorrectiveStrategy`, `WaitTime`) para un control preciso de ciclos y liberación.
+* **Patrón CQRS**: Separa la orquestación de mutaciones de parámetros mediante comandos específicos de las operaciones de lectura orientadas a la consulta del dispositivo.
+
 ##### 4.2.2.6.2. Bounded Context Database Design Diagram
+
+A continuación se detalla la definición DDL de la base de datos relacional encargada del almacenamiento de los dispositivos IoT y sus respectivas configuraciones operativas:
+
+---
+
+[![database.png](https://i.postimg.cc/90N77gY7/database.png)](https://postimg.cc/wRLMKVPq)
+
+---
+
+```sql
+CREATE TABLE iot_devices
+(
+  id INT NOT NULL,
+  serial_number VARCHAR(50) NOT NULL,
+  device_model VARCHAR(255) NOT NULL,
+  operator_id INT NOT NULL,
+  created_at DATE NOT NULL,
+  updated_at DATE NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (id),
+  UNIQUE (serial_number)
+);
+
+CREATE TABLE device_configurations
+(
+  id INT NOT NULL,
+  status VARCHAR(15) NOT NULL,
+  release_mode VARCHAR(20) NOT NULL,
+  vma_min_value FLOAT NOT NULL,
+  vma_max_value FLOAT NOT NULL,
+  vma_target_value FLOAT NOT NULL,
+  crop_min_value FLOAT NOT NULL,
+  crop_max_value FLOAT NOT NULL,
+  crop_target_value FLOAT NOT NULL,
+  strategy_type VARCHAR(50) NOT NULL,
+  strategy_threshold_value FLOAT NOT NULL,
+  wait_time_seconds INT NOT NULL,
+  created_at DATE NOT NULL,
+  updated_at DATE NOT NULL,
+  device_id INT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (device_id) REFERENCES iot_devices(id),
+  UNIQUE (id)
+);
+
+```
+
+* **`iot_devices`**: Almacena el inventario de hardware registrado, garantizando la unicidad mediante la restricción sobre `serial_number`.
+* **`device_configurations`**: Modela la configuración de umbrales y tiempos de espera de forma denormalizada para optimizar las lecturas por parte del microservicio, enlazada mediante la clave foránea `device_id` en una relación de 1 a N.
 
 ### 4.2.3. Bounded Context: IOT Telemetry
 
