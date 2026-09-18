@@ -748,13 +748,139 @@ A continuación se detalla la lista de requerimientos priorizados por valor de n
 
 ### 4.2.1. Bounded Context: Authentication
 
+#### 4.2.1.1. Domain Layer
+
+##### A. Aggregates (Agregados)
+* **`User` (Agregado Principal)**
+  * **Descripción:** Representa a la entidad raíz del agregado (hereda de `AuditableAbstractAggregateRoot`). Encapsula la identidad del usuario, sus credenciales y sus roles asignados.
+  * **Comportamiento y Reglas de Negocio:**
+    * Validar los datos durante la creación/registro.
+    * Autenticar credenciales mediante la verificación del hash de contraseña.
+    * Asignar y revocar roles asegurando que no existan duplicados.
+
+---
+
+##### B. Value Objects (Objetos de Valor)
+* **`Role`**: Representa el rol dentro del sistema (`ROLE_OPERATOR`, `ROLE_ADMIN`).
+* **`Roles`**: Colección inmutable o conjunto de roles asociados a un usuario.
+
+---
+
+##### C. Commands (Comandos - CQRS)
+Representan las intenciones del usuario o sistema para modificar el estado del dominio:
+* **`RegisterUserCommand(String username, String rawPassword, Role initialRole)`**: Intención de registrar un nuevo operario.
+* **`SignInCommand(String username, String rawPassword)`**: Intención de iniciar sesión en el sistema.
+* **`AssignRoleCommand(Long userId, Role role)`**: Intención enviada por un Administrador para asignar un nuevo rol a un operario.
+
+---
+
+##### D. Queries (Consultas - CQRS)
+Abstracciones para la lectura de información del dominio sin alterar su estado:
+* **`GetUserByIdQuery(Long userId)`**
+* **`GetUserByUsernameQuery(String username)`**
+
+---
+
+##### E. Services (Servicios de Comando y Consulta)
+
+* **`UserCommandService` (Interfaz de Servicio de Dominio / Aplicación)**
+  * **Descripción:** Coordina las operaciones que modifican el estado del dominio procesando los *Commands*.
+  * **Métodos principales:**
+    * `Optional<User> handle(RegisterUserCommand command)`: Procesa la creación/registro del usuario operario y guarda el agregado.
+    * `Optional<String> handle(SignInCommand command)`: Valida las credenciales e inicia la sesión generando el token de autenticación.
+    * `Optional<User> handle(AssignRoleCommand command)`: Busca el usuario objetivo y ejecuta la lógica de asignación de rol dentro del agregado `User`.
+
+* **`UserQueryService` (Interfaz de Servicio de Dominio / Aplicación)**
+  * **Descripción:** Atiende únicamente las operaciones de lectura recibiendo objetos *Query*.
+  * **Métodos principales:**
+    * `Optional<User> handle(GetUserByIdQuery query)`: Retorna el usuario por su `UserId`.
+    * `Optional<User> handle(GetUserByUsernameQuery query)`: Retorna el usuario por su `Username`.
+
+#### 4.2.1.2. Interface Layer
+
+#### 4.2.1.3. Application Layer
+
+#### 4.2.1.4. Infrastructure Layer
+
+#### 4.2.1.5. Bounded Context Software Architecture Component Level Diagrams
+
+#### 4.2.1.6. Bounded Context Software Architecture Code Level Diagrams
+
+##### 4.2.1.6.1. Bounded Context Domain Layer Class Diagrams
+
+##### 4.2.1.6.2. Bounded Context Database Design Diagram
+
 ### 4.2.2. Bounded Context: Configuration
+
+#### 4.2.2.1. Domain Layer
+
+#### 4.2.2.2. Interface Layer
+
+#### 4.2.2.3. Application Layer
+
+#### 4.2.2.4. Infrastructure Layer
+
+#### 4.2.2.5. Bounded Context Software Architecture Component Level Diagrams
+
+#### 4.2.2.6. Bounded Context Software Architecture Code Level Diagrams
+
+##### 4.2.2.6.1. Bounded Context Domain Layer Class Diagrams
+
+##### 4.2.2.6.2. Bounded Context Database Design Diagram
 
 ### 4.2.3. Bounded Context: IOT Telemetry
 
+#### 4.2.3.1. Domain Layer
+
+#### 4.2.3.2. Interface Layer
+
+#### 4.2.3.3. Application Layer
+
+#### 4.2.3.4. Infrastructure Layer
+
+#### 4.2.3.5. Bounded Context Software Architecture Component Level Diagrams
+
+#### 4.2.3.6. Bounded Context Software Architecture Code Level Diagrams
+
+##### 4.2.3.6.1. Bounded Context Domain Layer Class Diagrams
+
+##### 4.2.3.6.2. Bounded Context Database Design Diagram
+
 ### 4.2.4. Bounded Context: Quality
 
+#### 4.2.4.1. Domain Layer
+
+#### 4.2.4.2. Interface Layer
+
+#### 4.2.4.3. Application Layer
+
+#### 4.2.4.4. Infrastructure Layer
+
+#### 4.2.4.5. Bounded Context Software Architecture Component Level Diagrams
+
+#### 4.2.4.6. Bounded Context Software Architecture Code Level Diagrams
+
+##### 4.2.4.6.1. Bounded Context Domain Layer Class Diagrams
+
+##### 4.2.4.6.2. Bounded Context Database Design Diagram
+
 ### 4.2.5. Bounded Context: Monitoring
+
+#### 4.2.5.1. Domain Layer
+
+#### 4.2.5.2. Interface Layer
+
+#### 4.2.5.3. Application Layer
+
+#### 4.2.5.4. Infrastructure Layer
+
+#### 4.2.5.5. Bounded Context Software Architecture Component Level Diagrams
+
+#### 4.2.5.6. Bounded Context Software Architecture Code Level Diagrams
+
+##### 4.2.5.6.1. Bounded Context Domain Layer Class Diagrams
+
+##### 4.2.5.6.2. Bounded Context Database Design Diagram
 
 # Bibliografía
 
