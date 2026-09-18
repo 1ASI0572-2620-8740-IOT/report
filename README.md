@@ -916,7 +916,58 @@ Clases que configuran componentes del framework y la documentación del microser
 
 ##### 4.2.1.6.1. Bounded Context Domain Layer Class Diagrams
 
+A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Autenticación, donde se estructuran los agregados, objetos de valor, comandos, consultas y servicios bajo el patrón CQRS y DDD:
+
+[![UML-Image.png](https://i.postimg.cc/Jn4PLg6C/UML-Image.png)](https://postimg.cc/mcJQ3dWm)
+
+* **`User` (Agregado Principal)**: Modela las credenciales y el estado del usuario heredando de `AuditableAbstractAggregateRoot`.
+* **`Roles` y `Role` (Value Objects)**: Encapsulan el conjunto inmutable de permisos asignados a un usuario, garantizando que no existan duplicados.
+* **Separación CQRS**: Desacopla las operaciones de mutación mediante *Commands* (`RegisterUserCommand`, `SignInCommand`, `AssignRoleCommand`) de las operaciones de lectura mediante *Queries* (`GetUserByIdQuery`, `GetUserByUsernameQuery`).
+
 ##### 4.2.1.6.2. Bounded Context Database Design Diagram
+
+Para respaldar el modelo relacional del Bounded Context de Autenticación, se define la estructura DDL para la persistencia en base de datos. Este esquema implementa una relación de muchos a muchos ($M:N$) entre los usuarios y sus roles:
+
+[![database.png](https://i.postimg.cc/Z0k8CDcP/database.png)](https://postimg.cc/wRVyr2n3)
+
+---
+
+```sql
+CREATE TABLE users
+(
+  id INT NOT NULL,
+  username VARCHAR(50) NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  created_at DATE NOT NULL,
+  updated_at DATE NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (username)
+);
+
+CREATE TABLE roles
+(
+  id INT NOT NULL,
+  name VARCHAR(30) NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (name)
+);
+
+CREATE TABLE user_roles
+(
+  user_id INT NOT NULL,
+  role_id INT NOT NULL,
+  PRIMARY KEY (user_id, role_id),
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (role_id) REFERENCES roles(id)
+);
+
+```
+
+---
+
+* **`users`**: Almacena la entidad raíz del agregado, asegurando la unicidad del `username` y manteniendo trazabilidad mediante los campos de auditoría (`created_at`, `updated_at`).
+* **`roles`**: Contiene la lista maestra de roles disponibles en el sistema (`ROLE_OPERATOR`, `ROLE_ADMIN`).
+* **`user_roles`**: Tabla de uniones que materializa la relación $M:N$ utilizando una clave primaria compuesta (`user_id`, `role_id`) y garantiza la integridad referencial mediante claves foráneas.
 
 ### 4.2.2. Bounded Context: Configuration
 
@@ -1072,58 +1123,7 @@ Clases que configuran componentes del framework y la documentación del microser
 
 ##### 4.2.2.6.1. Bounded Context Domain Layer Class Diagrams
 
-A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Autenticación, donde se estructuran los agregados, objetos de valor, comandos, consultas y servicios bajo el patrón CQRS y DDD:
-
-[![UML-Image.png](https://i.postimg.cc/Jn4PLg6C/UML-Image.png)](https://postimg.cc/mcJQ3dWm)
-
-* **`User` (Agregado Principal)**: Modela las credenciales y el estado del usuario heredando de `AuditableAbstractAggregateRoot`.
-* **`Roles` y `Role` (Value Objects)**: Encapsulan el conjunto inmutable de permisos asignados a un usuario, garantizando que no existan duplicados.
-* **Separación CQRS**: Desacopla las operaciones de mutación mediante *Commands* (`RegisterUserCommand`, `SignInCommand`, `AssignRoleCommand`) de las operaciones de lectura mediante *Queries* (`GetUserByIdQuery`, `GetUserByUsernameQuery`).
-
 ##### 4.2.2.6.2. Bounded Context Database Design Diagram
-
-Para respaldar el modelo relacional del Bounded Context de Autenticación, se define la estructura DDL para la persistencia en base de datos. Este esquema implementa una relación de muchos a muchos ($M:N$) entre los usuarios y sus roles:
-
-[![database.png](https://i.postimg.cc/Z0k8CDcP/database.png)](https://postimg.cc/wRVyr2n3)
-
----
-
-```sql
-CREATE TABLE users
-(
-  id INT NOT NULL,
-  username VARCHAR(50) NOT NULL,
-  password_hash VARCHAR(255) NOT NULL,
-  created_at DATE NOT NULL,
-  updated_at DATE NOT NULL,
-  PRIMARY KEY (id),
-  UNIQUE (username)
-);
-
-CREATE TABLE roles
-(
-  id INT NOT NULL,
-  name VARCHAR(30) NOT NULL,
-  PRIMARY KEY (id),
-  UNIQUE (name)
-);
-
-CREATE TABLE user_roles
-(
-  user_id INT NOT NULL,
-  role_id INT NOT NULL,
-  PRIMARY KEY (user_id, role_id),
-  FOREIGN KEY (user_id) REFERENCES users(id),
-  FOREIGN KEY (role_id) REFERENCES roles(id)
-);
-
-```
-
----
-
-* **`users`**: Almacena la entidad raíz del agregado, asegurando la unicidad del `username` y manteniendo trazabilidad mediante los campos de auditoría (`created_at`, `updated_at`).
-* **`roles`**: Contiene la lista maestra de roles disponibles en el sistema (`ROLE_OPERATOR`, `ROLE_ADMIN`).
-* **`user_roles`**: Tabla de uniones que materializa la relación $M:N$ utilizando una clave primaria compuesta (`user_id`, `role_id`) y garantiza la integridad referencial mediante claves foráneas.
 
 ### 4.2.3. Bounded Context: IOT Telemetry
 
