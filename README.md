@@ -798,7 +798,48 @@ Abstracciones para la lectura de información del dominio sin alterar su estado:
 
 #### 4.2.1.2. Interface Layer
 
+##### A. Controllers (Controladores REST)
+
+Son los puntos de entrada HTTP (Inbound Adapters) que exponen los endpoints de la API REST del Bounded Context.
+
+* **`AuthenticationController`**
+  * **Descripción:** Expone los endpoints para la autenticación de usuarios y registro de operarios.
+  * **Endpoints:**
+    * `POST /api/v1/authentication/sign-in`: Recibe un `SignInResource`, lo transforma a `SignInCommand`, lo envía a `UserCommandService` y retorna un `AuthenticatedUserResource` con el token generado.
+    * `POST /api/v1/authentication/sign-up`: Permite registrar un nuevo usuario/operario. Recibe `SignUpResource`, invoca `UserCommandService` con `RegisterUserCommand` y retorna un `UserResource`.
+
+* **`UsersController`**
+  * **Descripción:** Gestiona las operaciones de administración sobre la entidad de usuarios.
+  * **Endpoints:**
+    * `GET /api/v1/users/{userId}`: Recibe el ID, ejecuta `GetUserByIdQuery` mediante `UserQueryService` y retorna un `UserResource`.
+    * `POST /api/v1/users/{userId}/roles`: Permite a un Administrador asignar un nuevo rol a un usuario. Recibe `AssignRoleResource`, construye un `AssignRoleCommand` y retorna el `UserResource` actualizado.
+
+---
+
+##### B. Resources / DTOs (Objetos de Transferencia de Datos)
+
+Definen las estructuras de datos aceptadas en las peticiones (Requests) y enviadas en las respuestas (Responses) de la API REST:
+
+* **`SignInResource(String username, String password)`**: DTO de entrada con las credenciales enviadas en el login.
+* **`SignUpResource(String username, String password, String role)`**: DTO de entrada con los datos para registrar un operario.
+* **`AssignRoleResource(String roleName)`**: DTO de entrada para especificar el rol a asignar.
+* **`UserResource(Long id, String username, List<String> roles)`**: DTO de salida que expone la información pública del usuario.
+* **`AuthenticatedUserResource(Long id, String username, String token)`**: DTO de salida que retorna el token de autenticación (JWT) tras un login exitoso.
+
+---
+
+##### C. Transformers / Mappers
+
+Clases de transformación encargadas de mapear entre los DTOs/Resources de la capa de interfaz y los objetos de la capa de aplicación/dominio (Commands, Queries y Agregados).
+
+* **`SignInCommandFromResourceAssembler`**: Transforma un `SignInResource` a un `SignInCommand`.
+* **`SignUpCommandFromResourceAssembler`**: Transforma un `SignUpResource` a un `RegisterUserCommand`.
+* **`AssignRoleCommandFromResourceAssembler`**: Transforma un `AssignRoleResource` y `userId` a un `AssignRoleCommand`.
+* **`UserResourceFromEntityAssembler`**: Transforma la entidad/agregado `User` a un `UserResource`.
+
 #### 4.2.1.3. Application Layer
+
+
 
 #### 4.2.1.4. Infrastructure Layer
 
