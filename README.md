@@ -1078,6 +1078,51 @@ Clases que configuran componentes del framework y la documentación del microser
 
 #### 4.2.3.1. Domain Layer
 
+##### A. Aggregates (Agregados)
+
+* **`WaterMeasurement` (Agregado Principal)**
+  * **Descripción:** Representa el registro inmutable del sensado de las variables del agua enviadas por un dispositivo IoT (hereda de `AuditableAbstractAggregateRoot`).
+  * **Comportamiento y Reglas de Negocio:**
+    * Capturar e interpretar las lecturas enviadas por los sensores del dispositivo.
+    * Validar la integridad de los datos de la medición (rangos físicos válidos para pH, temperatura, turbidez, etc.).
+    * Registrar la fecha y hora precisa de la captura.
+
+---
+
+##### B. Value Objects (Objetos de Valor)
+
+* **`WaterMetrics`**: Encapsula los valores numéricos de las lecturas físicas (ej. nivel de pH, temperatura en °C, nivel de VMA/conductividad).
+* **`DeviceId`**: Identificador único del dispositivo IoT emisor de la telemetría.
+* **`MeasurementTimestamp`**: Marca de tiempo inmutable del momento en que el sensor realizó la lectura.
+
+---
+
+##### C. Commands (Comandos - CQRS)
+
+* **`RecordWaterMeasurementCommand(String deviceId, Double ph, Double temperature, Double turbidity, Long timestamp)`**: Intención enviada desde el dispositivo IoT o el broker para registrar una nueva lectura de agua.
+
+---
+
+##### D. Queries (Consultas - CQRS)
+
+* **`GetWaterMeasurementByIdQuery(Long measurementId)`**
+* **`GetWaterMeasurementsByDeviceIdQuery(String deviceId)`**
+* **`GetLatestWaterMeasurementByDeviceIdQuery(String deviceId)`**
+
+---
+
+##### E. Services (Servicios de Comando y Consulta)
+
+* **`TelemetryCommandService` (Interfaz)**
+  * **Métodos principales:**
+    * `Optional<WaterMeasurement> handle(RecordWaterMeasurementCommand command)`: Procesa y persiste la lectura recibida desde los sensores.
+
+* **`TelemetryQueryService` (Interfaz)**
+  * **Métodos principales:**
+    * `Optional<WaterMeasurement> handle(GetWaterMeasurementByIdQuery query)`
+    * `List<WaterMeasurement> handle(GetWaterMeasurementsByDeviceIdQuery query)`
+    * `Optional<WaterMeasurement> handle(GetLatestWaterMeasurementByDeviceIdQuery query)`
+
 #### 4.2.3.2. Interface Layer
 
 #### 4.2.3.3. Application Layer
