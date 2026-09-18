@@ -751,6 +751,7 @@ A continuación se detalla la lista de requerimientos priorizados por valor de n
 #### 4.2.1.1. Domain Layer
 
 ##### A. Aggregates (Agregados)
+
 * **`User` (Agregado Principal)**
   * **Descripción:** Representa a la entidad raíz del agregado (hereda de `AuditableAbstractAggregateRoot`). Encapsula la identidad del usuario, sus credenciales y sus roles asignados.
   * **Comportamiento y Reglas de Negocio:**
@@ -921,11 +922,149 @@ Clases que configuran componentes del framework y la documentación del microser
 
 #### 4.2.2.1. Domain Layer
 
+##### A. Aggregates (Agregados)
+
+* **`IotDevice` (Agregado)**
+  * **Descripción:** Representa al dispositivo IoT registrado en el sistema y su asignación operativa.
+  * **Comportamiento y Reglas de Negocio:**
+    * Validar la unicidad del identificador físico/MAC o número de serie del dispositivo durante el registro.
+    * Asignar o reasignar un operario responsable verificando el estado del dispositivo.
+
+* **`DeviceConfiguration` (Agregado Principal)**
+  * **Descripción:** Agregado que encapsula los parámetros, rangos operativos, tiempos de espera y estrategias correctivas asociadas a un dispositivo o cultivo (hereda de `AuditableAbstractAggregateRoot`).
+  * **Comportamiento y Reglas de Negocio:**
+    * Definir y validar rangos operativos de VMA (Valores Máximos Admisibles) y parámetros del cultivo (temperatura, pH, humedad).
+    * Configurar la estrategia correctiva (pH / Térmica) garantizando que los valores de ajuste sean coherentes.
+    * Definir tiempos de espera para ciclos de control.
+    * Alternar el modo de liberación entre `AUTOMATIC` y `MANUAL`.
+    * Publicar la configuración final cambiando su estado a publicado para su consumo por los dispositivos.
+
+---
+
+##### B. Value Objects (Objetos de Valor)
+
+* **`OperatingRange`**: Modela el rango operativo (mínimo, máximo, objetivo) para variables VMA/Cultivo.
+* **`CorrectiveStrategy`**: Encapsula el tipo de corrección (pH, Térmica) y sus reglas de dosificación/accionamiento.
+* **`WaitTime`**: Modela los intervalos de espera entre mediciones o acciones correctivas.
+* **`ReleaseMode`**: Enum que define el modo de liberación (`AUTOMATIC`, `MANUAL`).
+* **`ConfigurationStatus`**: Enum que define el estado de la configuración (`DRAFT`, `PUBLISHED`).
+
+---
+
+##### C. Commands (Comandos - CQRS)
+
+* **`RegisterIotDeviceCommand(String serialNumber, String deviceModel)`**: Registrar un nuevo dispositivo IoT (Administrador).
+* **`AssignIotDeviceCommand(Long deviceId, Long operatorId)`**: Asignar un dispositivo IoT a un operario (Administrador).
+* **`ConfigureOperatingRangesCommand(Long configurationId, OperatingRange vmaRange, OperatingRange cropRange)`**: Establecer los rangos operativos (Operario).
+* **`ConfigureCorrectiveStrategyCommand(Long configurationId, CorrectiveStrategy strategy)`**: Configurar la estrategia correctiva de pH o Térmica (Operario).
+* **`ConfigureWaitTimeCommand(Long configurationId, WaitTime waitTime)`**: Establecer los tiempos de espera del ciclo (Operario).
+* **`ConfigureReleaseModeCommand(Long configurationId, ReleaseMode releaseMode)`**: Configurar el modo de liberación Auto/Manual (Operario).
+* **`PublishConfigurationCommand(Long configurationId)`**: Publicar la configuración activa para el dispositivo (Operario).
+
+---
+
+##### D. Queries (Consultas - CQRS)
+
+* **`GetIotDeviceByIdQuery(Long deviceId)`**
+* **`GetConfigurationByDeviceIdQuery(Long deviceId)`**
+* **`GetPublishedConfigurationQuery(Long deviceId)`**
+
+---
+
+##### E. Services (Servicios de Comando y Consulta)
+
+* **`ConfigurationCommandService` (Interfaz)**
+  * **Métodos principales:**
+    * `Optional<IotDevice> handle(RegisterIotDeviceCommand command)`
+    * `Optional<IotDevice> handle(AssignIotDeviceCommand command)`
+    * `Optional<DeviceConfiguration> handle(ConfigureOperatingRangesCommand command)`
+    * `Optional<DeviceConfiguration> handle(ConfigureCorrectiveStrategyCommand command)`
+    * `Optional<DeviceConfiguration> handle(ConfigureWaitTimeCommand command)`
+    * `Optional<DeviceConfiguration> handle(ConfigureReleaseModeCommand command)`
+    * `Optional<DeviceConfiguration> handle(PublishConfigurationCommand command)`
+
+* **`ConfigurationQueryService` (Interfaz)**
+  * **Métodos principales:**
+    * `Optional<IotDevice> handle(GetIotDeviceByIdQuery query)`
+    * `Optional<DeviceConfiguration> handle(GetConfigurationByDeviceIdQuery query)`
+    * `Optional<DeviceConfiguration> handle(GetPublishedConfigurationQuery query)`
+
+---
+
 #### 4.2.2.2. Interface Layer
+
+##### A. Controllers (Controladores REST)
+
+* **`IotDevicesController`**
+  * **Endpoints:**
+    * `POST /api/v1/iot-devices`: Permite al Administrador registrar un nuevo dispositivo (`RegisterIotDeviceResource`).
+    * `POST /api/v1/iot-devices/{deviceId}/assignments`: Permite asignar un dispositivo a un operario (`AssignIotDeviceResource`).
+
+* **`ConfigurationsController`**
+  * **Endpoints:**
+    * `PUT /api/v1/configurations/{configurationId}/operating-ranges`: Actualiza rangos operativos VMA/Cultivo.
+    * `PUT /api/v1/configurations/{configurationId}/corrective-strategy`: Configura estrategia correctiva pH/Térmica.
+    * `PUT /api/v1/configurations/{configurationId}/wait-time`: Establece el tiempo de espera.
+    * `PUT /api/v1/configurations/{configurationId}/release-mode`: Modifica el modo de liberación (Auto/Manual).
+    * `POST /api/v1/configurations/{configurationId}/publish`: Publica la configuración final.
+    * `GET /api/v1/devices/{deviceId}/configuration`: Consulta la configuración de un dispositivo.
+
+---
+
+##### B. Resources / DTOs (Objetos de Transferencia de Datos)
+
+* **`RegisterIotDeviceResource(String serialNumber, String deviceModel)`**
+* **`AssignIotDeviceResource(Long operatorId)`**
+* **`ConfigureOperatingRangesResource(Double minVma, Double maxVma, Double minCrop, Double maxCrop)`**
+* **`ConfigureCorrectiveStrategyResource(String strategyType, Double thresholdValue)`**
+* **`ConfigureWaitTimeResource(Integer waitTimeSeconds)`**
+* **`ConfigureReleaseModeResource(String releaseMode)`**
+* **`IotDeviceResource(Long id, String serialNumber, Long operatorId)`**
+* **`DeviceConfigurationResource(Long id, Long deviceId, String status, String releaseMode, ...)`**
+
+---
+
+##### C. Transformers / Mappers
+
+* **`RegisterIotDeviceCommandFromResourceAssembler`**: Mapea `RegisterIotDeviceResource` a `RegisterIotDeviceCommand`.
+* **`AssignIotDeviceCommandFromResourceAssembler`**: Mapea `AssignIotDeviceResource` a `AssignIotDeviceCommand`.
+* **`ConfigureOperatingRangesCommandFromResourceAssembler`**: Mapea la petición de rangos a su respectivo `Command`.
+* **`DeviceConfigurationResourceFromEntityAssembler`**: Mapea la entidad `DeviceConfiguration` hacia `DeviceConfigurationResource`.
 
 #### 4.2.2.3. Application Layer
 
+##### A. Command Services & Handlers (Servicios de Comandos)
+
+* **`ConfigurationCommandServiceImpl`**
+  * **Descripción:** Implementa la orquestación de la lógica de configuración y registro de dispositivos.
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(RegisterIotDeviceCommand command)`**: Valida la existencia previa del dispositivo, crea el agregado `IotDevice` y lo persiste.
+    * **`handle(AssignIotDeviceCommand command)`**: Actualiza la asignación del operario en el dispositivo.
+    * **`handle(ConfigureOperatingRangesCommand command)`**: Actualiza los objetos de valor de rangos VMA/Cultivo en el agregado `DeviceConfiguration`.
+    * **`handle(ConfigureCorrectiveStrategyCommand command)`**: Aplica la estrategia correctiva pH/Térmica.
+    * **`handle(ConfigureWaitTimeCommand command)`**: Modifica los parámetros de tiempo de espera.
+    * **`handle(ConfigureReleaseModeCommand command)`**: Establece el modo Auto/Manual.
+    * **`handle(PublishConfigurationCommand command)`**: Cambia el estado a `PUBLISHED`.
+
+---
+
+##### B. Query Services & Handlers (Servicios de Consulta)
+
+* **`ConfigurationQueryServiceImpl`**
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(GetIotDeviceByIdQuery query)`**: Recupera la información del dispositivo IoT.
+    * **`handle(GetConfigurationByDeviceIdQuery query)`**: Obtiene el estado actual de la configuración.
+    * **`handle(GetPublishedConfigurationQuery query)`**: Retorna únicamente la última configuración validada y publicada.
+
 #### 4.2.2.4. Infrastructure Layer
+
+##### A. Persistence & Repositories (Persistencia y Repositorios)
+
+* **`IotDeviceRepository` (JPA Repository)**
+  * `Optional<IotDevice> findBySerialNumber(String serialNumber)`
+
+* **`DeviceConfigurationRepository` (JPA Repository)**
+  * `Optional<DeviceConfiguration> findByDeviceIdAndStatus(Long deviceId, ConfigurationStatus status)`
 
 #### 4.2.2.5. Bounded Context Software Architecture Component Level Diagrams
 
