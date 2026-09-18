@@ -410,6 +410,16 @@ El primer segmento de investigación comprende a dueños, supervisores de planta
 
 El segundo segmento de investigación abarca a pequeños agricultores urbanos y periurbanos, técnicos y encargados de módulos de cultivo hidropónico (sistemas NFT o raíz flotante), responsables de la formulación, acondicionamiento y liberación de soluciones nutritivas para el riego.
 
+##### Entrevista 4 - Sector Hidropónico
+
+| Entrevistado 4 | Diego Alonso Quispe Flores |
+| :--- | :--- |
+| **Edad** | 25 años |
+| **Distrito/Ciudad** | Lima |
+| <img src="https://i.postimg.cc/PJV1tDn7/Diego.png" alt="Entrevista 4 - Diego Quispe (Sector Hidróponico)" width="400"> | **Resumen:**<br>Diego se desempeña como encargado de producción en un emprendimiento hidropónico urbano/periurbano en Perú, dedicado al cultivo de hortalizas como lechuga y espinaca. Su responsabilidad abarca todo el proceso productivo: prepara manualmente la solución nutritiva (llenado de tanque, dosificación de nutrientes según la etapa del cultivo y mezcla), y luego realiza mediciones de pH y temperatura con instrumentos digitales portátiles (pH-metro y termómetro de sonda) una o dos veces al día. Si los parámetros están fuera de rango, aplica correctores manualmente y espera entre 15 y 30 minutos hasta que la mezcla se estabilice. El riego permanece deshabilitado bajo cualquier circunstancia hasta confirmar que los valores son óptimos, ya que de lo contrario se estresarían las raíces y se afectaría la absorción de nutrientes. Todo el control es manual y autónomo, sin autorización previa para cada ciclo.<br><br>**Características objetivas y subjetivas:**<br>• *Personalidad y actitud:* Joven (25 años), metódico y responsable. Asume con seriedad el control de calidad de su producción, consciente de que un error en la dosificación puede arruinar toda la cosecha. Busca activamente escalar su emprendimiento mediante herramientas tecnológicas que simplifiquen el monitoreo diario sin sacrificar la calidad.<br>• *Tecnología y dispositivos de preferencia:* Usuario habitual de smartphone. Considera óptimo recibir alertas automáticas en el celular ante desviaciones de los parámetros, así como controlar el riego de forma remota mediante una aplicación.<br>• *Puntos de dolor y frustraciones:* El tiempo invertido en el monitoreo manual y la incertidumbre asociada al proceso; el temor constante a que un error de dosificación comprometa la cosecha completa; y la dependencia de mediciones presenciales que no pueden consultarse a distancia.<br>• *Canales y necesidades identificadas:* Alertas automáticas al celular ante desviaciones de pH o temperatura; historial de mediciones para trazabilidad; perfiles configurables por tipo de cultivo; y control remoto del riego mediante aplicación móvil. |
+
+| Timing: 00:00 – 05:38 min (Duración: 05:38 min) | https://upcedupe-my.sharepoint.com/:v:/g/personal/u202220294_upc_edu_pe/IQDh3_0-joIaQoG_r7I4j0EqAbumFTbX7us6qypX58W_oB0?e=9v5dwE&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D |
+
 *(Las entrevistas correspondientes a este segmento se encuentran programadas y se incorporarán en las siguientes iteraciones del proyecto siguiendo la misma estructura y rigor metodológico).*
 
 ### 2.2.3. Análisis de entrevistas
