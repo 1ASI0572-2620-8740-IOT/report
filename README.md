@@ -873,6 +873,42 @@ Interfaces y abstracciones requeridas por la capa de aplicación para comunicars
 
 #### 4.2.1.4. Infrastructure Layer
 
+##### A. Persistence & Repositories (Persistencia y Repositorios)
+
+Proporciona las implementaciones concretas para el almacenamiento y recuperación de agregados mediante Spring Data JPA y la base de datos relacional.
+
+* **`UserRepository` (JPA Repository)**
+  * **Descripción:** Interfaz que extiende de `JpaRepository` para la gestión directa de las operaciones CRUD y consultas personalizadas sobre la entidad `User`.
+  * **Métodos principales:**
+    * `Optional<User> findByUsername(String username)`: Recupera un usuario basándose en su nombre de usuario único.
+    * `boolean existsByUsername(String username)`: Verifica la existencia de un usuario antes del registro para evitar duplicados.
+
+---
+
+##### B. Security & Cryptography Adapters (Adaptadores de Seguridad)
+
+Implementa los puertos de la capa de aplicación destinados al cifrado de contraseñas y la gestión de tokens de seguridad para la autenticación REST.
+
+* **`BCryptHashingServiceImpl`**
+  * **Descripción:** Implementación del puerto `HashingService` utilizando el algoritmo BCrypt para el encriptado y verificación segura de credenciales.
+  * **Métodos:**
+    * `encode(CharSequence rawPassword)`: Retorna el hash cifrado de la contraseña.
+    * `matches(CharSequence rawPassword, String encodedPassword)`: Valida la autenticidad de la contraseña en texto plano contra el hash almacenado.
+
+* **`JwtTokenServiceImpl`**
+  * **Descripción:** Implementación del puerto `TokenVerificationService` encargada del ciclo de vida de los tokens JWT.
+  * **Métodos:**
+    * `generateToken(User user)`: Construye, firma y emite el JWT con los *claims* (roles e identidad) del usuario.
+    * `validateToken(String token)`: Comprueba la validez técnica y firma del token recibido en las peticiones HTTP.
+
+---
+
+##### C. Configuration & OpenAPI (Configuración de Infraestructura)
+
+Clases que configuran componentes del framework y la documentación del microservicio.
+
+* **`SecurityConfiguration`**: Define la cadena de filtros de seguridad (`SecurityFilterChain`), reglas de acceso a endpoints HTTP (CORS, CSRF) y la gestión de sesiones *stateless*.
+
 #### 4.2.1.5. Bounded Context Software Architecture Component Level Diagrams
 
 #### 4.2.1.6. Bounded Context Software Architecture Code Level Diagrams
