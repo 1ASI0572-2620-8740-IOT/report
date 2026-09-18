@@ -157,7 +157,7 @@ La solución contempla dos roles. El operario tendrá asignado un dispositivo y 
 
 | **Nombre** | **Descripción** | **Foto** |
 |:--|:--|:--:|
-| Gomez Hurtado, Miguel Angel |  |  |
+| Gomez Hurtado, Miguel Angel | Tengo 24 años y estoy estudiando la carrera de Ingeniería Informática. Me encuentro en mi octavo ciclo en la UPC Sede San Miguel. Soy una persona académica y siempre estoy abierto al diálogo. Me apasiona mi carrera y siempre estoy dispuesto a aprender sobre este curso para brindar a mis futuros usuarios un buen producto acorde a sus necesidades. | [![Miguel.png](https://i.postimg.cc/fTbbZs0N/Miguel.png)](https://postimg.cc/PNBHzB43) |
 | Rodriguez Macedo, Sebastian |  |  |
 | Santur Tello, Andrea Elizabeth |  |  |
 | Prieto Mantari, Leonardo Fabrizzio Junior |  |  |
