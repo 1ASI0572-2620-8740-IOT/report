@@ -1524,6 +1524,74 @@ CREATE TABLE water_treatment_processes
 
 #### 4.2.5.1. Domain Layer
 
+##### A. Aggregates (Agregados)
+
+* **`OperationalAlert` (Agregado Principal)**
+  * **Descripción:** Encapsula la creación, gestión y trazabilidad de alertas operativas en el sistema (hereda de `AuditableAbstractAggregateRoot`).
+  * **Comportamiento y Reglas de Negocio:**
+    * Crear e inicializar alertas operativas asignando un nivel de severidad y origen.
+    * Permitir la atención y cambio de estado de la alerta por parte del sistema o personal autorizados.
+* **`QualityIncident` (Agregado)**
+  * **Descripción:** Representa el registro de incidentes de calidad o la pérdida de monitoreo observada en los dispositivos/ciclos.
+  * **Comportamiento y Reglas de Negocio:**
+    * Registrar incidentes detallando el tipo (calidad o pérdida de monitoreo).
+    * Validar y asociar el incidente con las métricas y eventos recopilados.
+* **`EventCorrelation` (Agregado)**
+  * **Descripción:** Asocia y correlaciona eventos del sistema con los ciclos de tratamiento y telemetría para mantener la trazabilidad completa.
+  * **Comportamiento y Reglas de Negocio:**
+    * Agrupar y correlacionar eventos temporales y de ciclo.
+    * Generar proyecciones y consolidados de estado actualizados.
+
+---
+
+##### B. Value Objects (Objetos de Valor)
+
+* **`IncidentType`**: Tipo de incidente (`QUALITY_INCIDENT`, `MONITORING_LOSS`).
+* **`AlertSeverity`**: Nivel de severidad de la alerta operativa (`LOW`, `MEDIUM`, `HIGH`, `CRITICAL`).
+* **`StatusView`**: Estado proyectado o vista de monitoreo (`UPDATED`, `OUTDATED`).
+* **`CorrelationData`**: Contenedor inmutable de claves de correlación y métricas asociadas.
+
+---
+
+##### C. Commands (Comandos - CQRS)
+
+* **`CreateOperationalAlertCommand(Long deviceId, String severity, String description)`**: Solicita la creación de una alerta operativa.
+* **`RegisterIncidentCommand(Long deviceId, IncidentType incidentType, String description)`**: Registra un incidente de calidad o pérdida de monitoreo.
+* **`CorrelateEventsCommand(Long deviceId, Long cycleId, List<Long> eventIds)`**: Correlaciona eventos con ciclos operativos específicos.
+* **`UpdateStatusViewCommand(Long deviceId, StatusView statusView)`**: Actualiza la vista de estado del sistema.
+* **`GenerateUpdatedReportCommand(Long deviceId, String reportType)`**: Genera el estado consolidado o reporte actualizado.
+
+---
+
+##### D. Queries (Consultas - CQRS)
+
+* **`GetActiveAlertsByDeviceIdQuery(Long deviceId)`**
+* **`GetIncidentsByDeviceIdQuery(Long deviceId)`**
+* **`GetCorrelatedEventsByCycleQuery(Long cycleId)`**
+* **`GetStatusViewByDeviceIdQuery(Long deviceId)`**
+* **`GetTraceabilityReportQuery(Long deviceId)`**
+
+---
+
+##### E. Services (Servicios de Comando y Consulta)
+
+* **`MonitoringCommandService` (Interfaz)**
+  * **Métodos principales:**
+    * `Optional<OperationalAlert> handle(CreateOperationalAlertCommand command)`
+    * `Optional<QualityIncident> handle(RegisterIncidentCommand command)`
+    * `Optional<EventCorrelation> handle(CorrelateEventsCommand command)`
+    * `void handle(UpdateStatusViewCommand command)`
+    * `Optional<Report> handle(GenerateUpdatedReportCommand command)`
+
+* **`MonitoringQueryService` (Interfaz)**
+  * **Métodos principales:**
+    * `List<OperationalAlert> handle(GetActiveAlertsByDeviceIdQuery query)`
+    * `List<QualityIncident> handle(GetIncidentsByDeviceIdQuery query)`
+    * `Optional<EventCorrelation> handle(GetCorrelatedEventsByCycleQuery query)`
+    * `Optional<StatusViewResource> handle(GetStatusViewByDeviceIdQuery query)`
+    * `Optional<ReportResource> handle(GetTraceabilityReportQuery query)`
+
+
 #### 4.2.5.2. Interface Layer
 
 #### 4.2.5.3. Application Layer
