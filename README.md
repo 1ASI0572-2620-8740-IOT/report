@@ -130,8 +130,8 @@ En el siguiente cuadro se describirán las acciones realizadas y las conclusione
 
 | Criterios específicos | Acciones realizadas | Conclusiones |
 |:--|:--|:--|
-| Trabaja en equipo para proporcionar liderazgo en forma conjunta. | **Rios Pacheco, Hector Javier — AV1:** Inició y estructuró el informe compartido (portada y esquema de capítulos). Guió las decisiones tempranas del equipo desarrollando el análisis 5W2H, los segmentos objetivo, las referencias, el análisis competitivo, el diseño de entrevistas y el Lean UX Canvas, artefactos base que permitieron alinear la propuesta de valor y los requisitos del sistema. | **AV1:** Demostró liderazgo conjunto al establecer las bases documentales y analíticas del proyecto, aportando entregables habilitadores que facilitaron el trabajo de los demás integrantes y la toma de decisiones compartidas. |
-| Crea un entorno colaborativo e inclusivo, establece metas, planifica tareas y cumple objetivos. | **Rios Pacheco, Hector Javier — AV1:** Planificó y ejecutó entregables progresivos: formulación de la problemática, estudio de competidores, supuestos e hipótesis de Lean UX y el levantamiento y análisis de entrevistas del sector textil. Integró las necesidades reales de los operarios para proveer insumos fundamentales al diseño de User Personas, mapas de experiencia y requisitos. | **AV1:** Fomentó la colaboración e inclusión al traducir las perspectivas de los usuarios en insumos de trabajo para todo el equipo, cumpliendo oportunamente los objetivos planificados y garantizando la coherencia global del informe. |
+| Trabaja en equipo para proporcionar liderazgo en forma conjunta. | **Rios Pacheco, Hector Javier — AV1:** Inició y estructuró el informe compartido (portada y esquema de capítulos). Guió las decisiones tempranas del equipo desarrollando el análisis 5W2H, los segmentos objetivo, las referencias, el análisis competitivo, el diseño de entrevistas y el Lean UX Canvas, artefactos base que permitieron alinear la propuesta de valor y los requisitos del sistema. **Rodriguez Macedo, Sebastián — AV1:** Participó activamente en la definición de la arquitectura del sistema, proponiendo la separación de responsabilidades a partir de los Bounded Contexts identificados y su posterior representación mediante microservicios. Asimismo, elaboró los diagramas C4 de System Landscape, System Context y Container, además del Deployment Diagram.|  **AV1:** Demostró liderazgo conjunto al establecer las bases documentales y analíticas del proyecto, aportando entregables habilitadores que facilitaron el trabajo de los demás integrantes y la toma de decisiones compartidas. **AV1:** Demostró liderazgo conjunto al orientar parte de las decisiones arquitectónicas del proyecto y convertir los requerimientos y dominios identificados por el equipo en una estructura técnica comprensible.| 
+| Crea un entorno colaborativo e inclusivo, establece metas, planifica tareas y cumple objetivos. | **Rios Pacheco, Hector Javier — AV1:** Planificó y ejecutó entregables progresivos: formulación de la problemática, estudio de competidores, supuestos e hipótesis de Lean UX y el levantamiento y análisis de entrevistas del sector textil. Integró las necesidades reales de los operarios para proveer insumos fundamentales al diseño de User Personas, mapas de experiencia y requisitos. **Rodriguez Macedo, Sebastian — AV1:** Organizó progresivamente los entregables relacionados con la arquitectura, partiendo de la definición de los Bounded Contexts y su correspondencia con los microservicios hasta la construcción de los diagramas de arquitectura y despliegue.| **AV1:** Fomentó la colaboración e inclusión al traducir las perspectivas de los usuarios en insumos de trabajo para todo el equipo, cumpliendo oportunamente los objetivos planificados y garantizando la coherencia global del informe. **AV1:** Contribuyó a un entorno colaborativo mediante la integración de los aportes funcionales de los integrantes dentro de una arquitectura común. Cumplió con los entregables asignados y permitió que las decisiones técnicas, los componentes del sistema y las responsabilidades de cada servicio quedaran claramente organizados|
 
 
 # Capítulo I: Introducción
@@ -158,7 +158,7 @@ La solución contempla dos roles. El operario tendrá asignado un dispositivo y 
 | **Nombre** | **Descripción** | **Foto** |
 |:--|:--|:--:|
 | Gomez Hurtado, Miguel Angel | Tengo 24 años y estoy estudiando la carrera de Ingeniería Informática. Me encuentro en mi octavo ciclo en la UPC Sede San Miguel. Soy una persona académica y siempre estoy abierto al diálogo. Me apasiona mi carrera y siempre estoy dispuesto a aprender sobre este curso para brindar a mis futuros usuarios un buen producto acorde a sus necesidades. | [![Miguel.png](https://i.postimg.cc/fTbbZs0N/Miguel.png)](https://postimg.cc/PNBHzB43) |
-| Rodriguez Macedo, Sebastian |  |  |
+| Rodriguez Macedo, Sebastian |  Tengo 20 años y soy estudiante de Ingeniería de Software. Actualmente me encuentro cursando el octavo ciclo y realizando prácticas en el área de desarrollo de software. Me interesa especialmente el desarrollo backend y la arquitectura de software. Me considero una persona responsable y con disposición para trabajar en equipo. Durante los proyectos me gusta involucrarme activamente, proponer mejoras y aportar ideas que permitan desarrollar soluciones más organizadas. |  ![alt text](assets/FotoSebastian.png) |
 | Santur Tello, Andrea Elizabeth |  |  |
 | Prieto Mantari, Leonardo Fabrizzio Junior |  |  |
 | Rios Pacheco, Hector Javier | Cuento con formación en desarrollo de software, incluyendo estructuras de datos, algoritmos y arquitecturas orientadas a servicios. Trabajo con lenguajes como Java, TypeScript, JavaScript, HTML5 y CSS3, y utilizo herramientas y frameworks como Angular, Spring Boot, Git/GitHub, Swagger y bases de datos relacionales. Soy responsable, me gusta involucrarme activamente en los proyectos, aportar ideas útiles | ![alt text](assets/FotoHector.png)  |
@@ -737,12 +737,24 @@ A continuación se detalla la lista de requerimientos priorizados por valor de n
 ### 4.1.3. Software Architecture
 
 #### 4.1.3.1. Software Architecture System Landscape Diagram
+<p align="center">
+  <img src="assets/HydroGuard - Software Architecture System Landscape Diagram.png" alt="Software Architecture System Landscape Diagram" width="800">
+</p>
 
 #### 4.1.3.2. Software Architecture Context Level Diagrams
+<p align="center">
+  <img src="assets/HydroGuard - Software Architecture System Context Diagram.png" alt="Software Architecture System Context Diagram" width="800">
+</p>
 
 #### 4.1.3.3. Software Architecture Container Level Diagrams
+<p align="center">
+  <img src="assets/HydroGuard - Software Architecture Container Diagram.png" alt="Software Architecture Container Diagram" width="800">
+</p>
 
 #### 4.1.3.4. Software Architecture Deployment Diagrams
+<p align="center">
+  <img src="assets/HydroGuard - Software Architecture Deployment Diagram.png" alt="Software Architecture Deployment Diagram" width="800">
+</p>
 
 ## 4.2. Tactical-Level Domain-Driven Design
 
