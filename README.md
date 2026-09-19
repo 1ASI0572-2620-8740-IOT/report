@@ -1071,7 +1071,7 @@ CREATE TABLE user_roles
 * **`ConfigureWaitTimeResource(Integer waitTimeSeconds)`**
 * **`ConfigureReleaseModeResource(String releaseMode)`**
 * **`IotDeviceResource(Long id, String serialNumber, Long operatorId)`**
-* **`DeviceConfigurationResource(Long id, Long deviceId, String status, String releaseMode, ...)`**
+* **`DeviceConfigurationResource(Long id, Long deviceId, String status, String releaseMode)`**
 
 ---
 
@@ -1302,13 +1302,124 @@ CREATE TABLE device_configurations
 
 ##### 4.2.3.6.1. Bounded Context Domain Layer Class Diagrams
 
+A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Telemetría IoT, detallando el agregado principal `WaterMeasurement`, sus objetos de valor inmutables (`DeviceId`, `WaterMetrics`, `MeasurementTimestamp`), comandos, consultas y servicios bajo el patrón CQRS:
+
+---
+
+[![uml.png](https://i.postimg.cc/8kW3p8tg/uml.png)](https://postimg.cc/4nfwPSDW)
+
+---
+
+* **`WaterMeasurement`**: Representa la entidad raíz del agregado que consolida y valida las métricas del agua recibidas de un dispositivo en un instante de tiempo.
+* **`WaterMetrics` / `MeasurementTimestamp**`: Objetos de valor que garantizan la inmutabilidad de los datos recolectados por el hardware sensado.
+* **CQRS Pattern**: Desacopla la inserción masiva de lecturas mediante `RecordWaterMeasurementCommand` de la consulta histórica optimizada mediante las queries correspondientes.
+
 ##### 4.2.3.6.2. Bounded Context Database Design Diagram
+
+Para la persistencia de las métricas enviadas por los dispositivos IoT, se establece el siguiente esquema relacional DDL diseñado para almacenar registros inmutables de telemetría:
+
+---
+
+[![database.png](https://i.postimg.cc/L4TtBN8r/database.png)](https://postimg.cc/yWD37h9P)
+
+---
+
+```sql
+CREATE TABLE water_measurements
+(
+  id INT NOT NULL,
+  device_id INT NOT NULL,
+  ph FLOAT NOT NULL,
+  temperature FLOAT NOT NULL,
+  turbidity FLOAT NOT NULL,
+  measurement_timestamp INT NOT NULL,
+  created_at DATE NOT NULL,
+  updated_at DATE NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (id)
+);
+
+```
+
+---
+
+* **`water_measurements`**: Almacena las lecturas físicas individuales (`ph`, `temperature`, `turbidity`) indexadas por el identificador del dispositivo (`device_id`) y su correspondiente sello de tiempo (`measurement_timestamp`).
+* **Auditoría e Inmutabilidad**: Mantiene trazabilidad mediante los campos `created_at` y `updated_at`, sirviendo como fuente primaria para análisis histórico y consultas de última medición.
 
 ### 4.2.4. Bounded Context: Quality
 
 #### 4.2.4.1. Domain Layer
 
+* **`WaterTreatmentProcess` (Agregado Principal)**
+  * **Descripción:** Encapsula el ciclo de vida completo de evaluación, tratamiento, reevaluación y liberación o retención de agua para un dispositivo/cultivo específico (hereda de `AuditableAbstractAggregateRoot`).
+  * **Comportamiento y Reglas de Negocio:**
+    * Iniciar y contabilizar ciclos de tratamiento.
+    * Evaluar mediciones entrantes (pH, Temperatura) y determinar la conformidad del agua.
+    * Seleccionar y aplicar estrategias de corrección (pH+, pH-, Térmica).
+    * Comprobar variación útil y límites absolutos de ciclos para detectar fallos del sistema.
+    * Activar el estado de fallo con retención (cierre de válvula) al exceder límites permisibles.
+    * Autorizar la liberación automática o manual del agua tratada.
+    * Ejecutar parada de emergencia e interactuar con el restablecimiento explícito del proceso por parte del operario.
+
+---
+
+##### B. Value Objects (Objetos de Valor)
+
+* **`WaterConformity`**: Estado de evaluación del agua (`CONFORME`, `NO_CONFORME`).
+* **`TreatmentStatus`**: Estado del proceso (`INICIADO`, `EN_TRATAMIENTO`, `RETENIDO_FALLO`, `LIBERADO`, `PARADA_EMERGENCIA`).
+* **`TreatmentCycle`**: Contador inmutable de ciclos aplicados e intervalo de variación útil.
+* **`CorrectionStrategyType`**: Enum que representa el tipo de corrección (`PH_PLUS`, `PH_MINUS`, `THERMAL`).
+
+---
+
+##### C. Commands (Comandos - CQRS)
+
+* **`StartTreatmentProcessCommand(Long deviceId)`**: Inicia un nuevo ciclo de proceso de tratamiento.
+* **`EvaluateMeasurementCommand(Long processId, Double ph, Double temperature)`**: Evalúa las condiciones físicas actuales del agua contra los rangos configurados.
+* **`ApplyCorrectionStrategyCommand(Long processId, CorrectionStrategyType strategyType)`**: Registra la selección y aplicación de una estrategia de corrección.
+* **`AuthorizeReleaseCommand(Long processId, String releaseType)`**: Autoriza la liberación (automática o manual) del agua.
+* **`ExecuteEmergencyStopCommand(Long processId)`**: Dispara la parada de emergencia y el cierre de válvulas.
+* **`ResetProcessCommand(Long processId, Long operatorId)`**: Restablece el proceso tras una falla o parada de emergencia.
+
+---
+
+##### D. Queries (Consultas - CQRS)
+
+* **`GetTreatmentProcessByIdQuery(Long processId)`**
+* **`GetActiveTreatmentProcessByDeviceIdQuery(Long deviceId)`**
+* **`GetTreatmentHistoryByDeviceIdQuery(Long deviceId)`**
+
+---
+
+##### E. Services (Servicios de Comando y Consulta)
+
+* **`QualityCommandService` (Interfaz)**
+  * **Métodos principales:**
+    * `Optional<WaterTreatmentProcess> handle(StartTreatmentProcessCommand command)`
+    * `Optional<WaterTreatmentProcess> handle(EvaluateMeasurementCommand command)`
+    * `Optional<WaterTreatmentProcess> handle(ApplyCorrectionStrategyCommand command)`
+    * `Optional<WaterTreatmentProcess> handle(AuthorizeReleaseCommand command)`
+    * `Optional<WaterTreatmentProcess> handle(ExecuteEmergencyStopCommand command)`
+    * `Optional<WaterTreatmentProcess> handle(ResetProcessCommand command)`
+
+* **`QualityQueryService` (Interfaz)**
+  * **Métodos principales:**
+    * `Optional<WaterTreatmentProcess> handle(GetTreatmentProcessByIdQuery query)`
+    * `Optional<WaterTreatmentProcess> handle(GetActiveTreatmentProcessByDeviceIdQuery query)`
+    * `List<WaterTreatmentProcess> handle(GetTreatmentHistoryByDeviceIdQuery query)`
+
 #### 4.2.4.2. Interface Layer
+
+##### A. Controllers (Controladores REST)
+
+* **`QualityController`**
+  * **Endpoints:**
+    * `POST /api/v1/quality/processes`: Inicia un proceso de tratamiento para un dispositivo (`StartTreatmentProcessResource`).
+    * `POST /api/v1/quality/processes/{processId}/evaluations`: Recibe datos de sensado para evaluar la conformidad (`EvaluateMeasurementResource`).
+    * `POST /api/v1/quality/processes/{processId}/release`: Permite la liberación manual de agua por un operario (`AuthorizeReleaseResource`).
+    * `POST /api/v1/quality/processes/{processId}/emergency-stop`: Ejecuta la parada de emergencia del tratamiento.
+    * `POST /api/v1/quality/processes/{processId}/reset`: Restablece el proceso detenido (`ResetProcessResource`).
+    * `GET /api/v1/quality/devices/{deviceId}/active-process`: Obtiene el estado del proceso en curso.
 
 #### 4.2.4.3. Application Layer
 
