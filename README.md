@@ -1346,7 +1346,7 @@ CREATE TABLE water_measurements
 * **`water_measurements`**: Almacena las lecturas físicas individuales (`ph`, `temperature`, `turbidity`) indexadas por el identificador del dispositivo (`device_id`) y su correspondiente sello de tiempo (`measurement_timestamp`).
 * **Auditoría e Inmutabilidad**: Mantiene trazabilidad mediante los campos `created_at` y `updated_at`, sirviendo como fuente primaria para análisis histórico y consultas de última medición.
 
-### 4.2.4. Bounded Context: Quality
+### 4.2.4. Bounded Context: Treatment
 
 #### 4.2.4.1. Domain Layer
 
@@ -1421,7 +1421,46 @@ CREATE TABLE water_measurements
     * `POST /api/v1/quality/processes/{processId}/reset`: Restablece el proceso detenido (`ResetProcessResource`).
     * `GET /api/v1/quality/devices/{deviceId}/active-process`: Obtiene el estado del proceso en curso.
 
+---
+
+##### B. Resources / DTOs (Objetos de Transferencia de Datos)
+
+* **`StartTreatmentProcessResource(Long deviceId)`**
+* **`EvaluateMeasurementResource(Double ph, Double temperature)`**
+* **`AuthorizeReleaseResource(String releaseType)`**
+* **`ResetProcessResource(Long operatorId, String reason)`**
+* **`WaterTreatmentProcessResource(Long id, Long deviceId, String conformity, String status, Integer cycleCount)`**
+
+---
+
+##### C. Transformers / Mappers
+
+* **`StartTreatmentProcessCommandFromResourceAssembler`**: Mapea la petición de inicio a `StartTreatmentProcessCommand`.
+* **`EvaluateMeasurementCommandFromResourceAssembler`**: Transforma el recurso de evaluación a `EvaluateMeasurementCommand`.
+* **`WaterTreatmentProcessResourceFromEntityAssembler`**: Mapea la entidad `WaterTreatmentProcess` hacia `WaterTreatmentProcessResource`.
+
 #### 4.2.4.3. Application Layer
+
+##### A. Command Services & Handlers (Servicios de Comandos)
+
+* **`QualityCommandServiceImpl`**
+  * **Descripción:** Orquesta el flujo completo de evaluación, toma de decisiones y emergencias sobre el agua sensada.
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(StartTreatmentProcessCommand command)`**: Instancia y persiste un nuevo `WaterTreatmentProcess` para el dispositivo.
+    * **`handle(EvaluateMeasurementCommand command)`**: Verifica la calidad del agua. Si no es conforme, incrementa el contador de ciclo, selecciona la estrategia de corrección y valida si sobrepasa el límite absoluto para activar el estado de fallo (`RETENIDO_FALLO`).
+    * **`handle(AuthorizeReleaseCommand command)`**: Si la evaluación resulta conforme o un operario confirma manualmente, autoriza la apertura de válvulas y emite el evento de dominio `WaterReleasedEvent`.
+    * **`handle(ExecuteEmergencyStopCommand command)`**: Cambia el estado a `PARADA_EMERGENCIA` y genera una alerta del sistema.
+    * **`handle(ResetProcessCommand command)`**: Permite el reingreso a operaciones tras la revisión directa del operario.
+
+---
+
+##### B. Query Services & Handlers (Servicios de Consulta)
+
+* **`QualityQueryServiceImpl`**
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(GetTreatmentProcessByIdQuery query)`**: Retorna el detalle del tratamiento solicitado.
+    * **`handle(GetActiveTreatmentProcessByDeviceIdQuery query)`**: Consulta el tratamiento actual que no ha finalizado su ciclo.
+    * **`handle(GetTreatmentHistoryByDeviceIdQuery query)`**: Retorna el histórico de ejecuciones y evaluaciones de calidad.
 
 #### 4.2.4.4. Infrastructure Layer
 
