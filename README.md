@@ -1476,7 +1476,49 @@ CREATE TABLE water_measurements
 
 ##### 4.2.4.6.1. Bounded Context Domain Layer Class Diagrams
 
+A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Tratamiento y Calidad del Agua, detallando el agregado principal `WaterTreatmentProcess`, sus objetos de valor (`WaterConformity`, `TreatmentStatus`, `CorrectionStrategyType`, `TreatmentCycle`), comandos, consultas y servicios del patrón CQRS:
+
+---
+
+[![uml.png](https://i.postimg.cc/g2S1dnnY/uml.png)](https://postimg.cc/CR8csMGt)
+
+---
+
+* **`WaterTreatmentProcess`**: Encapsula las reglas del ciclo de evaluación, control de estados del agua, toma de decisiones correctivas e intervenciones manuales o de emergencia.
+* **Objetos de Valor**: Definen de manera explícita e inmutable los estados (`WaterConformity`, `TreatmentStatus`), tipos de corrección (`CorrectionStrategyType`) y métricas de iteración del ciclo (`TreatmentCycle`).
+* **Patrón CQRS**: Separa limpiamente la ejecución de comandos de cambio de estado sobre el tratamiento de la consulta de procesos activos e históricos.
+
 ##### 4.2.4.6.2. Bounded Context Database Design Diagram
+
+A continuación se detalla la definición DDL de la base de datos relacional encargada del almacenamiento y persistencia del flujo de tratamiento de agua:
+
+---
+
+[![database.png](https://i.postimg.cc/G3XFXYNs/database.png)](https://postimg.cc/z3RHBLqJ)
+
+---
+
+```sql
+CREATE TABLE water_treatment_processes
+(
+  id INT NOT NULL,
+  device_id INT NOT NULL,
+  conformity VARCHAR(20) NOT NULL,
+  status VARCHAR(20) NOT NULL,
+  current_strategy VARCHAR(20) NOT NULL,
+  cycle_count INT NOT NULL,
+  useful_variation FLOAT NOT NULL,
+  created_at INT NOT NULL,
+  updated_at INT NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (id)
+);
+
+```
+
+---
+
+* **`water_treatment_processes`**: Mantiene la trazabilidad y persistencia de cada flujo de tratamiento asignado a un dispositivo (`device_id`), registrando las métricas de ciclo (`cycle_count`, `useful_variation`), las estrategias aplicadas y las decisiones de liberación o retención por fallo.
 
 ### 4.2.5. Bounded Context: Monitoring
 
