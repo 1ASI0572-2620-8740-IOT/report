@@ -1625,7 +1625,38 @@ CREATE TABLE water_treatment_processes
 
 #### 4.2.5.3. Application Layer
 
+##### A. Command Services & Handlers (Servicios de Comandos)
+
+* **`MonitoringCommandServiceImpl`**
+  * **Descripción:** Coordina los flujos de trabajo de trazabilidad, registro de incidentes y correlación de eventos.
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(CreateOperationalAlertCommand command)`**: Instancia la alerta operativa y la persiste.
+    * **`handle(RegisterIncidentCommand command)`**: Registra la incidencia de calidad o pérdida de monitoreo.
+    * **`handle(CorrelateEventsCommand command)`**: Correlaciona eventos del sistema con ciclos operativos.
+    * **`handle(UpdateStatusViewCommand command)`**: Actualiza la proyección de las vistas de estado para consulta rápida.
+    * **`handle(GenerateUpdatedReportCommand command)`**: Procesa el consolidado histórico y genera el reporte actualizado (`ReportGeneratedEvent`).
+
+---
+
+##### B. Query Services & Handlers (Servicios de Consulta)
+
+* **`MonitoringQueryServiceImpl`**
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(GetActiveAlertsByDeviceIdQuery query)`**: Obtiene las alertas activas del dispositivo.
+    * **`handle(GetIncidentsByDeviceIdQuery query)`**: Devuelve la lista de incidentes registrados.
+    * **`handle(GetCorrelatedEventsByCycleQuery query)`**: Recupera la información correlacionada por ciclo.
+    * **`handle(GetTraceabilityReportQuery query)`**: Devuelve el reporte de trazabilidad consolidado.
+
 #### 4.2.5.4. Infrastructure Layer
+
+##### A. Persistence & Repositories (Persistencia y Repositorios)
+
+* **`OperationalAlertRepository` (JPA Repository)**
+  * `List<OperationalAlert> findByDeviceIdOrderByCreatedAtDesc(Long deviceId)`
+* **`QualityIncidentRepository` (JPA Repository)**
+  * `List<QualityIncident> findByDeviceId(Long deviceId)`
+* **`EventCorrelationRepository` (JPA Repository)**
+  * `Optional<EventCorrelation> findByCycleId(Long cycleId)`
 
 #### 4.2.5.5. Bounded Context Software Architecture Component Level Diagrams
 
