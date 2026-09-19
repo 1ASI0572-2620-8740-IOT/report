@@ -1464,6 +1464,12 @@ CREATE TABLE water_measurements
 
 #### 4.2.4.4. Infrastructure Layer
 
+##### A. Persistence & Repositories (Persistencia y Repositorios)
+
+* **`WaterTreatmentProcessRepository` (JPA Repository)**
+* `Optional<WaterTreatmentProcess> findByDeviceIdAndStatusNotIn(Long deviceId, List<TreatmentStatus> closedStatuses)`
+* `List<WaterTreatmentProcess> findByDeviceIdOrderByCreatedAtDesc(Long deviceId)`
+
 #### 4.2.4.5. Bounded Context Software Architecture Component Level Diagrams
 
 #### 4.2.4.6. Bounded Context Software Architecture Code Level Diagrams
