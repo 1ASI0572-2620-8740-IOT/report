@@ -1591,8 +1591,37 @@ CREATE TABLE water_treatment_processes
     * `Optional<StatusViewResource> handle(GetStatusViewByDeviceIdQuery query)`
     * `Optional<ReportResource> handle(GetTraceabilityReportQuery query)`
 
-
 #### 4.2.5.2. Interface Layer
+
+##### A. Controllers (Controladores REST)
+
+* **`MonitoringController`**
+  * **Endpoints:**
+    * `POST /api/v1/monitoring/alerts`: Crea una nueva alerta operativa (`CreateOperationalAlertResource`).
+    * `POST /api/v1/monitoring/incidents`: Registra un incidente de calidad o pérdida de monitoreo (`RegisterIncidentResource`).
+    * `POST /api/v1/monitoring/correlations`: Ejecuta la correlación de eventos/ciclos (`CorrelateEventsResource`).
+    * `PUT /api/v1/monitoring/status-views`: Actualiza las vistas de estado (`UpdateStatusViewResource`).
+    * `POST /api/v1/monitoring/reports/generate`: Solicita la generación de un reporte de estado actualizado (`GenerateReportResource`).
+    * `GET /api/v1/monitoring/devices/{deviceId}/status-view`: Consulta la vista de estado actual.
+
+---
+
+##### B. Resources / DTOs (Objetos de Transferencia de Datos)
+
+* **`CreateOperationalAlertResource(Long deviceId, String severity, String description)`**
+* **`RegisterIncidentResource(Long deviceId, String incidentType, String description)`**
+* **`CorrelateEventsResource(Long deviceId, Long cycleId, List<Long> eventIds)`**
+* **`UpdateStatusViewResource(Long deviceId, String status)`**
+* **`GenerateReportResource(Long deviceId, String reportType)`**
+* **`OperationalAlertResource(Long id, Long deviceId, String severity, String description, String createdAt)`**
+
+---
+
+##### C. Transformers / Mappers
+
+* **`CreateOperationalAlertCommandFromResourceAssembler`**: Mapea `CreateOperationalAlertResource` a `CreateOperationalAlertCommand`.
+* **`RegisterIncidentCommandFromResourceAssembler`**: Transforma el recurso de incidente en `RegisterIncidentCommand`.
+* **`OperationalAlertResourceFromEntityAssembler`**: Transforma la entidad `OperationalAlert` en `OperationalAlertResource`.
 
 #### 4.2.5.3. Application Layer
 
