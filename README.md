@@ -747,6 +747,10 @@ A continuación se detalla la lista de requerimientos priorizados por valor de n
 | 51 | US-28 | Generación de reporte de calidad | Como administrador, quiero generar un reporte del estado y evolución de la calidad del agua de un dispositivo, para utilizarlo en la toma de decisiones o en la sustentación de una auditoría. | 5 |
 | 52 | US-29 | Exportación de reporte | Como administrador, quiero exportar un reporte generado, para conservarlo o compartirlo con otros responsables autorizados. | 3 |
 
+<p align="center">
+  <img src="assets/trello_backlog.jpg" alt="EventStorming" width="600">
+</p>
+
 # Capítulo IV: Solution Software Design
 
 ## 4.1. Strategic-Level Domain-Driven Design
