@@ -56,6 +56,7 @@
 | AV1 | 16/09/2026 | Santur Tello, Andrea Elizabeth | Actualizó el Big Picture EventStorming y la especificación de requisitos; documentó el Impact Mapping con su diagrama y añadió el Product Backlog inicial priorizado. |
 | AV1 | 20/09/2026 | Eric Marlon Olivera Barzola | Agrego el capítulo 4: Design-Level EventStorming, Candidate Context Discovery, Domain Message Flows Modeling, Bounded Context Canvases |
 | AV1 | 20/09/2026 | Rios Pacheco, Hector Javier | Consolidó y completó las secciones del Student Outcome 5 para todos los integrantes según sus contribuciones técnicas; incorporó el capítulo de Conclusiones y recomendaciones, actualizando la tabla de contenidos. |
+| AV1 | 20/09/2026 | Rios Pacheco, Hector Javier | Actualizó la sección 2.2.3 de Análisis de entrevistas con sustento estadístico porcentual para los segmentos textil e hidropónico a partir de las 6 entrevistas registradas, vinculando características objetivas y subjetivas con los arquetipos de usuario. |
 
 
 ## Project Report Collaboration Insights
@@ -409,13 +410,13 @@ El primer segmento de investigación comprende a dueños, supervisores de planta
 
 ---
 
-##### Entrevista  - Sector Textil
+##### Entrevista 3 - Sector Textil
 
 | Entrevistado 3 | Carlos Madueño |
 | :--- | :--- |
 | **Edad** | 24 años |
 | **Distrito/Ciudad** | Lima |
-| <img src="assets/interviews/entrevista3.png" alt="Entrevista 2 - David Ramírez (Sector Textil)" width="400"> | **Resumen:**<br>El entrevistado se desempeña en el área de control de agua de una empresa textil en Lima, supervisando principalmente los procesos de teñido y lavado. Su trabajo consiste en verificar el pH y la temperatura del agua durante las principales etapas del proceso. Cuando encuentra valores fuera del rango esperado, repite la medición y comunica el resultado al supervisor, quien indica la corrección correspondiente. Las correcciones se realizan agregando productos químicos y esperando unos minutos antes de volver a medir.<br><br>**Características objetivas y subjetivas:**<br>• *Personalidad y actitud:* Responsable y cuidadoso con las mediciones. Sigue los procedimientos establecidos y consulta al supervisor cuando se presenta una variación.<br>• *Tecnología y dispositivos de preferencia:* Utiliza instrumentos de medición como pH-metro y termómetro. Considera práctico poder consultar información desde una computadora o celular.<br>• *Puntos de dolor y frustraciones:* La necesidad de repetir mediciones y determinar manualmente cuánto producto agregar y cuánto tiempo esperar cuando los valores están fuera del rango.<br>• *Canales y necesidades identificadas:* Historial de mediciones, registro de las correcciones realizadas y seguimiento de los parámetros desde un celular o computadora para facilitar el control del proceso. |
+| <img src="assets/interviews/entrevista3.png" alt="Entrevista 3 - Carlos Madueño (Sector Textil)" width="400"> | **Resumen:**<br>El entrevistado se desempeña en el área de control de agua de una empresa textil en Lima, supervisando principalmente los procesos de teñido y lavado. Su trabajo consiste en verificar el pH y la temperatura del agua durante las principales etapas del proceso. Cuando encuentra valores fuera del rango esperado, repite la medición y comunica el resultado al supervisor, quien indica la corrección correspondiente. Las correcciones se realizan agregando productos químicos y esperando unos minutos antes de volver a medir.<br><br>**Características objetivas y subjetivas:**<br>• *Personalidad y actitud:* Responsable y cuidadoso con las mediciones. Sigue los procedimientos establecidos y consulta al supervisor cuando se presenta una variación.<br>• *Tecnología y dispositivos de preferencia:* Utiliza instrumentos de medición como pH-metro y termómetro. Considera práctico poder consultar información desde una computadora o celular.<br>• *Puntos de dolor y frustraciones:* La necesidad de repetir mediciones y determinar manualmente cuánto producto agregar y cuánto tiempo esperar cuando los valores están fuera del rango.<br>• *Canales y necesidades identificadas:* Historial de mediciones, registro de las correcciones realizadas y seguimiento de los parámetros desde un celular o computadora para facilitar el control del proceso. |
 
 | Timing: 00:02 – 03:16 min (Duración: 03:14 min) |https://upcedupe-my.sharepoint.com/:v:/g/personal/u202315032_upc_edu_pe/IQA6nuyzcUNxQpTUU3tqKpDLAZOyagZ4x_kxWces0Y8-kew?e=DYi0iB&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D |
 
@@ -457,24 +458,176 @@ El segundo segmento de investigación abarca a pequeños agricultores urbanos y 
 
 ### 2.2.3. Análisis de entrevistas
 
-#### Análisis del Segmento 2: Pequeños productores y microempresas hidropónicas
+En esta sección se desarrolla un análisis exhaustivo y cuantitativo-cualitativo estructurado por cada uno de los dos segmentos objetivo de HydroGuard, sustentado estadísticamente a partir de las seis (6) entrevistas a profundidad realizadas y registradas en la sección precedente (3 entrevistas para el sector textil y 3 para el sector hidropónico). A través de este análisis se identifican, cuantifican y triangulan todas las características objetivas (demográficas, operativas, técnicas e instrumentales) y subjetivas (personalidad, actitudes, puntos de dolor, temores y motivaciones) que representan los patrones comunes indispensables para la modelación y validación empírica de los arquetipos de usuario (*User Personas*).
 
-La entrevista a Lyan Jarod Luis Carrasco Prosopio refuerza que, en un emprendimiento hidropónico pequeño, una misma persona suele asumir la gestión del negocio y la operación diaria. Esta concentración de responsabilidades convierte la medición manual en una actividad vulnerable a olvidos o intervalos de revisión mayores a los deseados, aun cuando el productor conoce el procedimiento y actúa con cautela.
+---
 
-El flujo observado sigue una secuencia repetitiva y verificable: preparar la solución, medir, corregir en pequeñas dosis, mezclar, esperar entre 5 y 10 minutos, volver a medir y habilitar el riego únicamente cuando los parámetros son aceptables. El punto de mayor incertidumbre se encuentra durante la espera posterior al ajuste, porque el productor no sabe con precisión cuándo se estabilizó la solución y una intervención prematura puede provocar una sobrecorrección.
+#### 2.2.3.1. Análisis del Segmento 1: Micro y pequeñas empresas textiles con teñido o acabado
 
-Los principales hallazgos para HydroGuard son los siguientes:
+El análisis de este segmento se fundamenta en los datos recopilados en las entrevistas al sector textil: **Entrevista 1 (Oscar, 28 años)**, **Entrevista 2 (David Ramírez, 23 años)** y **Entrevista 3 (Carlos Madueño, 24 años)**, conformando una muestra segmentada de $n = 3$ sujetos (100% de la muestra textil).
 
-- **Monitoreo continuo y móvil:** el productor necesita consultar desde el celular el pH y la temperatura actuales sin permanecer junto al tanque.
-- **Contexto temporal y tendencias:** un valor aislado no es suficiente; también necesita saber desde cuándo se mantiene y si aumenta o disminuye.
-- **Alertas configurables:** el sistema debe advertir cuando los parámetros salen del rango definido para el cultivo, especialmente durante periodos de calor o mientras el responsable realiza otras tareas.
-- **Apoyo al ciclo de corrección:** registrar cada ajuste, el tiempo de espera y la medición posterior permitiría reducir la incertidumbre y evitar correcciones consecutivas antes de que la solución se estabilice.
-- **Historial y trazabilidad:** la consulta diaria y semanal ayudaría a identificar las horas en que aumenta la temperatura o comienza a variar el pH.
-- **Decisión humana sobre el riego:** la solución debe indicar que los valores configurados se cumplen, pero mantener la confirmación final del inicio del riego en manos del responsable cuando se utilice el modo manual.
-- **Configuración por cultivo:** el rango de pH mencionado para la lechuga, aproximadamente de 5.5 a 6.5, confirma la necesidad de perfiles ajustables según el cultivo y las condiciones de cada productor.
-- **Oportunidad de evolución:** la conductividad eléctrica es un parámetro complementario relevante para la concentración de nutrientes y puede considerarse en una futura ampliación del producto, sin desplazar el alcance inicial centrado en pH y temperatura.
+##### A. Características Objetivas (Sustento Estadístico)
 
-En conjunto, los resultados validan las funciones de monitoreo en tiempo real, rangos configurables, alertas, historial, ciclos de corrección y liberación manual contempladas en HydroGuard. La propuesta de valor debe enfatizar la reducción de la carga de vigilancia y el apoyo a decisiones oportunas, sin sustituir el criterio del productor ni automatizar la dosificación de correctores.
+1. **Rango etario y localización geográfica:**
+   - El **100% (3 de 3 entrevistados)** residen y operan en la ciudad de Lima (zonas industriales y talleres de confección/teñido).
+   - El rango de edad oscila entre los 23 y 28 años, arrojando una media muestral de **25.0 años**, lo que evidencia una fuerza laboral técnica y de supervisión joven y familiarizada con el ecosistema de aplicaciones digitales.
+
+2. **Rol operativo y concentración funcional:**
+   - El **66.7% (2 de 3, Oscar y David)** concentran simultáneamente funciones de supervisión técnica, gestión de planta y ejecución operativa directa del tratamiento de efluentes, con alto grado de autonomía para autorizar la descarga.
+   - El **33.3% (1 de 3, Carlos)** se desempeña como operario de control de calidad bajo supervisión directa jerárquica, debiendo validar las anomalías con un supervisor antes de proceder con las descargas.
+
+3. **Frecuencia y momento de monitoreo en el proceso productivo:**
+   - El **100% (3 de 3 entrevistados)** efectúan mediciones discontinuas y reactivas por lotes (*batch*), concentradas en los momentos inmediatamente posteriores a las descargas de tinas de teñido, lavado o calderas hacia las pozas o fosas de tratamiento (de 3 a 4 descargas diarias en promedio).
+   - Ninguna de las plantas (**0%**) cuenta con instrumentación en línea o monitoreo continuo automatizado.
+
+4. **Instrumentación de medición actual:**
+   - El **100% (3 de 3 entrevistados)** utilizan instrumentos portátiles digitales manuales no conectados (pH-metros de bolsillo y termómetros digitales independientes o de sonda manual).
+   - El **100% (3 de 3)** manifiesta que las lecturas son puntuales y requieren sumergir manualmente el electrodo en la poza, lo que exige presencia física continua junto a la fosa.
+
+5. **Método de corrección química y mezcla:**
+   - El **100% (3 de 3 entrevistados)** corrigen las desviaciones de pH mediante la adición manual empírica de reactivos químicos (cal/álcali para neutralizar acidez o ácidos industriales para neutralizar efluentes básicos).
+   - El **66.7% (2 de 3, Oscar y David)** utilizan herramientas manuales (palas o agitadores) o encienden manualmente bombas de recirculación auxiliar para dispersar el reactivo.
+   - El **100% (3 de 3)** debe esperar ventanas de estabilización que van desde los 5 hasta los 30 minutos antes de realizar un remuestreo manual.
+
+6. **Sistema de registro y trazabilidad:**
+   - El **66.7% (2 de 3, David y Oscar)** registran sus mediciones en cuadernos físicos o libretas de papel expuestas al desgaste de planta, o dependen de la memoria del operario entre tareas.
+   - El **33.3% (1 de 3, Carlos)** reporta los resultados de manera verbal a su supervisor sin un registro documental personal.
+   - El **0% (ninguno)** dispone de un sistema digital, base de datos o almacenamiento en la nube para consolidar el historial de descargas ante eventuales auditorías de Valores Máximos Admisibles (VMA).
+
+7. **Dispositivos de preferencia y canal de interacción:**
+   - El **100% (3 de 3 entrevistados)** utilizan intensivamente el *smartphone* durante su jornada laboral y señalan que una aplicación móvil es el canal idóneo para supervisar la poza mientras se desplazan por la planta.
+   - El **33.3% (1 de 3, Carlos)** menciona que una interfaz web en computadora complementaría la labor administrativa de supervisión.
+
+##### B. Características Subjetivas (Sustento Estadístico)
+
+1. **Personalidad y actitud frente al trabajo:**
+   - El **100% (3 de 3 entrevistados)** manifiestan una actitud responsable, metódica y orientada al cumplimiento normativo, reconociendo el grave impacto económico que representan las sanciones ambientales o multas por exceder los VMA en el alcantarillado.
+   - El **66.7% (2 de 3, Oscar y David)** evidencian frustración por sobrecarga laboral debido a la necesidad de alternar la atención de calderas y producción con la vigilancia física del efluente.
+
+2. **Puntos de dolor y frustraciones prioritarias:**
+   - **Incertidumbre en la dosificación y estabilización química (100%, 3 de 3):** Los entrevistados afirman que la mayor molestia es no saber con exactitud si la cantidad de químico dosificada fue suficiente o excesiva, ni en qué minuto exacto el agua terminó de estabilizarse sin tener que acudir a medir a ciegas.
+   - **Pérdida de tiempo y desplazamientos físicos repetitivos (100%, 3 de 3):** Manifiestan cansancio de tener que interrumpir sus actividades operativas para caminar hacia la fosa/poza exclusivamente a constatar si el agua ya se enfrió o neutralizó.
+   - **Vulnerabilidad documental e inconsistencia de registros (100%, 3 de 3):** Expresan inseguridad al no poseer un historial digital fidedigno y auditable que respalde que el agua se descargó dentro de los parámetros permitidos.
+
+3. **Motivaciones y expectativas frente a HydroGuard:**
+   - El **100% (3 de 3)** valoran prioritariamente la visualización de lecturas en tiempo real y la recepción de alertas automáticas en el celular cuando un parámetro sale de norma o cuando el agua ya está conforme.
+   - El **66.7% (2 de 3, Oscar y David)** respalda la automatización de la apertura de la válvula de descarga una vez que el sistema certifique la conformidad del agua, liberando tiempo productivo.
+
+##### C. Tabla Síntesis Estadística: Segmento 1 (Textil)
+
+| Variable Analizada | Frecuencia Absoluta ($n=3$) | Porcentaje (%) | Evidencia en Entrevistas Registradas |
+| :--- | :---: | :---: | :--- |
+| **Ubicación en Lima** | 3 / 3 | 100.0% | Oscar (Lima), David (Lima), Carlos (Lima) |
+| **Rango de edad (23–28 años)** | 3 / 3 | 100.0% | Oscar (28), David (23), Carlos (24) — Media: 25.0 años |
+| **Rol operativo directo en vertimientos** | 3 / 3 | 100.0% | Dueño/supervisor (Oscar), encargado de efluentes (David), control de agua (Carlos) |
+| **Medición manual y discontinua** | 3 / 3 | 100.0% | pH-metro y termómetro portátil; 0% monitoreo en línea continuo |
+| **Corrección química y mezcla manual** | 3 / 3 | 100.0% | Dosificación manual de cal/ácido; agitación física o bomba auxiliar |
+| **Tiempo de espera tras corrección (5–30 min)** | 3 / 3 | 100.0% | Espera empírica a ciegas reportada por los 3 entrevistados |
+| **Preferencia por supervisión móvil** | 3 / 3 | 100.0% | Demanda explícita de alertas y visualización vía smartphone |
+| **Incertidumbre operativa por estabilización** | 3 / 3 | 100.0% | Principal punto de dolor cualitativo en las tres entrevistas |
+| **Inexistencia de registro digital automático** | 3 / 3 | 100.0% | Cuaderno físico (David), notas/memoria (Oscar), reporte verbal (Carlos) |
+| **Interés en apertura automática de válvula** | 2 / 3 | 66.7% | Oscar y David operan con autonomía; Carlos consulta a supervisor |
+
+##### D. Vinculación con la Construcción del Arquetipo (User Persona: Marcelino Valencia)
+
+Los hallazgos estadísticos sustentan directamente la modelación de **Marcelino Valencia (Jefe de Planta / Operario Textil)**:
+- Su rol multifuncional (supervisión + operación manual) y su rango etario reflejan al **66.7%** de los casos donde la responsabilidad recae en una sola persona que recorre la planta.
+- La frustración central de Marcelino por los cuadernos de papel manchados y la falta de trazabilidad ante fiscalizaciones de VMA se fundamenta en el **100% de ausencia de registros digitales** y el **66.7% de dependencia de anotaciones físicas**.
+- Su necesidad de alertas preventivas en el móvil responde al **100% de preferencia por interfaces en smartphone** para no estar atado a la fosa.
+
+---
+
+#### 2.2.3.2. Análisis del Segmento 2: Pequeños productores y microempresas hidropónicas
+
+El análisis de este segmento se basa en las entrevistas al sector hidropónico: **Entrevista 4 (Diego Alonso Quispe Flores, 25 años)**, **Entrevista 5 (Lyan Jarod Luis Carrasco Prosopio, 28 años)** y **Entrevista 6 (Carlos Gabriel Mendoz, 26 años)**, conformando una muestra segmentada de $n = 3$ sujetos (100% de la muestra hidropónica).
+
+##### A. Características Objetivas (Sustento Estadístico)
+
+1. **Rango etario y localización geográfica:**
+   - El **100% (3 de 3 entrevistados)** desarrollan sus cultivos hidropónicos en Lima (entornos urbanos y periurbanos).
+   - El rango de edad se sitúa entre los 25 y 28 años, con una media de **26.3 años**, representando a jóvenes emprendedores y técnicos agrícolas tecnológicamente receptivos.
+
+2. **Tipo de cultivo y sistema hidropónico implementado:**
+   - El **100% (3 de 3 entrevistados)** cultivan hortalizas de hoja verde de ciclo corto, destacando la **lechuga como cultivo común primordial en el 100% de los casos**, complementada con hierbas aromáticas como albahaca (**66.7%, 2 de 3, Lyan y Carlos**) o espinaca (**33.3%, 1 de 3, Diego**).
+   - El **66.7% (2 de 3, Lyan y Carlos)** emplean sistemas hidropónicos de recirculación cerrada bajo la técnica NFT (*Nutrient Film Technique*), mientras que el **33.3% (1 de 3, Diego)** formula en reservorios para irrigación controlada.
+
+3. **Rol operativo y toma de decisiones:**
+   - El **100% (3 de 3 entrevistados)** son los responsables directos y autónomos de formular la solución nutritiva (agua, macronutrientes y micronutrientes), calibrar el pH y decidir la activación del sistema de bombeo/riego.
+   - El **33.3% (Lyan)** combina la propiedad del negocio con la labor agrícola, y el **66.7% (Diego y Carlos)** se desempeñan como encargados técnicos de producción del módulo.
+
+4. **Instrumentación actual y variables controladas:**
+   - El **100% (3 de 3 entrevistados)** controlan cotidianamente como parámetros críticos obligatorios el **pH** y la **temperatura** de la solución.
+   - El **100% (3 de 3)** utilizan medidores digitales portátiles manuales (pH-metro de sonda y termómetro digital de inmersión).
+   - El **33.3% (1 de 3, Lyan)** mide de forma complementaria y esporádica la conductividad eléctrica (EC), pero coincide en que la estabilidad del pH (rango 5.5 – 6.5) y la temperatura del agua determinan la viabilidad del riego diario.
+
+5. **Metodología de corrección y preparación de la solución:**
+   - El **100% (3 de 3 entrevistados)** aplican correctores químicos de pH en microdosis progresivas y graduales (*gotas o pequeños volúmenes*) para prevenir sobrecorrecciones que alteren la disponibilidad iónica de los nutrientes.
+   - El **100% (3 de 3)** recirculan con bomba o mezclan activamente y esperan entre **5 y 30 minutos** antes de volver a muestrear.
+
+6. **Política de seguridad sobre el riego:**
+   - El **100% (3 de 3 entrevistados)** mantienen el riego **estrictamente bloqueado o inhabilitado** mientras la solución nutritiva presente lecturas fuera del rango deseado, ya que el vertido de una solución desbalanceada provocaría el estrés irreversible de las raíces y la pérdida de plantas.
+   - El **100% (3 de 3)** prefiere mantener la **decisión final de liberación del riego bajo confirmación manual supervisada**, tras verificar en el sistema que la solución cumple con las condiciones óptimas.
+
+7. **Canales de preferencia tecnológica:**
+   - El **100% (3 de 3 entrevistados)** consideran el *smartphone* como el canal imprescindible y natural para supervisar el estado de la solución a distancia y recibir notificaciones push.
+   - El **33.3% (1 de 3, Carlos)** utiliza adicionalmente una computadora para monitoreo complementario de nivel de agua y estado de bombas.
+
+##### B. Características Subjetivas (Sustento Estadístico)
+
+1. **Personalidad y actitud:**
+   - El **100% (3 de 3 entrevistados)** demuestran un perfil sumamente cauteloso, analítico, perseverante y con alta atención al detalle. Son conscientes de que un descuido biológico arruina cosechas completas.
+   - El **100% (3 de 3)** expresan un deseo explícito de modernizar y tecnificar sus módulos con soluciones IoT que reduzcan la carga operativa repetitiva sin perder el control sobre el cultivo.
+
+2. **Puntos de dolor y frustraciones prioritarias:**
+   - **Temor permanente a la pérdida total de la cosecha (100%, 3 de 3):** La principal angustia psicológica es que un valor de pH ácido o alcalino no detectado a tiempo, o un alza crítica de temperatura en horas de sol, queme las raíces y comprometa semanas de inversión.
+   - **Incertidumbre en los tiempos de homogenización (100%, 3 de 3):** No cuentan con visibilidad del proceso de mezcla continua, debiendo adivinar cuándo la dosis hizo efecto.
+   - **Sobrecarga de tareas simultáneas y riesgo de olvido (66.7%, 2 de 3, Diego y Lyan):** Al estar ocupados en trasplantes, limpieza de canaletas o cosecha, admiten que existe el riesgo de postergar las mediciones u olvidar abrir/cerrar el riego oportunamente.
+
+3. **Motivaciones y expectativas frente a HydroGuard:**
+   - El **100% (3 de 3)** requiere alertas instantáneas al celular ante desviaciones de pH o temperatura.
+   - El **100% (3 de 3)** demanda perfiles de configuración de rangos ajustables según el tipo de cultivo o etapa fenológica (ej. lechuga pH 5.5–6.5).
+   - El **100% (3 de 3)** valora un historial de tendencias gráficas para correlacionar variaciones térmicas con la salud radicular.
+
+##### C. Tabla Síntesis Estadística: Segmento 2 (Hidroponía)
+
+| Variable Analizada | Frecuencia Absoluta ($n=3$) | Porcentaje (%) | Evidencia en Entrevistas Registradas |
+| :--- | :---: | :---: | :--- |
+| **Ubicación en Lima urbana/periurbana** | 3 / 3 | 100.0% | Diego (Lima), Lyan (Lima), Carlos Gabriel (Lima) |
+| **Rango de edad (25–28 años)** | 3 / 3 | 100.0% | Diego (25), Lyan (28), Carlos Gabriel (26) — Media: 26.3 años |
+| **Cultivo de lechuga como base** | 3 / 3 | 100.0% | 100% producen lechuga; 66.7% suman albahaca/hierbas aromáticas |
+| **Sistema NFT / Recirculación de solución** | 2 / 3 | 66.7% | Lyan y Carlos usan sistemas NFT; Diego reservorio para cultivo protegido |
+| **Monitoreo exclusivo de pH y temperatura** | 3 / 3 | 100.0% | Parámetros críticos diarios en los 3 casos; EC secundario en Lyan |
+| **Uso de instrumentos digitales manuales** | 3 / 3 | 100.0% | pH-metros y termómetros de mano; 0% sensores telemáticos continuos |
+| **Corrección en microdosis y recirculación** | 3 / 3 | 100.0% | Dosificación progresiva con espera de 5–15 min en tanque o tuberías |
+| **Retención preventiva del riego si no está listo** | 3 / 3 | 100.0% | Riego deshabilitado ante desviaciones para proteger raíces (100%) |
+| **Preferencia por liberación con confirmación manual**| 3 / 3 | 100.0% | Los tres productores prefieren validar antes de activar el flujo de riego |
+| **Temor a pérdida total de la cosecha** | 3 / 3 | 100.0% | Mayor factor de estrés subjetivo compartido por los tres productores |
+| **Preferencia por notificaciones y control móvil** | 3 / 3 | 100.0% | 100% smartphones para supervisión y alertas proactivas |
+
+##### D. Vinculación con la Construcción del Arquetipo (User Persona: Lucía Paredes)
+
+Los datos estadísticos y cualitativos analizados justifican directamente la construcción de **Lucía Paredes (Productora y Operaria Hidropónica)**:
+- La especialización en lechuga en sistema NFT y el rango de edad joven representan fielmente al **100% de la muestra agrícola** y al **66.7% con NFT**.
+- Su miedo medular a "quemar las raíces por una mezcla descalibrada" surge del **100% de entrevistados** que identificaron el estrés radicular como su peor contingencia.
+- Su comportamiento de "preparar, corregir gradualmente y retener el riego hasta verificar conformidad" responde al **100% de concordancia** en la política de liberación manual supervisada y retención obligatoria identificada en Diego, Lyan y Carlos Gabriel.
+
+---
+
+#### 2.2.3.3. Matriz Comparativa Inter-Segmentos y Hallazgos Globales ($N=6$)
+
+A partir del análisis cuantitativo de la muestra global de seis (6) entrevistas registradas, se establecen las siguientes coincidencias y divergencias fundamentales que definen las decisiones de diseño del sistema HydroGuard:
+
+| Criterio de Análisis | Segmento 1: Textil ($n=3$) | Segmento 2: Hidroponía ($n=3$) | Muestra Total ($N=6$) | Impacto Directo en la Solución HydroGuard |
+| :--- | :---: | :---: | :---: | :--- |
+| **Adopción de smartphone como interfaz principal** | 100.0% (3/3) | 100.0% (3/3) | **100.0% (6/6)** | Justifica el desarrollo de una Progressive Web App (PWA) / aplicación móvil adaptativa con alertas en tiempo real. |
+| **Dependencia de instrumentos manuales portátiles** | 100.0% (3/3) | 100.0% (3/3) | **100.0% (6/6)** | Demuestra la oportunidad y viabilidad de un dispositivo IoT integrado que centralice pH y temperatura de manera continua. |
+| **Incertidumbre en tiempo de mezcla y estabilización** | 100.0% (3/3) | 100.0% (3/3) | **100.0% (6/6)** | Define la User Story de *ciclos de corrección* y *tiempos de espera configurables* antes de la reevaluación automática. |
+| **Necesidad de bloqueo/retención de flujo no conforme** | 100.0% (3/3) | 100.0% (3/3) | **100.0% (6/6)** | Sustenta el control de válvula con estado cerrado por defecto (*retención segura*) mientras el agua no alcance el estado "Listo". |
+| **Inexistencia de trazabilidad e historial digital** | 100.0% (3/3) | 100.0% (3/3) | **100.0% (6/6)** | Fundamenta el servicio de persistencia en la nube, exportación de reportes e historial por lote/ciclo de medición. |
+| **Modo de liberación preferido** | Automático: 66.7% <br>Manual: 33.3% | Automático: 0.0% <br>Manual: 100.0% | Automático: 33.3% <br>Manual: 66.7% | Exige implementar **ambos modos de liberación configurables** (automático para textil, manual con autorización para hidroponía). |
+| **Parámetros de rangos operativos configurables** | pH 6.0 – 9.0; Temp < 35°C | pH 5.5 – 6.5; Temp 18 – 24°C | **100.0% diferenciados** | Confirma la arquitectura con **perfiles de configuración por segmento y dispositivo** habilitada en el modelo de dominio. |
+
+En conclusión, los hallazgos cuantitativos y cualitativos recopilados de las seis entrevistas registradas demuestran una alta convergencia operativa entre ambos sectores en cuanto a la necesidad de automatizar la lectura, alertar desviaciones y retener el flujo. A la vez, sustentan la flexibilidad de HydroGuard para adaptarse a las particularidades de cada industria (liberación automática en efluentes versus liberación manual supervisada en soluciones de cultivo) mediante rangos y políticas de liberación configurables.
 
 ## 2.3. Needfinding
 ### 2.3.1. User Personas
