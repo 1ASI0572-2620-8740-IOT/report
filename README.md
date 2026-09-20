@@ -157,8 +157,8 @@ La solución contempla dos roles. El operario tendrá asignado un dispositivo y 
 | **Nombre** | **Descripción** | **Foto** |
 |:--|:--|:--:|
 | Gomez Hurtado, Miguel Angel | Tengo 24 años y estoy estudiando la carrera de Ingeniería Informática. Me encuentro en mi octavo ciclo en la UPC Sede San Miguel. Soy una persona académica y siempre estoy abierto al diálogo. Me apasiona mi carrera y siempre estoy dispuesto a aprender sobre este curso para brindar a mis futuros usuarios un buen producto acorde a sus necesidades. | [![Miguel.png](https://i.postimg.cc/fTbbZs0N/Miguel.png)](https://postimg.cc/PNBHzB43) |
-| Rodriguez Macedo, Sebastian |  |  |
-| Santur Tello, Andrea Elizabeth |  |  |
+| Rodriguez Macedo, Sebastian |  Tengo 20 años y soy estudiante de Ingeniería de Software. Actualmente me encuentro cursando el octavo ciclo y realizando prácticas en el área de desarrollo de software. Me interesa especialmente el desarrollo backend y la arquitectura de software. Me considero una persona responsable y con disposición para trabajar en equipo. Durante los proyectos me gusta involucrarme activamente, proponer mejoras y aportar ideas que permitan desarrollar soluciones más organizadas. |  ![alt text](assets/FotoSebastian.png) |
+| Santur Tello, Andrea Elizabeth | Estoy cursando el octavo ciclo de mi carrera Ingeniería de Software, soy una persona responsable que le gusta resolver desafíos a la par con el trabajo responsable y en equipo tengo la capacidad de líder y me gusta aprender nuevas cosas dia a dia. | ![alt text](assets/andrea.png) |
 | Prieto Mantari, Leonardo Fabrizzio Junior |  |  |
 | Rios Pacheco, Hector Javier | Cuento con formación en desarrollo de software, incluyendo estructuras de datos, algoritmos y arquitecturas orientadas a servicios. Trabajo con lenguajes como Java, TypeScript, JavaScript, HTML5 y CSS3, y utilizo herramientas y frameworks como Angular, Spring Boot, Git/GitHub, Swagger y bases de datos relacionales. Soy responsable, me gusta involucrarme activamente en los proyectos, aportar ideas útiles | ![alt text](assets/FotoHector.png)  |
 | Olivera Barzola, Eric Marlon |  |  |
@@ -419,10 +419,34 @@ El segundo segmento de investigación abarca a pequeños agricultores urbanos y 
 
 | Timing: 00:00 – 05:38 min (Duración: 05:38 min) | https://upcedupe-my.sharepoint.com/:v:/g/personal/u202220294_upc_edu_pe/IQDh3_0-joIaQoG_r7I4j0EqAbumFTbX7us6qypX58W_oB0?e=9v5dwE&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D |
 
-*(Las entrevistas correspondientes a este segmento se encuentran programadas y se incorporarán en las siguientes iteraciones del proyecto siguiendo la misma estructura y rigor metodológico).*
+##### Entrevista 5 - Sector Hidropónico
+
+| Entrevistado 5 | Lyan Jarod Luis Carrasco Prosopio |
+| :--- | :--- |
+| **Edad** | 28 años |
+| **Perfil** | Propietario y responsable directo de la producción en un pequeño emprendimiento hidropónico con sistema NFT, dedicado principalmente al cultivo de lechuga y, en menor medida, albahaca. |
+| <img src="assets/interviews/Lyan.png" alt="Entrevista 4 - Lyan Carrasco (Sector Hidróponico)" width="800"> | **Resumen:**<br>Lyan concentra las funciones de propietario y operario. Prepara la solución nutritiva directamente en un tanque, completa el volumen de agua, añade los nutrientes, mezcla y verifica el pH y la temperatura antes de activar la bomba e iniciar el riego. Utiliza un medidor digital portátil de pH y un termómetro digital; además, consulta ocasionalmente la conductividad eléctrica para comprobar la concentración de la solución. En el caso de la lechuga procura mantener el pH aproximadamente entre 5.5 y 6.5. Cuando detecta una desviación, añade pequeñas cantidades de corrector, mezcla o hace circular la solución, espera entre 5 y 10 minutos y vuelve a medir. Solo inicia el riego cuando confirma que los valores se encuentran dentro del rango que maneja.<br><br>**Características objetivas y subjetivas:**<br>• *Personalidad y actitud:* Responsable, prudente y autónomo. Prefiere realizar ajustes graduales para evitar una sobrecorrección y basa la liberación de la solución en una verificación previa de las mediciones.<br>• *Tecnología y dispositivos de preferencia:* Emplea instrumentos digitales portátiles y considera el celular como el canal más útil para consultar el estado actual de la solución, su evolución y los eventos ocurridos durante el día o la semana.<br>• *Puntos de dolor y frustraciones:* El monitoreo depende de que recuerde realizar cada medición mientras atiende otras tareas del cultivo; existe incertidumbre sobre el momento en que el valor se estabiliza después de una corrección; la temperatura no siempre puede modificarse con rapidez; y la repetición manual de mediciones aumenta el riesgo de retrasar el riego o excederse al corregir el pH.<br>• *Canales y necesidades identificadas:* Monitoreo móvil del pH y la temperatura en tiempo real; visualización de tendencias y del tiempo transcurrido desde un cambio; alertas cuando un parámetro sale del rango configurado; historial diario y semanal; e indicación de que la solución ya cumple las condiciones para que el responsable decida si inicia el riego. La medición de conductividad eléctrica aparece como una posible ampliación futura, aunque el control cotidiano se concentra en pH y temperatura. |
 
 ### 2.2.3. Análisis de entrevistas
 
+#### Análisis del Segmento 2: Pequeños productores y microempresas hidropónicas
+
+La entrevista a Lyan Jarod Luis Carrasco Prosopio refuerza que, en un emprendimiento hidropónico pequeño, una misma persona suele asumir la gestión del negocio y la operación diaria. Esta concentración de responsabilidades convierte la medición manual en una actividad vulnerable a olvidos o intervalos de revisión mayores a los deseados, aun cuando el productor conoce el procedimiento y actúa con cautela.
+
+El flujo observado sigue una secuencia repetitiva y verificable: preparar la solución, medir, corregir en pequeñas dosis, mezclar, esperar entre 5 y 10 minutos, volver a medir y habilitar el riego únicamente cuando los parámetros son aceptables. El punto de mayor incertidumbre se encuentra durante la espera posterior al ajuste, porque el productor no sabe con precisión cuándo se estabilizó la solución y una intervención prematura puede provocar una sobrecorrección.
+
+Los principales hallazgos para HydroGuard son los siguientes:
+
+- **Monitoreo continuo y móvil:** el productor necesita consultar desde el celular el pH y la temperatura actuales sin permanecer junto al tanque.
+- **Contexto temporal y tendencias:** un valor aislado no es suficiente; también necesita saber desde cuándo se mantiene y si aumenta o disminuye.
+- **Alertas configurables:** el sistema debe advertir cuando los parámetros salen del rango definido para el cultivo, especialmente durante periodos de calor o mientras el responsable realiza otras tareas.
+- **Apoyo al ciclo de corrección:** registrar cada ajuste, el tiempo de espera y la medición posterior permitiría reducir la incertidumbre y evitar correcciones consecutivas antes de que la solución se estabilice.
+- **Historial y trazabilidad:** la consulta diaria y semanal ayudaría a identificar las horas en que aumenta la temperatura o comienza a variar el pH.
+- **Decisión humana sobre el riego:** la solución debe indicar que los valores configurados se cumplen, pero mantener la confirmación final del inicio del riego en manos del responsable cuando se utilice el modo manual.
+- **Configuración por cultivo:** el rango de pH mencionado para la lechuga, aproximadamente de 5.5 a 6.5, confirma la necesidad de perfiles ajustables según el cultivo y las condiciones de cada productor.
+- **Oportunidad de evolución:** la conductividad eléctrica es un parámetro complementario relevante para la concentración de nutrientes y puede considerarse en una futura ampliación del producto, sin desplazar el alcance inicial centrado en pH y temperatura.
+
+En conjunto, los resultados validan las funciones de monitoreo en tiempo real, rangos configurables, alertas, historial, ciclos de corrección y liberación manual contempladas en HydroGuard. La propuesta de valor debe enfatizar la reducción de la carga de vigilancia y el apoyo a decisiones oportunas, sin sustituir el criterio del productor ni automatizar la dosificación de correctores.
 
 ## 2.3. Needfinding
 ### 2.3.1. User Personas
@@ -736,12 +760,24 @@ A continuación se detalla la lista de requerimientos priorizados por valor de n
 ### 4.1.3. Software Architecture
 
 #### 4.1.3.1. Software Architecture System Landscape Diagram
+<p align="center">
+  <img src="assets/HydroGuard - Software Architecture System Landscape Diagram.png" alt="Software Architecture System Landscape Diagram" width="800">
+</p>
 
 #### 4.1.3.2. Software Architecture Context Level Diagrams
+<p align="center">
+  <img src="assets/HydroGuard - Software Architecture System Context Diagram.png" alt="Software Architecture System Context Diagram" width="800">
+</p>
 
 #### 4.1.3.3. Software Architecture Container Level Diagrams
+<p align="center">
+  <img src="assets/HydroGuard - Software Architecture Container Diagram.png" alt="Software Architecture Container Diagram" width="800">
+</p>
 
 #### 4.1.3.4. Software Architecture Deployment Diagrams
+<p align="center">
+  <img src="assets/HydroGuard - Software Architecture Deployment Diagram.png" alt="Software Architecture Deployment Diagram" width="800">
+</p>
 
 ## 4.2. Tactical-Level Domain-Driven Design
 
