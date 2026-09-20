@@ -161,7 +161,7 @@ La solución contempla dos roles. El operario tendrá asignado un dispositivo y 
 | Santur Tello, Andrea Elizabeth | Estoy cursando el octavo ciclo de mi carrera Ingeniería de Software, soy una persona responsable que le gusta resolver desafíos a la par con el trabajo responsable y en equipo tengo la capacidad de líder y me gusta aprender nuevas cosas dia a dia. | ![alt text](assets/andrea.png) |
 | Prieto Mantari, Leonardo Fabrizzio Junior |  |  |
 | Rios Pacheco, Hector Javier | Cuento con formación en desarrollo de software, incluyendo estructuras de datos, algoritmos y arquitecturas orientadas a servicios. Trabajo con lenguajes como Java, TypeScript, JavaScript, HTML5 y CSS3, y utilizo herramientas y frameworks como Angular, Spring Boot, Git/GitHub, Swagger y bases de datos relacionales. Soy responsable, me gusta involucrarme activamente en los proyectos, aportar ideas útiles | ![alt text](assets/FotoHector.png)  |
-| Olivera Barzola, Eric Marlon |  |  |
+| Olivera Barzola, Eric Marlon | Estudiante de Ingeniería de Software del octavo ciclo, con un interés particular en la ciberseguridad. A lo largo de mi formación he adquirido experiencia en diferentes lenguajes de programación como C#, C++ y Java| ![alt text](assets/FotoEric.jpg)  |
 
 ## 1.2. Solution Profile
 
@@ -747,15 +747,246 @@ A continuación se detalla la lista de requerimientos priorizados por valor de n
 
 ## 4.1. Strategic-Level Domain-Driven Design
 
+En esta sección se elaborará el diseño de la arquitectura desde una perspectiva estratégica, aplicando el enfoque Attribute-Driven Design (ADD). Logrando vincular los objetivos de negocio con las decisiones arquitectónicas, asegurando que la solución responda los requerimientos funcionales y los atributos de calidad como escalabilidad y desempeño. El propósito es tener una guía sobre definición de contextos, interacciones y responsabilidades dentro del dominio del sistema.
+
+
 ### 4.1.1. Design-Level EventStorming
+
+El EventStorming de Nivel de Diseño es la evolución directa del modelo de Big Picture. El objetivo es pasar del entendimiento general a un modelo táctico y ejecutable que exponga cómo la lógica del negocio debe ser codificada. Al introducir los conceptos de Policies, Vistas de Lectura (Read Models) y, crucialmente, los Agregados, se establece el modelo conceptual que servirá como base para la arquitectura de microservicios.
+
+**Autenticación y acceso**
+Inicio de sesión, validación de credenciales y control de acceso por rol
+
+<p align="center">
+  <img src="assets/Design-Level EventStorming 1.jpg" alt="EventStorming" width="800">
+</p>
+
+**Asignación y configuración operativa**
+Asignación del dispositivo al operario y configuración completa de parámetros de tratamiento, hasta su publicación y sincronización.
+<p align="center">
+  <img src="assets/Design-Level EventStorming 2.jpg" alt="EventStorming" width="800">
+</p>
+
+**Recepción y evaluación de una medición**
+Validación técnica de la telemetría entrante y evaluación de negocio contra la configuración efectiva.
+<p align="center">
+  <img src="assets/Design-Level EventStorming 3.jpg" alt="EventStorming" width="800">
+</p>
+
+**Selección y ejecución de la corrección**
+Elección de la estrategia correctiva y su ejecución, tanto en la rama simulada (LED) como en la física (intervención del operario).
+<p align="center">
+  <img src="assets/Design-Level EventStorming 4.jpg" alt="EventStorming" width="800">
+</p>
+
+**Espera, reevaluación y ciclos**
+Tiempo de espera tras la corrección, nueva medición y decisión sobre continuar, reintentar o bloquear el proceso.
+<p align="center">
+  <img src="assets/Design-Level EventStorming 5.jpg" alt="EventStorming" width="800">
+</p>
+
+**Liberación manual y automática**
+Autorización de la liberación del agua conforme, en modo automático o con confirmación del operario, y apertura de la válvula.
+<p align="center">
+  <img src="assets/Design-Level EventStorming 6.jpg" alt="EventStorming" width="800">
+</p>
+
+**Fallo, pérdida de monitoreo y emergencia**
+Bloqueo seguro del proceso ante fallos o pérdida de monitoreo, registro del incidente y restablecimiento.
+<p align="center">
+  <img src="assets/Design-Level EventStorming 7.jpg" alt="EventStorming" width="800">
+</p>
+
+**Monitoreo, trazabilidad y reporte**
+Reacciones automáticas de trazabilidad/alertas y consultas de supervisión disponibles para operario y administrador.
+
+<p align="center">
+  <img src="assets/Design-Level EventStorming 8.jpg" alt="EventStorming" width="800">
+</p>
 
 #### 4.1.1.1 Candidate Context Discovery
 
+Una vez que se estableció el modelo táctico detallado mediante EventStorming, el siguiente paso fue aislar las fronteras de los Contextos Delimitados (Bounded Contexts/BCs). Estos BCs actúan como los límites de los futuros microservicios, asegurando que el Lenguaje Ubicuo y los Agregados de cada sección sean consistentes e inconfundibles.
+
+Se usaron las siguientes técnicas:
+
+Start-with-Value: Esta técnica permitió identificar los BCs Core (Núcleo), que son la fuente de valor diferenciador del negocio.
+
+Start-with-Simple: Se utilizó esta técnica para dividir el timeline en flujos de trabajo secuenciales, creando modelos con un propósito único.
+
+<p align="center">
+  <img src="assets/Candidate Context Discovery1.1.jpg" alt="EventStorming" width="800">
+</p>
+
+<p align="center">
+  <img src="assets/Candidate Context Discovery1.2.jpg" alt="EventStorming" width="800">
+</p>
+<p align="center">
+  <img src="assets/Candidate Context Discovery1.3.jpg" alt="EventStorming" width="800">
+</p>
+
 #### 4.1.1.2 Domain Message Flows Modeling
+
+### Caso 1: Configuración y sincronización del dispositivo
+
+1. El operario configura los parámetros operativos desde la aplicación:
+   - Rangos permitidos.
+   - Estrategia de operación.
+   - Dosificación.
+   - Tiempos de espera.
+   - Modo de liberación.
+
+2. El contexto de Configuración valida los datos y publica la configuración.
+
+3. Se emite el evento `ConfiguracionPublicada`.
+
+4. El contexto de Telemetría IoT recibe el evento y sincroniza la configuración con el dispositivo físico.
+
+5. El contexto de Monitoreo y Trazabilidad registra la actualización en la línea temporal del dispositivo.
+
+<p align="center">
+  <img src="assets/Domain Message Flows Modeling1.png" alt="EventStorming" width="800">
+</p>
+
+### Caso 2: Recepción y evaluación de una medición
+
+1. El dispositivo IoT envía una medición de pH y temperatura del agua.
+
+2. El contexto de Telemetría IoT valida que el dispositivo esté autorizado y que el mensaje no sea duplicado.
+
+3. Se registra la medición y se emite el evento `MedicionRegistrada`.
+
+4. El contexto de Calidad de agua y tratamiento evalúa la medición contra la configuración efectiva.
+
+5. El contexto de Monitoreo y Trazabilidad actualiza la vista de estado del dispositivo.
+
+<p align="center">
+  <img src="assets/Domain Message Flows Modeling2.png" alt="EventStorming" width="800">
+</p>
+
+### Caso 3: Selección y ejecución de una corrección
+
+1. El contexto de Calidad de agua y tratamiento detecta agua no conforme mediante el evento `AguaNoConformeDetectada`.
+
+2. Selecciona la estrategia correctiva adecuada según el parámetro desviado.
+
+3. Se emite el evento `EstrategiaCorrectivaSeleccionada`.
+
+4. El contexto de Telemetría IoT activa el actuador o LED correspondiente en el dispositivo.
+
+5. El contexto de Monitoreo y Trazabilidad genera una alerta operativa con el estado de la corrección.
+<p align="center">
+  <img src="assets/Domain Message Flows Modeling3.png" alt="EventStorming" width="800">
+</p>
+
+
+### Caso 4: Confirmación de la corrección e inicio de espera
+
+1. El dispositivo IoT ejecuta la actuación correctiva mediante el LED o el operario confirma la intervención manual.
+
+2. El contexto de Telemetría IoT confirma la ejecución técnica.
+
+3. Se emite el evento `ActuacionCorrectivaConfirmada`.
+
+4. El contexto de Calidad de agua y tratamiento inicia el tiempo de espera antes de reevaluar el agua.
+
+5. El contexto de Monitoreo y Trazabilidad actualiza el historial del proceso de tratamiento.
+
+<p align="center">
+  <img src="assets/Domain Message Flows Modeling4.png" alt="EventStorming" width="800">
+</p>
+
+### Caso 5: Liberación del agua tratada
+
+1. El contexto de Calidad de agua y tratamiento confirma que el agua está conforme mediante el evento `AguaConformeConfirmada`.
+
+2. Si el modo es manual, el operario confirma la liberación. Si es automático, el sistema la autoriza directamente.
+
+3. Se emite el evento `LiberacionAutorizada`.
+
+4. El contexto de Telemetría IoT abre la válvula del dispositivo físico.
+
+5. El contexto de Monitoreo y Trazabilidad registra el proceso como finalizado.
+
+<p align="center">
+  <img src="assets/Domain Message Flows Modeling5.png" alt="EventStorming" width="800">
+</p>
+
+### Caso 6: Fallo, alerta y restablecimiento
+
+1. Se detecta una condición crítica, como el límite de ciclos alcanzado, una actuación fallida o la pérdida de monitoreo.
+
+2. El contexto de Calidad de agua y tratamiento bloquea el proceso.
+
+3. Se emite el evento `ProcesoBloqueado`.
+
+4. El contexto de Telemetría IoT cierra la válvula del dispositivo.
+
+5. El contexto de Monitoreo y Trazabilidad registra el incidente y genera una alerta crítica.
+
+6. El operario consulta el estado y, después de atender la causa, restablece el proceso.
+
+<p align="center">
+  <img src="assets/Domain Message Flows Modeling6.png" alt="EventStorming" width="800">
+</p>
+
 
 #### 4.1.1.3 Bounded Context Canvases
 
+En esta sección se desarrollan los Bounded Context Canvases correspondientes a los contextos delimitados previamente durante el proceso de Candidate Context Discovery. El objetivo principal de este apartado es detallar, para cada contexto, los criterios de diseño que permitan comprender su propósito, límites de responsabilidad, capacidades clave, dependencias y reglas de negocio asociadas.
+
+IAM (Identity and Access Management)
+
+<p align="center">
+  <img src="assets/Bounded Context Canvases1.jpg" alt="EventStorming" width="800">
+</p>
+
+
+Device and Operational Configuration
+
+<p align="center">
+  <img src="assets/Bounded Context Canvases2.jpg" alt="EventStorming" width="800">
+</p>
+
+IoT Telemetry and Device Integration
+
+<p align="center">
+  <img src="assets/Bounded Context Canvases3.jpg" alt="EventStorming" width="800">
+</p>
+Operational Monitoring and Traceability
+<p align="center">
+  <img src="assets/Bounded Context Canvases4.jpg" alt="EventStorming" width="800">
+</p>
+Water Quality Treatment and Release
+<p align="center">
+  <img src="assets/Bounded Context Canvases5.jpg" alt="EventStorming" width="800">
+</p>
+
+
 ### 4.1.2. Context Mapping
+
+En esta sección se presenta el proceso de Context Mapping, cuyo propósito es identificar, analizar y documentar las relaciones estructurales entre los bounded contexts previamente definidos
+
+
+<p align="center">
+  <img src="assets/Context Map.png" alt="EventStorming" width="800">
+</p>
+
+
+| Contexto A | Contexto B | Relación (DDD) | Justificación |
+|:--|:--|:--|:--|
+| IAM | Device and Operational Configuration | Conformist | Configuration conforma su modelo de sesión y permisos al que define IAM, sin negociar cambios en el contrato de autenticación. |
+| IAM | Water Quality Treatment and Release | Conformist | Treatment solo necesita saber si la sesión es válida y qué rol la autoriza; adopta el modelo de IAM tal como se publica, sin influir en su diseño. |
+| IAM | Operational Monitoring and Traceability | Open Host Service / Published Language | IAM publica eventos de acceso (Acceso Denegado, Rol Asignado) en un formato abierto que Monitoring consume para fines de auditoría. |
+| Device and Operational Configuration | IoT Telemetry and Device Integration | Customer / Supplier | Telemetry depende de que Configuration le entregue una configuración publicada y válida para poder sincronizarla con el dispositivo; sus necesidades de formato condicionan el contrato de Configuration. |
+| Device and Operational Configuration | Water Quality Treatment and Release | Customer / Supplier | El Core Domain exige que la configuración efectiva cumpla reglas estrictas (rangos, dosificación, tiempos) antes de poder evaluarla, lo que condiciona el contrato que expone Configuration. |
+| Device and Operational Configuration | Operational Monitoring and Traceability | Open Host Service / Published Language | Configuration publica sus eventos (Dispositivo Asignado, Configuración Publicada) en un formato abierto, consumido por Monitoring sin coordinación directa. |
+| IoT Telemetry and Device Integration | Water Quality Treatment and Release | Customer / Supplier | Treatment, como Core Domain, define qué datos de telemetría necesita (medición válida, confirmaciones de actuación) y Telemetry ajusta su contrato para satisfacerlos. |
+| Water Quality Treatment and Release | IoT Telemetry and Device Integration | Conformist | Telemetry ejecuta sin objeciones los comandos que Treatment le envía (activar LED, abrir/cerrar válvula); es un ejecutor técnico que conforma su comportamiento a las decisiones del Core. |
+| IoT Telemetry and Device Integration | Operational Monitoring and Traceability | Open Host Service / Published Language | Telemetry emite eventos técnicos (Medición Registrada, Monitoreo Perdido) como lenguaje publicado, consumidos por Monitoring para trazabilidad. |
+| Water Quality Treatment and Release | Operational Monitoring and Traceability | Open Host Service / Published Language | El Core Domain publica sus eventos de negocio (Agua Conforme, Proceso Bloqueado, Liberación Autorizada) como lenguaje publicado; Monitoring los consume para alertas e historial. |
+
+
 
 ### 4.1.3. Software Architecture
 
