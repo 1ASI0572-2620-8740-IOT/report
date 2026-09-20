@@ -1664,7 +1664,70 @@ CREATE TABLE water_treatment_processes
 
 ##### 4.2.5.6.1. Bounded Context Domain Layer Class Diagrams
 
+A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Monitoreo y Trazabilidad, estructurando los agregados `OperationalAlert`, `QualityIncident` y `EventCorrelation`, sus objetos de valor asociados (`AlertSeverity`, `IncidentType`, `StatusView`, `CorrelationData`), junto con las interfaces para los comandos, consultas y servicios del patrón CQRS:
+
+---
+
+[![uml.png](https://i.postimg.cc/jSBvVQCW/uml.png)](https://postimg.cc/Wd60gZGj)
+
+---
+
+* **`OperationalAlert`**: Agregado encargado de gestionar las notificaciones de eventos operacionales críticos en base a incidentes o anomalías del sistema.
+* **`QualityIncident`**: Encapsula la detección de fallos de calidad de agua o interrupciones de lectura en los sensores.
+* **`EventCorrelation`**: Mantiene la agrupación relacional de identificadores de eventos por ciclos de tratamiento para garantizar trazabilidad técnica.
+
 ##### 4.2.5.6.2. Bounded Context Database Design Diagram
+
+[![db.png](https://i.postimg.cc/Wbb501Qv/db.png)](https://postimg.cc/1420QsmC)
+
+---
+
+```sql
+CREATE TABLE event_correlations
+(
+  id INT NOT NULL,
+  device_id INT NOT NULL,
+  cycle_id INT NOT NULL,
+  created_at DATE NOT NULL,
+  updated_at DATE NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (id)
+);
+
+CREATE TABLE quality_incidents
+(
+  id INT NOT NULL,
+  device_id INT NOT NULL,
+  incident_type VARCHAR(15) NOT NULL,
+  description VARCHAR(100) NOT NULL,
+  created_at DATE NOT NULL,
+  updated_at DATE NOT NULL,
+  correlation_id INT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (correlation_id) REFERENCES event_correlations(id),
+  UNIQUE (id)
+);
+
+CREATE TABLE operational_alerts
+(
+  id INT NOT NULL,
+  device_id INT NOT NULL,
+  severity VARCHAR(15) NOT NULL,
+  description VARCHAR(100) NOT NULL,
+  created_at DATE NOT NULL,
+  updated_at DATE NOT NULL,
+  incident_id INT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (incident_id) REFERENCES quality_incidents(id),
+  UNIQUE (id)
+);
+```
+
+---
+
+* **`event_correlations`**: Registra las agrupaciones de eventos del sistema por ciclos operativos y dispositivos IoT.
+* **`quality_incidents`**: Almacena las incidencias técnicas y de calidad detectadas, enlazadas mediante clave foránea (`correlation_id`) a la trazabilidad de eventos origen.
+* **`operational_alerts`**: Mantiene las alertas dirigidas a los operadores, vinculadas a su incidente disparador (`incident_id`) para permitir un análisis inmediato de causa raíz.
 
 # Bibliografía
 
