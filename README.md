@@ -784,13 +784,996 @@ A continuación se detalla la lista de requerimientos priorizados por valor de n
 
 ### 4.2.1. Bounded Context: Authentication
 
+#### 4.2.1.1. Domain Layer
+
+##### A. Aggregates (Agregados)
+
+* **`User` (Agregado Principal)**
+  * **Descripción:** Representa a la entidad raíz del agregado (hereda de `AuditableAbstractAggregateRoot`). Encapsula la identidad del usuario, sus credenciales y sus roles asignados.
+  * **Comportamiento y Reglas de Negocio:**
+    * Validar los datos durante la creación/registro.
+    * Autenticar credenciales mediante la verificación del hash de contraseña.
+    * Asignar y revocar roles asegurando que no existan duplicados.
+
+---
+
+##### B. Value Objects (Objetos de Valor)
+* **`Role`**: Representa el rol dentro del sistema (`ROLE_OPERATOR`, `ROLE_ADMIN`).
+* **`Roles`**: Colección inmutable o conjunto de roles asociados a un usuario.
+
+---
+
+##### C. Commands (Comandos - CQRS)
+Representan las intenciones del usuario o sistema para modificar el estado del dominio:
+* **`RegisterUserCommand(String username, String rawPassword, Role initialRole)`**: Intención de registrar un nuevo operario.
+* **`SignInCommand(String username, String rawPassword)`**: Intención de iniciar sesión en el sistema.
+* **`AssignRoleCommand(Long userId, Role role)`**: Intención enviada por un Administrador para asignar un nuevo rol a un operario.
+
+---
+
+##### D. Queries (Consultas - CQRS)
+Abstracciones para la lectura de información del dominio sin alterar su estado:
+* **`GetUserByIdQuery(Long userId)`**
+* **`GetUserByUsernameQuery(String username)`**
+
+---
+
+##### E. Services (Servicios de Comando y Consulta)
+
+* **`UserCommandService` (Interfaz de Servicio de Dominio / Aplicación)**
+  * **Descripción:** Coordina las operaciones que modifican el estado del dominio procesando los *Commands*.
+  * **Métodos principales:**
+    * `Optional<User> handle(RegisterUserCommand command)`: Procesa la creación/registro del usuario operario y guarda el agregado.
+    * `Optional<String> handle(SignInCommand command)`: Valida las credenciales e inicia la sesión generando el token de autenticación.
+    * `Optional<User> handle(AssignRoleCommand command)`: Busca el usuario objetivo y ejecuta la lógica de asignación de rol dentro del agregado `User`.
+
+* **`UserQueryService` (Interfaz de Servicio de Dominio / Aplicación)**
+  * **Descripción:** Atiende únicamente las operaciones de lectura recibiendo objetos *Query*.
+  * **Métodos principales:**
+    * `Optional<User> handle(GetUserByIdQuery query)`: Retorna el usuario por su `UserId`.
+    * `Optional<User> handle(GetUserByUsernameQuery query)`: Retorna el usuario por su `Username`.
+
+#### 4.2.1.2. Interface Layer
+
+##### A. Controllers (Controladores REST)
+
+Son los puntos de entrada HTTP (Inbound Adapters) que exponen los endpoints de la API REST del Bounded Context.
+
+* **`AuthenticationController`**
+  * **Descripción:** Expone los endpoints para la autenticación de usuarios y registro de operarios.
+  * **Endpoints:**
+    * `POST /api/v1/authentication/sign-in`: Recibe un `SignInResource`, lo transforma a `SignInCommand`, lo envía a `UserCommandService` y retorna un `AuthenticatedUserResource` con el token generado.
+    * `POST /api/v1/authentication/sign-up`: Permite registrar un nuevo usuario/operario. Recibe `SignUpResource`, invoca `UserCommandService` con `RegisterUserCommand` y retorna un `UserResource`.
+
+* **`UsersController`**
+  * **Descripción:** Gestiona las operaciones de administración sobre la entidad de usuarios.
+  * **Endpoints:**
+    * `GET /api/v1/users/{userId}`: Recibe el ID, ejecuta `GetUserByIdQuery` mediante `UserQueryService` y retorna un `UserResource`.
+    * `POST /api/v1/users/{userId}/roles`: Permite a un Administrador asignar un nuevo rol a un usuario. Recibe `AssignRoleResource`, construye un `AssignRoleCommand` y retorna el `UserResource` actualizado.
+
+---
+
+##### B. Resources / DTOs (Objetos de Transferencia de Datos)
+
+Definen las estructuras de datos aceptadas en las peticiones (Requests) y enviadas en las respuestas (Responses) de la API REST:
+
+* **`SignInResource(String username, String password)`**: DTO de entrada con las credenciales enviadas en el login.
+* **`SignUpResource(String username, String password, String role)`**: DTO de entrada con los datos para registrar un operario.
+* **`AssignRoleResource(String roleName)`**: DTO de entrada para especificar el rol a asignar.
+* **`UserResource(Long id, String username, List<String> roles)`**: DTO de salida que expone la información pública del usuario.
+* **`AuthenticatedUserResource(Long id, String username, String token)`**: DTO de salida que retorna el token de autenticación (JWT) tras un login exitoso.
+
+---
+
+##### C. Transformers / Mappers
+
+Clases de transformación encargadas de mapear entre los DTOs/Resources de la capa de interfaz y los objetos de la capa de aplicación/dominio (Commands, Queries y Agregados).
+
+* **`SignInCommandFromResourceAssembler`**: Transforma un `SignInResource` a un `SignInCommand`.
+* **`SignUpCommandFromResourceAssembler`**: Transforma un `SignUpResource` a un `RegisterUserCommand`.
+* **`AssignRoleCommandFromResourceAssembler`**: Transforma un `AssignRoleResource` y `userId` a un `AssignRoleCommand`.
+* **`UserResourceFromEntityAssembler`**: Transforma la entidad/agregado `User` a un `UserResource`.
+
+#### 4.2.1.3. Application Layer
+
+##### A. Command Services & Handlers (Servicios de Comandos)
+
+Procesan las intenciones de cambio de estado recibiendo *Commands*, orquestando la lógica de negocio junto con los agregados del dominio y persistiendo los cambios mediante los repositorios.
+
+* **`UserCommandServiceImpl`**
+  * **Descripción:** Implementación principal de la interfaz `UserCommandService`. Coordina las mutaciones del dominio y la publicación de eventos tras cambios exitosos.
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(RegisterUserCommand command)`**: Verifica la no existencia previa del nombre de usuario, cifra la contraseña en texto plano, construye la entidad/agregado `User` con su rol inicial, lo persiste mediante el repositorio y dispara el evento `UserRegisteredEvent`.
+    * **`handle(SignInCommand command)`**: Recupera el usuario desde la capa de persistencia, valida la coincidencia de las credenciales mediante el servicio de hashing/seguridad, genera el token de acceso JWT y publica el evento `UserSignedInEvent`.
+    * **`handle(AssignRoleCommand command)`**: Busca al usuario objetivo por su `userId`, ejecuta el método del agregado `User` para agregar el nuevo `Role` garantizando las invariantes de negocio.
+
+---
+
+##### B. Query Services & Handlers (Servicios de Consulta)
+
+Atienden las lecturas de información recibiendo objetos *Query*, optimizando el acceso a los datos sin alterar el estado del dominio.
+
+* **`UserQueryServiceImpl`**
+  * **Descripción:** Implementación de la interfaz `UserQueryService` enfocada exclusivamente en la recuperación eficiente de datos.
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(GetUserByIdQuery query)`**: Consulta la persistencia para recuperar el agregado `User` correspondiente al identificador provisto.
+    * **`handle(GetUserByUsernameQuery query)`**: Busca y retorna el agregado `User` a partir de su nombre de usuario único.
+
+---
+
+##### C. Outbound Services / Ports (Servicios de Salida)
+
+Interfaces y abstracciones requeridas por la capa de aplicación para comunicarse con el exterior sin acoplarse a tecnologías específicas.
+
+* **`HashingService`**: Puerto para la delegación del cifrado y verificación de contraseñas de manera segura.
+* **`TokenVerificationService`**: Puerto para la generación y firma de tokens de autenticación (JWT).
+
+#### 4.2.1.4. Infrastructure Layer
+
+##### A. Persistence & Repositories (Persistencia y Repositorios)
+
+Proporciona las implementaciones concretas para el almacenamiento y recuperación de agregados mediante Spring Data JPA y la base de datos relacional.
+
+* **`UserRepository` (JPA Repository)**
+  * **Descripción:** Interfaz que extiende de `JpaRepository` para la gestión directa de las operaciones CRUD y consultas personalizadas sobre la entidad `User`.
+  * **Métodos principales:**
+    * `Optional<User> findByUsername(String username)`: Recupera un usuario basándose en su nombre de usuario único.
+    * `boolean existsByUsername(String username)`: Verifica la existencia de un usuario antes del registro para evitar duplicados.
+
+---
+
+##### B. Security & Cryptography Adapters (Adaptadores de Seguridad)
+
+Implementa los puertos de la capa de aplicación destinados al cifrado de contraseñas y la gestión de tokens de seguridad para la autenticación REST.
+
+* **`BCryptHashingServiceImpl`**
+  * **Descripción:** Implementación del puerto `HashingService` utilizando el algoritmo BCrypt para el encriptado y verificación segura de credenciales.
+  * **Métodos:**
+    * `encode(CharSequence rawPassword)`: Retorna el hash cifrado de la contraseña.
+    * `matches(CharSequence rawPassword, String encodedPassword)`: Valida la autenticidad de la contraseña en texto plano contra el hash almacenado.
+
+* **`JwtTokenServiceImpl`**
+  * **Descripción:** Implementación del puerto `TokenVerificationService` encargada del ciclo de vida de los tokens JWT.
+  * **Métodos:**
+    * `generateToken(User user)`: Construye, firma y emite el JWT con los *claims* (roles e identidad) del usuario.
+    * `validateToken(String token)`: Comprueba la validez técnica y firma del token recibido en las peticiones HTTP.
+
+---
+
+##### C. Configuration & OpenAPI (Configuración de Infraestructura)
+
+Clases que configuran componentes del framework y la documentación del microservicio.
+
+* **`SecurityConfiguration`**: Define la cadena de filtros de seguridad (`SecurityFilterChain`), reglas de acceso a endpoints HTTP (CORS, CSRF) y la gestión de sesiones *stateless*.
+
+#### 4.2.1.5. Bounded Context Software Architecture Component Level Diagrams
+
+[![Component.png](https://i.postimg.cc/C5XyWn8B/Component.png)](https://postimg.cc/N26PXMpB)
+
+#### 4.2.1.6. Bounded Context Software Architecture Code Level Diagrams
+
+##### 4.2.1.6.1. Bounded Context Domain Layer Class Diagrams
+
+A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Autenticación, donde se estructuran los agregados, objetos de valor, comandos, consultas y servicios bajo el patrón CQRS y DDD:
+
+[![UML-Image.png](https://i.postimg.cc/Jn4PLg6C/UML-Image.png)](https://postimg.cc/mcJQ3dWm)
+
+* **`User` (Agregado Principal)**: Modela las credenciales y el estado del usuario heredando de `AuditableAbstractAggregateRoot`.
+* **`Roles` y `Role` (Value Objects)**: Encapsulan el conjunto inmutable de permisos asignados a un usuario, garantizando que no existan duplicados.
+* **Separación CQRS**: Desacopla las operaciones de mutación mediante *Commands* (`RegisterUserCommand`, `SignInCommand`, `AssignRoleCommand`) de las operaciones de lectura mediante *Queries* (`GetUserByIdQuery`, `GetUserByUsernameQuery`).
+
+##### 4.2.1.6.2. Bounded Context Database Design Diagram
+
+Para respaldar el modelo relacional del Bounded Context de Autenticación, se define la estructura DDL para la persistencia en base de datos. Este esquema implementa una relación de muchos a muchos ($M:N$) entre los usuarios y sus roles:
+
+[![database.png](https://i.postimg.cc/Z0k8CDcP/database.png)](https://postimg.cc/wRVyr2n3)
+
+---
+
+```sql
+CREATE TABLE users
+(
+  id INT NOT NULL,
+  username VARCHAR(50) NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  created_at DATE NOT NULL,
+  updated_at DATE NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (username)
+);
+
+CREATE TABLE roles
+(
+  id INT NOT NULL,
+  name VARCHAR(30) NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (name)
+);
+
+CREATE TABLE user_roles
+(
+  user_id INT NOT NULL,
+  role_id INT NOT NULL,
+  PRIMARY KEY (user_id, role_id),
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (role_id) REFERENCES roles(id)
+);
+
+```
+
+---
+
+* **`users`**: Almacena la entidad raíz del agregado, asegurando la unicidad del `username` y manteniendo trazabilidad mediante los campos de auditoría (`created_at`, `updated_at`).
+* **`roles`**: Contiene la lista maestra de roles disponibles en el sistema (`ROLE_OPERATOR`, `ROLE_ADMIN`).
+* **`user_roles`**: Tabla de uniones que materializa la relación $M:N$ utilizando una clave primaria compuesta (`user_id`, `role_id`) y garantiza la integridad referencial mediante claves foráneas.
+
 ### 4.2.2. Bounded Context: Configuration
+
+#### 4.2.2.1. Domain Layer
+
+##### A. Aggregates (Agregados)
+
+* **`IotDevice` (Agregado)**
+  * **Descripción:** Representa al dispositivo IoT registrado en el sistema y su asignación operativa.
+  * **Comportamiento y Reglas de Negocio:**
+    * Validar la unicidad del identificador físico/MAC o número de serie del dispositivo durante el registro.
+    * Asignar o reasignar un operario responsable verificando el estado del dispositivo.
+
+* **`DeviceConfiguration` (Agregado Principal)**
+  * **Descripción:** Agregado que encapsula los parámetros, rangos operativos, tiempos de espera y estrategias correctivas asociadas a un dispositivo o cultivo (hereda de `AuditableAbstractAggregateRoot`).
+  * **Comportamiento y Reglas de Negocio:**
+    * Definir y validar rangos operativos de VMA (Valores Máximos Admisibles) y parámetros del cultivo (temperatura, pH, humedad).
+    * Configurar la estrategia correctiva (pH / Térmica) garantizando que los valores de ajuste sean coherentes.
+    * Definir tiempos de espera para ciclos de control.
+    * Alternar el modo de liberación entre `AUTOMATIC` y `MANUAL`.
+    * Publicar la configuración final cambiando su estado a publicado para su consumo por los dispositivos.
+
+---
+
+##### B. Value Objects (Objetos de Valor)
+
+* **`OperatingRange`**: Modela el rango operativo (mínimo, máximo, objetivo) para variables VMA/Cultivo.
+* **`CorrectiveStrategy`**: Encapsula el tipo de corrección (pH, Térmica) y sus reglas de dosificación/accionamiento.
+* **`WaitTime`**: Modela los intervalos de espera entre mediciones o acciones correctivas.
+* **`ReleaseMode`**: Enum que define el modo de liberación (`AUTOMATIC`, `MANUAL`).
+* **`ConfigurationStatus`**: Enum que define el estado de la configuración (`DRAFT`, `PUBLISHED`).
+
+---
+
+##### C. Commands (Comandos - CQRS)
+
+* **`RegisterIotDeviceCommand(String serialNumber, String deviceModel)`**: Registrar un nuevo dispositivo IoT (Administrador).
+* **`AssignIotDeviceCommand(Long deviceId, Long operatorId)`**: Asignar un dispositivo IoT a un operario (Administrador).
+* **`ConfigureOperatingRangesCommand(Long configurationId, OperatingRange vmaRange, OperatingRange cropRange)`**: Establecer los rangos operativos (Operario).
+* **`ConfigureCorrectiveStrategyCommand(Long configurationId, CorrectiveStrategy strategy)`**: Configurar la estrategia correctiva de pH o Térmica (Operario).
+* **`ConfigureWaitTimeCommand(Long configurationId, WaitTime waitTime)`**: Establecer los tiempos de espera del ciclo (Operario).
+* **`ConfigureReleaseModeCommand(Long configurationId, ReleaseMode releaseMode)`**: Configurar el modo de liberación Auto/Manual (Operario).
+* **`PublishConfigurationCommand(Long configurationId)`**: Publicar la configuración activa para el dispositivo (Operario).
+
+---
+
+##### D. Queries (Consultas - CQRS)
+
+* **`GetIotDeviceByIdQuery(Long deviceId)`**
+* **`GetConfigurationByDeviceIdQuery(Long deviceId)`**
+* **`GetPublishedConfigurationQuery(Long deviceId)`**
+
+---
+
+##### E. Services (Servicios de Comando y Consulta)
+
+* **`ConfigurationCommandService` (Interfaz)**
+  * **Métodos principales:**
+    * `Optional<IotDevice> handle(RegisterIotDeviceCommand command)`
+    * `Optional<IotDevice> handle(AssignIotDeviceCommand command)`
+    * `Optional<DeviceConfiguration> handle(ConfigureOperatingRangesCommand command)`
+    * `Optional<DeviceConfiguration> handle(ConfigureCorrectiveStrategyCommand command)`
+    * `Optional<DeviceConfiguration> handle(ConfigureWaitTimeCommand command)`
+    * `Optional<DeviceConfiguration> handle(ConfigureReleaseModeCommand command)`
+    * `Optional<DeviceConfiguration> handle(PublishConfigurationCommand command)`
+
+* **`ConfigurationQueryService` (Interfaz)**
+  * **Métodos principales:**
+    * `Optional<IotDevice> handle(GetIotDeviceByIdQuery query)`
+    * `Optional<DeviceConfiguration> handle(GetConfigurationByDeviceIdQuery query)`
+    * `Optional<DeviceConfiguration> handle(GetPublishedConfigurationQuery query)`
+
+---
+
+#### 4.2.2.2. Interface Layer
+
+##### A. Controllers (Controladores REST)
+
+* **`IotDevicesController`**
+  * **Endpoints:**
+    * `POST /api/v1/iot-devices`: Permite al Administrador registrar un nuevo dispositivo (`RegisterIotDeviceResource`).
+    * `POST /api/v1/iot-devices/{deviceId}/assignments`: Permite asignar un dispositivo a un operario (`AssignIotDeviceResource`).
+
+* **`ConfigurationsController`**
+  * **Endpoints:**
+    * `PUT /api/v1/configurations/{configurationId}/operating-ranges`: Actualiza rangos operativos VMA/Cultivo.
+    * `PUT /api/v1/configurations/{configurationId}/corrective-strategy`: Configura estrategia correctiva pH/Térmica.
+    * `PUT /api/v1/configurations/{configurationId}/wait-time`: Establece el tiempo de espera.
+    * `PUT /api/v1/configurations/{configurationId}/release-mode`: Modifica el modo de liberación (Auto/Manual).
+    * `POST /api/v1/configurations/{configurationId}/publish`: Publica la configuración final.
+    * `GET /api/v1/devices/{deviceId}/configuration`: Consulta la configuración de un dispositivo.
+
+---
+
+##### B. Resources / DTOs (Objetos de Transferencia de Datos)
+
+* **`RegisterIotDeviceResource(String serialNumber, String deviceModel)`**
+* **`AssignIotDeviceResource(Long operatorId)`**
+* **`ConfigureOperatingRangesResource(Double minVma, Double maxVma, Double minCrop, Double maxCrop)`**
+* **`ConfigureCorrectiveStrategyResource(String strategyType, Double thresholdValue)`**
+* **`ConfigureWaitTimeResource(Integer waitTimeSeconds)`**
+* **`ConfigureReleaseModeResource(String releaseMode)`**
+* **`IotDeviceResource(Long id, String serialNumber, Long operatorId)`**
+* **`DeviceConfigurationResource(Long id, Long deviceId, String status, String releaseMode)`**
+
+---
+
+##### C. Transformers / Mappers
+
+* **`RegisterIotDeviceCommandFromResourceAssembler`**: Mapea `RegisterIotDeviceResource` a `RegisterIotDeviceCommand`.
+* **`AssignIotDeviceCommandFromResourceAssembler`**: Mapea `AssignIotDeviceResource` a `AssignIotDeviceCommand`.
+* **`ConfigureOperatingRangesCommandFromResourceAssembler`**: Mapea la petición de rangos a su respectivo `Command`.
+* **`DeviceConfigurationResourceFromEntityAssembler`**: Mapea la entidad `DeviceConfiguration` hacia `DeviceConfigurationResource`.
+
+#### 4.2.2.3. Application Layer
+
+##### A. Command Services & Handlers (Servicios de Comandos)
+
+* **`ConfigurationCommandServiceImpl`**
+  * **Descripción:** Implementa la orquestación de la lógica de configuración y registro de dispositivos.
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(RegisterIotDeviceCommand command)`**: Valida la existencia previa del dispositivo, crea el agregado `IotDevice` y lo persiste.
+    * **`handle(AssignIotDeviceCommand command)`**: Actualiza la asignación del operario en el dispositivo.
+    * **`handle(ConfigureOperatingRangesCommand command)`**: Actualiza los objetos de valor de rangos VMA/Cultivo en el agregado `DeviceConfiguration`.
+    * **`handle(ConfigureCorrectiveStrategyCommand command)`**: Aplica la estrategia correctiva pH/Térmica.
+    * **`handle(ConfigureWaitTimeCommand command)`**: Modifica los parámetros de tiempo de espera.
+    * **`handle(ConfigureReleaseModeCommand command)`**: Establece el modo Auto/Manual.
+    * **`handle(PublishConfigurationCommand command)`**: Cambia el estado a `PUBLISHED`.
+
+---
+
+##### B. Query Services & Handlers (Servicios de Consulta)
+
+* **`ConfigurationQueryServiceImpl`**
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(GetIotDeviceByIdQuery query)`**: Recupera la información del dispositivo IoT.
+    * **`handle(GetConfigurationByDeviceIdQuery query)`**: Obtiene el estado actual de la configuración.
+    * **`handle(GetPublishedConfigurationQuery query)`**: Retorna únicamente la última configuración validada y publicada.
+
+#### 4.2.2.4. Infrastructure Layer
+
+##### A. Persistence & Repositories (Persistencia y Repositorios)
+
+* **`IotDeviceRepository` (JPA Repository)**
+  * `Optional<IotDevice> findBySerialNumber(String serialNumber)`
+
+* **`DeviceConfigurationRepository` (JPA Repository)**
+  * `Optional<DeviceConfiguration> findByDeviceIdAndStatus(Long deviceId, ConfigurationStatus status)`
+
+#### 4.2.2.5. Bounded Context Software Architecture Component Level Diagrams
+
+[![component.png](https://i.postimg.cc/BnqWR3LX/component.png)](https://postimg.cc/1fYYNLKQ)
+
+#### 4.2.2.6. Bounded Context Software Architecture Code Level Diagrams
+
+##### 4.2.2.6.1. Bounded Context Domain Layer Class Diagrams
+
+A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Configuración, detallando los agregados `IotDevice` y `DeviceConfiguration`, sus objetos de valor, comandos, consultas y servicios del patrón CQRS:
+
+---
+
+[![uml.png](https://i.postimg.cc/vmLxzZvV/uml.png)](https://postimg.cc/4Ky34Zqf)
+
+---
+
+* **`IotDevice`**: Encapsula el registro del hardware físico y su vinculación con el operario asignado.
+* **`DeviceConfiguration`**: Modela los parámetros dinámicos de operación, aplanando los objetos de valor (`OperatingRange`, `CorrectiveStrategy`, `WaitTime`) para un control preciso de ciclos y liberación.
+* **Patrón CQRS**: Separa la orquestación de mutaciones de parámetros mediante comandos específicos de las operaciones de lectura orientadas a la consulta del dispositivo.
+
+##### 4.2.2.6.2. Bounded Context Database Design Diagram
+
+A continuación se detalla la definición DDL de la base de datos relacional encargada del almacenamiento de los dispositivos IoT y sus respectivas configuraciones operativas:
+
+---
+
+[![database.png](https://i.postimg.cc/90N77gY7/database.png)](https://postimg.cc/wRLMKVPq)
+
+---
+
+```sql
+CREATE TABLE iot_devices
+(
+  id INT NOT NULL,
+  serial_number VARCHAR(50) NOT NULL,
+  device_model VARCHAR(255) NOT NULL,
+  operator_id INT NOT NULL,
+  created_at DATE NOT NULL,
+  updated_at DATE NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (id),
+  UNIQUE (serial_number)
+);
+
+CREATE TABLE device_configurations
+(
+  id INT NOT NULL,
+  status VARCHAR(15) NOT NULL,
+  release_mode VARCHAR(20) NOT NULL,
+  vma_min_value FLOAT NOT NULL,
+  vma_max_value FLOAT NOT NULL,
+  vma_target_value FLOAT NOT NULL,
+  crop_min_value FLOAT NOT NULL,
+  crop_max_value FLOAT NOT NULL,
+  crop_target_value FLOAT NOT NULL,
+  strategy_type VARCHAR(50) NOT NULL,
+  strategy_threshold_value FLOAT NOT NULL,
+  wait_time_seconds INT NOT NULL,
+  created_at DATE NOT NULL,
+  updated_at DATE NOT NULL,
+  device_id INT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (device_id) REFERENCES iot_devices(id),
+  UNIQUE (id)
+);
+
+```
+
+* **`iot_devices`**: Almacena el inventario de hardware registrado, garantizando la unicidad mediante la restricción sobre `serial_number`.
+* **`device_configurations`**: Modela la configuración de umbrales y tiempos de espera de forma denormalizada para optimizar las lecturas por parte del microservicio, enlazada mediante la clave foránea `device_id` en una relación de 1 a N.
 
 ### 4.2.3. Bounded Context: IOT Telemetry
 
-### 4.2.4. Bounded Context: Quality
+#### 4.2.3.1. Domain Layer
+
+##### A. Aggregates (Agregados)
+
+* **`WaterMeasurement` (Agregado Principal)**
+  * **Descripción:** Representa el registro inmutable del sensado de las variables del agua enviadas por un dispositivo IoT (hereda de `AuditableAbstractAggregateRoot`).
+  * **Comportamiento y Reglas de Negocio:**
+    * Capturar e interpretar las lecturas enviadas por los sensores del dispositivo.
+    * Validar la integridad de los datos de la medición (rangos físicos válidos para pH, temperatura, turbidez, etc.).
+    * Registrar la fecha y hora precisa de la captura.
+
+---
+
+##### B. Value Objects (Objetos de Valor)
+
+* **`WaterMetrics`**: Encapsula los valores numéricos de las lecturas físicas (ej. nivel de pH, temperatura en °C, nivel de VMA/conductividad).
+* **`DeviceId`**: Identificador único del dispositivo IoT emisor de la telemetría.
+* **`MeasurementTimestamp`**: Marca de tiempo inmutable del momento en que el sensor realizó la lectura.
+
+---
+
+##### C. Commands (Comandos - CQRS)
+
+* **`RecordWaterMeasurementCommand(String deviceId, Double ph, Double temperature, Double turbidity, Long timestamp)`**: Intención enviada desde el dispositivo IoT o el broker para registrar una nueva lectura de agua.
+
+---
+
+##### D. Queries (Consultas - CQRS)
+
+* **`GetWaterMeasurementByIdQuery(Long measurementId)`**
+* **`GetWaterMeasurementsByDeviceIdQuery(String deviceId)`**
+* **`GetLatestWaterMeasurementByDeviceIdQuery(String deviceId)`**
+
+---
+
+##### E. Services (Servicios de Comando y Consulta)
+
+* **`TelemetryCommandService` (Interfaz)**
+  * **Métodos principales:**
+    * `Optional<WaterMeasurement> handle(RecordWaterMeasurementCommand command)`: Procesa y persiste la lectura recibida desde los sensores.
+
+* **`TelemetryQueryService` (Interfaz)**
+  * **Métodos principales:**
+    * `Optional<WaterMeasurement> handle(GetWaterMeasurementByIdQuery query)`
+    * `List<WaterMeasurement> handle(GetWaterMeasurementsByDeviceIdQuery query)`
+    * `Optional<WaterMeasurement> handle(GetLatestWaterMeasurementByDeviceIdQuery query)`
+
+#### 4.2.3.2. Interface Layer
+
+##### A. Controllers & Consumers (Controladores REST y Consumidores)
+
+* **`WaterMeasurementsController`**
+  * **Endpoints:**
+    * `GET /api/v1/devices/{deviceId}/water-measurements`: Consulta el historial de mediciones de un dispositivo (`WaterMeasurementResource`).
+    * `GET /api/v1/devices/{deviceId}/water-measurements/latest`: Obtiene la última medición registrada.
+
+* **`TelemetryMqttConsumer` / `TelemetryMessageListener` (Inbound Adapter)**
+  * **Descripción:** Consumidor que escucha los mensajes provenientes del broker MQTT/RabbitMQ publicados por los dispositivos IoT en el tópico de sensado.
+  * **Acción:** Recibe la carga útil, llama al assembler para transformarla a `RecordWaterMeasurementCommand` e invoca `TelemetryCommandService`.
+
+---
+
+##### B. Resources / DTOs (Objetos de Transferencia de Datos)
+
+* **`RecordWaterMeasurementResource(String deviceId, Double ph, Double temperature, Double turbidity, Long timestamp)`**
+* **`WaterMeasurementResource(Long id, String deviceId, Double ph, Double temperature, Double turbidity, String recordedAt)`**
+
+---
+
+##### C. Transformers / Mappers
+
+* **`RecordWaterMeasurementCommandFromResourceAssembler`**: Transforma el payload recibido en la API REST/MQTT a `RecordWaterMeasurementCommand`.
+* **`WaterMeasurementResourceFromEntityAssembler`**: Mapea la entidad `WaterMeasurement` hacia `WaterMeasurementResource`.
+
+#### 4.2.3.3. Application Layer
+
+##### A. Command Services & Handlers (Servicios de Comandos)
+
+* **`TelemetryCommandServiceImpl`**
+  * **Descripción:** Implementa la lógica de procesamiento de telemetría proveniente del sensado de dispositivos.
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(RecordWaterMeasurementCommand command)`**: Valida la existencia del dispositivo, instancia el agregado `WaterMeasurement`, evalúa las métricas, persiste el registro y emite el evento de dominio `WaterMeasurementRecordedEvent`.
+
+---
+
+##### B. Query Services & Handlers (Servicios de Consulta)
+
+* **`TelemetryQueryServiceImpl`**
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(GetWaterMeasurementByIdQuery query)`**: Busca una medición por su identificador único.
+    * **`handle(GetWaterMeasurementsByDeviceIdQuery query)`**: Retorna la lista histórica de sensado para un dispositivo.
+    * **`handle(GetLatestWaterMeasurementByDeviceIdQuery query)`**: Recupera de manera optimizada el último registro ingresado.
+
+#### 4.2.3.4. Infrastructure Layer
+
+##### A. Persistence & Repositories (Persistencia y Repositorios)
+
+* **`WaterMeasurementRepository` (JPA Repository)**
+  * `List<WaterMeasurement> findByDeviceIdOrderByCreatedAtDesc(String deviceId)`
+  * `Optional<WaterMeasurement> findFirstByDeviceIdOrderByCreatedAtDesc(String deviceId)`
+
+---
+
+##### B. Messaging Adapters (Adaptadores de Mensajería)
+
+* **`MqttTelemetryListenerAdapter`**
+  * **Descripción:** Adaptador de infraestructura que se conecta al servidor MQTT, suscribe al tópico `telemetry/water/+` y canaliza las lecturas hacia la capa de interfaz.
+
+#### 4.2.3.5. Bounded Context Software Architecture Component Level Diagrams
+
+[![component.png](https://i.postimg.cc/YCSn1Cmc/component.png)](https://postimg.cc/dLzjFvBn)
+
+#### 4.2.3.6. Bounded Context Software Architecture Code Level Diagrams
+
+##### 4.2.3.6.1. Bounded Context Domain Layer Class Diagrams
+
+A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Telemetría IoT, detallando el agregado principal `WaterMeasurement`, sus objetos de valor inmutables (`DeviceId`, `WaterMetrics`, `MeasurementTimestamp`), comandos, consultas y servicios bajo el patrón CQRS:
+
+---
+
+[![uml.png](https://i.postimg.cc/8kW3p8tg/uml.png)](https://postimg.cc/4nfwPSDW)
+
+---
+
+* **`WaterMeasurement`**: Representa la entidad raíz del agregado que consolida y valida las métricas del agua recibidas de un dispositivo en un instante de tiempo.
+* **`WaterMetrics` / `MeasurementTimestamp**`: Objetos de valor que garantizan la inmutabilidad de los datos recolectados por el hardware sensado.
+* **CQRS Pattern**: Desacopla la inserción masiva de lecturas mediante `RecordWaterMeasurementCommand` de la consulta histórica optimizada mediante las queries correspondientes.
+
+##### 4.2.3.6.2. Bounded Context Database Design Diagram
+
+Para la persistencia de las métricas enviadas por los dispositivos IoT, se establece el siguiente esquema relacional DDL diseñado para almacenar registros inmutables de telemetría:
+
+---
+
+[![database.png](https://i.postimg.cc/L4TtBN8r/database.png)](https://postimg.cc/yWD37h9P)
+
+---
+
+```sql
+CREATE TABLE water_measurements
+(
+  id INT NOT NULL,
+  device_id INT NOT NULL,
+  ph FLOAT NOT NULL,
+  temperature FLOAT NOT NULL,
+  turbidity FLOAT NOT NULL,
+  measurement_timestamp INT NOT NULL,
+  created_at DATE NOT NULL,
+  updated_at DATE NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (id)
+);
+
+```
+
+---
+
+* **`water_measurements`**: Almacena las lecturas físicas individuales (`ph`, `temperature`, `turbidity`) indexadas por el identificador del dispositivo (`device_id`) y su correspondiente sello de tiempo (`measurement_timestamp`).
+* **Auditoría e Inmutabilidad**: Mantiene trazabilidad mediante los campos `created_at` y `updated_at`, sirviendo como fuente primaria para análisis histórico y consultas de última medición.
+
+### 4.2.4. Bounded Context: Treatment
+
+#### 4.2.4.1. Domain Layer
+
+* **`WaterTreatmentProcess` (Agregado Principal)**
+  * **Descripción:** Encapsula el ciclo de vida completo de evaluación, tratamiento, reevaluación y liberación o retención de agua para un dispositivo/cultivo específico (hereda de `AuditableAbstractAggregateRoot`).
+  * **Comportamiento y Reglas de Negocio:**
+    * Iniciar y contabilizar ciclos de tratamiento.
+    * Evaluar mediciones entrantes (pH, Temperatura) y determinar la conformidad del agua.
+    * Seleccionar y aplicar estrategias de corrección (pH+, pH-, Térmica).
+    * Comprobar variación útil y límites absolutos de ciclos para detectar fallos del sistema.
+    * Activar el estado de fallo con retención (cierre de válvula) al exceder límites permisibles.
+    * Autorizar la liberación automática o manual del agua tratada.
+    * Ejecutar parada de emergencia e interactuar con el restablecimiento explícito del proceso por parte del operario.
+
+---
+
+##### B. Value Objects (Objetos de Valor)
+
+* **`WaterConformity`**: Estado de evaluación del agua (`CONFORME`, `NO_CONFORME`).
+* **`TreatmentStatus`**: Estado del proceso (`INICIADO`, `EN_TRATAMIENTO`, `RETENIDO_FALLO`, `LIBERADO`, `PARADA_EMERGENCIA`).
+* **`TreatmentCycle`**: Contador inmutable de ciclos aplicados e intervalo de variación útil.
+* **`CorrectionStrategyType`**: Enum que representa el tipo de corrección (`PH_PLUS`, `PH_MINUS`, `THERMAL`).
+
+---
+
+##### C. Commands (Comandos - CQRS)
+
+* **`StartTreatmentProcessCommand(Long deviceId)`**: Inicia un nuevo ciclo de proceso de tratamiento.
+* **`EvaluateMeasurementCommand(Long processId, Double ph, Double temperature)`**: Evalúa las condiciones físicas actuales del agua contra los rangos configurados.
+* **`ApplyCorrectionStrategyCommand(Long processId, CorrectionStrategyType strategyType)`**: Registra la selección y aplicación de una estrategia de corrección.
+* **`AuthorizeReleaseCommand(Long processId, String releaseType)`**: Autoriza la liberación (automática o manual) del agua.
+* **`ExecuteEmergencyStopCommand(Long processId)`**: Dispara la parada de emergencia y el cierre de válvulas.
+* **`ResetProcessCommand(Long processId, Long operatorId)`**: Restablece el proceso tras una falla o parada de emergencia.
+
+---
+
+##### D. Queries (Consultas - CQRS)
+
+* **`GetTreatmentProcessByIdQuery(Long processId)`**
+* **`GetActiveTreatmentProcessByDeviceIdQuery(Long deviceId)`**
+* **`GetTreatmentHistoryByDeviceIdQuery(Long deviceId)`**
+
+---
+
+##### E. Services (Servicios de Comando y Consulta)
+
+* **`QualityCommandService` (Interfaz)**
+  * **Métodos principales:**
+    * `Optional<WaterTreatmentProcess> handle(StartTreatmentProcessCommand command)`
+    * `Optional<WaterTreatmentProcess> handle(EvaluateMeasurementCommand command)`
+    * `Optional<WaterTreatmentProcess> handle(ApplyCorrectionStrategyCommand command)`
+    * `Optional<WaterTreatmentProcess> handle(AuthorizeReleaseCommand command)`
+    * `Optional<WaterTreatmentProcess> handle(ExecuteEmergencyStopCommand command)`
+    * `Optional<WaterTreatmentProcess> handle(ResetProcessCommand command)`
+
+* **`QualityQueryService` (Interfaz)**
+  * **Métodos principales:**
+    * `Optional<WaterTreatmentProcess> handle(GetTreatmentProcessByIdQuery query)`
+    * `Optional<WaterTreatmentProcess> handle(GetActiveTreatmentProcessByDeviceIdQuery query)`
+    * `List<WaterTreatmentProcess> handle(GetTreatmentHistoryByDeviceIdQuery query)`
+
+#### 4.2.4.2. Interface Layer
+
+##### A. Controllers (Controladores REST)
+
+* **`QualityController`**
+  * **Endpoints:**
+    * `POST /api/v1/quality/processes`: Inicia un proceso de tratamiento para un dispositivo (`StartTreatmentProcessResource`).
+    * `POST /api/v1/quality/processes/{processId}/evaluations`: Recibe datos de sensado para evaluar la conformidad (`EvaluateMeasurementResource`).
+    * `POST /api/v1/quality/processes/{processId}/release`: Permite la liberación manual de agua por un operario (`AuthorizeReleaseResource`).
+    * `POST /api/v1/quality/processes/{processId}/emergency-stop`: Ejecuta la parada de emergencia del tratamiento.
+    * `POST /api/v1/quality/processes/{processId}/reset`: Restablece el proceso detenido (`ResetProcessResource`).
+    * `GET /api/v1/quality/devices/{deviceId}/active-process`: Obtiene el estado del proceso en curso.
+
+---
+
+##### B. Resources / DTOs (Objetos de Transferencia de Datos)
+
+* **`StartTreatmentProcessResource(Long deviceId)`**
+* **`EvaluateMeasurementResource(Double ph, Double temperature)`**
+* **`AuthorizeReleaseResource(String releaseType)`**
+* **`ResetProcessResource(Long operatorId, String reason)`**
+* **`WaterTreatmentProcessResource(Long id, Long deviceId, String conformity, String status, Integer cycleCount)`**
+
+---
+
+##### C. Transformers / Mappers
+
+* **`StartTreatmentProcessCommandFromResourceAssembler`**: Mapea la petición de inicio a `StartTreatmentProcessCommand`.
+* **`EvaluateMeasurementCommandFromResourceAssembler`**: Transforma el recurso de evaluación a `EvaluateMeasurementCommand`.
+* **`WaterTreatmentProcessResourceFromEntityAssembler`**: Mapea la entidad `WaterTreatmentProcess` hacia `WaterTreatmentProcessResource`.
+
+#### 4.2.4.3. Application Layer
+
+##### A. Command Services & Handlers (Servicios de Comandos)
+
+* **`QualityCommandServiceImpl`**
+  * **Descripción:** Orquesta el flujo completo de evaluación, toma de decisiones y emergencias sobre el agua sensada.
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(StartTreatmentProcessCommand command)`**: Instancia y persiste un nuevo `WaterTreatmentProcess` para el dispositivo.
+    * **`handle(EvaluateMeasurementCommand command)`**: Verifica la calidad del agua. Si no es conforme, incrementa el contador de ciclo, selecciona la estrategia de corrección y valida si sobrepasa el límite absoluto para activar el estado de fallo (`RETENIDO_FALLO`).
+    * **`handle(AuthorizeReleaseCommand command)`**: Si la evaluación resulta conforme o un operario confirma manualmente, autoriza la apertura de válvulas y emite el evento de dominio `WaterReleasedEvent`.
+    * **`handle(ExecuteEmergencyStopCommand command)`**: Cambia el estado a `PARADA_EMERGENCIA` y genera una alerta del sistema.
+    * **`handle(ResetProcessCommand command)`**: Permite el reingreso a operaciones tras la revisión directa del operario.
+
+---
+
+##### B. Query Services & Handlers (Servicios de Consulta)
+
+* **`QualityQueryServiceImpl`**
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(GetTreatmentProcessByIdQuery query)`**: Retorna el detalle del tratamiento solicitado.
+    * **`handle(GetActiveTreatmentProcessByDeviceIdQuery query)`**: Consulta el tratamiento actual que no ha finalizado su ciclo.
+    * **`handle(GetTreatmentHistoryByDeviceIdQuery query)`**: Retorna el histórico de ejecuciones y evaluaciones de calidad.
+
+#### 4.2.4.4. Infrastructure Layer
+
+##### A. Persistence & Repositories (Persistencia y Repositorios)
+
+* **`WaterTreatmentProcessRepository` (JPA Repository)**
+* `Optional<WaterTreatmentProcess> findByDeviceIdAndStatusNotIn(Long deviceId, List<TreatmentStatus> closedStatuses)`
+* `List<WaterTreatmentProcess> findByDeviceIdOrderByCreatedAtDesc(Long deviceId)`
+
+#### 4.2.4.5. Bounded Context Software Architecture Component Level Diagrams
+
+[![component.png](https://i.postimg.cc/y6bkVfXg/component.png)](https://postimg.cc/rz58jNHM)
+
+#### 4.2.4.6. Bounded Context Software Architecture Code Level Diagrams
+
+##### 4.2.4.6.1. Bounded Context Domain Layer Class Diagrams
+
+A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Tratamiento y Calidad del Agua, detallando el agregado principal `WaterTreatmentProcess`, sus objetos de valor (`WaterConformity`, `TreatmentStatus`, `CorrectionStrategyType`, `TreatmentCycle`), comandos, consultas y servicios del patrón CQRS:
+
+---
+
+[![uml.png](https://i.postimg.cc/g2S1dnnY/uml.png)](https://postimg.cc/CR8csMGt)
+
+---
+
+* **`WaterTreatmentProcess`**: Encapsula las reglas del ciclo de evaluación, control de estados del agua, toma de decisiones correctivas e intervenciones manuales o de emergencia.
+* **Objetos de Valor**: Definen de manera explícita e inmutable los estados (`WaterConformity`, `TreatmentStatus`), tipos de corrección (`CorrectionStrategyType`) y métricas de iteración del ciclo (`TreatmentCycle`).
+* **Patrón CQRS**: Separa limpiamente la ejecución de comandos de cambio de estado sobre el tratamiento de la consulta de procesos activos e históricos.
+
+##### 4.2.4.6.2. Bounded Context Database Design Diagram
+
+A continuación se detalla la definición DDL de la base de datos relacional encargada del almacenamiento y persistencia del flujo de tratamiento de agua:
+
+---
+
+[![database.png](https://i.postimg.cc/G3XFXYNs/database.png)](https://postimg.cc/z3RHBLqJ)
+
+---
+
+```sql
+CREATE TABLE water_treatment_processes
+(
+  id INT NOT NULL,
+  device_id INT NOT NULL,
+  conformity VARCHAR(20) NOT NULL,
+  status VARCHAR(20) NOT NULL,
+  current_strategy VARCHAR(20) NOT NULL,
+  cycle_count INT NOT NULL,
+  useful_variation FLOAT NOT NULL,
+  created_at INT NOT NULL,
+  updated_at INT NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (id)
+);
+
+```
+
+---
+
+* **`water_treatment_processes`**: Mantiene la trazabilidad y persistencia de cada flujo de tratamiento asignado a un dispositivo (`device_id`), registrando las métricas de ciclo (`cycle_count`, `useful_variation`), las estrategias aplicadas y las decisiones de liberación o retención por fallo.
 
 ### 4.2.5. Bounded Context: Monitoring
+
+#### 4.2.5.1. Domain Layer
+
+##### A. Aggregates (Agregados)
+
+* **`OperationalAlert` (Agregado Principal)**
+  * **Descripción:** Encapsula la creación, gestión y trazabilidad de alertas operativas en el sistema (hereda de `AuditableAbstractAggregateRoot`).
+  * **Comportamiento y Reglas de Negocio:**
+    * Crear e inicializar alertas operativas asignando un nivel de severidad y origen.
+    * Permitir la atención y cambio de estado de la alerta por parte del sistema o personal autorizados.
+* **`QualityIncident` (Agregado)**
+  * **Descripción:** Representa el registro de incidentes de calidad o la pérdida de monitoreo observada en los dispositivos/ciclos.
+  * **Comportamiento y Reglas de Negocio:**
+    * Registrar incidentes detallando el tipo (calidad o pérdida de monitoreo).
+    * Validar y asociar el incidente con las métricas y eventos recopilados.
+* **`EventCorrelation` (Agregado)**
+  * **Descripción:** Asocia y correlaciona eventos del sistema con los ciclos de tratamiento y telemetría para mantener la trazabilidad completa.
+  * **Comportamiento y Reglas de Negocio:**
+    * Agrupar y correlacionar eventos temporales y de ciclo.
+    * Generar proyecciones y consolidados de estado actualizados.
+
+---
+
+##### B. Value Objects (Objetos de Valor)
+
+* **`IncidentType`**: Tipo de incidente (`QUALITY_INCIDENT`, `MONITORING_LOSS`).
+* **`AlertSeverity`**: Nivel de severidad de la alerta operativa (`LOW`, `MEDIUM`, `HIGH`, `CRITICAL`).
+* **`StatusView`**: Estado proyectado o vista de monitoreo (`UPDATED`, `OUTDATED`).
+* **`CorrelationData`**: Contenedor inmutable de claves de correlación y métricas asociadas.
+
+---
+
+##### C. Commands (Comandos - CQRS)
+
+* **`CreateOperationalAlertCommand(Long deviceId, String severity, String description)`**: Solicita la creación de una alerta operativa.
+* **`RegisterIncidentCommand(Long deviceId, IncidentType incidentType, String description)`**: Registra un incidente de calidad o pérdida de monitoreo.
+* **`CorrelateEventsCommand(Long deviceId, Long cycleId, List<Long> eventIds)`**: Correlaciona eventos con ciclos operativos específicos.
+* **`UpdateStatusViewCommand(Long deviceId, StatusView statusView)`**: Actualiza la vista de estado del sistema.
+* **`GenerateUpdatedReportCommand(Long deviceId, String reportType)`**: Genera el estado consolidado o reporte actualizado.
+
+---
+
+##### D. Queries (Consultas - CQRS)
+
+* **`GetActiveAlertsByDeviceIdQuery(Long deviceId)`**
+* **`GetIncidentsByDeviceIdQuery(Long deviceId)`**
+* **`GetCorrelatedEventsByCycleQuery(Long cycleId)`**
+* **`GetStatusViewByDeviceIdQuery(Long deviceId)`**
+* **`GetTraceabilityReportQuery(Long deviceId)`**
+
+---
+
+##### E. Services (Servicios de Comando y Consulta)
+
+* **`MonitoringCommandService` (Interfaz)**
+  * **Métodos principales:**
+    * `Optional<OperationalAlert> handle(CreateOperationalAlertCommand command)`
+    * `Optional<QualityIncident> handle(RegisterIncidentCommand command)`
+    * `Optional<EventCorrelation> handle(CorrelateEventsCommand command)`
+    * `void handle(UpdateStatusViewCommand command)`
+    * `Optional<Report> handle(GenerateUpdatedReportCommand command)`
+
+* **`MonitoringQueryService` (Interfaz)**
+  * **Métodos principales:**
+    * `List<OperationalAlert> handle(GetActiveAlertsByDeviceIdQuery query)`
+    * `List<QualityIncident> handle(GetIncidentsByDeviceIdQuery query)`
+    * `Optional<EventCorrelation> handle(GetCorrelatedEventsByCycleQuery query)`
+    * `Optional<StatusViewResource> handle(GetStatusViewByDeviceIdQuery query)`
+    * `Optional<ReportResource> handle(GetTraceabilityReportQuery query)`
+
+#### 4.2.5.2. Interface Layer
+
+##### A. Controllers (Controladores REST)
+
+* **`MonitoringController`**
+  * **Endpoints:**
+    * `POST /api/v1/monitoring/alerts`: Crea una nueva alerta operativa (`CreateOperationalAlertResource`).
+    * `POST /api/v1/monitoring/incidents`: Registra un incidente de calidad o pérdida de monitoreo (`RegisterIncidentResource`).
+    * `POST /api/v1/monitoring/correlations`: Ejecuta la correlación de eventos/ciclos (`CorrelateEventsResource`).
+    * `PUT /api/v1/monitoring/status-views`: Actualiza las vistas de estado (`UpdateStatusViewResource`).
+    * `POST /api/v1/monitoring/reports/generate`: Solicita la generación de un reporte de estado actualizado (`GenerateReportResource`).
+    * `GET /api/v1/monitoring/devices/{deviceId}/status-view`: Consulta la vista de estado actual.
+
+---
+
+##### B. Resources / DTOs (Objetos de Transferencia de Datos)
+
+* **`CreateOperationalAlertResource(Long deviceId, String severity, String description)`**
+* **`RegisterIncidentResource(Long deviceId, String incidentType, String description)`**
+* **`CorrelateEventsResource(Long deviceId, Long cycleId, List<Long> eventIds)`**
+* **`UpdateStatusViewResource(Long deviceId, String status)`**
+* **`GenerateReportResource(Long deviceId, String reportType)`**
+* **`OperationalAlertResource(Long id, Long deviceId, String severity, String description, String createdAt)`**
+
+---
+
+##### C. Transformers / Mappers
+
+* **`CreateOperationalAlertCommandFromResourceAssembler`**: Mapea `CreateOperationalAlertResource` a `CreateOperationalAlertCommand`.
+* **`RegisterIncidentCommandFromResourceAssembler`**: Transforma el recurso de incidente en `RegisterIncidentCommand`.
+* **`OperationalAlertResourceFromEntityAssembler`**: Transforma la entidad `OperationalAlert` en `OperationalAlertResource`.
+
+#### 4.2.5.3. Application Layer
+
+##### A. Command Services & Handlers (Servicios de Comandos)
+
+* **`MonitoringCommandServiceImpl`**
+  * **Descripción:** Coordina los flujos de trabajo de trazabilidad, registro de incidentes y correlación de eventos.
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(CreateOperationalAlertCommand command)`**: Instancia la alerta operativa y la persiste.
+    * **`handle(RegisterIncidentCommand command)`**: Registra la incidencia de calidad o pérdida de monitoreo.
+    * **`handle(CorrelateEventsCommand command)`**: Correlaciona eventos del sistema con ciclos operativos.
+    * **`handle(UpdateStatusViewCommand command)`**: Actualiza la proyección de las vistas de estado para consulta rápida.
+    * **`handle(GenerateUpdatedReportCommand command)`**: Procesa el consolidado histórico y genera el reporte actualizado (`ReportGeneratedEvent`).
+
+---
+
+##### B. Query Services & Handlers (Servicios de Consulta)
+
+* **`MonitoringQueryServiceImpl`**
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(GetActiveAlertsByDeviceIdQuery query)`**: Obtiene las alertas activas del dispositivo.
+    * **`handle(GetIncidentsByDeviceIdQuery query)`**: Devuelve la lista de incidentes registrados.
+    * **`handle(GetCorrelatedEventsByCycleQuery query)`**: Recupera la información correlacionada por ciclo.
+    * **`handle(GetTraceabilityReportQuery query)`**: Devuelve el reporte de trazabilidad consolidado.
+
+#### 4.2.5.4. Infrastructure Layer
+
+##### A. Persistence & Repositories (Persistencia y Repositorios)
+
+* **`OperationalAlertRepository` (JPA Repository)**
+  * `List<OperationalAlert> findByDeviceIdOrderByCreatedAtDesc(Long deviceId)`
+* **`QualityIncidentRepository` (JPA Repository)**
+  * `List<QualityIncident> findByDeviceId(Long deviceId)`
+* **`EventCorrelationRepository` (JPA Repository)**
+  * `Optional<EventCorrelation> findByCycleId(Long cycleId)`
+
+#### 4.2.5.5. Bounded Context Software Architecture Component Level Diagrams
+
+[![Component.png](https://i.postimg.cc/259VV2RX/Component.png)](https://postimg.cc/kV8nHN5x)
+
+#### 4.2.5.6. Bounded Context Software Architecture Code Level Diagrams
+
+##### 4.2.5.6.1. Bounded Context Domain Layer Class Diagrams
+
+A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Monitoreo y Trazabilidad, estructurando los agregados `OperationalAlert`, `QualityIncident` y `EventCorrelation`, sus objetos de valor asociados (`AlertSeverity`, `IncidentType`, `StatusView`, `CorrelationData`), junto con las interfaces para los comandos, consultas y servicios del patrón CQRS:
+
+---
+
+[![uml.png](https://i.postimg.cc/jSBvVQCW/uml.png)](https://postimg.cc/Wd60gZGj)
+
+---
+
+* **`OperationalAlert`**: Agregado encargado de gestionar las notificaciones de eventos operacionales críticos en base a incidentes o anomalías del sistema.
+* **`QualityIncident`**: Encapsula la detección de fallos de calidad de agua o interrupciones de lectura en los sensores.
+* **`EventCorrelation`**: Mantiene la agrupación relacional de identificadores de eventos por ciclos de tratamiento para garantizar trazabilidad técnica.
+
+##### 4.2.5.6.2. Bounded Context Database Design Diagram
+
+[![db.png](https://i.postimg.cc/Wbb501Qv/db.png)](https://postimg.cc/1420QsmC)
+
+---
+
+```sql
+CREATE TABLE event_correlations
+(
+  id INT NOT NULL,
+  device_id INT NOT NULL,
+  cycle_id INT NOT NULL,
+  created_at DATE NOT NULL,
+  updated_at DATE NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (id)
+);
+
+CREATE TABLE quality_incidents
+(
+  id INT NOT NULL,
+  device_id INT NOT NULL,
+  incident_type VARCHAR(15) NOT NULL,
+  description VARCHAR(100) NOT NULL,
+  created_at DATE NOT NULL,
+  updated_at DATE NOT NULL,
+  correlation_id INT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (correlation_id) REFERENCES event_correlations(id),
+  UNIQUE (id)
+);
+
+CREATE TABLE operational_alerts
+(
+  id INT NOT NULL,
+  device_id INT NOT NULL,
+  severity VARCHAR(15) NOT NULL,
+  description VARCHAR(100) NOT NULL,
+  created_at DATE NOT NULL,
+  updated_at DATE NOT NULL,
+  incident_id INT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (incident_id) REFERENCES quality_incidents(id),
+  UNIQUE (id)
+);
+```
+
+---
+
+* **`event_correlations`**: Registra las agrupaciones de eventos del sistema por ciclos operativos y dispositivos IoT.
+* **`quality_incidents`**: Almacena las incidencias técnicas y de calidad detectadas, enlazadas mediante clave foránea (`correlation_id`) a la trazabilidad de eventos origen.
+* **`operational_alerts`**: Mantiene las alertas dirigidas a los operadores, vinculadas a su incidente disparador (`incident_id`) para permitir un análisis inmediato de causa raíz.
 
 # Bibliografía
 
