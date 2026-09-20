@@ -912,6 +912,8 @@ Clases que configuran componentes del framework y la documentación del microser
 
 #### 4.2.1.5. Bounded Context Software Architecture Component Level Diagrams
 
+[![Component.png](https://i.postimg.cc/C5XyWn8B/Component.png)](https://postimg.cc/N26PXMpB)
+
 #### 4.2.1.6. Bounded Context Software Architecture Code Level Diagrams
 
 ##### 4.2.1.6.1. Bounded Context Domain Layer Class Diagrams
@@ -1119,6 +1121,8 @@ CREATE TABLE user_roles
 
 #### 4.2.2.5. Bounded Context Software Architecture Component Level Diagrams
 
+[![component.png](https://i.postimg.cc/BnqWR3LX/component.png)](https://postimg.cc/1fYYNLKQ)
+
 #### 4.2.2.6. Bounded Context Software Architecture Code Level Diagrams
 
 ##### 4.2.2.6.1. Bounded Context Domain Layer Class Diagrams
@@ -1298,6 +1302,8 @@ CREATE TABLE device_configurations
 
 #### 4.2.3.5. Bounded Context Software Architecture Component Level Diagrams
 
+[![component.png](https://i.postimg.cc/YCSn1Cmc/component.png)](https://postimg.cc/dLzjFvBn)
+
 #### 4.2.3.6. Bounded Context Software Architecture Code Level Diagrams
 
 ##### 4.2.3.6.1. Bounded Context Domain Layer Class Diagrams
@@ -1471,6 +1477,8 @@ CREATE TABLE water_measurements
 * `List<WaterTreatmentProcess> findByDeviceIdOrderByCreatedAtDesc(Long deviceId)`
 
 #### 4.2.4.5. Bounded Context Software Architecture Component Level Diagrams
+
+[![component.png](https://i.postimg.cc/y6bkVfXg/component.png)](https://postimg.cc/rz58jNHM)
 
 #### 4.2.4.6. Bounded Context Software Architecture Code Level Diagrams
 
@@ -1659,6 +1667,8 @@ CREATE TABLE water_treatment_processes
   * `Optional<EventCorrelation> findByCycleId(Long cycleId)`
 
 #### 4.2.5.5. Bounded Context Software Architecture Component Level Diagrams
+
+[![Component.png](https://i.postimg.cc/259VV2RX/Component.png)](https://postimg.cc/kV8nHN5x)
 
 #### 4.2.5.6. Bounded Context Software Architecture Code Level Diagrams
 
