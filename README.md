@@ -409,6 +409,20 @@ El primer segmento de investigación comprende a dueños, supervisores de planta
 
 ---
 
+##### Entrevista  - Sector Textil
+
+| Entrevistado 3 | Carlos Madueño |
+| :--- | :--- |
+| **Edad** | 24 años |
+| **Distrito/Ciudad** | Lima |
+| <img src="assets/interviews/entrevista3.png" alt="Entrevista 2 - David Ramírez (Sector Textil)" width="400"> | **Resumen:**<br>El entrevistado se desempeña en el área de control de agua de una empresa textil en Lima, supervisando principalmente los procesos de teñido y lavado. Su trabajo consiste en verificar el pH y la temperatura del agua durante las principales etapas del proceso. Cuando encuentra valores fuera del rango esperado, repite la medición y comunica el resultado al supervisor, quien indica la corrección correspondiente. Las correcciones se realizan agregando productos químicos y esperando unos minutos antes de volver a medir.<br><br>**Características objetivas y subjetivas:**<br>• *Personalidad y actitud:* Responsable y cuidadoso con las mediciones. Sigue los procedimientos establecidos y consulta al supervisor cuando se presenta una variación.<br>• *Tecnología y dispositivos de preferencia:* Utiliza instrumentos de medición como pH-metro y termómetro. Considera práctico poder consultar información desde una computadora o celular.<br>• *Puntos de dolor y frustraciones:* La necesidad de repetir mediciones y determinar manualmente cuánto producto agregar y cuánto tiempo esperar cuando los valores están fuera del rango.<br>• *Canales y necesidades identificadas:* Historial de mediciones, registro de las correcciones realizadas y seguimiento de los parámetros desde un celular o computadora para facilitar el control del proceso. |
+
+| Timing: 00:02 – 03:16 min (Duración: 03:14 min) |https://upcedupe-my.sharepoint.com/:v:/g/personal/u202315032_upc_edu_pe/IQA6nuyzcUNxQpTUU3tqKpDLAZOyagZ4x_kxWces0Y8-kew?e=DYi0iB&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D |
+
+---
+
+
+
 #### Segmento 2: Pequeños productores y microempresas hidropónicas
 
 El segundo segmento de investigación abarca a pequeños agricultores urbanos y periurbanos, técnicos y encargados de módulos de cultivo hidropónico (sistemas NFT o raíz flotante), responsables de la formulación, acondicionamiento y liberación de soluciones nutritivas para el riego.
