@@ -162,7 +162,7 @@ La solución contempla dos roles. El operario tendrá asignado un dispositivo y 
 | Santur Tello, Andrea Elizabeth | Estoy cursando el octavo ciclo de mi carrera Ingeniería de Software, soy una persona responsable que le gusta resolver desafíos a la par con el trabajo responsable y en equipo tengo la capacidad de líder y me gusta aprender nuevas cosas dia a dia. | ![alt text](assets/andrea.png) |
 | Prieto Mantari, Leonardo Fabrizzio Junior |  |  |
 | Rios Pacheco, Hector Javier | Cuento con formación en desarrollo de software, incluyendo estructuras de datos, algoritmos y arquitecturas orientadas a servicios. Trabajo con lenguajes como Java, TypeScript, JavaScript, HTML5 y CSS3, y utilizo herramientas y frameworks como Angular, Spring Boot, Git/GitHub, Swagger y bases de datos relacionales. Soy responsable, me gusta involucrarme activamente en los proyectos, aportar ideas útiles | ![alt text](assets/FotoHector.png)  |
-| Olivera Barzola, Eric Marlon |  |  |
+| Olivera Barzola, Eric Marlon | Estudiante de Ingeniería de Software del octavo ciclo, con un interés particular en la ciberseguridad. A lo largo de mi formación he adquirido experiencia en diferentes lenguajes de programación como C#, C++ y Java| ![alt text](assets/FotoEric.jpg)  |
 
 ## 1.2. Solution Profile
 
@@ -934,7 +934,60 @@ Start-with-Simple: Se utilizó esta técnica para dividir el timeline en flujos 
 
 #### 4.1.1.3 Bounded Context Canvases
 
+En esta sección se desarrollan los Bounded Context Canvases correspondientes a los contextos delimitados previamente durante el proceso de Candidate Context Discovery. El objetivo principal de este apartado es detallar, para cada contexto, los criterios de diseño que permitan comprender su propósito, límites de responsabilidad, capacidades clave, dependencias y reglas de negocio asociadas.
+
+IAM (Identity and Access Management)
+
+<p align="center">
+  <img src="assets/Bounded Context Canvases1.jpg" alt="EventStorming" width="800">
+</p>
+
+
+Device and Operational Configuration
+
+<p align="center">
+  <img src="assets/Bounded Context Canvases2.jpg" alt="EventStorming" width="800">
+</p>
+
+IoT Telemetry and Device Integration
+
+<p align="center">
+  <img src="assets/Bounded Context Canvases3.jpg" alt="EventStorming" width="800">
+</p>
+Operational Monitoring and Traceability
+<p align="center">
+  <img src="assets/Bounded Context Canvases4.jpg" alt="EventStorming" width="800">
+</p>
+Water Quality Treatment and Release
+<p align="center">
+  <img src="assets/Bounded Context Canvases5.jpg" alt="EventStorming" width="800">
+</p>
+
+
 ### 4.1.2. Context Mapping
+
+En esta sección se presenta el proceso de Context Mapping, cuyo propósito es identificar, analizar y documentar las relaciones estructurales entre los bounded contexts previamente definidos
+
+
+<p align="center">
+  <img src="assets/Context Map.png" alt="EventStorming" width="800">
+</p>
+
+
+| Contexto A | Contexto B | Relación (DDD) | Justificación |
+|:--|:--|:--|:--|
+| IAM | Device and Operational Configuration | Conformist | Configuration conforma su modelo de sesión y permisos al que define IAM, sin negociar cambios en el contrato de autenticación. |
+| IAM | Water Quality Treatment and Release | Conformist | Treatment solo necesita saber si la sesión es válida y qué rol la autoriza; adopta el modelo de IAM tal como se publica, sin influir en su diseño. |
+| IAM | Operational Monitoring and Traceability | Open Host Service / Published Language | IAM publica eventos de acceso (Acceso Denegado, Rol Asignado) en un formato abierto que Monitoring consume para fines de auditoría. |
+| Device and Operational Configuration | IoT Telemetry and Device Integration | Customer / Supplier | Telemetry depende de que Configuration le entregue una configuración publicada y válida para poder sincronizarla con el dispositivo; sus necesidades de formato condicionan el contrato de Configuration. |
+| Device and Operational Configuration | Water Quality Treatment and Release | Customer / Supplier | El Core Domain exige que la configuración efectiva cumpla reglas estrictas (rangos, dosificación, tiempos) antes de poder evaluarla, lo que condiciona el contrato que expone Configuration. |
+| Device and Operational Configuration | Operational Monitoring and Traceability | Open Host Service / Published Language | Configuration publica sus eventos (Dispositivo Asignado, Configuración Publicada) en un formato abierto, consumido por Monitoring sin coordinación directa. |
+| IoT Telemetry and Device Integration | Water Quality Treatment and Release | Customer / Supplier | Treatment, como Core Domain, define qué datos de telemetría necesita (medición válida, confirmaciones de actuación) y Telemetry ajusta su contrato para satisfacerlos. |
+| Water Quality Treatment and Release | IoT Telemetry and Device Integration | Conformist | Telemetry ejecuta sin objeciones los comandos que Treatment le envía (activar LED, abrir/cerrar válvula); es un ejecutor técnico que conforma su comportamiento a las decisiones del Core. |
+| IoT Telemetry and Device Integration | Operational Monitoring and Traceability | Open Host Service / Published Language | Telemetry emite eventos técnicos (Medición Registrada, Monitoreo Perdido) como lenguaje publicado, consumidos por Monitoring para trazabilidad. |
+| Water Quality Treatment and Release | Operational Monitoring and Traceability | Open Host Service / Published Language | El Core Domain publica sus eventos de negocio (Agua Conforme, Proceso Bloqueado, Liberación Autorizada) como lenguaje publicado; Monitoring los consume para alertas e historial. |
+
+
 
 ### 4.1.3. Software Architecture
 
