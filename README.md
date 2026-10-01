@@ -1080,7 +1080,7 @@ Start-with-Simple: Se utilizó esta técnica para dividir el timeline en flujos 
 
 ### Caso 4: Confirmación de la corrección e inicio de espera
 
-1. El dispositivo IoT ejecuta la actuación correctiva mediante el LED o el operario confirma la intervención manual.
+1. El dispositivo ejecuta la orden según su entorno: dosificación o actuación física en el producto integral, indicador seguido de modificación del sensor en la simulación, o LED activo mientras el equipo realiza la corrección manual sustitutiva en el prototipo académico.
 
 2. El contexto de Telemetría IoT confirma la ejecución técnica.
 
@@ -1180,9 +1180,104 @@ En esta sección se presenta el proceso de Context Mapping, cuyo propósito es i
 | Device and Operational Configuration | Water Quality Treatment and Release | Customer / Supplier | El Core Domain exige que la configuración efectiva cumpla reglas estrictas (rangos, dosificación, tiempos) antes de poder evaluarla, lo que condiciona el contrato que expone Configuration. |
 | Device and Operational Configuration | Operational Monitoring and Traceability | Open Host Service / Published Language | Configuration publica sus eventos (Dispositivo Asignado, Configuración Publicada) en un formato abierto, consumido por Monitoring sin coordinación directa. |
 | IoT Telemetry and Device Integration | Water Quality Treatment and Release | Customer / Supplier | Treatment, como Core Domain, define qué datos de telemetría necesita (medición válida, confirmaciones de actuación) y Telemetry ajusta su contrato para satisfacerlos. |
-| Water Quality Treatment and Release | IoT Telemetry and Device Integration | Conformist | Telemetry ejecuta sin objeciones los comandos que Treatment le envía (activar LED, abrir/cerrar válvula); es un ejecutor técnico que conforma su comportamiento a las decisiones del Core. |
+| Water Quality Treatment and Release | IoT Telemetry and Device Integration | Conformist | Telemetry ejecuta los comandos que Treatment le envía —actuación correctiva física o representada, apertura, cierre y parada— según las capacidades declaradas por el dispositivo; es un ejecutor técnico que no redefine las decisiones del Core. |
 | IoT Telemetry and Device Integration | Operational Monitoring and Traceability | Open Host Service / Published Language | Telemetry emite eventos técnicos (Medición Registrada, Monitoreo Perdido) como lenguaje publicado, consumidos por Monitoring para trazabilidad. |
 | Water Quality Treatment and Release | Operational Monitoring and Traceability | Open Host Service / Published Language | El Core Domain publica sus eventos de negocio (Agua Conforme, Proceso Bloqueado, Liberación Autorizada) como lenguaje publicado; Monitoring los consume para alertas e historial. |
+
+#### 4.1.2.1. Línea base de implementación
+
+Esta línea base establece las decisiones que deben compartir los servicios de backend, el Edge API, el firmware, el simulador y las aplicaciones cliente. Su propósito es impedir que cada componente interprete de forma diferente los ciclos, las actuaciones o las condiciones de seguridad. Los cambios posteriores deberán registrarse como una decisión arquitectónica y reflejarse en las historias, contratos y pruebas afectadas.
+
+##### Estados y transiciones del proceso
+
+| Estado | Entrada válida | Responsabilidad | Salida permitida |
+|:--|:--|:--|:--|
+| `SIN_INICIAR` | Dispositivo disponible y configuración vigente | Mantener la válvula cerrada y esperar el inicio del proceso. | `MIDIENDO` o `EMERGENCIA` |
+| `MIDIENDO` | Inicio o solicitud de nueva lectura | Obtener una medición identificada de pH y temperatura. | `EVALUANDO`, `FALLO` o `EMERGENCIA` |
+| `EVALUANDO` | Medición válida y no duplicada | Comparar la lectura con la versión de configuración asociada al proceso. | `CORRIGIENDO`, `LISTO`, `FALLO` o `EMERGENCIA` |
+| `CORRIGIENDO` | Agua no conforme, estrategia válida y ciclos disponibles | Seleccionar y ordenar una única actuación correctiva para el ciclo. | `ESPERANDO`, `FALLO` o `EMERGENCIA` |
+| `ESPERANDO` | Actuación confirmada | Mantener la actuación detenida y esperar el intervalo configurado. | `REEVALUANDO`, `FALLO` o `EMERGENCIA` |
+| `REEVALUANDO` | Tiempo de espera finalizado y nueva medición válida | Cerrar el ciclo y decidir automáticamente si el agua está lista, requiere otro ciclo o debe bloquearse. | `CORRIGIENDO`, `LISTO`, `FALLO` o `EMERGENCIA` |
+| `LISTO` | Medición conforme | Mantener disponible la autorización de liberación conforme al modo configurado. | `LIBERANDO`, `MIDIENDO` o `EMERGENCIA` |
+| `LIBERANDO` | Autorización vigente | Abrir la válvula, confirmar la operación y finalizar la liberación. | `FINALIZADO`, `FALLO` o `EMERGENCIA` |
+| `FALLO` | Límite alcanzado, actuación rechazada o fallida, configuración inválida o pérdida crítica de monitoreo | Detener actuaciones, cerrar la válvula y exigir atención y restablecimiento autorizado. | `SIN_INICIAR` o `EMERGENCIA` |
+| `EMERGENCIA` | Parada de emergencia desde cualquier estado activo | Interrumpir la actuación, cerrar la válvula e impedir órdenes automáticas. | `SIN_INICIAR`, únicamente mediante restablecimiento autorizado |
+| `FINALIZADO` | Liberación confirmada | Cerrar el proceso y conservar su trazabilidad. | `SIN_INICIAR` para un proceso nuevo |
+
+Una medición inválida, duplicada o anterior al fin del tiempo de espera no permite avanzar ni cerrar un ciclo. Ante incertidumbre, el proceso conserva la válvula cerrada.
+
+##### Inicio y cierre de un ciclo correctivo
+
+1. Treatment selecciona la estrategia y crea una orden con un `commandId` único, el `processId`, el número de ciclo y la versión de configuración utilizada.
+2. El ciclo comienza y su contador aumenta una sola vez cuando IoT Telemetry acepta la orden correctiva.
+3. El dispositivo ejecuta una sola actuación por orden. La dosificación se detiene al completar la cantidad o duración indicada; no permanece activa durante la espera.
+4. Una confirmación prueba que la orden fue ejecutada o representada, pero no que el agua ya sea conforme.
+5. Después de la confirmación, el proceso pasa a `ESPERANDO`. Al vencer el intervalo solicita una nueva medición y pasa a `REEVALUANDO`.
+6. El ciclo termina cuando Treatment evalúa esa nueva medición válida. Si el agua sigue fuera de rango y quedan intentos con variación útil, puede preparar otro ciclo; si está conforme pasa a `LISTO`; y si alcanza el límite o incumple una regla de seguridad pasa a `FALLO`.
+
+##### Contrato común de mensajes
+
+Todo comando y evento entre contextos debe incluir el siguiente sobre común:
+
+| Campo | Regla |
+|:--|:--|
+| `messageId` | Identificador único del mensaje. |
+| `messageType` | Nombre estable del comando o evento. |
+| `schemaVersion` | Versión explícita del contrato. |
+| `occurredAt` | Fecha y hora en UTC con formato ISO 8601. |
+| `correlationId` | Identificador común del proceso completo. |
+| `causationId` | Identificador del mensaje que produjo el mensaje actual. |
+| `deviceId` | Dispositivo al que pertenece la operación. |
+| `processId` | Proceso de tratamiento asociado. |
+| `payload` | Datos propios del comando o evento. |
+
+Los consumidores deben ser idempotentes mediante `messageId` o `commandId`. Reintentar un mensaje no puede repetir una dosificación, incrementar nuevamente el ciclo ni abrir dos veces la válvula.
+
+| Mensaje | Emisor → receptor | Contenido mínimo del `payload` |
+|:--|:--|:--|
+| `EvaluarMedicion` | IoT Telemetry → Treatment | `measurementId`, pH, temperatura, unidad, `measuredAt`, `configurationVersion`. |
+| `EjecutarActuacionCorrectiva` | Treatment → IoT Telemetry | `commandId`, `cycleNumber`, parámetro objetivo, tipo de actuación, sustancia o acción, dosis o intensidad y duración cuando corresponda. |
+| `ActuacionCorrectivaConfirmada` | IoT Telemetry → Treatment | `commandId`, `cycleNumber`, entorno, modo de ejecución, inicio, fin y resultado `COMPLETADA`. |
+| `ActuacionCorrectivaRechazada` | IoT Telemetry → Treatment | `commandId`, `cycleNumber`, resultado `RECHAZADA` o `FALLIDA`, `errorCode` y detalle seguro. |
+| `SolicitarNuevaMedicion` | Treatment → IoT Telemetry | `cycleNumber`, instante mínimo permitido y motivo `REEVALUACION`. |
+| `AutorizarLiberacion` | Treatment → IoT Telemetry | `authorizationId`, `measurementId` conforme, modo de liberación y vencimiento. |
+| `AbrirValvula` / `CerrarValvula` | Treatment → IoT Telemetry | `commandId`, `authorizationId` cuando se abre y motivo de la operación. |
+| `ActivarParadaEmergencia` | Usuario autorizado o Treatment → IoT Telemetry | `commandId`, actor, motivo y fecha. |
+| `RestablecerProceso` | Operario autorizado → Treatment | `commandId`, actor, causa atendida y evidencia o nota operativa. |
+
+##### Entornos y capacidades del dispositivo
+
+El entorno no altera las decisiones de Treatment; solamente determina cómo IoT Telemetry adapta la ejecución.
+
+| Entorno | Capacidades mínimas | Ejecución de la actuación correctiva |
+|:--|:--|:--|
+| `PRODUCTO_INTEGRAL` | Telemetría, dosificación física, actuación térmica cuando corresponda y control de flujo. | Ejecuta físicamente la sustancia, dosis, intensidad o acción ordenada y confirma el resultado técnico. |
+| `SIMULACION` | Telemetría simulada, indicador visual y representación del control de flujo. | Activa el indicador; posteriormente una persona modifica el sensor simulado para representar el efecto que será evaluado en la siguiente medición. |
+| `PROTOTIPO_ACADEMICO` | Sensores de pH y temperatura, LED de actuación y servomotor de válvula. | Mantiene el LED activo mientras una persona del equipo realiza manualmente la corrección y la mezcla sustitutivas; luego confirma la representación. |
+
+Cada dispositivo declara capacidades como `PH_MEASUREMENT`, `TEMPERATURE_MEASUREMENT`, `PHYSICAL_DOSING`, `THERMAL_ACTUATION`, `VISUAL_INDICATION` y `FLOW_CONTROL`. Configuration no puede publicar para un dispositivo una estrategia incompatible con su entorno y capacidades.
+
+##### Reglas de seguridad obligatorias
+
+- La válvula permanece cerrada en `SIN_INICIAR`, `MIDIENDO`, `EVALUANDO`, `CORRIGIENDO`, `ESPERANDO`, `REEVALUANDO`, `FALLO` y `EMERGENCIA`.
+- Solo una autorización vigente, asociada a una medición conforme y al proceso actual, permite abrir la válvula desde `LISTO`.
+- La parada de emergencia tiene prioridad sobre cualquier orden pendiente y cancela la autorización de liberación.
+- Una actuación rechazada, fallida o sin confirmación dentro del tiempo permitido detiene el ciclo y lleva el proceso a `FALLO`; no se reintenta físicamente sin una nueva decisión de Treatment.
+- Una configuración no puede modificarse dentro de un proceso activo. El proceso conserva su `configurationVersion`; la nueva versión se aplica al siguiente proceso.
+- Ninguna confirmación de actuador sustituye la reevaluación mediante una nueva medición.
+- Los registros de actuación, transición, autorización y emergencia son inmutables para fines de trazabilidad.
+
+##### Propiedad de datos e integración
+
+| Bounded context | Datos que posee | Integración autorizada |
+|:--|:--|:--|
+| Identity and Access Management | Cuentas, credenciales, roles y estado del usuario. | Token o identidad validada y eventos de acceso; ningún otro contexto consulta directamente su base de datos. |
+| Device and Operational Configuration | Dispositivos, asignaciones, perfiles, capacidades declaradas y versiones de configuración. | API para comandos y consultas; evento versionado `ConfiguracionPublicada`. |
+| IoT Telemetry and Device Integration | Identidad técnica, mediciones recibidas, disponibilidad y resultado técnico de comandos. | Edge API y mensajes versionados de telemetría, actuación y válvula. |
+| Water Quality Treatment and Release | Proceso, estado, ciclos, decisiones, fallos y autorizaciones de liberación. | Comandos hacia IoT y eventos de negocio publicados para Monitoring. |
+| Operational Monitoring and Traceability | Alertas, incidentes, proyecciones de consulta, historial y reportes. | Consume eventos publicados; no modifica los agregados ni las bases de los otros contextos. |
+
+Cada contexto mantiene su propio esquema o base lógica. No se permiten tablas compartidas, uniones directas entre bases ni escritura en datos ajenos. Las consultas inmediatas pueden utilizar APIs REST; la propagación de mediciones, cambios de estado, actuaciones, alertas y trazabilidad utiliza mensajes versionados y reintentables.
 
 
 
