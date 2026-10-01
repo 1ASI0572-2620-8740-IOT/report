@@ -2362,6 +2362,140 @@ Para evitar ambigüedades se aplicarán las siguientes reglas:
 
 Las relaciones se expresarán mediante contexto y no mediante códigos aislados. Por ejemplo, el detalle de un Operario mostrará `Grupo` y `Reservorios asignados`; el detalle de un dispositivo mostrará `Reservorio`, `Operario responsable`, `Configuración vigente` y `Proceso actual`; y una alerta enlazará `Dispositivo`, `Proceso`, `Ciclo` y `Medición relacionada`.
 
+### 5.2.3. SEO Tags and Meta Tags
+
+La Landing Page es la única experiencia destinada a indexación pública. Las rutas de autenticación, registro y administración no deben aparecer en buscadores, porque su propósito es transaccional y pueden contener información privada. Los metadatos se declararán en UTF-8, se actualizará el `title` al cambiar de vista y nunca incluirán nombres de empresas, personas, dispositivos ni datos obtenidos de la sesión.
+
+#### Landing Page
+
+La Landing Page actual es una sola página con navegación mediante anclas. Por ello, `Solución`, `Sectores`, `Equipo` y `Contacto` comparten los metadatos del documento principal y no se presentan como páginas independientes.
+
+| Elemento | Valor definido |
+|:--|:--|
+| Title | `HydroGuard — Agua bajo control` |
+| Description | `HydroGuard: monitoreo inteligente y seguro del agua para organizaciones textiles e hidropónicas.` |
+| Keywords | `monitoreo de agua, control de pH, temperatura del agua, IoT, industria textil, hidroponía, trazabilidad` |
+| Author | `HydroLink` |
+| Robots | `index, follow` |
+| Language | `es-PE` |
+| Open Graph title | `HydroGuard — Agua bajo control` |
+| Open Graph description | `Monitoreo, corrección controlada y trazabilidad del agua para pequeñas operaciones textiles e hidropónicas.` |
+
+La URL canónica y la imagen social se configurarán con las direcciones definitivas del despliegue; no se publicarán valores de `localhost` ni rutas provisionales.
+
+#### Aplicación web administrativa
+
+| Página principal | Title | Description | Keywords | Author | Robots |
+|:--|:--|:--|:--|:--|:--|
+| Inicio de sesión | `Iniciar sesión — HydroGuard Admin` | `Acceso de administradores a la plataforma HydroGuard.` | `HydroGuard, acceso administrador` | `HydroLink` | `noindex, nofollow` |
+| Registro | `Registrar empresa — HydroGuard Admin` | `Registro de una empresa y su única cuenta administradora en HydroGuard.` | `HydroGuard, registro de empresa` | `HydroLink` | `noindex, nofollow` |
+| Operarios | `Operarios — HydroGuard Admin` | `Administración de Operarios de la empresa autenticada.` | `HydroGuard, Operarios` | `HydroLink` | `noindex, nofollow` |
+| Estructura operativa | `Estructura operativa — HydroGuard Admin` | `Gestión de grupos, reservorios, dispositivos y asignaciones de la empresa.` | `HydroGuard, dispositivos, reservorios` | `HydroLink` | `noindex, nofollow` |
+| Supervisión | `Supervisión — HydroGuard Admin` | `Consulta de telemetría, procesos y alertas de la empresa autenticada.` | `HydroGuard, telemetría, alertas` | `HydroLink` | `noindex, nofollow` |
+| Historial y reportes | `Historial y reportes — HydroGuard Admin` | `Consulta de trazabilidad y reportes operativos de la empresa.` | `HydroGuard, trazabilidad, reportes` | `HydroLink` | `noindex, nofollow` |
+
+Las páginas de detalle utilizarán títulos del tipo `Detalle del Operario | HydroGuard Admin` o `Detalle del dispositivo | HydroGuard Admin`, sin incorporar datos personales al marcado público. El servidor deberá acompañar esta decisión mediante encabezados y reglas que impidan indexar las rutas autenticadas.
+
+#### ASO de la aplicación móvil
+
+| Elemento ASO | Valor definido |
+|:--|:--|
+| App Title | `HydroGuard Operario` |
+| App Subtitle | `Control de agua en campo` |
+| App Keywords | `agua, pH, temperatura, reservorios, alertas, trazabilidad, IoT` |
+| App Description | `Aplicación para Operarios de HydroGuard. Permite consultar los reservorios-dispositivos asignados, completar su configuración operativa, supervisar pH y temperatura, atender alertas y ejecutar acciones autorizadas de tratamiento y liberación.` |
+
+La ficha de la aplicación no afirmará que el teléfono mide o corrige directamente el agua. Explicará que la app consulta el sistema HydroGuard y permite actuar sobre los dispositivos asignados conforme a los permisos y condiciones de seguridad.
+
+### 5.2.4. Searching Systems
+
+La búsqueda se incorporará solo donde el volumen o la variación de datos pueda dificultar la localización manual. Todas las consultas respetarán `organizationId`, rol y asignaciones obtenidos de la sesión. Los filtros del cliente no reemplazarán estas restricciones del backend.
+
+| Experiencia y conjunto | Búsqueda ofrecida | Filtros y orden | Presentación de resultados |
+|:--|:--|:--|:--|
+| Landing Page | No requiere buscador global por tratarse de una página breve. | Navegación por anclas temáticas. | Desplazamiento directo hacia la sección elegida y llamadas a la acción visibles. |
+| Operarios — web | Nombre o identificador de acceso. | Estado de cuenta; orden alfabético. | Tabla paginada con nombre, identificador, estado y acción `Ver detalle`. La implementación inicial ya ofrece búsqueda por nombre o identificador y filtro por estado. |
+| Grupos y reservorios — web | Nombre, código interno o propósito. | Grupo, tipo, estado y responsable; orden alfabético. | Tabla con filtros activos visibles y acceso al grupo o reservorio correspondiente. |
+| Dispositivos — web | Número de serie o alias. | Grupo, reservorio, responsable, disponibilidad, entorno y estado. | Tabla con disponibilidad, vínculo y acceso al detalle; los dispositivos sin responsable pueden mostrarse como vista guardada. |
+| Telemetría — web | Alias, serie o reservorio. | Disponibilidad, entorno y periodo. | Resumen por tarjetas y tabla; el detalle presenta mediciones cronológicas de pH y temperatura. |
+| Procesos — web | Dispositivo o reservorio. | Estado y periodo. | Tabla con estado, ciclo, última actualización y vínculo a la línea temporal. |
+| Alertas e incidentes — web | Dispositivo, reservorio o texto identificable. | Severidad, estado, tipo y periodo. | Resultados priorizados por severidad y fecha, con acceso al proceso y medición relacionados. |
+| Reportes — web | Dispositivo o nombre del reporte. | Tipo, estado y periodo. | Tabla con fecha, alcance, estado de generación y acción de descarga cuando esté disponible. |
+| Mis reservorios — móvil | Nombre o alias cuando el Operario tenga varias asignaciones. | Estado del dispositivo y proceso. | Tarjetas táctiles que muestran reservorio, última medición, disponibilidad y estado actual. |
+| Alertas e historial — móvil | Búsqueda contextual dentro del reservorio seleccionado. | Severidad, estado, tipo de evento y periodo. | Lista cronológica agrupada por fecha; cada resultado abre un detalle con su proceso, ciclo y medición asociados. |
+| Mi grupo — móvil | Nombre del integrante cuando el grupo sea numeroso. | Sin filtros operativos. | Lista de nombres y reservorios asignados, sin exponer mediciones ni configuraciones ajenas. |
+
+La interacción de búsqueda seguirá reglas comunes:
+
+- Mostrar el número de resultados y los filtros aplicados.
+- Permitir limpiar la consulta y cada filtro sin recargar toda la aplicación.
+- Conservar los filtros al regresar desde un detalle durante la sesión.
+- Utilizar paginación en la web y carga incremental controlada en móvil.
+- Diferenciar `Sin resultados` de `No existen datos registrados` y de un error de conexión.
+- No utilizar cero como sustituto de una medición inexistente.
+- Cancelar consultas reemplazadas y evitar resultados tardíos de una búsqueda anterior.
+
+### 5.2.5. Navigation Systems
+
+La navegación utilizará sistemas globales, locales, contextuales y suplementarios. Cada experiencia mantendrá rutas predecibles, indicará la ubicación actual y evitará ofrecer acciones que el rol no puede ejecutar.
+
+#### Landing Page
+
+La cabecera funciona como navegación global y permanece orientada a las secciones `Solución`, `Sectores`, `Equipo` y `Contacto`. El logotipo y `Volver arriba` conducen a `Inicio`. En pantallas pequeñas, las mismas opciones se presentan mediante un menú desplegable accesible, sin cambiar su orden.
+
+El recorrido principal es secuencial:
+
+```text
+Inicio → Solución → Producto → Sectores → Beneficios → Equipo → Contacto
+```
+
+Las llamadas `Conoce HydroGuard`, `Ver el producto`, `Quiero saber más` y `Explorar aplicación` actúan como navegación contextual. El acceso a la plataforma deberá conducir a `Iniciar sesión`, mientras que una empresa nueva podrá continuar a `Registrar empresa`.
+
+#### Aplicación web del Administrador
+
+Las páginas públicas `Iniciar sesión` y `Registrar empresa` quedan fuera del contenedor administrativo. Después de autenticarse, el Administrador utiliza una navegación global persistente, agrupada según sus objetivos:
+
+```text
+Resumen
+Operarios
+Estructura operativa
+├── Grupos
+├── Reservorios
+├── Dispositivos
+└── Perfiles y asignaciones
+Supervisión
+├── Telemetría
+├── Procesos
+├── Alertas
+└── Incidentes
+Historial y reportes
+Perfil
+```
+
+Las vistas de detalle incorporarán breadcrumbs y navegación contextual. Por ejemplo, `Grupo → Reservorio → Dispositivo` conserva la relación operativa, mientras que desde un dispositivo se podrá continuar hacia `Telemetría`, `Proceso actual`, `Alertas` o `Historial`. El flujo de incorporación del Operario funcionará como asistente secuencial: `Cuenta → Perfil → Asignación → Código`.
+
+El menú solo mostrará recursos de la organización autenticada. Las rutas estarán protegidas; una URL inexistente mostrará una página de no encontrado y una ruta sin permisos mostrará acceso denegado, sin redirigir silenciosamente a información que pueda confundirse con la solicitada.
+
+#### Aplicación móvil del Operario
+
+El primer acceso comienza con el código entregado externamente. Los accesos posteriores utilizan el identificador y la contraseña definitiva. Una vez autenticado, la navegación principal prioriza cuatro destinos de uso frecuente: `Inicio`, `Mis reservorios`, `Alertas` e `Historial`. `Mi grupo`, `Perfil` y `Cerrar sesión` se ubican en el menú de cuenta.
+
+`Proceso` y `Configuración` son destinos contextuales del reservorio seleccionado, porque no deben operar sin una asignación activa. El recorrido operativo principal será:
+
+```text
+Inicio
+└── Seleccionar reservorio
+    ├── Consultar estado y última medición
+    ├── Completar o consultar configuración
+    ├── Iniciar o supervisar proceso
+    ├── Atender alerta
+    └── Consultar historial
+```
+
+La acción `Parada de emergencia` permanecerá visible en las pantallas de un proceso activo, pero requerirá confirmación para evitar activaciones accidentales. `Confirmar liberación` solo aparecerá cuando el backend informe que el proceso está listo y utiliza modo manual. La interfaz conservará el reservorio seleccionado al navegar entre estado, proceso, alertas e historial, y mostrará claramente cualquier cambio de contexto.
+
+En todos los canales se respetará el comportamiento del botón Atrás, se conservará el foco visible para navegación por teclado en web, se utilizarán etiquetas accesibles para iconos y se informarán cambios de ruta o estado mediante títulos y encabezados consistentes.
+
 # Conclusiones
 
 ## Conclusiones y recomendaciones
