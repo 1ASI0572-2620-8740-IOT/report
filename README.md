@@ -2296,11 +2296,77 @@ CREATE TABLE operational_alerts
 * **`quality_incidents`**: Almacena las incidencias técnicas y de calidad detectadas, enlazadas mediante clave foránea (`correlation_id`) a la trazabilidad de eventos origen.
 * **`operational_alerts`**: Mantiene las alertas dirigidas a los operadores, vinculadas a su incidente disparador (`incident_id`) para permitir un análisis inmediato de causa raíz.
 
+# Capítulo V: Solution UI/UX Design
+
+## 5.2. Information Architecture
+
+La arquitectura de información de HydroGuard se define para tres experiencias complementarias: la Landing Page pública, la aplicación web del Administrador y la aplicación móvil del Operario. Cada canal organiza y expone únicamente la información necesaria para su audiencia, evitando trasladar al usuario la estructura técnica de los bounded contexts.
+
+La Landing Page guía al visitante desde la comprensión del problema hasta el contacto o acceso a la plataforma. La aplicación web permite que el único Administrador de cada empresa prepare y supervise los recursos de su organización. La aplicación móvil permite que el Operario configure y atienda exclusivamente los reservorios-dispositivos que tiene asignados. En las aplicaciones autenticadas, la organización se obtiene de la sesión y actúa como límite de navegación, búsqueda y consulta; ningún usuario puede explorar información de otra empresa.
+
+La propuesta combina jerarquía visual, recorridos secuenciales y relaciones matriciales según la tarea. La Landing Page y el módulo IAM de la web administrativa ya cuentan con una implementación inicial. Las estructuras relativas a configuración operativa, telemetría, tratamiento, monitoreo y aplicación móvil representan el diseño objetivo que orientará las siguientes iteraciones.
+
+### 5.2.1. Organization Systems
+
+HydroGuard empleará diferentes sistemas de organización según el volumen de información, la naturaleza de la tarea y el rol que utiliza cada producto.
+
+| Experiencia o grupo de información | Organización visual | Esquema de categorización | Aplicación en HydroGuard |
+|:--|:--|:--|:--|
+| Landing Page | Jerárquica y secuencial | Por tópicos y audiencia | Presenta primero la propuesta de valor y continúa con solución, producto, sectores, beneficios, equipo y contacto. Los casos textil e hidropónico permiten que cada visitante identifique rápidamente su contexto. |
+| Registro de empresa y Administrador | Secuencial | Por tarea | Divide el alta en datos de la empresa y datos del Administrador. La organización y su única cuenta administradora se crean conjuntamente antes del primer inicio de sesión. |
+| Incorporación de Operarios | Secuencial | Por tarea y estado | Sigue el orden cuenta → perfil → grupo → reservorio-dispositivo → código de primer acceso. No se habilita el código hasta completar las dependencias anteriores. |
+| Estructura operativa administrativa | Jerárquica | Por tópicos | Organiza la información como empresa → grupos → reservorios → dispositivos y empresa → grupos → perfiles de Operario → asignaciones. Cada nivel conduce al detalle del recurso seleccionado. |
+| Listados administrativos | Matricial | Alfabético, por estado y por tópicos | Las tablas permiten comparar Operarios, dispositivos, procesos, alertas o reportes mediante columnas, orden, filtros y acceso al detalle. Los nombres se ordenan alfabéticamente y los estados agrupan elementos que requieren acciones similares. |
+| Telemetría, procesos y trazabilidad | Matricial y cronológica | Por fecha, dispositivo, estado y tópico | Las mediciones se muestran por periodo; los eventos de un proceso se presentan como una línea temporal; los paneles relacionan dispositivo, configuración, ciclos, actuaciones, alertas y liberaciones. |
+| Inicio de la aplicación móvil | Jerárquica y contextual | Por audiencia y asignación | Prioriza el reservorio seleccionado, su estado actual, última medición, actuación vigente y acciones disponibles. Si el Operario administra varios reservorios, primero selecciona la asignación sobre la que trabajará. |
+| Configuración móvil | Secuencial | Por tarea | Divide el formulario en datos del reservorio-dispositivo, rangos, estrategia correctiva, dosis o intensidad, espera, ciclos, modo de liberación, revisión y publicación. |
+| Alertas e historial móvil | Cronológica | Por estado, severidad y periodo | Muestra primero alertas activas y críticas. El historial ordena los hechos más recientes y permite reconstruir mediciones, ciclos, actuaciones y liberaciones del dispositivo asignado. |
+
+La organización por audiencia se aplica en el nivel superior: los visitantes acceden al contenido público, el Administrador trabaja sobre toda su empresa y el Operario solo sobre su grupo y asignaciones. La organización alfabética se reserva para directorios de personas o recursos; la cronológica se utiliza cuando el tiempo es indispensable para interpretar mediciones, alertas, procesos e incidentes; y la organización por tópicos estructura las capacidades principales sin exponer nombres técnicos como IAM, CQRS o bounded context en la interfaz.
+
+### 5.2.2. Labeling Systems
+
+Las etiquetas utilizarán el Ubiquitous Language del proyecto, se redactarán en español y emplearán el menor número de palabras que conserve un significado inequívoco. Los nombres visibles describirán conceptos y acciones del negocio; los identificadores técnicos, enumeraciones y nombres internos permanecerán en los contratos y no se mostrarán directamente al usuario.
+
+#### Etiquetas principales por experiencia
+
+| Experiencia | Conjuntos de información | Etiquetas principales |
+|:--|:--|:--|
+| Landing Page | Navegación y llamadas a la acción | `Solución`, `Sectores`, `Equipo`, `Contacto`, `Conoce HydroGuard`, `Ver el producto`, `Quiero saber más`, `Enviar mensaje`, `Acceder`. |
+| Web pública | Acceso e incorporación | `Iniciar sesión`, `Registrar empresa`, `Datos de la empresa`, `Datos del Administrador`, `RUC`, `Teléfono`, `Segmento`, `Correo`, `Contraseña`. |
+| Web administrativa | Navegación principal | `Resumen`, `Operarios`, `Estructura operativa`, `Telemetría`, `Procesos`, `Alertas`, `Incidentes`, `Historial`, `Reportes`, `Perfil`, `Cerrar sesión`. |
+| Estructura operativa | Recursos y relaciones | `Grupos`, `Reservorios`, `Dispositivos`, `Perfiles de Operario`, `Asignaciones`, `Configuraciones`, `Código de primer acceso`. |
+| Aplicación móvil | Navegación y contexto | `Inicio`, `Mis reservorios`, `Mi grupo`, `Proceso`, `Alertas`, `Historial`, `Configuración`, `Perfil`, `Cerrar sesión`. |
+| Operación móvil | Acciones críticas | `Iniciar proceso`, `Confirmar liberación`, `Parada de emergencia`, `Restablecer proceso`, `Publicar configuración`. |
+
+Para evitar ambigüedades se aplicarán las siguientes reglas:
+
+- **Empresa** será el término visible; `Organization` y `organizationId` permanecerán como términos técnicos.
+- **Operario** y **Administrador** serán los únicos roles visibles. No se emplearán `usuario`, `supervisor` u otros sinónimos cuando se necesite identificar el rol.
+- **Reservorio** será la etiqueta canónica de navegación. `Fosa` o `tanque` se mostrarán como tipo del reservorio cuando corresponda al proceso, sin cambiar el significado de `reservoirId`.
+- **Dispositivo** identificará la unidad IoT; **reservorio-dispositivo** describirá la unidad operativa vinculada.
+- **Configuración operativa** identificará rangos, estrategia, dosis o intensidad, espera, ciclos y modo de liberación. **Estructura operativa** agrupará grupos, reservorios, dispositivos, perfiles y asignaciones en la web.
+- Los botones utilizarán verbo y objeto: `Crear grupo`, `Registrar dispositivo`, `Asignar Operario`, `Generar código`, `Publicar configuración` y `Exportar reporte`.
+- Una acción aceptada y una actuación completada no compartirán etiqueta. Se mostrarán estados diferenciados como `Aceptada`, `En ejecución`, `Completada`, `Rechazada` o `Fallida`.
+
+#### Etiquetas de estado
+
+| Grupo | Valores visibles |
+|:--|:--|
+| Cuenta | `Activa`, `Inactiva`. |
+| Perfil de Operario | `Pendiente de primer acceso`, `Activo`, `Inactivo`. |
+| Código de primer acceso | `Disponible`, `Utilizado`, `Revocado`. |
+| Disponibilidad del dispositivo | `En línea`, `Con retraso`, `Sin conexión`, `Desconocida`. |
+| Proceso | `Sin iniciar`, `Midiendo`, `Evaluando`, `Corrigiendo`, `Esperando`, `Reevaluando`, `Listo`, `Liberando`, `Finalizado`, `Fallo`, `Emergencia`. |
+| Alerta | `Activa`, `Atendida`, `Resuelta`; acompañada por severidad `Informativa`, `Advertencia` o `Crítica`. |
+
+Las relaciones se expresarán mediante contexto y no mediante códigos aislados. Por ejemplo, el detalle de un Operario mostrará `Grupo` y `Reservorios asignados`; el detalle de un dispositivo mostrará `Reservorio`, `Operario responsable`, `Configuración vigente` y `Proceso actual`; y una alerta enlazará `Dispositivo`, `Proceso`, `Ciclo` y `Medición relacionada`.
+
 # Conclusiones
 
 ## Conclusiones y recomendaciones
 
-* **Resultados frente al Problem Statement:** El diseño de HydroGuard responde con eficacia a la problemática de las micro y pequeñas empresas textiles y pequeños productores hidropónicos, resolviendo la dependencia de mediciones manuales aisladas y registros dispersos. La arquitectura basada en Domain-Driven Design (DDD) y microservicios demostró la viabilidad de unificar la lógica operativa de ambos sectores en un núcleo común configurable, capaz de supervisar pH y temperatura, orientar la corrección manual y asegurar la liberación controlada del agua según normativas VMA o requerimientos agrícolas.
+* **Resultados frente al Problem Statement:** El diseño de HydroGuard responde con eficacia a la problemática de las micro y pequeñas empresas textiles y pequeños productores hidropónicos, resolviendo la dependencia de mediciones manuales aisladas y registros dispersos. La arquitectura basada en Domain-Driven Design (DDD) y microservicios demostró la viabilidad de unificar la lógica operativa de ambos sectores en un núcleo común configurable, capaz de supervisar pH y temperatura, ejecutar la dosificación correctiva por ciclos, decidir automáticamente si debe continuar o detenerse y asegurar la liberación controlada del agua según normativas VMA o requerimientos agrícolas. En el prototipo académico, el LED representa la actuación mientras una persona del equipo realiza manualmente la corrección por falta de dosificadores físicos.
 
 * **Contrastación de Assumptions frente al comportamiento real:** Las validaciones de campo ratificaron que ambos segmentos comparten el mismo flujo base (medir, corregir, esperar y liberar) y valoran la supervisión remota mediante smartphones para evitar desplazamientos continuos. Como contraste clave, se identificó que el sector textil se beneficia de la liberación automática al alcanzar valores conformes, mientras que en hidroponía los productores exigen mantener la confirmación manual final antes del riego para resguardar sus cultivos frente a contingencias.
 
