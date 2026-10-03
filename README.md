@@ -2664,6 +2664,62 @@ La acción `Parada de emergencia` permanecerá visible en las pantallas de un pr
 
 En todos los canales se respetará el comportamiento del botón Atrás, se conservará el foco visible para navegación por teclado en web, se utilizarán etiquetas accesibles para iconos y se informarán cambios de ruta o estado mediante títulos y encabezados consistentes.
 
+# Capítulo VI: Product Implementation, Validation & Deployment
+
+## 6.1. Software Configuration Management
+
+### 6.1.3. Source Code Style Guide & Conventions
+
+El equipo utiliza inglés para nombres de archivos, símbolos de programación, contratos, rutas y mensajes de commit. El español se mantiene en el contenido visible para el usuario y en la documentación dirigida a los stakeholders. Se priorizan nombres completos del lenguaje ubicuo; no se emplean abreviaciones ambiguas ni comentarios que repitan literalmente el código.
+
+#### Convenciones comunes
+
+- Los archivos se codifican en UTF-8, terminan con una nueva línea, eliminan espacios finales y usan dos espacios de indentación en TypeScript, HTML, CSS, JSON y Gherkin.
+- La longitud recomendada es de 100 caracteres por línea. Se utilizan comillas simples en TypeScript y JavaScript, salvo que el contenido requiera otra forma.
+- Cada bounded context organiza sus responsabilidades en `domain`, `application`, `infrastructure` y `presentation`. Las dependencias apuntan hacia el dominio mediante puertos; los detalles HTTP, almacenamiento y framework permanecen en infraestructura o presentación.
+- Las clases, funciones y módulos tienen una sola responsabilidad. Los valores repetidos o relevantes para el dominio se extraen como constantes o tokens; se evitan números mágicos.
+- Los comentarios explican decisiones, restricciones o motivos. Las reglas de negocio se expresan en código y pruebas con nombres legibles.
+- Los datos sensibles, secretos y direcciones dependientes del ambiente no se incluyen en el repositorio. Se suministran mediante variables de entorno y archivos de configuración ignorados por Git.
+
+#### TypeScript y Angular
+
+Se siguen la guía oficial de Angular y las convenciones de Google para TypeScript, ajustadas a la arquitectura del producto:
+
+- Los archivos usan `kebab-case` y un sufijo que expresa su rol: `monitoring-dashboard.page.ts`, `get-operational-alerts.use-case.ts`, `monitoring.repository.ts` o `monitoring.dto.ts`.
+- Componentes, clases, interfaces, tipos y enumeraciones usan `PascalCase`; funciones, variables, propiedades y métodos usan `camelCase`; las constantes globales usan `UPPER_SNAKE_CASE` cuando son valores inmutables del sistema.
+- Se mantiene el modo estricto de TypeScript. No se utiliza `any`; ante datos aún no validados se usa `unknown` y se realiza un estrechamiento explícito.
+- Se prefieren componentes standalone, propiedades `readonly`, inyección de dependencias y composición. Los componentes de presentación delegan la obtención y transformación de datos a casos de uso y repositorios.
+- Los estados asíncronos distinguen carga, datos, vacío y error. Las suscripciones o efectos deben finalizar con el ciclo de vida correspondiente.
+- Los imports se agrupan en framework, dependencias externas y módulos internos. No se accede a una capa interna atravesando rutas privadas de otro bounded context.
+
+#### HTML y CSS
+
+El HTML utiliza elementos semánticos (`header`, `nav`, `main`, `section`, `table`, `button`) y atributos accesibles cuando el significado no puede inferirse del elemento nativo. Cada campo tiene una etiqueta asociada, cada imagen un texto alternativo apropiado y cada botón un nombre comprensible fuera de contexto. No se agregan estilos en línea.
+
+Las clases CSS usan `kebab-case` y describen función, no apariencia circunstancial. Los colores, espacios, radios y sombras se consumen desde propiedades personalizadas. Se trabaja desde una base responsiva y se introducen puntos de quiebre solo cuando el contenido lo exige. Se evitan selectores por identificador y `!important`; cualquier excepción necesaria para adaptar un componente de Angular Material debe permanecer localizada y documentada.
+
+#### JavaScript, JSON y API REST
+
+Los scripts auxiliares y el mock server utilizan módulos ECMAScript (`.mjs`), `const` por defecto, `let` únicamente para reasignación y `async/await` para operaciones asíncronas. Las propiedades JSON se escriben en `lowerCamelCase`; las fechas viajan en ISO 8601 y las unidades forman parte del contrato o del nombre cuando existe ambigüedad. Las rutas REST usan sustantivos plurales en minúsculas, segmentos con guion y versionado `/api/v1`. Los códigos HTTP y el cuerpo de error mantienen un contrato uniforme y no exponen trazas internas.
+
+#### Java/Spring y software embebido
+
+El backend sigue Google Java Style: paquetes en minúsculas, tipos en `PascalCase`, miembros en `lowerCamelCase`, constantes en `UPPER_SNAKE_CASE` y cuatro espacios de indentación. Los sufijos `Controller`, `Service`, `Repository`, `Resource` y `Assembler` hacen explícito el rol. Los controladores traducen HTTP, los servicios coordinan casos de uso y las entidades no dependen del framework web.
+
+En C/C++ para el dispositivo, los nombres técnicos permanecen en inglés, las constantes y pines usan `UPPER_SNAKE_CASE`, se declaran unidades y rangos, y se evita memoria dinámica innecesaria. Las operaciones de red tienen timeout y reintentos acotados. El control de válvula y las transiciones de seguridad se encapsulan, se prueban y se documentan con la razón de su comportamiento fail-safe.
+
+#### Gherkin, pruebas y commits
+
+Los archivos Gherkin usan nombres en `kebab-case` y las palabras clave `Feature`, `Scenario`, `Given`, `When` y `Then`. Cada escenario describe un comportamiento observable y evita detalles de implementación. Las pruebas unitarias siguen el patrón Arrange–Act–Assert; su nombre indica condición y resultado esperado.
+
+Los commits siguen **Conventional Commits**:
+
+```text
+<type>(<scope>): <imperative summary>
+```
+
+Los tipos aceptados incluyen `feat`, `fix`, `docs`, `test`, `refactor`, `style`, `build`, `ci` y `chore`. El `scope` identifica el bounded context o componente, por ejemplo `monitoring`, `configuration`, `iam` o `report`. Ejemplos reales del desarrollo son `feat(monitoring): implement monitoring dashboard and operational alerts pages`, `test(monitoring): add bounded context verification script` y `fix(build): resolve app configuration typing and template warnings`. Antes de integrar una rama se ejecutan el formateador, la compilación y las verificaciones específicas del bounded context.
+
 # Conclusiones
 
 ## Conclusiones y recomendaciones
