@@ -2739,6 +2739,40 @@ La matriz LACX identifica quién lidera (**L**) y quién colabora (**C**) en cad
 
 La matriz refleja la división por bounded contexts aplicada en el frontend: Hector lideró IAM y la estructura administrativa; Sebastian, Device and Operational Configuration; Andrea, IoT Telemetry; y Leonardo, Operational Monitoring and Traceability. Miguel, Sebastian y Eric sostuvieron entregables de modelado, arquitectura y documentación. UX/UI es transversal, pero Leonardo lidera su formalización para esta entrega al convertir los patrones ya implementados en una guía verificable.
 
+#### 6.2.1.9. Team Collaboration Insights during Sprint
+
+Durante el Sprint 1, el equipo distribuyó el trabajo por bounded contexts y utilizó ramas de funcionalidad para mantener aislados los cambios: `feature/iam-operator-management`, `feature/device-configuration`, `feature/iot-telemetry` y `feature/operational-monitoring` en el frontend; y ramas personales o documentales para el informe. La integración se realizó sobre ramas compartidas, conservando commits pequeños y descriptivos que permiten reconstruir la evolución del producto.
+
+En el frontend, Operational Monitoring and Traceability se desarrolló después de Device and Operational Configuration para aprovechar su estructura y lenguaje visual. Se incorporaron progresivamente modelos de dominio, puerto de repositorio, adaptador Axios, casos de uso, estado de presentación, datos mock, tablero, alertas, incidencias, trazabilidad, rutas y acceso desde la barra lateral. Esta secuencia redujo el acoplamiento y permitió verificar el bounded context de manera independiente.
+
+Las siguientes gráficas resumen los commits alcanzados en todas las ramas locales/remotas disponibles al cierre del 3 de octubre de 2026. Las identidades duplicadas por nombre o correo se consolidaron por integrante. El conteo representa actividad versionada y no se interpreta por sí solo como medida de calidad o esfuerzo.
+
+```mermaid
+pie showData
+    title Commits del frontend por integrante — Sprint 1
+    "Hector (Khafna09)" : 22
+    "Leonardo (leitojunior36)" : 10
+    "Sebastian (Shiftinnnnn)" : 4
+    "Andrea (andreli-star)" : 1
+```
+
+```mermaid
+pie showData
+    title Commits del informe por integrante — hasta Sprint 1
+    "Miguel (Miguel26112001)" : 28
+    "Hector (Khafna09)" : 20
+    "Andrea (andreli-star)" : 18
+    "Leonardo (leitojunior36)" : 8
+    "Eric (EricMOB-afk)" : 6
+    "Sebastian (Shiftinnnnn)" : 2
+```
+
+La evidencia muestra una colaboración complementaria: el repositorio de producto concentra a quienes implementaron los primeros bounded contexts, mientras el repositorio del informe visibiliza el trabajo de modelado y documentación de los seis integrantes. Por ello, el equipo considera ambos repositorios al evaluar participación. La actividad puede consultarse en [los commits del frontend](https://github.com/1ASI0572-2620-8740-IOT/hydroguard-admin-web-frontend/commits) y [los commits del informe](https://github.com/1ASI0572-2620-8740-IOT/report/commits).
+
+Los principales retos de integración fueron mantener rutas y providers coherentes al agregar módulos, compartir el layout sin acoplar los dominios, alinear DTOs con contratos mock y sostener una interfaz homogénea. El equipo los afrontó mediante una arquitectura por capas, puertos de repositorio, tokens visuales compartidos, contratos versionados y verificación de compilación antes de integrar. Como mejora para el siguiente sprint, se acordó reforzar la revisión cruzada mediante pull requests, adjuntar evidencia de pruebas a cada historia, asociar commits con identificadores del Product Backlog y registrar decisiones de arquitectura cuando afecten a más de un bounded context.
+
+En conjunto, el sprint permitió trabajar de manera paralela sin perder una experiencia unificada. La separación de responsabilidades facilitó el liderazgo distribuido, mientras que las convenciones de código, las ramas por funcionalidad y la documentación común ofrecieron puntos concretos de coordinación.
+
 # Conclusiones
 
 ## Conclusiones y recomendaciones
