@@ -2720,6 +2720,25 @@ Los commits siguen **Conventional Commits**:
 
 Los tipos aceptados incluyen `feat`, `fix`, `docs`, `test`, `refactor`, `style`, `build`, `ci` y `chore`. El `scope` identifica el bounded context o componente, por ejemplo `monitoring`, `configuration`, `iam` o `report`. Ejemplos reales del desarrollo son `feat(monitoring): implement monitoring dashboard and operational alerts pages`, `test(monitoring): add bounded context verification script` y `fix(build): resolve app configuration typing and template warnings`. Antes de integrar una rama se ejecutan el formateador, la compilación y las verificaciones específicas del bounded context.
 
+## 6.2. Landing Page, Services & Applications Implementation
+
+### 6.2.1. Sprint 1
+
+#### 6.2.1.2. Aspect Leaders and Collaborators
+
+La matriz LACX identifica quién lidera (**L**) y quién colabora (**C**) en cada aspecto transversal o funcional. El liderazgo no implica propiedad exclusiva: la persona líder mantiene la coherencia del aspecto, coordina decisiones e integra los aportes; los colaboradores revisan, implementan dependencias y aportan evidencia. La asignación se deriva de las ramas, commits y entregables realizados hasta el 3 de octubre de 2026.
+
+| Integrante / GitHub | IAM y acceso administrativo | Configuración de dispositivos | Telemetría IoT | Monitoreo y trazabilidad | UX/UI y estándares | Arquitectura e informe |
+|:--|:--:|:--:|:--:|:--:|:--:|:--:|
+| Gomez Hurtado, Miguel Angel (`Miguel26112001`) | C | C | C | C | C | L |
+| Rodriguez Macedo, Sebastian (`Shiftinnnnn`) | C | L | C | C | C | L |
+| Santur Tello, Andrea Elizabeth (`andreli-star`) | C | C | L | C | C | C |
+| Prieto Mantari, Leonardo Fabrizzio Junior (`leitojunior36`) | C | C | C | L | L | C |
+| Rios Pacheco, Hector Javier (`Khafna09`) | L | C | C | C | C | C |
+| Olivera Barzola, Eric Marlon (`EricMOB-afk`) | C | C | C | C | C | L |
+
+La matriz refleja la división por bounded contexts aplicada en el frontend: Hector lideró IAM y la estructura administrativa; Sebastian, Device and Operational Configuration; Andrea, IoT Telemetry; y Leonardo, Operational Monitoring and Traceability. Miguel, Sebastian y Eric sostuvieron entregables de modelado, arquitectura y documentación. UX/UI es transversal, pero Leonardo lidera su formalización para esta entrega al convertir los patrones ya implementados en una guía verificable.
+
 # Conclusiones
 
 ## Conclusiones y recomendaciones
