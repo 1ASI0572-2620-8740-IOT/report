@@ -2371,6 +2371,101 @@ CREATE TABLE operational_alerts
 
 # Capítulo V: Solution UI/UX Design
 
+## 5.1. Style Guidelines
+
+Las guías de estilo de HydroGuard constituyen la fuente común para diseñar las interfaces de administración web, la aplicación móvil del operario y la interacción con el dispositivo IoT. Su propósito es que una medición, alerta o estado conserve el mismo significado sin importar el canal en el que se presente. Para evitar divergencias, los recursos visuales y las decisiones reutilizables se mantienen como tokens de diseño en el repositorio del producto: familia tipográfica, colores, radios, sombras, espaciado y estados semánticos.
+
+La implementación web existente es la referencia visual inicial. Esta utiliza una interfaz clara para las áreas de trabajo, navegación lateral oscura, azul como color de acción y tarjetas blancas sobre un fondo neutro. El diseño del bounded context **Operational Monitoring and Traceability** reutiliza los mismos patrones de **Device and Operational Configuration**: encabezado de página, filtros, indicadores resumen, tablas responsivas, tarjetas, chips de estado y estados de carga, vacío y error. De esta manera, el usuario no necesita aprender una gramática visual distinta al cambiar de función.
+
+### 5.1.1. General Style Guidelines
+
+#### Identidad y principios
+
+La identidad de HydroGuard comunica **control, confianza, trazabilidad y cuidado del agua**. Las decisiones de interfaz se evalúan con los siguientes principios:
+
+1. **El estado debe entenderse primero.** La condición del agua, del dispositivo o de una operación crítica debe identificarse antes que los detalles secundarios.
+2. **La seguridad prevalece sobre la estética.** Las alertas, liberaciones y fallas se comunican con texto, icono y color; nunca únicamente mediante color.
+3. **Una acción debe producir retroalimentación.** Toda consulta, actualización o exportación muestra carga, resultado satisfactorio o explicación del error.
+4. **La trazabilidad no debe ocultarse.** Las fechas, responsables, dispositivos y relaciones entre mediciones, correcciones y liberaciones permanecen visibles y utilizan términos del lenguaje ubicuo.
+5. **Consistencia antes que novedad.** Un mismo concepto conserva etiqueta, color y comportamiento en todas las vistas.
+6. **Divulgación progresiva.** Los tableros presentan primero indicadores y excepciones; el detalle técnico se ofrece bajo demanda.
+
+#### Logotipo y marca
+
+El nombre visible del producto es **HydroGuard** y la organización responsable es **HydroLink**. El logotipo se emplea sobre fondos de contraste suficiente, sin deformarlo, rotarlo, recortarlo ni modificar sus colores. Debe conservar un área libre equivalente, como mínimo, a la altura de la letra mayúscula de la marca. En superficies reducidas se utiliza el isotipo acompañado de un nombre accesible; no se sustituye por texto decorativo ni se incorpora dentro de botones operativos.
+
+#### Tipografía
+
+| Uso | Familia | Peso recomendado | Aplicación |
+|:--|:--|:--|:--|
+| Interfaz y contenido | Plus Jakarta Sans | 400, 500, 600, 700 y 800 | Títulos, etiquetas, botones, tablas y texto descriptivo. |
+| Datos técnicos | JetBrains Mono | 400 a 600 | Identificadores, códigos, marcas de tiempo y valores que requieran alineación monoespaciada. |
+| Reserva del sistema | Segoe UI, Roboto, sans-serif | Según plataforma | Se utiliza cuando la fuente principal no se encuentra disponible. |
+
+Los títulos se escriben en estilo oración, evitando bloques completos en mayúsculas. El cuerpo debe conservar una altura de línea aproximada de 1.5 y un tamaño mínimo equivalente a 16 px en contenido principal. La tipografía monoespaciada se reserva para datos técnicos; no se emplea en párrafos extensos.
+
+#### Paleta cromática
+
+| Rol | Valor principal | Uso |
+|:--|:--:|:--|
+| Acción primaria | `#0284C7` | Botones principales, enlaces activos y selección. |
+| Información/acento | `#0EA5E9` | Indicadores, gráficos y elementos informativos. |
+| Navegación | `#0F172A` | Barra lateral y superficies de alto contraste. |
+| Fondo general | `#F8FAFC` | Lienzo de las aplicaciones. |
+| Superficie | `#FFFFFF` | Tarjetas, formularios y tablas. |
+| Texto principal | `#0F172A` | Títulos, datos y contenido de alta prioridad. |
+| Texto secundario | `#475569` | Ayudas, descripciones y metadatos. |
+| Borde | `#E2E8F0` | Separadores y contornos. |
+| Correcto | `#047857` sobre `#ECFDF5` | Estado normal, liberado o completado. |
+| Advertencia | `#C2410C` sobre `#FFF7ED` | Desviación, espera o atención requerida. |
+| Crítico | `#BE123C` sobre `#FFF1F2` | Error, peligro, bloqueo o incidencia crítica. |
+
+Cada combinación debe alcanzar, como mínimo, los criterios de contraste de **WCAG 2.2 nivel AA**. Los colores semánticos no cambian de significado entre vistas: rojo indica una condición crítica y no una acción común; verde confirma un resultado válido y no se usa solo como decoración.
+
+#### Espaciado, formas e iconografía
+
+HydroGuard utiliza una retícula base de 4 px. Los espacios habituales son 8, 12, 16, 24 y 32 px. Los controles relacionados se agrupan con menor separación que los grupos independientes. Los radios definidos son 6 px para controles compactos, 10 px para campos y botones, y 16 px para tarjetas o paneles. Las sombras son sutiles y expresan elevación, no decoración.
+
+Los iconos pertenecen a una misma familia visual, se muestran junto a una etiqueta cuando representan acciones importantes y disponen de nombre accesible. Los iconos de estado se acompañan con términos como **Operativo**, **Advertencia**, **Crítico**, **Sin conexión** o **Liberado**.
+
+#### Voz, tono y redacción
+
+La interfaz se dirige al usuario de forma directa, profesional y calmada. Se prefieren verbos de acción —**Guardar configuración**, **Ver trazabilidad**, **Exportar reporte**— y mensajes que indiquen causa y recuperación. Por ejemplo: “No se pudieron cargar las alertas. Verifica la conexión y vuelve a intentarlo”. Las confirmaciones describen el resultado; las operaciones irreversibles explican su alcance antes de ejecutarse. Las unidades (`pH`, `°C`, minutos y ciclos) siempre acompañan al valor correspondiente.
+
+#### Accesibilidad y estados de interacción
+
+La navegación debe ser posible mediante teclado y mantener un foco visible. Los formularios asocian cada campo con su etiqueta y expresan los errores cerca del control. El orden visual coincide con el orden de lectura. Las tablas emplean encabezados semánticos y ofrecen una representación por tarjetas en pantallas angostas. Las animaciones son breves, no bloquean la interacción y respetan la preferencia de movimiento reducido. Toda vista contempla al menos los estados de carga, sin resultados, error, contenido disponible y permisos insuficientes.
+
+### 5.1.2. Web, Mobile and IoT Style Guidelines
+
+#### Aplicación web administrativa
+
+La aplicación web está orientada a administradores que supervisan múltiples dispositivos. Mantiene una barra lateral de 268 px en escritorio y una navegación compacta por debajo de 900 px. El contenido tiene un ancho máximo aproximado de 1240 px para conservar legibilidad. Los tableros priorizan indicadores resumen, alertas activas y excepciones; las tablas se utilizan cuando el usuario debe comparar entidades y siempre incluyen filtros, encabezados claros y una alternativa responsiva.
+
+Las acciones principales aparecen una sola vez por vista y las acciones por registro se mantienen cerca del elemento afectado. En **Operational Monitoring and Traceability**, el patrón se concreta en cuatro vistas: tablero de monitoreo, alertas operativas, incidencias de calidad y trazabilidad. Los chips conservan la semántica `success`, `warning`, `danger` e `info`; las fechas se presentan en la zona horaria del usuario y los identificadores técnicos pueden copiarse sin ocupar la jerarquía principal.
+
+#### Aplicación móvil del operario
+
+La futura aplicación móvil reutilizará los mismos tokens, nombres de estado y reglas de accesibilidad. La composición base es de una columna, tomando 390 px como ancho de referencia y creciendo de forma fluida. Los objetivos táctiles miden como mínimo 44 × 44 px y las acciones críticas no se ubican pegadas a los bordes. Las tablas se transforman en listas o tarjetas y la información indispensable —estado del dispositivo, última lectura, desviación y acción en curso— aparece antes del desplazamiento.
+
+Debido a que el operario puede trabajar con conectividad limitada, la interfaz debe diferenciar **Sin conexión**, **Sincronizando** y **Actualizado**, conservar temporalmente las operaciones permitidas y ofrecer reintento explícito. Una notificación conduce al contexto exacto de la alerta, no solo a la pantalla inicial. Las confirmaciones de corrección o liberación requieren una descripción inequívoca del dispositivo y el lote afectado.
+
+#### Dispositivo IoT e interfaz física
+
+La interfaz física privilegia reconocimiento inmediato, pocas decisiones y funcionamiento seguro. La señalización recomendada es: azul para información o comunicación, verde para listo/normal/liberado, ámbar para espera o corrección y rojo para falla o emergencia. Cada señal luminosa debe combinar color con una etiqueta, icono, patrón de parpadeo o mensaje; así continúa siendo interpretable ante deficiencias de visión cromática.
+
+La pantalla o panel del dispositivo presenta pH y temperatura con sus unidades, estado de conectividad, fase actual y condición de la válvula. Los controles de emergencia se distinguen por forma, posición y confirmación física, no solo por color. Toda pulsación genera retroalimentación inmediata y las acciones con impacto sobre la válvula o la liberación solicitan confirmación. Ante pérdida de comunicación, lectura inválida o reinicio, el dispositivo adopta el estado seguro definido por el dominio, conserva la evidencia local y comunica claramente que la operación automática está limitada.
+
+La siguiente correspondencia mantiene coherencia entre canales:
+
+| Concepto | Web | Móvil | IoT físico |
+|:--|:--|:--|:--|
+| Operación normal | Chip verde y texto “Operativo” | Tarjeta verde tenue y estado textual | Indicador verde estable y mensaje “Listo”. |
+| Desviación | Chip ámbar y valor fuera de rango | Alerta prioritaria con acción sugerida | Indicador ámbar y mensaje de corrección. |
+| Falla crítica | Banner/chip rojo con detalle | Notificación crítica y acceso al incidente | Indicador rojo, señal diferenciada y estado seguro. |
+| Sin conexión | Estado neutro y hora de última lectura | Modo sin conexión y control de reintento | Indicador de comunicación y almacenamiento temporal. |
+| Liberación autorizada | Estado verde, responsable y fecha | Confirmación con lote/dispositivo | Confirmación visible y estado de válvula. |
+
 ## 5.2. Information Architecture
 
 La arquitectura de información de HydroGuard se define para tres experiencias complementarias: la Landing Page pública, la aplicación web del Administrador y la aplicación móvil del Operario. Cada canal organiza y expone únicamente la información necesaria para su audiencia, evitando trasladar al usuario la estructura técnica de los bounded contexts.
