@@ -2665,6 +2665,188 @@ La acción `Parada de emergencia` permanecerá visible en las pantallas de un pr
 
 En todos los canales se respetará el comportamiento del botón Atrás, se conservará el foco visible para navegación por teclado en web, se utilizarán etiquetas accesibles para iconos y se informarán cambios de ruta o estado mediante títulos y encabezados consistentes.
 
+## 5.4. Applications UX/UI Design.
+
+### 5.4.1. Applications Wireframes.
+
+Los wireframes de HydroGuard representan, a nivel de baja fidelidad, la estructura, distribución de información y principales elementos de interacción de sus aplicaciones. Se presentan de manera separada la aplicación web orientada al Administrador y la aplicación móvil orientada al Operario. Todos los wireframes utilizan una representación en escala de grises con el propósito de priorizar la organización, jerarquía y navegación antes de desarrollar los mock-ups de alta fidelidad.
+
+#### Web Application Wireframes - Administrator
+
+La aplicación web está dirigida al Administrador de HydroGuard, quien dispone de una visión general de la organización y puede gestionar Operarios, dispositivos y estructuras operativas, además de supervisar procesos, telemetría, alertas, incidentes e información histórica.
+
+#### W01 - Iniciar sesión
+
+Esta vista permite al usuario ingresar sus credenciales para acceder a las funcionalidades correspondientes a su rol dentro de HydroGuard. También proporciona acceso al registro de una nueva empresa.
+
+<p align="center">
+  <img src="assets/wireframes/W01 - Iniciar sesión.png" alt="W01 - Iniciar sesión" width="900">
+</p>
+
+#### W02 - Registrar empresa
+
+Esta vista permite registrar una nueva empresa en HydroGuard junto con la información correspondiente a su cuenta administradora, constituyendo el punto de incorporación de una nueva organización a la plataforma.
+
+<p align="center">
+  <img src="assets/wireframes/W02 - Registrar empresa.png" alt="W02 - Registrar empresa" width="900">
+</p>
+
+#### W03 - Resumen
+
+La vista de resumen funciona como el panel principal del Administrador. Presenta una visión general del estado de los dispositivos, procesos, alertas e incidencias de la organización, facilitando el acceso a las principales funciones de supervisión.
+
+<p align="center">
+  <img src="assets/wireframes/W03 - Resumen.png" alt="W03 - Resumen" width="900">
+</p>
+
+#### W04 - Operarios
+
+Esta vista permite al Administrador consultar y gestionar los Operarios registrados en la empresa, visualizar su estado y revisar las asignaciones relacionadas con grupos, reservorios y dispositivos.
+
+<p align="center">
+  <img src="assets/wireframes/W04 - Operarios.png" alt="W04 - Operarios" width="900">
+</p>
+
+#### W05 - Asignar Operario
+
+Esta vista representa el proceso de incorporación y asignación de un Operario. El Administrador puede registrar su información y asociarlo con los recursos operativos correspondientes, finalizando con la generación del código de primer acceso.
+
+<p align="center">
+  <img src="assets/wireframes/W05 - asignar Operario.png" alt="W05 - Asignar Operario" width="900">
+</p>
+
+#### W06 - Estructura operativa
+
+Esta vista permite administrar y consultar la estructura operativa de la organización, conformada por grupos, reservorios, dispositivos, perfiles y sus respectivas asignaciones.
+
+<p align="center">
+  <img src="assets/wireframes/W06 - Estructura operativa.png" alt="W06 - Estructura operativa" width="900">
+</p>
+
+#### W07 - Detalle de dispositivo
+
+La vista de detalle presenta la información principal de un dispositivo seleccionado, incluyendo su disponibilidad, asignación, configuración, última medición y estado operativo. Desde esta pantalla también es posible acceder a información relacionada con telemetría, procesos, alertas e historial.
+
+<p align="center">
+  <img src="assets/wireframes/W07 - Detalle de dispositivo.png" alt="W07 - Detalle de dispositivo" width="900">
+</p>
+
+#### W08 - Telemetría
+
+Esta vista permite supervisar las mediciones registradas por los dispositivos de HydroGuard. Presenta información relacionada con el pH, temperatura, disponibilidad, última actualización y estado actual del proceso.
+
+<p align="center">
+  <img src="assets/wireframes/W08 - Telemetría.png" alt="W08 - Telemetría" width="900">
+</p>
+
+#### W09 - Alertas e Incidentes
+
+Esta vista centraliza las alertas operativas e incidentes detectados por el sistema. El Administrador puede utilizar filtros para localizar eventos específicos y acceder al detalle correspondiente para evaluar la situación.
+
+<p align="center">
+  <img src="assets/wireframes/W09 - Alertas e Incidentes.png" alt="W09 - Alertas e Incidentes" width="900">
+</p>
+
+#### W10 - Historial y reportes
+
+Esta vista permite consultar la trazabilidad histórica de las operaciones realizadas en HydroGuard. El Administrador puede revisar mediciones, procesos, correcciones, alertas y liberaciones, además de acceder a las opciones de generación y exportación de reportes.
+
+<p align="center">
+  <img src="assets/wireframes/W10 - Historial y reportes.png" alt="W10 - Historial y reportes" width="900">
+</p>
+
+#### Mobile Application Wireframes - Operator
+
+La aplicación móvil está orientada al Operario de HydroGuard y prioriza las actividades realizadas durante la supervisión del agua en campo. Sus vistas permiten acceder al sistema, consultar los reservorios asignados, revisar mediciones y estados operativos, configurar parámetros autorizados, supervisar procesos, atender alertas y consultar el historial de operaciones.
+
+##### M01 - Primer acceso
+
+Esta vista permite al Operario realizar su primer ingreso a HydroGuard mediante el código de acceso proporcionado por el Administrador. A partir de este proceso, el usuario puede validar su cuenta y establecer las credenciales necesarias para futuros accesos.
+
+<p align="center">
+  <img src="assets/wireframes/M01 - Primer acceso.png" alt="M01 - Primer acceso" width="400">
+</p>
+
+##### M02 - Iniciar sesión
+
+Esta vista permite al Operario autenticarse mediante sus credenciales para acceder a los reservorios, dispositivos y funcionalidades que le han sido asignados dentro de HydroGuard.
+
+<p align="center">
+  <img src="assets/wireframes/M02 - Iniciar sesión.png" alt="M02 - Iniciar sesión" width="400">
+</p>
+
+##### M03 - Inicio
+
+La vista de inicio presenta un resumen del estado operativo del Operario, incluyendo el reservorio seleccionado, las últimas mediciones de pH y temperatura, el estado del proceso, la conectividad y las alertas que requieren atención.
+
+<p align="center">
+  <img src="assets/wireframes/M03 - Inicio.png" alt="M03 - Inicio" width="400">
+</p>
+
+##### M04 - Mis reservorios
+
+Esta vista muestra los reservorios asignados al Operario. Cada elemento presenta información resumida sobre su dispositivo asociado, estado actual, últimas mediciones y disponibilidad, permitiendo acceder posteriormente a su detalle.
+
+<p align="center">
+  <img src="assets/wireframes/M04 - Mis reservorios.png" alt="M04 - Mis reservorios" width="400">
+</p>
+
+##### M05 - Detalle de reservorio
+
+Esta vista presenta la información principal del reservorio seleccionado, incluyendo el dispositivo asociado, las mediciones actuales de pH y temperatura, el estado del agua, la disponibilidad del dispositivo y la condición de la válvula. Desde esta pantalla también se puede acceder al proceso, configuración, alertas e historial relacionados.
+
+<p align="center">
+  <img src="assets/wireframes/M05 - Detalle de reservorio.png" alt="M05 - Detalle de reservorio" width="400">
+</p>
+
+##### M06 - Configuración operativa
+
+Esta vista permite al Operario consultar y modificar los parámetros operativos autorizados del dispositivo asignado. Entre ellos se incluyen los rangos de pH y temperatura, la estrategia correctiva, el tiempo de espera, el límite de ciclos y el modo de liberación.
+
+<p align="center">
+  <img src="assets/wireframes/M06 - Configuración operativa.png" alt="M06 - Configuración operativa" width="400">
+</p>
+
+##### M07 - Proceso actual
+
+Esta vista permite supervisar el proceso activo del reservorio, mostrando las mediciones actuales, el estado del tratamiento, los ciclos realizados, la acción correctiva aplicada y la condición de la válvula. También incluye las acciones disponibles para confirmar una liberación manual o ejecutar una parada de emergencia cuando corresponda.
+
+<p align="center">
+  <img src="assets/wireframes/M07 - Proceso actual.png" alt="M07 - Proceso actual" width="400">
+</p>
+
+##### M08 - Alertas
+
+Esta vista permite al Operario consultar las alertas asociadas a sus reservorios y dispositivos. Las alertas se presentan según su prioridad, estado y fecha, permitiendo acceder al detalle de aquellas situaciones que requieren atención.
+
+<p align="center">
+  <img src="assets/wireframes/M08 - Alertas.png" alt="M08 - Alertas" width="400">
+</p>
+
+##### M09 - Historial
+
+Esta vista presenta de manera cronológica los eventos registrados durante la operación de los dispositivos asignados. Permite consultar mediciones, ciclos de corrección, alertas, actuaciones y liberaciones anteriores para mantener la trazabilidad del proceso.
+
+<p align="center">
+  <img src="assets/wireframes/M09 - Historial.png" alt="M09 - Historial" width="400">
+</p>
+
+##### M10 - Perfil y cuenta
+
+Esta vista permite al Operario consultar la información asociada a su cuenta, grupo y asignaciones actuales. También proporciona acceso a las opciones relacionadas con su perfil y el cierre de sesión.
+
+<p align="center">
+  <img src="assets/wireframes/M10 - Perfil y cuenta.png" alt="M10 - Perfil y cuenta" width="400">
+</p>
+
+### 5.4.2. Applications Wireflow Diagrams.
+
+
+
+## 5.5. Applications Prototyping.
+
+
+
 # Capítulo VI: Product Implementation, Validation & Deployment
 
 ## 6.1. Software Configuration Management
@@ -2718,6 +2900,8 @@ Los commits siguen **Conventional Commits**:
 ```text
 <type>(<scope>): <imperative summary>
 ```
+
+
 
 Los tipos aceptados incluyen `feat`, `fix`, `docs`, `test`, `refactor`, `style`, `build`, `ci` y `chore`. El `scope` identifica el bounded context o componente, por ejemplo `monitoring`, `configuration`, `iam` o `report`. Ejemplos reales del desarrollo son `feat(monitoring): implement monitoring dashboard and operational alerts pages`, `test(monitoring): add bounded context verification script` y `fix(build): resolve app configuration typing and template warnings`. Antes de integrar una rama se ejecutan el formateador, la compilación y las verificaciones específicas del bounded context.
 
