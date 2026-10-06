@@ -1,0 +1,44 @@
+Tecnología
+Para elaborar los User Personas, Empathy Maps, Journey Maps e Impact Maps se utilizará
+UXPressia.
+Para la elaboración de Wireframes, Mock-ups y Prototypes, se utilizará Figma.
+Para la elaboración de Wireflows y User Flows, se utilizará FigJam / LucidChart / Overflow.
+Para los diagramas de EventStorming se utilizará FigJam / LucidChart / Miro.
+Para la elaboración de diagramas de Software Architecture se utilizará Structurizr para C4
+Model, LucidChart para UML y para Database Design se utilizará ERDPlus / LucidChart /
+MySQL Workbench / DataGrip / Hackolade.
+En caso de aplicar Diagram-as-Code se puede utilizar Structurizr DSL (para C4 Model
+Diagrams) / PlantUML (para UML Diagrams, C4 Model Diagrams, ERD/Database Diagrams,
+EventStorming Diagrams) / Mermaid (para UML Diagrams, C4 Model Diagrams,
+ERD/Database Diagrams, EventStorming Diagrams).
+Para los Diagramas de Device Design se utilizará Cirkit Designer o Wokwi.
+Para el desarrollo del Landing Page, se utilizará HTML5, CSS3 y JavaScript.
+Para el desarrollo de Web Applications, se hará uso de Angular Framework, o Vue utilizando
+HTML5, CSS3 y JavaScript para aspectos estáticos de templates y (JavaScript en el caso de
+34/47 V1.0
+Vue) o TypeScript (en el caso de Angular) como lenguaje de programación. El lenguaje de
+diseño de Landing Page y Web Applications estará basado en Material Design. Como
+biblioteca de componentes de UI se utilizará Angular Material.
+Para el desarrollo de Web Services, se realizará bajo RESTful API architectural style y se hará
+uso de Spring Boot Framework con Spring Data JPA, ASP.NET Core Framework con Entity
+Framework Core, o Nest Framework con TypeORM, utilizando Java, C# o TypeScript
+respectivamente como lenguaje de Programación.
+Para la documentación de Web Services se utilizará OpenAPI Specification vía Swagger.
+Para Edge Services, se utilizará Flask, Pewee ORM, SQLite, utilizando Python como lenguaje
+de Programación.
+Para las Mobile Applications, se utilizará Kotlin en Android, Swift en iOS para Native Mobile
+Apps. Lo mismo aplica para OS de dispositivos IoT basados de Android o Apple, como
+Wearables, Smart TV, Smart Home Devices, o Car.
+Si la naturaleza de la solución soporta el uso de Cross-Platform Mobile Apps, se utilizará
+Flutter con Dart, .NET MAUI con C#, Skip con Swift, o Kotlin Multiplatform con Kotlin.
+Para las IoT Embedded Applications se utilizará C++, Python, o el lenguaje oficial
+recomendado por el fabricante del Embedded OS.
+Para IoT Device Management, Cloud Computing y Edge Computing (para alguna
+característica complementaria al RESTful Edge API elaborado) puede utilizar las alternativas
+que ofrecen los cloud providers Microsoft, AWS, Google, u otras como Arduino, según la
+naturaleza de la solución.
+Para el control de proyectos, se utilizará JetBrains YouTrack / Jira Software / Trello.
+Para el almacenamiento y control de versiones de código se utilizará GIT gestionado desde
+GitHub aplicando GitFlow Workflow, Conventional Commits y Semantic Versioning.
+Para el despliegue de aplicaciones móviles para su prueba en dispositivos físicos, se utilizará
+Firebase App Distribution.
