@@ -1032,7 +1032,7 @@ En esta sección se elaborará el diseño de la arquitectura desde una perspecti
 
 ### 4.1.1. Design-Level EventStorming
 
-El EventStorming de Nivel de Diseño es la evolución directa del modelo de Big Picture. El objetivo es pasar del entendimiento general a un modelo táctico que exponga comandos, eventos, políticas, vistas de lectura y agregados. La especificación textual de esta sección constituye la línea vigente; los artefactos gráficos se revisarán por separado para incorporar Device Identity and Access, la aprobación única del tratamiento y la comunicación HTTPS/REST.
+El EventStorming de Nivel de Diseño es la evolución directa del modelo de Big Picture. Su objetivo es pasar del entendimiento general a un modelo de diseño que exponga actores, comandos, eventos, políticas y reglas relevantes. Los artefactos siguientes incorporan la identidad técnica del dispositivo, la aprobación única del tratamiento y la comunicación HTTPS/REST.
 
 **Autenticación y acceso**
 Inicio de sesión, validación de credenciales y control de acceso por rol
@@ -1040,6 +1040,13 @@ Inicio de sesión, validación de credenciales y control de acceso por rol
 <p align="center">
   <img src="assets/Design-Level EventStorming 1.jpg" alt="EventStorming" width="800">
 </p>
+
+**Provisionamiento y Autenticación del Dispositivo**
+Representa el registro del dispositivo, el provisionamiento de su identidad técnica y su autenticación mediante una credencial propia para obtener un token de acceso.
+<p align="center">
+  <img src="assets/Design-Level EventStorming 1.1.jpg" alt="EventStorming" width="800">
+</p>
+
 
 **Asignación y configuración operativa**
 Asignación del dispositivo al operario y configuración completa de parámetros de tratamiento, hasta su publicación y sincronización.
