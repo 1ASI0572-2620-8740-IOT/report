@@ -1238,36 +1238,40 @@ Start-with-Simple: Se utilizó esta técnica para dividir el timeline en flujos 
 
 En esta sección se desarrollan los Bounded Context Canvases correspondientes a los contextos delimitados previamente durante el proceso de Candidate Context Discovery. El objetivo principal de este apartado es detallar, para cada contexto, los criterios de diseño que permitan comprender su propósito, límites de responsabilidad, capacidades clave, dependencias y reglas de negocio asociadas.
 
-Human Identity and Access Management
+##### Human Identity and Access Management
 
 <p align="center">
-  <img src="assets/Bounded Context Canvases1.jpg" alt="EventStorming" width="800">
+  <img src="assets/Bounded Context Canvases1.jpg" alt="Bounded Context Canvas de Human Identity and Access Management" width="800">
 </p>
 
 
-Device and Operational Configuration
+##### Device and Operational Configuration
 
 <p align="center">
-  <img src="assets/Bounded Context Canvases2.jpg" alt="EventStorming" width="800">
+  <img src="assets/Bounded Context Canvases2.jpg" alt="Bounded Context Canvas de Device and Operational Configuration" width="800">
 </p>
 
-IoT Telemetry and Device Integration
+##### IoT Telemetry and Device Integration
 
 <p align="center">
-  <img src="assets/Bounded Context Canvases3.jpg" alt="EventStorming" width="800">
+  <img src="assets/Bounded Context Canvases3.jpg" alt="Bounded Context Canvas de IoT Telemetry and Device Integration" width="800">
 </p>
-Water Quality Treatment and Release
+##### Water Quality Treatment and Release
 <p align="center">
-  <img src="assets/Bounded Context Canvases4.jpg" alt="EventStorming" width="800">
+  <img src="assets/Bounded Context Canvases4.jpg" alt="Bounded Context Canvas de Water Quality Treatment and Release" width="800">
 </p>
-Operational Monitoring and Traceability
+##### Operational Monitoring and Traceability
 <p align="center">
-  <img src="assets/Bounded Context Canvases5.jpg" alt="EventStorming" width="800">
+  <img src="assets/Bounded Context Canvases5.jpg" alt="Bounded Context Canvas de Operational Monitoring and Traceability" width="800">
 </p>
 
-Device Identity and Access
+##### Device Identity and Access
 
-El sexto canvas deberá incorporarse en la actualización gráfica pendiente. Su especificación vigente comprende provisionamiento, autenticación, activación, revocación y regeneración manual de credenciales, sin asumir inventario, configuración, telemetría ni cuentas humanas.
+Este contexto administra exclusivamente la identidad técnica de los dispositivos, incluyendo su provisionamiento, autenticación, activación, revocación y regeneración manual de credenciales, sin asumir responsabilidades de inventario, configuración, telemetría ni cuentas humanas.
+
+<p align="center">
+  <img src="assets/Bounded Context Canvas - Device Identity and Access.png" alt="Bounded Context Canvas de Device Identity and Access" width="800">
+</p>
 
 
 ### 4.1.2. Context Mapping
