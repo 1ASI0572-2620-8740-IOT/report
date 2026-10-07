@@ -3046,7 +3046,30 @@ Esta sección define las reglas, estándares y herramientas establecidas para ga
 
 Para asegurar un flujo de trabajo colaborativo y estandarizado, el equipo ha configurado el siguiente entorno de desarrollo, cumpliendo con las restricciones tecnológicas del proyecto:
 
+**Project & Requirements Management**
+*   **Trello / Jira Software:** Plataforma principal para la gestión ágil del proyecto, administración del Product Backlog, y seguimiento de los Sprint Backlogs. (SaaS: trello.com)
+*   **Discord / Microsoft Teams:** Canales oficiales para las reuniones de *Sprint Planning*, *Daily Standups* y coordinación síncrona.
 
+**Product UX/UI Design**
+*   **Figma:** Herramienta colaborativa basada en la nube utilizada para la creación de *wireframes*, *mock-ups* de alta fidelidad, *wireflows* y prototipado interactivo de las aplicaciones. (SaaS: figma.com)
+*   **Miro / UXPressia:** Empleado para la digitalización de los artefactos de Needfinding (User Personas, Journey Maps) y las sesiones de *Design-Level EventStorming*.
+
+**Software Development**
+*   **Visual Studio Code:** Entorno de desarrollo integrado (IDE) principal, configurado con extensiones de formateo (Prettier, ESLint) para garantizar la consistencia en el código fuente. (Descarga: code.visualstudio.com)
+*   **Angular Framework:** Framework principal para el desarrollo de la *Web Application* de administración de HydroGuard, utilizando TypeScript.
+*   **Spring Boot / Flask:** Frameworks para el desarrollo de los *RESTful Web Services* y el *Edge API*, respectivamente, permitiendo el procesamiento de la telemetría IoT.
+*   **C++ (Arduino/ESP32):** Lenguaje y entorno para la programación del *Embedded System* en el prototipo físico IoT de monitoreo de calidad del agua.
+*   **Structurizr:** Herramienta implementada bajo *Diagram-as-Code* para la elaboración de la arquitectura de software bajo el modelo C4.
+
+### 6.1.2. Source Code Management
+
+La gestión del código fuente se realizó con Git y GitHub bajo una estrategia de ramificación basada en GitFlow, con el objetivo de mantener un desarrollo ordenado, rastreable y sostenible. La rama `main` se destinó al código estable y listo para producción, mientras que `develop` funcionó como línea principal de integración de cambios funcionales. Las ramas `feature/*` se utilizaron para nuevas funcionalidades, `hotfix/*` para correcciones urgentes y `release/*` para preparar entregas oficiales antes de un despliegue final.
+
+Esta estructura permitió a todo el equipo trabajar en paralelo sin mezclar avances incompletos con versiones estables. Cada cambio se integró con revisión mínima y se mantuvo registro del historial mediante commits descriptivos. Para asegurar consistencia, se adoptó la convención de Conventional Commits, utilizando tipos como `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore` y `perf`. Esta decisión mejoró la trazabilidad del desarrollo y permitió distinguir rápidamente cambios funcionales, correcciones, documentación y mejoras de la infraestructura técnica.
+
+El uso de ramas por bounded context y funcionalidad fue especialmente útil para la aplicación administrativa. Se trabajó por módulos como configuración, monitoreo y trazabilidad, evitando que el desarrollo de una vista afectara el resto del sistema. Además, la revisión cruzada mediante pull requests permitió validar cambios, detectar riesgos de integración y reforzar la calidad del código antes de su fusión a la rama principal de desarrollo.
+
+En conjunto, la estrategia de control de versiones resultó apropiada para un proyecto de TI académico con carga colaborativa, ya que permitió mantener un historial claro, controlar la evolución del producto y facilitar la continuidad en futuras iteraciones del desarrollo.
 
 ### 6.1.3. Source Code Style Guide & Conventions
 
@@ -3102,7 +3125,15 @@ Los commits siguen **Conventional Commits**:
 
 Los tipos aceptados incluyen `feat`, `fix`, `docs`, `test`, `refactor`, `style`, `build`, `ci` y `chore`. El `scope` identifica el bounded context o componente, por ejemplo `monitoring`, `configuration`, `iam` o `report`. Ejemplos reales del desarrollo son `feat(monitoring): implement monitoring dashboard and operational alerts pages`, `test(monitoring): add bounded context verification script` y `fix(build): resolve app configuration typing and template warnings`. Antes de integrar una rama se ejecutan el formateador, la compilación y las verificaciones específicas del bounded context.
 
+### 6.1.4. Software Deployment Configuration
+
+La configuración de despliegue de HydroGuard contempló dos líneas de entrega: la landing page pública y la aplicación web administrativa. La landing page se diseñó para ser desplegada de forma ágil y económica en GitHub Pages, con el objetivo de presentar el producto, comunicar su propuesta de valor y permitir la captación de interés por parte de clientes o evaluadores. Este tipo de despliegue es apropiado para un sitio estático, porque reduce costos y facilita la publicación inmediata del contenido.
+
+La aplicación web administrativa se configuró para ejecutarse en un entorno de desarrollo local mediante Angular y para poder publicarse posteriormente en un hosting web que soporte aplicaciones SPA. La configuración contempló la separación entre entornos, la preparación de variables de configuración y la gestión de rutas, favoreciendo la transición desde desarrollo a producción sin romper la aplicación ni exponer información sensible.
+
+Este enfoque de despliegue resulta adecuado para un proyecto académico con evolución incremental: la landing page se despliega rápidamente para difusión del proyecto, mientras la app web queda preparada para crecer con más módulos, servicios y autenticación en iteraciones posteriores. La estrategia define un proceso claro para publicar versiones estables, mantener consistencia con la arquitectura del sistema y reducir el riesgo operativo antes de la entrega final.
 ## 6.2. Landing Page, Services & Applications Implementation
+Esta sección detalla la ejecución técnica y colaborativa del desarrollo de HydroGuard. Se documentan las ceremonias, el diseño técnico y las evidencias de código que transforman los requisitos y modelos de arquitectura en componentes de software desplegables, estructurados de manera iterativa por *Sprints*.
 
 ### 6.2.1. Sprint 1
 
