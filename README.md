@@ -3040,6 +3040,14 @@ Esta vista permite al Operario consultar la información asociada a su cuenta, g
 
 ## 6.1. Software Configuration Management
 
+Esta sección define las reglas, estándares y herramientas establecidas para garantizar la integridad, trazabilidad y consistencia del ecosistema de software de HydroGuard durante todo su ciclo de vida. La configuración abarca desde el entorno de desarrollo y la gestión del código fuente hasta las estrategias de despliegue.   
+
+### 6.1.1. Software Development Environment Configuration.
+
+Para asegurar un flujo de trabajo colaborativo y estandarizado, el equipo ha configurado el siguiente entorno de desarrollo, cumpliendo con las restricciones tecnológicas del proyecto:
+
+
+
 ### 6.1.3. Source Code Style Guide & Conventions
 
 El equipo utiliza inglés para nombres de archivos, símbolos de programación, contratos, rutas y mensajes de commit. El español se mantiene en el contenido visible para el usuario y en la documentación dirigida a los stakeholders. Se priorizan nombres completos del lenguaje ubicuo; no se emplean abreviaciones ambiguas ni comentarios que repitan literalmente el código.
