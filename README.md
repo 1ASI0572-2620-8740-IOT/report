@@ -1116,7 +1116,7 @@ Start-with-Simple: Se utilizó esta técnica para dividir el timeline en flujos 
 
 #### 4.1.1.2 Domain Message Flows Modeling
 
-### Caso 0: Registro y autenticación técnica del dispositivo
+##### Caso 0: Registro y autenticación técnica del dispositivo
 
 1. El Administrador registra el dispositivo con su inventario, entorno y capacidades en Device and Operational Configuration.
 2. El backend solicita a Device Identity and Access el provisionamiento de una identidad vinculada con `deviceId` y `organizationId`.
@@ -1124,9 +1124,11 @@ Start-with-Simple: Se utilizó esta técnica para dividir el timeline en flujos 
 4. El dispositivo presenta `deviceId` y credencial mediante HTTPS para obtener un token de corta duración.
 5. Edge API valida el token y utiliza sus claims como identidad confiable para aceptar telemetría, heartbeat, consulta de comandos y acknowledgements.
 
-El diagrama correspondiente queda pendiente de incorporación junto con la actualización de los demás artefactos gráficos.
+<p align="center">
+  <img src="assets/Domain Message Flows Modeling0.png" alt="Flujo de registro y autenticación técnica del dispositivo" width="800">
+</p>
 
-### Caso 1: Configuración y sincronización del dispositivo
+##### Caso 1: Configuración y sincronización del dispositivo
 
 1. El operario configura los parámetros operativos desde la aplicación:
    - Rangos permitidos.
@@ -1147,7 +1149,7 @@ El diagrama correspondiente queda pendiente de incorporación junto con la actua
   <img src="assets/Domain Message Flows Modeling1.png" alt="EventStorming" width="800">
 </p>
 
-### Caso 2: Recepción y evaluación de una medición
+##### Caso 2: Recepción y evaluación de una medición
 
 1. El dispositivo IoT envía una medición de pH y temperatura del agua.
 
@@ -1160,10 +1162,10 @@ El diagrama correspondiente queda pendiente de incorporación junto con la actua
 5. El contexto de Monitoreo y Trazabilidad actualiza la vista de estado del dispositivo.
 
 <p align="center">
-  <img src="assets/Domain Message Flows Modeling2.png" alt="EventStorming" width="800">
+  <img src="assets/Domain Message Flows Modeling2.png" alt="Flujo de recepción y evaluación de una medición autenticada" width="800">
 </p>
 
-### Caso 3: Selección y ejecución de una corrección
+##### Caso 3: Selección, aprobación única y primera actuación
 
 1. Water Quality Treatment and Release detecta agua no conforme y selecciona la estrategia adecuada según la configuración vigente.
 
@@ -1177,11 +1179,11 @@ El diagrama correspondiente queda pendiente de incorporación junto con la actua
 
 6. Monitoring registra el cambio de estado y, cuando corresponda, solicita a FCM la notificación móvil.
 <p align="center">
-  <img src="assets/Domain Message Flows Modeling3.png" alt="EventStorming" width="800">
+  <img src="assets/Domain Message Flows Modeling3.png" alt="Flujo de selección, aprobación única y primera actuación" width="800">
 </p>
 
 
-### Caso 4: Confirmación de la corrección e inicio de espera
+##### Caso 4: Confirmación de la corrección e inicio de espera
 
 1. El dispositivo ejecuta la orden según su entorno: dosificación o actuación física en el producto integral, indicador seguido de modificación del sensor en la simulación, o LED activo mientras el equipo realiza la corrección manual sustitutiva en el prototipo académico.
 
@@ -1196,10 +1198,10 @@ El diagrama correspondiente queda pendiente de incorporación junto con la actua
 6. El contexto de Monitoreo y Trazabilidad actualiza el historial del proceso de tratamiento.
 
 <p align="center">
-  <img src="assets/Domain Message Flows Modeling4.png" alt="EventStorming" width="800">
+  <img src="assets/Domain Message Flows Modeling4.png" alt="Flujo de confirmación, espera y continuación automática" width="800">
 </p>
 
-### Caso 5: Liberación del agua tratada
+##### Caso 5: Liberación del agua tratada
 
 1. El contexto de Calidad de agua y tratamiento confirma que el agua está conforme mediante el evento `AguaConformeConfirmada`.
 
@@ -1212,25 +1214,23 @@ El diagrama correspondiente queda pendiente de incorporación junto con la actua
 5. El contexto de Monitoreo y Trazabilidad registra el proceso como finalizado.
 
 <p align="center">
-  <img src="assets/Domain Message Flows Modeling5.png" alt="EventStorming" width="800">
+  <img src="assets/Domain Message Flows Modeling5.png" alt="Flujo de liberación segura del agua tratada" width="800">
 </p>
 
-### Caso 6: Fallo, alerta y restablecimiento
+##### Caso 6: Fallo, emergencia y restablecimiento
 
-1. Se detecta una condición crítica, como el límite de ciclos alcanzado, una actuación fallida o la pérdida de monitoreo.
+1. Un fallo automático se origina por el límite de ciclos alcanzado, una actuación fallida, una medición crítica o la pérdida de monitoreo. Treatment cambia el proceso a `FALLO`, ordena el cierre de la válvula y Monitoring registra el incidente y solicita la alerta correspondiente.
 
-2. El contexto de Calidad de agua y tratamiento bloquea el proceso.
+2. Una emergencia se origina exclusivamente cuando el Operario activa la parada de emergencia. Esta orden tiene prioridad, interrumpe cualquier actuación, cambia el proceso a `EMERGENCIA`, cierra la válvula y genera una alerta de emergencia.
 
-3. Se emite el evento `ProcesoBloqueado`.
+3. Fallo y emergencia son estados diferentes, aunque ambos conservan la válvula cerrada e impiden nuevas órdenes automáticas.
 
-4. El contexto de Telemetría IoT cierra la válvula del dispositivo.
+4. Después de atender la causa, el Operario solicita un restablecimiento explícito. Treatment verifica que el dispositivo esté disponible y la válvula permanezca cerrada antes de volver a `SIN_INICIAR`.
 
-5. El contexto de Monitoreo y Trazabilidad registra el incidente y genera una alerta crítica.
-
-6. El operario consulta el estado y, después de atender la causa, restablece el proceso.
+5. El sistema exige una nueva medición después del restablecimiento; ninguna lectura anterior puede reutilizarse para liberar el agua.
 
 <p align="center">
-  <img src="assets/Domain Message Flows Modeling6.png" alt="EventStorming" width="800">
+  <img src="assets/Domain Message Flows Modeling6.png" alt="Flujo diferenciado de fallo, emergencia y restablecimiento" width="800">
 </p>
 
 
