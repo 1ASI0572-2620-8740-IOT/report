@@ -114,7 +114,7 @@ Las actividades del proyecto se planificarán, asignarán y evidenciarán progre
       - [4.1.3.3. Software Architecture Container Level Diagrams](#4133-software-architecture-container-level-diagrams)
       - [4.1.3.4. Software Architecture Deployment Diagrams](#4134-software-architecture-deployment-diagrams)
   - [4.2. Tactical-Level Domain-Driven Design](#42-tactical-level-domain-driven-design)
-    - [4.2.1. Bounded Context: Authentication](#421-bounded-context-authentication)
+    - [4.2.1. Bounded Context: Human Identity and Access Management](#421-bounded-context-human-identity-and-access-management)
       - [4.2.1.1. Domain Layer](#4211-domain-layer)
       - [4.2.1.2. Interface Layer](#4212-interface-layer)
       - [4.2.1.3. Application Layer](#4213-application-layer)
@@ -160,6 +160,10 @@ Las actividades del proyecto se planificarán, asignarán y evidenciarán progre
         - [4.2.5.6.1. Bounded Context Domain Layer Class Diagrams](#42561-bounded-context-domain-layer-class-diagrams)
         - [4.2.5.6.2. Bounded Context Database Design Diagram](#42562-bounded-context-database-design-diagram)
     - [4.2.6. Bounded Context: Device Identity and Access](#426-bounded-context-device-identity-and-access)
+      - [4.2.6.1. Domain Layer](#4261-domain-layer)
+      - [4.2.6.2. Interface Layer](#4262-interface-layer)
+      - [4.2.6.3. Application Layer](#4263-application-layer)
+      - [4.2.6.4. Infrastructure Layer](#4264-infrastructure-layer)
 - [Capítulo V: Solution UI/UX Design](#capítulo-v-solution-uiux-design)
   - [5.1. Style Guidelines](#51-style-guidelines)
     - [5.1.1. General Style Guidelines](#511-general-style-guidelines)
@@ -875,7 +879,7 @@ El Ubiquitous Language establece un vocabulario común entre los integrantes del
 
 | EPIC | USER STORY |
 | :--- | :--- |
-| **EP-01: Gestión de Cuentas y Dispositivos**<br>Administración de perfiles de operarios y administradores, autenticación y asignación de dispositivos IoT a los operarios responsables de su monitoreo. | • US-01: Registro de operario<br>• US-02: Autenticación de usuario<br>• US-03: Asignación de dispositivo a operario<br>• US-04: Supervisión de operarios y dispositivos<br>• US-39: Asignación de roles de usuario. |
+| **EP-01: Gestión de Cuentas y Dispositivos**<br>Administración de perfiles de operarios y administradores, autenticación y asignación de dispositivos IoT a los operarios responsables de su monitoreo. | • US-01: Registro de operario<br>• US-02: Autenticación de usuario<br>• US-03: Asignación de dispositivo a operario<br>• US-04: Supervisión de operarios y dispositivos<br>• US-39: Asignación automática de rol según el flujo de alta. |
 | **EP-02: Configuración de Parámetros y Reglas Operativas**<br>Definición del segmento y perfil base de cada dispositivo por parte del administrador, y ajuste operativo de rangos, tiempos de espera, límite de ciclos y modo de liberación por parte del operario responsable de cada dispositivo. | • US-05: Asignación de segmento y perfil base al dispositivo<br>• US-06: Configuración de rangos de calidad del dispositivo<br>• US-07: Configuración del límite de ciclos de corrección<br>• US-08: Configuración del tiempo de espera entre ciclos<br>• US-09: Configuración del modo de liberación<br>• US-10: Consulta de configuración de cualquier dispositivo<br>• US-40: Configuración de estrategia correctiva |
 | **EP-03: Monitoreo de Calidad del Agua**<br>Adquisición, visualización y consulta histórica de las mediciones de pH y temperatura provenientes del dispositivo. | • US-11: Monitoreo de mediciones en tiempo real<br>• US-12: Monitoreo desde aplicación móvil |
 | **EP-04: Evaluación y Tratamiento Correctivo del Agua**<br>Gestión de la conformidad del agua, dosificación correctiva por ciclos, comprobación de variación útil y límites absolutos para definir el estado del proceso. | • US-13: Evaluación de conformidad<br>• US-14: Retención de agua no conforme<br>• US-15: Ejecución de la acción correctiva<br>• US-16: Inicio de un ciclo de corrección<br>• US-17: Bloqueo por límite de ciclos sin efecto<br>• US-18: Reevaluación posterior al tratamiento |
@@ -893,7 +897,7 @@ El Ubiquitous Language establece un vocabulario común entre los integrantes del
 | **US-02** | Autenticación de usuario | Como usuario, quiero autenticarme con mis credenciales, para acceder únicamente a las funciones correspondientes a mi rol (operario o administrador). | **Escenario 1:** Given el usuario posee credenciales válidas, When envía la solicitud de acceso, Then el sistema concede el acceso a las funciones autorizadas para su rol. <br><br>**Escenario 2:** Given las credenciales proporcionadas no son válidas, When el usuario intenta autenticarse, Then el sistema deniega el acceso y registra el intento fallido. <br><br>**Escenario 3:** Given un usuario autenticado intenta acceder a una función que no corresponde a su rol, When realiza la solicitud, Then el sistema rechaza la operación. | EP-01 |
 | **US-03** | Asignación de dispositivo a operario | Como administrador, quiero asignar un dispositivo IoT a un operario, para delegar la responsabilidad de su monitoreo, dado que el alcance actual contempla un operario por dispositivo. | **Escenario 1:** Given un dispositivo sin operario asignado, When el administrador lo vincula a un operario activo, Then el sistema actualiza la asignación y otorga al operario los permisos correspondientes sobre ese dispositivo. <br><br>**Escenario 2:** Given un dispositivo ya cuenta con un operario asignado, When el administrador intenta asignarlo a otro operario, Then el sistema reemplaza la asignación anterior y notifica el cambio. <br><br>**Escenario 3:** Given un operario no está activo, When el administrador intenta asignarle un dispositivo, Then el sistema rechaza la asignación. | EP-01 |
 | **US-04** | Supervisión de operarios y dispositivos | Como administrador, quiero consultar el estado de los operarios y los dispositivos del sistema, para mantener control sobre las asignaciones vigentes, dado que no cuento con un dispositivo propio. | **Escenario 1:** Given existen operarios y dispositivos registrados, When el administrador consulta la relación entre ellos, Then el sistema muestra las asignaciones vigentes. <br><br>**Escenario 2:** Given un dispositivo no tiene operario asignado, When el administrador consulta el listado, Then el sistema lo identifica como pendiente de asignación. | EP-01 |
-| **US-39** | Asignación de roles de usuario | Como administrador, quiero asignar roles específicos (operario, administrador) a las cuentas, para controlar el nivel de acceso al sistema. | **Escenario 1:** Given una cuenta existente, When el administrador asigna el rol, Then el sistema otorga los permisos correspondientes. | EP-01 |
+| **US-39** | Asignación automática de rol según el flujo de alta | Como sistema, quiero asignar el rol Administrador únicamente durante el registro inicial de la organización y el rol Operario durante el alta administrativa de un operario, para impedir cambios manuales de rol y conservar un solo Administrador por organización. | **Escenario 1:** Given una organización nueva, When se completa su registro público, Then el sistema crea su única cuenta con rol Administrador. <br><br>**Escenario 2:** Given el Administrador registra una cuenta de operario, When el alta se completa, Then el sistema asigna el rol Operario sin permitir seleccionar otro rol. <br><br>**Escenario 3:** Given una cuenta existente, When se intenta modificar manualmente su rol, Then el sistema rechaza la operación. | EP-01 |
 | **EP-02** | **Configuración de Parámetros y Reglas Operativas** | Definición del segmento y perfil base de cada dispositivo por parte del administrador, y ajuste operativo de rangos, tiempos de espera, límite de ciclos y modo de liberación por parte del operario responsable de cada dispositivo. | N/A | - |
 | **US-05** | Asignación de segmento y perfil base al dispositivo | Como administrador, quiero asignar un segmento (textil u hidropónico) y un perfil base de configuración a un dispositivo, para habilitar al operario a ajustar sus rangos dentro de un contexto válido. | **Escenario 1:** Given un dispositivo recién asignado a un operario, When el administrador le asigna un segmento y un perfil base, Then el sistema habilita al operario a configurar rangos, tiempos y ciclos dentro de los límites de ese perfil. <br><br>**Escenario 2:** Given un dispositivo no tiene segmento asignado, When el operario intenta configurar un rango, Then el sistema rechaza la operación e indica que falta la asignación del segmento. | EP-02 |
 | **US-06** | Configuración de rangos de calidad del dispositivo | Como operario, quiero configurar los rangos permitidos de pH y temperatura de mi dispositivo dentro del perfil habilitado para mi segmento, para establecer las condiciones que determinan la conformidad del agua en mi proceso. | **Escenario 1:** Given valores numéricos coherentes con los límites físicos del sensor (pH entre 0 y 14, temperatura entre 0 °C y 100 °C), When el operario guarda la configuración, Then el sistema establece los rangos como vigentes para su dispositivo. <br><br>**Escenario 2:** Given un rango configurado con el límite inferior mayor que el límite superior, When el operario intenta guardarlo, Then el sistema rechaza la configuración. <br><br>**Escenario 3:** Given existe una configuración vigente para el dispositivo, When el operario guarda una nueva configuración, Then esta reemplaza a la anterior para las evaluaciones posteriores. | EP-02 |
@@ -1002,7 +1006,7 @@ A continuación se detalla la lista de requerimientos priorizados por valor de n
 | 35 | US-01 | Registro de operario | Como administrador, quiero registrar operarios con sus datos básicos, para habilitar su participación en el monitoreo de un dispositivo asignado. | 2 |
 | 36 | US-02 | Autenticación de usuario | Como usuario, quiero autenticarme con mis credenciales, para acceder únicamente a las funciones correspondientes a mi rol (operario o administrador). | 3 |
 | 37 | US-03 | Asignación de dispositivo a operario | Como administrador, quiero asignar un dispositivo IoT a un operario, para delegar la responsabilidad de su monitoreo, dado que el alcance actual contempla un operario por dispositivo. | 2 |
-| 38 | US-39 | Asignación de roles de usuario | Como administrador, quiero asignar roles específicos (operario, administrador) a las cuentas, para controlar el nivel de acceso al sistema. | 2 |
+| 38 | US-39 | Asignación automática de rol según el flujo de alta | Como sistema, quiero asignar Administrador únicamente en el alta inicial de la organización y Operario en el alta administrativa de cuentas, para impedir cambios manuales de rol y conservar un solo Administrador por organización. | 2 |
 | 39 | US-04 | Supervisión de operarios y dispositivos | Como administrador, quiero consultar el estado de los operarios y los dispositivos del sistema, para mantener control sobre las asignaciones vigentes, dado que no cuento con un dispositivo propio. | 3 |
 | 40 | US-05 | Asignación de segmento y perfil base al dispositivo | Como administrador, quiero asignar un segmento (textil u hidropónico) y un perfil base de configuración a un dispositivo, para habilitar al operario a ajustar sus rangos dentro de un contexto válido. | 3 |
 | 41 | US-10 | Consulta de configuración de cualquier dispositivo | Como administrador, quiero consultar los rangos, el tiempo de espera, el límite de ciclos y el modo de liberación vigentes de cualquier dispositivo, para supervisar la configuración operativa establecida por cada operario. | 2 |
@@ -1027,7 +1031,7 @@ A continuación se detalla la lista de requerimientos priorizados por valor de n
 
 ## 4.1. Strategic-Level Domain-Driven Design
 
-En esta sección se elaborará el diseño de la arquitectura desde una perspectiva estratégica, aplicando el enfoque Attribute-Driven Design (ADD). Logrando vincular los objetivos de negocio con las decisiones arquitectónicas, asegurando que la solución responda los requerimientos funcionales y los atributos de calidad como escalabilidad y desempeño. El propósito es tener una guía sobre definición de contextos, interacciones y responsabilidades dentro del dominio del sistema.
+En esta sección se define el diseño estratégico del dominio mediante Domain-Driven Design. A partir del lenguaje ubicuo, los eventos y las capacidades del negocio se delimitan los bounded contexts, sus responsabilidades y sus relaciones. Las decisiones de arquitectura de software y atributos de calidad se desarrollan posteriormente en la sección 4.1.3.
 
 
 ### 4.1.1. Design-Level EventStorming
@@ -1276,11 +1280,28 @@ Este contexto administra exclusivamente la identidad técnica de los dispositivo
 
 ### 4.1.2. Context Mapping
 
-En esta sección se presenta el Context Mapping vigente. La tabla textual prevalece hasta que se actualice la imagen correspondiente.
+El Context Mapping se elaboró a partir de los eventos, comandos, políticas y capacidades identificados en EventStorming. El equipo agrupó inicialmente las capacidades por propósito y propiedad de datos, y después evaluó si moverlas, dividirlas o compartirlas reducía el acoplamiento sin fragmentar innecesariamente el flujo de tratamiento.
+
+Para comparar los diseños candidatos se utilizaron cuatro criterios: protección del Core Domain, coherencia del lenguaje ubicuo, propiedad exclusiva de los datos y simplicidad operativa para el alcance académico. Se analizaron únicamente alternativas que podían modificar de forma relevante los límites ya identificados.
+
+| Alternativa evaluada | Cambio considerado | Consecuencia principal | Decisión |
+|:--|:--|:--|:--|
+| Unificar Human IAM y Device Identity and Access | Gestionar usuarios y dispositivos dentro de un mismo contexto de identidad. | Mezcla credenciales humanas con credenciales técnicas, ciclos de vida y superficies de ataque diferentes. | Rechazada. Se mantienen contextos separados. |
+| Mantener la identidad técnica dentro de Configuration | Hacer que el registro de inventario también genere, valide y revoque credenciales. | Configuration asumiría responsabilidades de seguridad y expondría detalles que no pertenecen a su modelo operativo. | Rechazada. Configuration solicita el provisionamiento mediante un contrato explícito. |
+| Dividir Treatment en evaluación, corrección y liberación | Crear contextos independientes para cada etapa del proceso. | Introduce coordinación distribuida sobre un mismo estado, ciclos y reglas de seguridad sin aportar valor suficiente al prototipo. | Rechazada para el alcance actual. Treatment conserva el proceso completo. |
+| Duplicar alertas e historial dentro de cada contexto de origen | Permitir que cada contexto genere sus propias vistas y reportes. | Duplica lógica, dificulta una trazabilidad transversal y puede producir estados contradictorios. | Rechazada. Monitoring consume eventos publicados y construye sus proyecciones. |
+| Crear un modelo compartido entre Telemetry y Treatment | Compartir entidades internas para evitar traducciones. | Aumenta el acoplamiento del Core Domain con detalles técnicos del dispositivo. | Rechazada. Se conservan contratos versionados y una relación Customer/Supplier. |
+| Aislar el núcleo de tratamiento y separar capacidades de soporte | Mantener Treatment como Core y separar identidad humana, identidad técnica, configuración, telemetría y monitoreo. | Protege las reglas diferenciadoras y permite que cada contexto evolucione con su propio modelo. | Seleccionada. |
+
+<p align="center">
+  <img src="assets/Context Mapping Alternatives.png" alt="Alternativas de Context Mapping evaluadas para HydroGuard" width="800">
+</p>
+
+La alternativa seleccionada establece seis bounded contexts. `Water Quality Treatment and Release` conserva las decisiones de evaluación, corrección por ciclos y liberación. Los demás contextos ofrecen capacidades de soporte claramente delimitadas. Edge API y Firebase Cloud Messaging permanecen como componentes externos de integración y no se modelan como bounded contexts.
 
 
 <p align="center">
-  <img src="assets/Context Map.png" alt="EventStorming" width="800">
+  <img src="assets/Context Map.png" alt="Context Map final de HydroGuard" width="800">
 </p>
 
 
@@ -1299,6 +1320,7 @@ En esta sección se presenta el Context Mapping vigente. La tabla textual preval
 | Water Quality Treatment and Release | IoT Telemetry and Device Integration | Conformist | Telemetry ejecuta los comandos que Treatment le envía —actuación correctiva física o representada, apertura, cierre y parada— según las capacidades declaradas por el dispositivo; es un ejecutor técnico que no redefine las decisiones del Core. |
 | IoT Telemetry and Device Integration | Operational Monitoring and Traceability | Open Host Service / Published Language | Telemetry emite eventos técnicos (Medición Registrada, Monitoreo Perdido) como lenguaje publicado, consumidos por Monitoring para trazabilidad. |
 | Water Quality Treatment and Release | Operational Monitoring and Traceability | Open Host Service / Published Language | El Core Domain publica sus eventos de negocio (Agua Conforme, Proceso Bloqueado, Liberación Autorizada) como lenguaje publicado; Monitoring los consume para alertas e historial. |
+| Operational Monitoring and Traceability | Firebase Cloud Messaging | Anti-corruption Layer | Monitoring utiliza un puerto propio de notificaciones y adapta las respuestas de FCM sin incorporar su modelo externo al dominio. |
 
 Firebase Cloud Messaging es un sistema externo consumido por Monitoring mediante un puerto de notificaciones. Edge API es la frontera HTTPS/REST de dispositivos. Ninguno constituye un bounded context adicional.
 
@@ -1445,7 +1467,7 @@ Los scopes mínimos son `telemetry:write`, `commands:read` y `commands:ack`. Un 
 
 ## 4.2. Tactical-Level Domain-Driven Design
 
-### 4.2.1. Bounded Context: Authentication
+### 4.2.1. Bounded Context: Human Identity and Access Management
 
 #### 4.2.1.1. Domain Layer
 
