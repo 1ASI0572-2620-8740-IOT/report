@@ -3124,6 +3124,8 @@ Link del figma: https://www.figma.com/design/zwubZlZ5k3BaILJMHbYa7E/Hydroguard--
 
 ### 5.4.4. Applications User Flow Diagrams.
 
+Link: https://www.figma.com/board/aA4hZeydBIROAefYuThSnW/IOT?node-id=3-318&t=q4MvEYSWK2j0nY4e-1
+
 #### Incio de sesión:
 
 [![image.png](https://i.postimg.cc/mkJr1KJH/image.png)](https://postimg.cc/T5jxZNRd)
@@ -3152,33 +3154,63 @@ Aqui se pueden ver las 9 secciones:
 
 [![image.png](https://i.postimg.cc/Y0YSgdHf/image.png)](https://postimg.cc/Wqpjc6th)
 
+[![image.png](https://i.postimg.cc/QNFmwwsm/image.png)](https://postimg.cc/0rq7JtzK)
+
+[![image.png](https://i.postimg.cc/tR8kjk4C/image.png)](https://postimg.cc/nMYBKvm6)
+
 #### Reservorios:
 
 [![image.png](https://i.postimg.cc/KvhjFh78/image.png)](https://postimg.cc/14MscTYk)
+
+[![image.png](https://i.postimg.cc/3JBkBrV5/image.png)](https://postimg.cc/fJVWWsMB)
+
+[![image.png](https://i.postimg.cc/qqGvjQmb/image.png)](https://postimg.cc/sGvz2PC7)
 
 #### Dispositivos:
 
 [![image.png](https://i.postimg.cc/q7FB5PBG/image.png)](https://postimg.cc/SXWpXtMX)
 
+[![image.png](https://i.postimg.cc/5tWD2195/image.png)](https://postimg.cc/bZLmm7td)
+
+[![image.png](https://i.postimg.cc/NfVWZmW1/image.png)](https://postimg.cc/nC4RDjVz)
+
+[![image.png](https://i.postimg.cc/tRr0tLDC/image.png)](https://postimg.cc/hh73KZHH)
+
 #### Perfiles:
 
 [![image.png](https://i.postimg.cc/g2nJdVtp/image.png)](https://postimg.cc/PCnhQwkV)
+
+[![image.png](https://i.postimg.cc/5t31cj5Y/image.png)](https://postimg.cc/zLV4Kzc8)
+
+[![image.png](https://i.postimg.cc/Bbdf5F3Y/image.png)](https://postimg.cc/JHcFMGGZ)
+
+[![image.png](https://i.postimg.cc/MZ4wJCBs/image.png)](https://postimg.cc/dD8p8S4d)
+
+[![image.png](https://i.postimg.cc/8zdgWs0Y/image.png)](https://postimg.cc/bZv5fY80)
 
 #### Monitoreo:
 
 [![image.png](https://i.postimg.cc/g0h2LYP5/image.png)](https://postimg.cc/f3wN6Qyj)
 
+[![image.png](https://i.postimg.cc/Ssc7Y5L4/image.png)](https://postimg.cc/5YNFZskK)
+
 #### Alertas:
 
 [![image.png](https://i.postimg.cc/XqjjPdBd/image.png)](https://postimg.cc/R6Yx63RZ)
+
+[![image.png](https://i.postimg.cc/fR697CRw/image.png)](https://postimg.cc/nXGrpvm5)
 
 #### Incidentes:
 
 [![image.png](https://i.postimg.cc/W1B2vQJv/image.png)](https://postimg.cc/ZWLkPsc7)
 
+[![image.png](https://i.postimg.cc/4xhK3cbv/image.png)](https://postimg.cc/cv019rz6)
+
 #### Trazabilidad:
 
 [![image.png](https://i.postimg.cc/FzC4nq4r/image.png)](https://postimg.cc/MfBNn9HN)
+
+[![image.png](https://i.postimg.cc/nhvH5G1r/image.png)](https://postimg.cc/CRxTnDXp)
 
 ## 5.5. Applications Prototyping.
 
