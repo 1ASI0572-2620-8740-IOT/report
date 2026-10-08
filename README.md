@@ -3047,19 +3047,66 @@ Esta sección define las reglas, estándares y herramientas establecidas para ga
 Para asegurar un flujo de trabajo colaborativo y estandarizado, el equipo ha configurado el siguiente entorno de desarrollo, cumpliendo con las restricciones tecnológicas del proyecto:
 
 **Project & Requirements Management**
-*   **Trello / Jira Software:** Plataforma principal para la gestión ágil del proyecto, administración del Product Backlog, y seguimiento de los Sprint Backlogs. (SaaS: trello.com)
-*   **Discord / Microsoft Teams:** Canales oficiales para las reuniones de *Sprint Planning*, *Daily Standups* y coordinación síncrona.
+*   **Trello** Plataforma principal para la gestión ágil del proyecto, administración del Product Backlog, y seguimiento de los Sprint Backlogs. (SaaS: trello.com)
+  
+<p align="center">
+  <img src="assets/wireframes/trello.png" alt="Trello" width="150">
+</p>
+    
+*   **Discord** Canales oficiales para las reuniones de *Sprint Planning*, *Daily Standups* y coordinación síncrona.
+  
+<p align="center">
+  <img src="assets/wireframes/discord.png" alt="Discord" width="150">
+</p>
 
 **Product UX/UI Design**
 *   **Figma:** Herramienta colaborativa basada en la nube utilizada para la creación de *wireframes*, *mock-ups* de alta fidelidad, *wireflows* y prototipado interactivo de las aplicaciones. (SaaS: figma.com)
+
+<p align="center">
+  <img src="assets/wireframes/figma.png" alt="Figma" width="150">
+</p>
+
 *   **Miro / UXPressia:** Empleado para la digitalización de los artefactos de Needfinding (User Personas, Journey Maps) y las sesiones de *Design-Level EventStorming*.
 
+<p align="center">
+  <img src="assets/wireframes/miro.png" alt="Miro" width="150">
+  <img src="assets/wireframes/uxpressia.png" alt="UXPressia" width="150">
+</p>
+  
 **Software Development**
-*   **Visual Studio Code:** Entorno de desarrollo integrado (IDE) principal, configurado con extensiones de formateo (Prettier, ESLint) para garantizar la consistencia en el código fuente. (Descarga: code.visualstudio.com)
+*   **WebStorm:** Entorno de desarrollo integrado (IDE) avanzado utilizado como herramienta principal para el desarrollo web. Ofrece soporte especializado para TypeScript y herramientas integradas de depuración que aseguran la mantenibilidad del código frontend.
+
+<p align="center">
+  <img src="assets/wireframes/webstorm.png" alt="WebStorm" width="120">
+</p>
+
 *   **Angular Framework:** Framework principal para el desarrollo de la *Web Application* de administración de HydroGuard, utilizando TypeScript.
-*   **Spring Boot / Flask:** Frameworks para el desarrollo de los *RESTful Web Services* y el *Edge API*, respectivamente, permitiendo el procesamiento de la telemetría IoT.
+
+<p align="center">
+  <img src="assets/wireframes/angular.png" alt="Angular Framework" width="120">
+</p>
+
+*   **Spring Boot / Flask:** Frameworks para el desarrollo de los *RESTful Web Services* y el *Edge API*, respectivamente, permitiendo el procesamiento ágil e integración de la telemetría IoT.
 *   **C++ (Arduino/ESP32):** Lenguaje y entorno para la programación del *Embedded System* en el prototipo físico IoT de monitoreo de calidad del agua.
-*   **Structurizr:** Herramienta implementada bajo *Diagram-as-Code* para la elaboración de la arquitectura de software bajo el modelo C4.
+*   **VisualParadigma:** Herramienta implementada bajo *Diagram-as-Code* para la elaboración de la arquitectura de software bajo el modelo C4.
+
+<p align="center">
+  <img src="assets/wireframes/VisualParadigma.png" alt="VisualParadigma" width="120">
+</p>
+
+**Source Code Management & Deployment**
+
+*   **GitHub:** Plataforma de control de versiones y colaboración en la nube, indispensable para gestionar los repositorios del proyecto, habilitar el trabajo en equipo mediante Git y asegurar la trazabilidad del código fuente aplicando GitFlow.
+
+<p align="center">
+  <img src="assets/wireframes/github.png" alt="GitHub" width="120">
+</p>
+
+*   **Firebase / GitHub Pages:** Plataformas utilizadas para el despliegue continuo de la aplicación web (*Hosting*) y el *Landing Page*, facilitando la configuración de entornos y publicación rápida del frontend.
+
+<p align="center">
+  <img src="assets/wireframes/firebase.png" alt="Firebase" width="120">
+</p>
 
 ### 6.1.2. Source Code Management
 
