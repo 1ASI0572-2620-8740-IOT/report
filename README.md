@@ -3032,6 +3032,30 @@ Esta vista permite al Operario consultar la información asociada a su cuenta, g
 
 
 
+### 5.4.3. Applications Mock-ups.
+
+Link del figma: https://www.figma.com/design/zwubZlZ5k3BaILJMHbYa7E/Hydroguard---Mockups?node-id=2-2&t=ViQYkj32RbslL2e6-1
+
+Inicio de sesión:
+
+[![image.png](https://i.postimg.cc/C5c9qzYT/image.png)](https://postimg.cc/ZvyfkYCV)
+
+[![image.png](https://i.postimg.cc/Ss3gFCyT/image.png)](https://postimg.cc/TLjVny5g)
+
+Operarios:
+
+[![image.png](https://i.postimg.cc/8cyPzp0m/image.png)](https://postimg.cc/RJHzPB9W)
+
+[![image.png](https://i.postimg.cc/0NqxxKyH/image.png)](https://postimg.cc/ZWjXxR3r)
+
+[![image.png](https://i.postimg.cc/Fs9Ttrvj/image.png)](https://postimg.cc/vDNrfdcB)
+
+[![image.png](https://i.postimg.cc/D0fLNzGC/image.png)](https://postimg.cc/CBtRBSmD)
+
+### 5.4.4. Applications User Flow Diagrams.
+
+
+
 ## 5.5. Applications Prototyping.
 
 
