@@ -3128,7 +3128,29 @@ Link del figma: https://www.figma.com/design/zwubZlZ5k3BaILJMHbYa7E/Hydroguard--
 
 ## 5.5. Applications Prototyping.
 
+## 5.6 IoT Device Design
 
+Link: https://app.cirkitdesigner.com/project/cbdef7ec-8293-4e11-94d1-0bf2247bb2e8
+
+### 1. Alimentación y Tierra
+* **ESP32 5V (VIN) → LCD VCC / Sensor pH VCC:** Proveen los 5V requeridos para la retroiluminación de la pantalla y la precisión del amplificador operacional del pH.
+* **ESP32 3V3 → LM35 (+Vs):** Alimenta el sensor analógico de temperatura.
+* **ESP32 GND:** Línea común de tierra conectada a todos los periféricos (LCD, pH, LM35 y Cátodos de los LEDs).
+
+### 2. Entradas Analógicas (Sensores)
+* **Sensor de pH (A0) → GPIO34:** Transmite la tensión proporcional a la acidez/alcalinidad del fluido.
+* **LM35 (Vout) → GPIO36 (VP):** Envía la señal de temperatura a razón de 10 mV por cada °C.
+
+### 3. Pantalla LCD 1602 (I2C)
+* **SDA → GPIO21**
+* **SCL → GPIO22**
+* Muestra las lecturas procesadas de pH (Fila 1) y Temperatura en °C (Fila 2).
+
+### 4. Indicadores Visuales (LEDs)
+* **GPIO18 → Resistencia → Ánodo LED Rojo:** Se activa cuando cualquiera de las variables sale del rango seguro ($pH < 6.5$, $pH > 8.5$, $T < 15^{\circ}C$ o $T > 30^{\circ}C$).
+* **GPIO19 → Resistencia → Ánodo LED Verde:** Se activa únicamente cuando ambas variables se encuentran dentro de los rangos óptimos establecidos.
+
+[![image.png](https://i.postimg.cc/kMbPnVwb/image.png)](https://postimg.cc/w3gG2jCq)
 
 # Capítulo VI: Product Implementation, Validation & Deployment
 
