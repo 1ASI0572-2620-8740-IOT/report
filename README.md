@@ -3124,7 +3124,49 @@ Link del figma: https://www.figma.com/design/zwubZlZ5k3BaILJMHbYa7E/Hydroguard--
 
 ### 5.4.4. Applications User Flow Diagrams.
 
+#### Incio de sesión:
 
+[![image.png](https://i.postimg.cc/mkJr1KJH/image.png)](https://postimg.cc/T5jxZNRd)
+
+#### Secciones:
+
+[![image.png](https://i.postimg.cc/5tb2zB75/image.png)](https://postimg.cc/YvD7KWwj)
+
+#### Operarios:
+
+[![image.png](https://i.postimg.cc/pTyxQqDc/image.png)](https://postimg.cc/YGcJMNDQ)
+
+#### Grupos:
+
+[![image.png](https://i.postimg.cc/Y0YSgdHf/image.png)](https://postimg.cc/Wqpjc6th)
+
+#### Reservorios:
+
+[![image.png](https://i.postimg.cc/KvhjFh78/image.png)](https://postimg.cc/14MscTYk)
+
+#### Dispositivos:
+
+[![image.png](https://i.postimg.cc/q7FB5PBG/image.png)](https://postimg.cc/SXWpXtMX)
+
+#### Perfiles:
+
+[![image.png](https://i.postimg.cc/g2nJdVtp/image.png)](https://postimg.cc/PCnhQwkV)
+
+#### Monitoreo:
+
+[![image.png](https://i.postimg.cc/g0h2LYP5/image.png)](https://postimg.cc/f3wN6Qyj)
+
+#### Alertas:
+
+[![image.png](https://i.postimg.cc/XqjjPdBd/image.png)](https://postimg.cc/R6Yx63RZ)
+
+#### Incidentes:
+
+[![image.png](https://i.postimg.cc/W1B2vQJv/image.png)](https://postimg.cc/ZWLkPsc7)
+
+#### Trazabilidad:
+
+[![image.png](https://i.postimg.cc/FzC4nq4r/image.png)](https://postimg.cc/MfBNn9HN)
 
 ## 5.5. Applications Prototyping.
 
