@@ -3224,11 +3224,41 @@ Los tipos aceptados incluyen `feat`, `fix`, `docs`, `test`, `refactor`, `style`,
 
 ### 6.1.4. Software Deployment Configuration
 
-La configuración de despliegue de HydroGuard contempló dos líneas de entrega: la landing page pública y la aplicación web administrativa. La landing page se diseñó para ser desplegada de forma ágil y económica en GitHub Pages, con el objetivo de presentar el producto, comunicar su propuesta de valor y permitir la captación de interés por parte de clientes o evaluadores. Este tipo de despliegue es apropiado para un sitio estático, porque reduce costos y facilita la publicación inmediata del contenido.
+**Deployment Landing Page:**
+La Landing Page de HydroGuard se publica en GitHub Pages desde la rama `main` y la carpeta raíz del repositorio.
 
-La aplicación web administrativa se configuró para ejecutarse en un entorno de desarrollo local mediante Angular y para poder publicarse posteriormente en un hosting web que soporte aplicaciones SPA. La configuración contempló la separación entre entornos, la preparación de variables de configuración y la gestión de rutas, favoreciendo la transición desde desarrollo a producción sin romper la aplicación ni exponer información sensible.
+Se crea el repositorio de GitHub para alojar los archivos fuente de la Landing Page, `index.html`, `styles.css` y `script.js`.
 
-Este enfoque de despliegue resulta adecuado para un proyecto académico con evolución incremental: la landing page se despliega rápidamente para difusión del proyecto, mientras la app web queda preparada para crecer con más módulos, servicios y autenticación en iteraciones posteriores. La estrategia define un proceso claro para publicar versiones estables, mantener consistencia con la arquitectura del sistema y reducir el riesgo operativo antes de la entrega final.
+<p align="center">
+  <img src="assets/landingpage-repositorio.png" alt="Repositorio LandingPage con los archivos fuente del sitio" width="800">
+</p>
+<p align="center"><em>Repositorio fuente: aquí se aloja el código; todavía no es la vista del sitio publicado.</em></p>
+
+Se habilita GitHub Pages seleccionando la rama `main` y la carpeta raíz (`/`). La captura muestra además la URL asignada y el estado de publicación.
+
+<p align="center">
+  <img src="assets/githubpages.png" alt="Configuración de GitHub Pages desde la rama main y carpeta raíz" width="800">
+</p>
+<p align="center"><em>Configuración de Pages: fuente seleccionada y enlace al sitio publicado.</em></p>
+
+Finalmente, se comprueba el resultado abriendo [la Landing Page desplegada](https://1asi0572-2620-8740-iot.github.io/LandingPage/). Esta captura corresponde al sitio visible para los visitantes, no al repositorio ni a su configuración.
+
+<p align="center">
+  <img src="assets/Lading-Page-Deployado.png" alt="Vista de la Landing Page de HydroGuard ya desplegada en el navegador" width="800">
+</p>
+<p align="center"><em>Resultado del despliegue: Landing Page abierta desde su URL pública.</em></p>
+
+El diagrama C4 resume este despliegue: el repositorio activa el workflow de GitHub Actions, que publica el sitio estático en GitHub Pages; los visitantes acceden mediante HTTPS.
+
+```mermaid
+flowchart LR
+    repo["Repositorio LandingPage<br/>main / raíz"]
+    action["GitHub Actions<br/>pages build and deployment"]
+    pages["GitHub Pages<br/>sitio estático"]
+    browser["Navegador del visitante"]
+    repo --> action --> pages
+    browser -->|"HTTPS"| pages
+```
 ## 6.2. Landing Page, Services & Applications Implementation
 Esta sección detalla la ejecución técnica y colaborativa del desarrollo de HydroGuard. Se documentan las ceremonias, el diseño técnico y las evidencias de código que transforman los requisitos y modelos de arquitectura en componentes de software desplegables, estructurados de manera iterativa por *Sprints*.
 
