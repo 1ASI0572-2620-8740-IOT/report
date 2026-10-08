@@ -3032,9 +3032,211 @@ Esta vista permite al Operario consultar la información asociada a su cuenta, g
 
 
 
+### 5.4.3. Applications Mock-ups.
+
+Link del figma: https://www.figma.com/design/zwubZlZ5k3BaILJMHbYa7E/Hydroguard---Mockups?node-id=2-2&t=ViQYkj32RbslL2e6-1
+
+#### Inicio de sesión:
+
+[![image.png](https://i.postimg.cc/C5c9qzYT/image.png)](https://postimg.cc/ZvyfkYCV)
+
+[![image.png](https://i.postimg.cc/Ss3gFCyT/image.png)](https://postimg.cc/TLjVny5g)
+
+#### Operarios:
+
+[![image.png](https://i.postimg.cc/8cyPzp0m/image.png)](https://postimg.cc/RJHzPB9W)
+
+[![image.png](https://i.postimg.cc/0NqxxKyH/image.png)](https://postimg.cc/ZWjXxR3r)
+
+[![image.png](https://i.postimg.cc/Fs9Ttrvj/image.png)](https://postimg.cc/vDNrfdcB)
+
+[![image.png](https://i.postimg.cc/D0fLNzGC/image.png)](https://postimg.cc/CBtRBSmD)
+
+#### Grupos:
+
+[![image.png](https://i.postimg.cc/dQzTdnHT/image.png)](https://postimg.cc/xq3CVGS0)
+
+[![image.png](https://i.postimg.cc/6QgBSbGm/image.png)](https://postimg.cc/kVNrRcsQ)
+
+[![image.png](https://i.postimg.cc/3JRb48qd/image.png)](https://postimg.cc/Z0GLXS4S)
+
+#### Reservorios:
+
+[![image.png](https://i.postimg.cc/c42TvQYD/image.png)](https://postimg.cc/ykh053L9)
+
+[![image.png](https://i.postimg.cc/wB6NMvf8/image.png)](https://postimg.cc/Yvs0ypBb)
+
+[![image.png](https://i.postimg.cc/fRg3zK9V/image.png)](https://postimg.cc/QF1NScSD)
+
+#### Dispositivos:
+
+[![image.png](https://i.postimg.cc/XJg4JjzT/image.png)](https://postimg.cc/7GbptkDV)
+
+[![image.png](https://i.postimg.cc/MG78PZqS/image.png)](https://postimg.cc/nsh5MJXR)
+
+[![image.png](https://i.postimg.cc/CLqrHPwt/image.png)](https://postimg.cc/RNvTvT6Q)
+
+#### Perfiles:
+
+[![image.png](https://i.postimg.cc/J4NvC6SD/image.png)](https://postimg.cc/rKpQSJVM)
+
+[![image.png](https://i.postimg.cc/ht4yWSLd/image.png)](https://postimg.cc/PPcz1nFX)
+
+[![image.png](https://i.postimg.cc/GhdzGcSH/image.png)](https://postimg.cc/8sXhVVGS)
+
+#### Estado Operacional:
+
+[![image.png](https://i.postimg.cc/Ssc7Y5L4/image.png)](https://postimg.cc/5YNFZskK)
+
+#### Alertas:
+
+[![image.png](https://i.postimg.cc/fR697CRw/image.png)](https://postimg.cc/nXGrpvm5)
+
+#### Incidentes:
+
+[![image.png](https://i.postimg.cc/4xhK3cbv/image.png)](https://postimg.cc/cv019rz6)
+
+#### Trazabilidad:
+
+[![image.png](https://i.postimg.cc/nhvH5G1r/image.png)](https://postimg.cc/CRxTnDXp)
+
+#### Mobile:
+
+[![1.jpg](https://i.postimg.cc/rm9QzsLM/1.jpg)](https://postimg.cc/MMvyFWTF)
+
+[![2.jpg](https://i.postimg.cc/cCpT6bLn/2.jpg)](https://postimg.cc/7JNSWX7H)
+
+[![3.jpg](https://i.postimg.cc/QCTw65Bq/3.jpg)](https://postimg.cc/YLtd0vz4)
+
+[![image.png](https://i.postimg.cc/sDV7VzmQ/image.png)](https://postimg.cc/CdQzNWWS)
+
+[![5.jpg](https://i.postimg.cc/yNDPXK3M/5.jpg)](https://postimg.cc/wtdLgSV2)
+
+[![6.jpg](https://i.postimg.cc/bNLH7rxh/6.jpg)](https://postimg.cc/nCjD7HSR)
+
+[![image.png](https://i.postimg.cc/ZnjcT5yH/image.png)](https://postimg.cc/m1zMjRj1)
+
+[![8.jpg](https://i.postimg.cc/KjfBhpgR/8.jpg)](https://postimg.cc/Fkf7jZp4)
+
+[![9.jpg](https://i.postimg.cc/W1hrxnpt/9.jpg)](https://postimg.cc/181fqDqZ)
+
+[![10.jpg](https://i.postimg.cc/zXfRRjgd/10.jpg)](https://postimg.cc/bdKv71Lb)
+
+### 5.4.4. Applications User Flow Diagrams.
+
+Link: https://www.figma.com/board/aA4hZeydBIROAefYuThSnW/IOT?node-id=3-318&t=q4MvEYSWK2j0nY4e-1
+
+#### Incio de sesión:
+
+[![image.png](https://i.postimg.cc/mkJr1KJH/image.png)](https://postimg.cc/T5jxZNRd)
+
+[![image.png](https://i.postimg.cc/5981BPTb/image.png)](https://postimg.cc/SjQwqGmv)
+
+#### Secciones:
+
+Aqui se pueden ver las 9 secciones:
+
+[![image.png](https://i.postimg.cc/5tb2zB75/image.png)](https://postimg.cc/YvD7KWwj)
+
+[![image.png](https://i.postimg.cc/8cyPzp0m/image.png)](https://postimg.cc/RJHzPB9W)
+
+#### Operarios:
+
+[![image.png](https://i.postimg.cc/pTyxQqDc/image.png)](https://postimg.cc/YGcJMNDQ)
+
+[![image.png](https://i.postimg.cc/Jn13pYKC/image.png)](https://postimg.cc/Jy2Bnq9p)
+
+[![image.png](https://i.postimg.cc/bNGxVt0X/image.png)](https://postimg.cc/Vd80d5H4)
+
+[![image.png](https://i.postimg.cc/Njm1BvP6/image.png)](https://postimg.cc/pmV9J4vr)
+
+#### Grupos:
+
+[![image.png](https://i.postimg.cc/Y0YSgdHf/image.png)](https://postimg.cc/Wqpjc6th)
+
+[![image.png](https://i.postimg.cc/QNFmwwsm/image.png)](https://postimg.cc/0rq7JtzK)
+
+[![image.png](https://i.postimg.cc/tR8kjk4C/image.png)](https://postimg.cc/nMYBKvm6)
+
+#### Reservorios:
+
+[![image.png](https://i.postimg.cc/KvhjFh78/image.png)](https://postimg.cc/14MscTYk)
+
+[![image.png](https://i.postimg.cc/3JBkBrV5/image.png)](https://postimg.cc/fJVWWsMB)
+
+[![image.png](https://i.postimg.cc/qqGvjQmb/image.png)](https://postimg.cc/sGvz2PC7)
+
+#### Dispositivos:
+
+[![image.png](https://i.postimg.cc/q7FB5PBG/image.png)](https://postimg.cc/SXWpXtMX)
+
+[![image.png](https://i.postimg.cc/5tWD2195/image.png)](https://postimg.cc/bZLmm7td)
+
+[![image.png](https://i.postimg.cc/NfVWZmW1/image.png)](https://postimg.cc/nC4RDjVz)
+
+[![image.png](https://i.postimg.cc/tRr0tLDC/image.png)](https://postimg.cc/hh73KZHH)
+
+#### Perfiles:
+
+[![image.png](https://i.postimg.cc/g2nJdVtp/image.png)](https://postimg.cc/PCnhQwkV)
+
+[![image.png](https://i.postimg.cc/5t31cj5Y/image.png)](https://postimg.cc/zLV4Kzc8)
+
+[![image.png](https://i.postimg.cc/Bbdf5F3Y/image.png)](https://postimg.cc/JHcFMGGZ)
+
+[![image.png](https://i.postimg.cc/MZ4wJCBs/image.png)](https://postimg.cc/dD8p8S4d)
+
+[![image.png](https://i.postimg.cc/8zdgWs0Y/image.png)](https://postimg.cc/bZv5fY80)
+
+#### Monitoreo:
+
+[![image.png](https://i.postimg.cc/g0h2LYP5/image.png)](https://postimg.cc/f3wN6Qyj)
+
+[![image.png](https://i.postimg.cc/Ssc7Y5L4/image.png)](https://postimg.cc/5YNFZskK)
+
+#### Alertas:
+
+[![image.png](https://i.postimg.cc/XqjjPdBd/image.png)](https://postimg.cc/R6Yx63RZ)
+
+[![image.png](https://i.postimg.cc/fR697CRw/image.png)](https://postimg.cc/nXGrpvm5)
+
+#### Incidentes:
+
+[![image.png](https://i.postimg.cc/W1B2vQJv/image.png)](https://postimg.cc/ZWLkPsc7)
+
+[![image.png](https://i.postimg.cc/4xhK3cbv/image.png)](https://postimg.cc/cv019rz6)
+
+#### Trazabilidad:
+
+[![image.png](https://i.postimg.cc/FzC4nq4r/image.png)](https://postimg.cc/MfBNn9HN)
+
+[![image.png](https://i.postimg.cc/nhvH5G1r/image.png)](https://postimg.cc/CRxTnDXp)
+
 ## 5.5. Applications Prototyping.
 
+## 5.6 IoT Device Design
 
+Link: https://app.cirkitdesigner.com/project/cbdef7ec-8293-4e11-94d1-0bf2247bb2e8
+
+### 1. Alimentación y Tierra
+* **ESP32 5V (VIN) → LCD VCC / Sensor pH VCC:** Proveen los 5V requeridos para la retroiluminación de la pantalla y la precisión del amplificador operacional del pH.
+* **ESP32 3V3 → LM35 (+Vs):** Alimenta el sensor analógico de temperatura.
+* **ESP32 GND:** Línea común de tierra conectada a todos los periféricos (LCD, pH, LM35 y Cátodos de los LEDs).
+
+### 2. Entradas Analógicas (Sensores)
+* **Sensor de pH (A0) → GPIO34:** Transmite la tensión proporcional a la acidez/alcalinidad del fluido.
+* **LM35 (Vout) → GPIO36 (VP):** Envía la señal de temperatura a razón de 10 mV por cada °C.
+
+### 3. Pantalla LCD 1602 (I2C)
+* **SDA → GPIO21**
+* **SCL → GPIO22**
+* Muestra las lecturas procesadas de pH (Fila 1) y Temperatura en °C (Fila 2).
+
+### 4. Indicadores Visuales (LEDs)
+* **GPIO18 → Resistencia → Ánodo LED Rojo:** Se activa cuando cualquiera de las variables sale del rango seguro ($pH < 6.5$, $pH > 8.5$, $T < 15^{\circ}C$ o $T > 30^{\circ}C$).
+* **GPIO19 → Resistencia → Ánodo LED Verde:** Se activa únicamente cuando ambas variables se encuentran dentro de los rangos óptimos establecidos.
+
+[![image.png](https://i.postimg.cc/kMbPnVwb/image.png)](https://postimg.cc/w3gG2jCq)
 
 # Capítulo VI: Product Implementation, Validation & Deployment
 
