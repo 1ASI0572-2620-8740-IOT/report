@@ -3128,13 +3128,25 @@ Link del figma: https://www.figma.com/design/zwubZlZ5k3BaILJMHbYa7E/Hydroguard--
 
 [![image.png](https://i.postimg.cc/mkJr1KJH/image.png)](https://postimg.cc/T5jxZNRd)
 
+[![image.png](https://i.postimg.cc/5981BPTb/image.png)](https://postimg.cc/SjQwqGmv)
+
 #### Secciones:
 
+Aqui se pueden ver las 9 secciones:
+
 [![image.png](https://i.postimg.cc/5tb2zB75/image.png)](https://postimg.cc/YvD7KWwj)
+
+[![image.png](https://i.postimg.cc/8cyPzp0m/image.png)](https://postimg.cc/RJHzPB9W)
 
 #### Operarios:
 
 [![image.png](https://i.postimg.cc/pTyxQqDc/image.png)](https://postimg.cc/YGcJMNDQ)
+
+[![image.png](https://i.postimg.cc/Jn13pYKC/image.png)](https://postimg.cc/Jy2Bnq9p)
+
+[![image.png](https://i.postimg.cc/bNGxVt0X/image.png)](https://postimg.cc/Vd80d5H4)
+
+[![image.png](https://i.postimg.cc/Njm1BvP6/image.png)](https://postimg.cc/pmV9J4vr)
 
 #### Grupos:
 
