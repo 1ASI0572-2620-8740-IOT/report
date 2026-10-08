@@ -3036,13 +3036,13 @@ Esta vista permite al Operario consultar la información asociada a su cuenta, g
 
 Link del figma: https://www.figma.com/design/zwubZlZ5k3BaILJMHbYa7E/Hydroguard---Mockups?node-id=2-2&t=ViQYkj32RbslL2e6-1
 
-Inicio de sesión:
+#### Inicio de sesión:
 
 [![image.png](https://i.postimg.cc/C5c9qzYT/image.png)](https://postimg.cc/ZvyfkYCV)
 
 [![image.png](https://i.postimg.cc/Ss3gFCyT/image.png)](https://postimg.cc/TLjVny5g)
 
-Operarios:
+#### Operarios:
 
 [![image.png](https://i.postimg.cc/8cyPzp0m/image.png)](https://postimg.cc/RJHzPB9W)
 
@@ -3051,6 +3051,54 @@ Operarios:
 [![image.png](https://i.postimg.cc/Fs9Ttrvj/image.png)](https://postimg.cc/vDNrfdcB)
 
 [![image.png](https://i.postimg.cc/D0fLNzGC/image.png)](https://postimg.cc/CBtRBSmD)
+
+#### Grupos:
+
+[![image.png](https://i.postimg.cc/dQzTdnHT/image.png)](https://postimg.cc/xq3CVGS0)
+
+[![image.png](https://i.postimg.cc/6QgBSbGm/image.png)](https://postimg.cc/kVNrRcsQ)
+
+[![image.png](https://i.postimg.cc/3JRb48qd/image.png)](https://postimg.cc/Z0GLXS4S)
+
+#### Reservorios:
+
+[![image.png](https://i.postimg.cc/c42TvQYD/image.png)](https://postimg.cc/ykh053L9)
+
+[![image.png](https://i.postimg.cc/wB6NMvf8/image.png)](https://postimg.cc/Yvs0ypBb)
+
+[![image.png](https://i.postimg.cc/fRg3zK9V/image.png)](https://postimg.cc/QF1NScSD)
+
+#### Dispositivos:
+
+[![image.png](https://i.postimg.cc/XJg4JjzT/image.png)](https://postimg.cc/7GbptkDV)
+
+[![image.png](https://i.postimg.cc/MG78PZqS/image.png)](https://postimg.cc/nsh5MJXR)
+
+[![image.png](https://i.postimg.cc/CLqrHPwt/image.png)](https://postimg.cc/RNvTvT6Q)
+
+#### Perfiles:
+
+[![image.png](https://i.postimg.cc/J4NvC6SD/image.png)](https://postimg.cc/rKpQSJVM)
+
+[![image.png](https://i.postimg.cc/ht4yWSLd/image.png)](https://postimg.cc/PPcz1nFX)
+
+[![image.png](https://i.postimg.cc/GhdzGcSH/image.png)](https://postimg.cc/8sXhVVGS)
+
+#### Estado Operacional:
+
+[![image.png](https://i.postimg.cc/Ssc7Y5L4/image.png)](https://postimg.cc/5YNFZskK)
+
+#### Alertas:
+
+[![image.png](https://i.postimg.cc/fR697CRw/image.png)](https://postimg.cc/nXGrpvm5)
+
+#### Incidentes:
+
+[![image.png](https://i.postimg.cc/4xhK3cbv/image.png)](https://postimg.cc/cv019rz6)
+
+#### Trazabilidad:
+
+[![image.png](https://i.postimg.cc/nhvH5G1r/image.png)](https://postimg.cc/CRxTnDXp)
 
 ### 5.4.4. Applications User Flow Diagrams.
 
