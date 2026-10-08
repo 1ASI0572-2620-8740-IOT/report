@@ -3264,6 +3264,25 @@ Esta sección detalla la ejecución técnica y colaborativa del desarrollo de Hy
 
 ### 6.2.1. Sprint 1
 
+#### 6.2.1.1. Sprint Planning 1
+
+En esta sesión, el equipo acordó orientar el Sprint 1 a construir el primer incremento visible de HydroGuard: publicar el *Landing Page* y desarrollar la base de la aplicación web para el Administrador. El alcance técnico se organizó en torno a los bounded contexts de acceso administrativo, configuración de dispositivos, telemetría y monitoreo operativo. La arquitectura y los contratos entre componentes se trabajaron como base para la integración progresiva; no se considera que esto demuestre por sí solo una integración funcional de extremo a extremo con el backend o la aplicación móvil.
+
+| **Sprint #** | Sprint 1 |
+|:--|:--|
+| **Sprint Planning Background** | |
+| Date | 2026-09-01 |
+| Time | 11:00 AM |
+| Location | Servidor del equipo en Discord |
+| Prepared By | Santur Tello, Andrea Elizabeth |
+| Attendees (to planning meeting) | Gomez Hurtado, Miguel Angel / Rodriguez Macedo, Sebastian / Santur Tello, Andrea Elizabeth / Prieto Mantari, Leonardo Fabrizzio Junior / Rios Pacheco, Hector Javier / Olivera Barzola, Eric Marlon |
+| Sprint 0 Review Summary | No aplica: el Sprint 1 es el primer Sprint del proyecto. |
+| Sprint 0 Retrospective Summary | No aplica: el Sprint 1 es el primer Sprint del proyecto. |
+| **Sprint Goal & User Stories** | |
+| Sprint 1 Goal | **Nuestro enfoque** es publicar el *Landing Page* de HydroGuard y desarrollar las principales vistas de la aplicación web del Administrador para gestionar accesos, operarios y dispositivos, y consultar telemetría e incidencias.<br><br>**Creemos que** este primer incremento permitirá presentar la solución y validar la experiencia web antes de completar la integración con los servicios reales.<br><br>**Esto se confirmará cuando** el sitio esté publicado, las vistas administrativas implementadas puedan recorrerse y el frontend compile correctamente. |
+| Sprint 1 Velocity | 37 Story Points, correspondientes a las User Stories cuyos Work-items aparecen como Done en el Sprint Backlog. |
+| Sum of Story Points | 47 Story Points, correspondientes a las User Stories incluidas en el Sprint Backlog y estimadas en el Product Backlog. |
+
 #### 6.2.1.2. Aspect Leaders and Collaborators
 
 La matriz LACX identifica quién lidera (**L**) y quién colabora (**C**) en cada aspecto transversal o funcional. El liderazgo no implica propiedad exclusiva: la persona líder mantiene la coherencia del aspecto, coordina decisiones e integra los aportes; los colaboradores revisan, implementan dependencias y aportan evidencia. La asignación se deriva de las ramas, commits y entregables realizados hasta el 3 de octubre de 2026.
@@ -3312,6 +3331,53 @@ La evidencia muestra una colaboración complementaria: el repositorio de product
 Los principales retos de integración fueron mantener rutas y providers coherentes al agregar módulos, compartir el layout sin acoplar los dominios, alinear DTOs con contratos mock y sostener una interfaz homogénea. El equipo los afrontó mediante una arquitectura por capas, puertos de repositorio, tokens visuales compartidos, contratos versionados y verificación de compilación antes de integrar. Como mejora para el siguiente sprint, se acordó reforzar la revisión cruzada mediante pull requests, adjuntar evidencia de pruebas a cada historia, asociar commits con identificadores del Product Backlog y registrar decisiones de arquitectura cuando afecten a más de un bounded context.
 
 En conjunto, el sprint permitió trabajar de manera paralela sin perder una experiencia unificada. La separación de responsabilidades facilitó el liderazgo distribuido, mientras que las convenciones de código, las ramas por funcionalidad y la documentación común ofrecieron puntos concretos de coordinación.
+
+#### 6.2.1.3. Sprint Backlog 1
+
+El Sprint Backlog 1 reúne las historias seleccionadas para el incremento web de HydroGuard y las tareas necesarias para implementarlas. Incluye el *Landing Page*, la aplicación web del Administrador y tareas transversales de desarrollo y verificación. Se consideran **29 Work-items**, con una estimación total de **118 horas**. Las 17 historias suman **47 Story Points**; las que figuran completadas representan **37 Story Points**.
+
+**Sprint #:** Sprint 1
+
+**Tablero de Trello:**
+
+<p align="center">
+  <img src="assets/trello_backlog.jpg" alt="Lista Product Backlog del tablero de HydroGuard en Trello" width="800">
+</p>
+<p align="center"><em>Lista Product Backlog del tablero de HydroGuard en Trello.</em></p>
+
+**URL público del Board:** Pendiente de incorporar.
+
+| Story Id | Story Title | Task Id | Task Title | Task Description | Estimation (Hours) | Assigned To | Status (To-do / InProcess / ToReview / Done) |
+|:--|:--|:--|:--|:--|:--:|:--|:--|
+| US-34 | Comprensión de la propuesta de valor | T-01 | Maquetar la sección principal del Landing Page | Presentar el problema del control manual del agua y la propuesta de valor de HydroGuard. | 3 | Por confirmar | Por confirmar |
+|  |  | T-02 | Aplicar los tokens de la guía de estilo | Usar la tipografía, la paleta y los espaciados definidos en la sección 5.1 en el Landing Page. | 2 | Por confirmar | Por confirmar |
+| US-35 | Explicación del funcionamiento de la solución | T-03 | Maquetar la sección de funcionamiento | Explicar las etapas de lectura, evaluación, corrección, espera y liberación. | 3 | Por confirmar | Por confirmar |
+| US-36 | Segmentos y casos de uso | T-04 | Maquetar la sección de segmentos | Describir los casos de uso del segmento textil y del hidropónico. | 3 | Por confirmar | Por confirmar |
+| US-37 | Solicitud de contacto o demostración | T-05 | Implementar el formulario de contacto | Formulario con validación de campos obligatorios y mensaje de confirmación. | 4 | Por confirmar | Por confirmar |
+| US-38 | Acceso a la plataforma | T-06 | Enlazar el acceso con la aplicación web | El llamado a la acción dirige a la vista de inicio de sesión de la aplicación web. | 1 | Por confirmar | Por confirmar |
+| US-01 | Registro de operario | T-07 | Implementar el caso de uso de alta de operario | Modelo de dominio, puerto de repositorio, adaptador Axios y caso de uso `create-operator-account`. | 3 | Rios Pacheco, Hector Javier | Done |
+|  |  | T-08 | Implementar la página de alta de operario | Página `operator-create` con validaciones de formulario y retroalimentación de errores. | 3 | Rios Pacheco, Hector Javier | Done |
+|  |  | T-09 | Implementar el código de primer acceso | Casos de uso y página `first-access-code` para generar, consultar y revocar el código. | 3 | Rios Pacheco, Hector Javier | Done |
+| US-02 | Autenticación de usuario | T-10 | Implementar el inicio de sesión del Administrador | Página `admin-login`, caso de uso `sign-in-admin` y manejo de la sesión. | 4 | Rios Pacheco, Hector Javier | Done |
+|  |  | T-11 | Proteger las rutas de la aplicación | Guard `adminAuthGuard` sobre el layout y las rutas hijas, con cierre de sesión. | 3 | Rios Pacheco, Hector Javier | Done |
+| US-39 | Asignación automática de rol según el flujo de alta | T-12 | Implementar el registro de empresa | Página `administrator-register`: crea la empresa y su única cuenta Administradora. | 4 | Rios Pacheco, Hector Javier | Done |
+| US-03 | Asignación de dispositivo a operario | T-13 | Implementar perfiles de operario y asignaciones | Páginas `operator-profiles`, `operator-profile-detail` y casos de uso de asignación y cierre. | 5 | Rodriguez Macedo, Sebastian | Done |
+| US-04 | Supervisión de operarios y dispositivos | T-14 | Implementar el listado y el detalle de operarios | Páginas `users` y `user-detail` con estado y filtros. | 4 | Rios Pacheco, Hector Javier | Done |
+|  |  | T-15 | Implementar el listado y el detalle de dispositivos | Páginas `devices` y `device-detail` con disponibilidad y asignación vigente. | 5 | Rodriguez Macedo, Sebastian | Done |
+| US-05 | Asignación de segmento y perfil base al dispositivo | T-16 | Implementar grupos de trabajo y reservorios | Páginas de listado, alta y detalle de `work-groups` y `reservoirs` del segmento de la empresa. | 6 | Rodriguez Macedo, Sebastian | Done |
+|  |  | T-17 | Implementar el alta de dispositivos | Página `device-create` con entorno operativo y capacidades, y vinculación exclusiva con el reservorio. | 4 | Rodriguez Macedo, Sebastian | Done |
+| US-10 | Consulta de configuración de cualquier dispositivo | T-18 | Implementar la consulta de versiones de configuración | Página `configuration-versions` con la configuración vigente y su historial de versiones. | 4 | Rodriguez Macedo, Sebastian | Done |
+| US-11 | Monitoreo de mediciones en tiempo real | T-19 | Implementar la vista general de telemetría | Página `telemetry-overview` con la última medición y la disponibilidad de cada dispositivo. | 5 | Santur Tello, Andrea Elizabeth | Done |
+|  |  | T-20 | Simular el heartbeat en el servidor mock | Ruta `mock-api/telemetry` que calcula la disponibilidad según el intervalo de heartbeat. | 3 | Santur Tello, Andrea Elizabeth | Done |
+| US-27 | Consulta del historial de cualquier dispositivo | T-21 | Implementar el historial de mediciones por dispositivo | Página `device-telemetry-detail` con paginación y ordenamiento por fecha, pH y temperatura. | 5 | Santur Tello, Andrea Elizabeth | Done |
+| US-25 | Alerta por pérdida de monitoreo | T-22 | Implementar el tablero de monitoreo | Página `monitoring-dashboard` con el estado operativo por dispositivo y la pérdida de monitoreo. | 5 | Prieto Mantari, Leonardo Fabrizzio Junior | Done |
+|  |  | T-23 | Implementar las alertas operativas | Página `operational-alerts` con filtros por prioridad y estado. | 4 | Prieto Mantari, Leonardo Fabrizzio Junior | Done |
+| US-24 | Registro de incidente de calidad | T-24 | Implementar los incidentes de calidad | Página `quality-incidents` para registrar y consultar incidentes. | 5 | Prieto Mantari, Leonardo Fabrizzio Junior | Done |
+| US-30 | Trazabilidad de tratamiento y liberación | T-25 | Implementar la trazabilidad | Página `traceability` que relaciona mediciones, ciclos de corrección y liberaciones. | 6 | Prieto Mantari, Leonardo Fabrizzio Junior | Done |
+| — | Tareas transversales | T-26 | Implementar el servidor mock base | `mock-api/server.mjs` y `db.json` con los contratos `/api/v1` de IAM por empresa. | 6 | Rios Pacheco, Hector Javier | Done |
+|  |  | T-27 | Implementar el layout y la guía de estilo web | Layout de administración con barra lateral y componentes compartidos de carga, vacío y error. | 6 | Prieto Mantari, Leonardo Fabrizzio Junior | Done |
+|  |  | T-28 | Automatizar la verificación de los bounded contexts | Scripts `verify:bc02` y `verify:bc05`, y sus guías de pruebas en `docs/`. | 6 | Rodriguez Macedo, Sebastian | Done |
+|  |  | T-29 | Documentar convenciones de código y matriz LACX | Secciones 6.1.3 y 6.2.1.2 del informe. | 3 | Prieto Mantari, Leonardo Fabrizzio Junior | Done |
 
 # Conclusiones
 
