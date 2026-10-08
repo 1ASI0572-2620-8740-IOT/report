@@ -3110,13 +3110,63 @@ Para asegurar un flujo de trabajo colaborativo y estandarizado, el equipo ha con
 
 ### 6.1.2. Source Code Management
 
-La gestión del código fuente se realizó con Git y GitHub bajo una estrategia de ramificación basada en GitFlow, con el objetivo de mantener un desarrollo ordenado, rastreable y sostenible. La rama `main` se destinó al código estable y listo para producción, mientras que `develop` funcionó como línea principal de integración de cambios funcionales. Las ramas `feature/*` se utilizaron para nuevas funcionalidades, `hotfix/*` para correcciones urgentes y `release/*` para preparar entregas oficiales antes de un despliegue final.
+Para el seguimiento de las modificaciones del código fuente, el equipo utiliza **Git** como sistema de control de versiones y **GitHub** como plataforma, dentro de la organización pública <https://github.com/1ASI0572-2620-8740-IOT>. Cada producto digital cuenta con su propio repositorio:
+ 
+* **Informe del proyecto:** <https://github.com/1ASI0572-2620-8740-IOT/report>
+* **Frontend Web Application (Administrador):** <https://github.com/1ASI0572-2620-8740-IOT/hydroguard-admin-web-frontend>
+* **Landing Page:** <https://github.com/1ASI0572-2620-8740-IOT/LandingPage>
+ 
+Para la gestión de versiones, el equipo adopta **GitFlow**, el modelo de ramificación descrito por Vincent Driessen en el artículo *A successful Git branching model*. Este modelo permite establecer claramente las convenciones de ramificación que se aplican en el proyecto: cada funcionalidad se desarrolla en su propia rama, el código en integración se mantiene separado del código publicado y cada versión publicada queda identificada.
+ 
+<p align="center">
+  <img src="assets/gitflow-hydroguard.png" alt="GitFlow aplicado en HydroGuard" width="900">
+  <br><em>Modelo de ramificación GitFlow de HydroGuard (Mermaid). Los nombres de las ramas feature corresponden al Sprint 1; los commits, las ramas release y hotfix y las etiquetas de versión ilustran la convención de nombres y de integración.</em>
+</p>
+* **Rama principal (Main branch):** contiene el código publicado. Cada commit que llega a esta rama corresponde a una versión y se etiqueta.
+  * Notación: `main`
+* **Rama de desarrollo (Develop branch):** acumula las últimas funcionalidades terminadas para la siguiente versión. Funciona como entorno de integración y prueba continua.
+  * Debe derivarse de: `main`
+  * Notación: `develop`
+* **Rama de características (Feature branch):** se utiliza para desarrollar una funcionalidad o un bounded context, de modo que el avance incompleto no afecte la rama de integración. Cada feature tiene su propia rama.
+  * Debe derivarse de: `develop`
+  * Debe fusionarse de vuelta a: `develop`
+  * Notación: `feature/<bounded-context>-<capacidad>`, en minúsculas y en `kebab-case`. Ejemplos del Sprint 1: `feature/iam-operator-management`, `feature/device-configuration`, `feature/iot-telemetry` y `feature/operational-monitoring`.
+* **Rama de lanzamiento (Release branch):** prepara una nueva versión; permite correcciones menores y ajustes finales mientras `develop` continúa recibiendo funcionalidades.
+  * Debe derivarse de: `develop`
+  * Debe fusionarse con: `main` y `develop`
+  * Notación: `release/<MAJOR.MINOR.PATCH>`. Ejemplo: `release/0.1.0`.
+* **Rama de corrección rápida (Hotfix branch):** corrige un defecto crítico detectado en la versión publicada, sin esperar al siguiente lanzamiento.
+  * Debe derivarse de: `main`
+  * Debe fusionarse con: `main` y `develop`
+  * Notación: `hotfix/<descripcion-corta>`. Ejemplo: `hotfix/fix-session-redirect`.
+La integración en `develop` y en `main` se realiza mediante *pull request*. Para ello, la compilación debe finalizar sin errores y, cuando el bounded context cuenta con verificación automatizada, los scripts `verify:bc02` o `verify:bc05` deben aprobarse. Como mejora acordada para el siguiente Sprint, cada pull request recibe la revisión de al menos otro integrante y referencia el identificador del Product Backlog que implementa.
+ 
+**Conventional Commits:**
+ 
+El equipo adopta **Conventional Commits** para estructurar los mensajes de commit de manera estándar y semántica, lo que facilita la comunicación y la generación automática del registro de cambios. Los mensajes se redactan en inglés con el formato `<type>(<scope>): <imperative summary>`.
+ 
+Tipos de commit:
+ 
+* `feat`: nuevas funcionalidades.
+* `fix`: correcciones de errores.
+* `docs`: cambios o mejoras en la documentación.
+* `style`: cambios de formato que no afectan la ejecución.
+* `refactor`: mejoras en la estructura o legibilidad del código sin cambiar su comportamiento.
+* `test`: adición o modificación de pruebas y scripts de verificación.
+* `build` y `ci`: compilación, dependencias e integración continua.
+* `chore`: tareas de mantenimiento.
+El `scope` identifica el bounded context o el componente: `iam`, `configuration`, `telemetry`, `monitoring`, `layout`, `mock-api`, `build` o `report`. Ejemplos reales del repositorio del frontend:
+ 
+```text
+feat(mock-api): add mock routes and seed datasets for operational monitoring (BC-05)
+feat(monitoring): implement application use cases and query state management
+test(monitoring): add automated verification script and npm script for BC-05
+docs(monitoring): add testing and verification guide for BC-05 bounded context
+fix(build): resolve app configuration typing and template warnings
+```
+ 
+ 
 
-Esta estructura permitió a todo el equipo trabajar en paralelo sin mezclar avances incompletos con versiones estables. Cada cambio se integró con revisión mínima y se mantuvo registro del historial mediante commits descriptivos. Para asegurar consistencia, se adoptó la convención de Conventional Commits, utilizando tipos como `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore` y `perf`. Esta decisión mejoró la trazabilidad del desarrollo y permitió distinguir rápidamente cambios funcionales, correcciones, documentación y mejoras de la infraestructura técnica.
-
-El uso de ramas por bounded context y funcionalidad fue especialmente útil para la aplicación administrativa. Se trabajó por módulos como configuración, monitoreo y trazabilidad, evitando que el desarrollo de una vista afectara el resto del sistema. Además, la revisión cruzada mediante pull requests permitió validar cambios, detectar riesgos de integración y reforzar la calidad del código antes de su fusión a la rama principal de desarrollo.
-
-En conjunto, la estrategia de control de versiones resultó apropiada para un proyecto de TI académico con carga colaborativa, ya que permitió mantener un historial claro, controlar la evolución del producto y facilitar la continuidad en futuras iteraciones del desarrollo.
 
 ### 6.1.3. Source Code Style Guide & Conventions
 
