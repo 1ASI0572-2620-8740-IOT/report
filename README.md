@@ -86,6 +86,14 @@ El análisis muestra una distribución de responsabilidades por artefacto y espe
 
 La evidencia verificable se encuentra en el [historial de commits del repositorio `report`](https://github.com/1ASI0572-2620-8740-IOT/report/commits).
 
+La siguiente captura de GitHub Contributors, aportada por el equipo, complementa los insights con una vista de la actividad semanal y la participación por cuenta.
+
+![Evidencia de colaboración en GitHub: commits semanales y contribuciones por cuenta](assets/report-collaboration-insights-github.png)
+
+*Figura: actividad de GitHub Contributors en el periodo del 4 de julio al 3 de octubre de 2026.*
+
+El periodo mostrado en la captura es distinto al corte de TB1 utilizado en las tablas del informe (21 de septiembre al 9 de octubre de 2026). Por ello, los conteos de la imagen no se comparan directamente con esas tablas ni reemplazan sus valores. La cantidad de commits constituye evidencia de actividad versionada, no una medida aislada de calidad o esfuerzo.
+
 
 ## Tabla de Contenidos
 
@@ -4287,6 +4295,8 @@ Las tablas siguientes resumen los commits incorporados entre el 21 de septiembre
 
 
 La actividad puede consultarse en [los commits del frontend](https://github.com/1ASI0572-2620-8740-IOT/hydroguard-admin-web-frontend/commits), [los commits del Mock API](https://github.com/1ASI0572-2620-8740-IOT/mock-api/commits), [los commits del Landing Page](https://github.com/1ASI0572-2620-8740-IOT/LandingPage/commits) y [los commits del informe](https://github.com/1ASI0572-2620-8740-IOT/report/commits).
+
+Como evidencia visual complementaria, la captura de GitHub Contributors se incluye en [TB1 — Project Report Collaboration Insights](#tb1--project-report-collaboration-insights), junto con la aclaración de su periodo y alcance.
 
 Los principales retos de integración fueron mantener rutas y providers coherentes al agregar módulos, compartir el layout sin acoplar los dominios, alinear DTOs con contratos mock y sostener una interfaz homogénea. El equipo los afrontó mediante una arquitectura por capas, puertos de repositorio, tokens visuales compartidos, contratos versionados y verificación de compilación antes de integrar. Como mejora para el siguiente sprint, se acordó reforzar la revisión cruzada mediante pull requests, adjuntar evidencia de pruebas a cada historia, asociar commits con identificadores del Product Backlog y registrar decisiones de arquitectura cuando afecten a más de un bounded context.
 
