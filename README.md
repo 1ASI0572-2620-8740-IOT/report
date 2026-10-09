@@ -3597,7 +3597,7 @@ El Sprint Backlog 1 reúne las historias seleccionadas para el incremento web de
 
 #### 6.2.1.5. Testing Suite Evidence for Sprint Review
 
-*Pendiente de completar.*
+En este entregable no hay entrega ni historias de usuario relacionadas con el backend de HydroGuard, por lo que no hay pruebas de testeo.
 
 #### 6.2.1.6. Execution Evidence for Sprint Review
 
