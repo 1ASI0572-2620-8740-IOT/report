@@ -71,7 +71,11 @@ Las actividades del proyecto se planificarán, asignarán y evidenciarán progre
 
 ## Tabla de Contenidos
 
+- [Registro de Versiones del Informe](#registro-de-versiones-del-informe)
+- [Project Report Collaboration Insights](#project-report-collaboration-insights)
+  - [TB1 — Project Report Collaboration Insights](#tb1--project-report-collaboration-insights)
 - [Student Outcome](#student-outcome)
+  - [TB1 — Student Outcome](#tb1--student-outcome)
 - [Capítulo I: Introducción](#capítulo-i-introducción)
   - [1.1. Startup Profile](#11-startup-profile)
     - [1.1.1. Descripción de la startup](#111-descripción-de-la-startup)
@@ -94,6 +98,9 @@ Las actividades del proyecto se planificarán, asignarán y evidenciarán progre
     - [2.2.1. Diseño de entrevistas](#221-diseño-de-entrevistas)
     - [2.2.2. Registro de entrevistas](#222-registro-de-entrevistas)
     - [2.2.3. Análisis de entrevistas](#223-análisis-de-entrevistas)
+      - [2.2.3.1. Análisis del Segmento 1](#2231-análisis-del-segmento-1-micro-y-pequeñas-empresas-textiles-con-teñido-o-acabado)
+      - [2.2.3.2. Análisis del Segmento 2](#2232-análisis-del-segmento-2-pequeños-productores-y-microempresas-hidropónicas)
+      - [2.2.3.3. Matriz Comparativa Inter-Segmentos y Hallazgos Globales](#2233-matriz-comparativa-inter-segmentos-y-hallazgos-globales-n6)
   - [2.3. Needfinding](#23-needfinding)
     - [2.3.1. User Personas](#231-user-personas)
     - [2.3.2. User Task Matrix](#232-user-task-matrix)
@@ -112,6 +119,7 @@ Las actividades del proyecto se planificarán, asignarán y evidenciarán progre
       - [4.1.1.2. Domain Message Flows Modeling](#4112-domain-message-flows-modeling)
       - [4.1.1.3. Bounded Context Canvases](#4113-bounded-context-canvases)
     - [4.1.2. Context Mapping](#412-context-mapping)
+      - [4.1.2.1. Línea base de implementación](#4121-línea-base-de-implementación)
     - [4.1.3. Software Architecture](#413-software-architecture)
       - [4.1.3.1. Software Architecture System Landscape Diagram](#4131-software-architecture-system-landscape-diagram)
       - [4.1.3.2. Software Architecture Context Level Diagrams](#4132-software-architecture-context-level-diagrams)
@@ -194,6 +202,7 @@ Las actividades del proyecto se planificarán, asignarán y evidenciarán progre
     - [6.1.2. Source Code Management](#612-source-code-management)
     - [6.1.3. Source Code Style Guide & Conventions](#613-source-code-style-guide--conventions)
     - [6.1.4. Software Deployment Configuration](#614-software-deployment-configuration)
+      - [Frontend Web Applications](#frontend-web-applications)
   - [6.2. Landing Page, Services & Applications Implementation](#62-landing-page-services--applications-implementation)
     - [6.2.1. Sprint 1](#621-sprint-1)
       - [6.2.1.1. Sprint Planning 1](#6211-sprint-planning-1)
@@ -204,11 +213,16 @@ Las actividades del proyecto se planificarán, asignarán y evidenciarán progre
       - [6.2.1.6. Execution Evidence for Sprint Review](#6216-execution-evidence-for-sprint-review)
       - [6.2.1.7. Services Documentation Evidence for Sprint Review](#6217-services-documentation-evidence-for-sprint-review)
       - [6.2.1.8. Software Deployment Evidence for Sprint Review](#6218-software-deployment-evidence-for-sprint-review)
+        - [Landing Page — Deployment Evidence](#landing-page--deployment-evidence)
+        - [Frontend Web Applications — Deployment Evidence](#frontend-web-applications--deployment-evidence)
       - [6.2.1.9. Team Collaboration Insights during Sprint](#6219-team-collaboration-insights-during-sprint)
 - [Conclusiones](#conclusiones)
   - [Conclusiones y recomendaciones](#conclusiones-y-recomendaciones)
 - [Bibliografía](#bibliografía)
 - [Anexos](#anexos)
+  - [Final Project Keynote](#final-project-keynote)
+  - [Final Project Individual Member Performance Report (by Team Leader)](#final-project-individual-member-performance-report-by-team-leader)
+  - [Archivos complementarios (.zip)](#archivos-complementarios-zip)
 
 ## Student Outcome
 
