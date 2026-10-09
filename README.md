@@ -3479,6 +3479,10 @@ flowchart LR
     repo --> action --> pages
     browser -->|"HTTPS"| pages
 ```
+#### Frontend Web Applications
+
+*Pendiente de completar.*
+
 ## 6.2. Landing Page, Services & Applications Implementation
 Esta sección detalla la ejecución técnica y colaborativa del desarrollo de HydroGuard. Se documentan las ceremonias, el diseño técnico y las evidencias de código que transforman los requisitos y modelos de arquitectura en componentes de software desplegables, estructurados de manera iterativa por *Sprints*.
 
@@ -3517,40 +3521,6 @@ La matriz LACX identifica quién lidera (**L**) y quién colabora (**C**) en cad
 | Olivera Barzola, Eric Marlon (`EricMOB-afk`) | C | C | C | C | C | L |
 
 La matriz refleja la división por bounded contexts aplicada en el frontend: Hector lideró IAM y la estructura administrativa; Sebastian, Device and Operational Configuration; Andrea, IoT Telemetry; y Leonardo, Operational Monitoring and Traceability. Miguel, Sebastian y Eric sostuvieron entregables de modelado, arquitectura y documentación. UX/UI es transversal, pero Leonardo lidera su formalización para esta entrega al convertir los patrones ya implementados en una guía verificable.
-
-#### 6.2.1.9. Team Collaboration Insights during Sprint
-
-Durante el Sprint 1, el equipo distribuyó el trabajo por bounded contexts y utilizó ramas de funcionalidad para mantener aislados los cambios: `feature/iam-operator-management`, `feature/device-configuration`, `feature/iot-telemetry` y `feature/operational-monitoring` en el frontend; y ramas personales o documentales para el informe. La integración se realizó sobre ramas compartidas, conservando commits pequeños y descriptivos que permiten reconstruir la evolución del producto.
-
-En el frontend, Operational Monitoring and Traceability se desarrolló después de Device and Operational Configuration para aprovechar su estructura y lenguaje visual. Se incorporaron progresivamente modelos de dominio, puerto de repositorio, adaptador Axios, casos de uso, estado de presentación, datos mock, tablero, alertas, incidencias, trazabilidad, rutas y acceso desde la barra lateral. Esta secuencia redujo el acoplamiento y permitió verificar el bounded context de manera independiente.
-
-Las siguientes gráficas resumen los commits alcanzados en todas las ramas locales/remotas disponibles al cierre del 3 de octubre de 2026. Las identidades duplicadas por nombre o correo se consolidaron por integrante. El conteo representa actividad versionada y no se interpreta por sí solo como medida de calidad o esfuerzo.
-
-```mermaid
-pie showData
-    title Commits del frontend por integrante — Sprint 1
-    "Hector (Khafna09)" : 22
-    "Leonardo (leitojunior36)" : 10
-    "Sebastian (Shiftinnnnn)" : 4
-    "Andrea (andreli-star)" : 1
-```
-
-```mermaid
-pie showData
-    title Commits del informe por integrante — hasta Sprint 1
-    "Miguel (Miguel26112001)" : 28
-    "Hector (Khafna09)" : 20
-    "Andrea (andreli-star)" : 18
-    "Leonardo (leitojunior36)" : 8
-    "Eric (EricMOB-afk)" : 6
-    "Sebastian (Shiftinnnnn)" : 2
-```
-
-La evidencia muestra una colaboración complementaria: el repositorio de producto concentra a quienes implementaron los primeros bounded contexts, mientras el repositorio del informe visibiliza el trabajo de modelado y documentación de los seis integrantes. Por ello, el equipo considera ambos repositorios al evaluar participación. La actividad puede consultarse en [los commits del frontend](https://github.com/1ASI0572-2620-8740-IOT/hydroguard-admin-web-frontend/commits) y [los commits del informe](https://github.com/1ASI0572-2620-8740-IOT/report/commits).
-
-Los principales retos de integración fueron mantener rutas y providers coherentes al agregar módulos, compartir el layout sin acoplar los dominios, alinear DTOs con contratos mock y sostener una interfaz homogénea. El equipo los afrontó mediante una arquitectura por capas, puertos de repositorio, tokens visuales compartidos, contratos versionados y verificación de compilación antes de integrar. Como mejora para el siguiente sprint, se acordó reforzar la revisión cruzada mediante pull requests, adjuntar evidencia de pruebas a cada historia, asociar commits con identificadores del Product Backlog y registrar decisiones de arquitectura cuando afecten a más de un bounded context.
-
-En conjunto, el sprint permitió trabajar de manera paralela sin perder una experiencia unificada. La separación de responsabilidades facilitó el liderazgo distribuido, mientras que las convenciones de código, las ramas por funcionalidad y la documentación común ofrecieron puntos concretos de coordinación.
 
 #### 6.2.1.3. Sprint Backlog 1
 
@@ -3598,6 +3568,14 @@ El Sprint Backlog 1 reúne las historias seleccionadas para el incremento web de
 |  |  | T-27 | Implementar el layout y la guía de estilo web | Layout de administración con barra lateral y componentes compartidos de carga, vacío y error. | 6 | Prieto Mantari, Leonardo Fabrizzio Junior | Done |
 |  |  | T-28 | Automatizar la verificación de los bounded contexts | Scripts `verify:bc02` y `verify:bc05`, y sus guías de pruebas en `docs/`. | 6 | Rodriguez Macedo, Sebastian | Done |
 |  |  | T-29 | Documentar convenciones de código y matriz LACX | Secciones 6.1.3 y 6.2.1.2 del informe. | 3 | Prieto Mantari, Leonardo Fabrizzio Junior | Done |
+
+#### 6.2.1.4. Development Evidence for Sprint Review
+
+*Pendiente de completar.*
+
+#### 6.2.1.5. Testing Suite Evidence for Sprint Review
+
+*Pendiente de completar.*
 
 #### 6.2.1.6. Execution Evidence for Sprint Review
 
@@ -3768,6 +3746,54 @@ El módulo Tratamientos presenta el buscador, el filtro por estado y las columna
 La secuencia muestra la incorporación de una empresa y su Administrador, el alta del Operario, la organización del grupo y reservorio, el registro y vínculo del dispositivo, la asignación al perfil y la emisión del código de primer acceso. Las vistas de monitoreo, alertas, incidentes, trazabilidad, telemetría y tratamientos documentan además cómo se presenta el sistema cuando aún no dispone de comunicación ni registros operativos.
 
 Para evidenciar la integración de extremo a extremo en una revisión posterior, será necesario complementar estas capturas con la recepción de heartbeat y mediciones, la aparición y atención de alertas, el registro efectivo de incidentes, los eventos de trazabilidad y la ejecución de tratamientos. Las imágenes actuales no acreditan comunicación con el dispositivo físico, uso del código en la app móvil ni integración con servicios reales.
+
+#### 6.2.1.7. Services Documentation Evidence for Sprint Review
+
+*Pendiente de completar.*
+
+#### 6.2.1.8. Software Deployment Evidence for Sprint Review
+
+##### Landing Page — Deployment Evidence
+
+*Pendiente de completar.*
+
+##### Frontend Web Applications — Deployment Evidence
+
+*Pendiente de completar.*
+
+#### 6.2.1.9. Team Collaboration Insights during Sprint
+
+Durante el Sprint 1, el equipo distribuyó el trabajo por bounded contexts y utilizó ramas de funcionalidad para mantener aislados los cambios: `feature/iam-operator-management`, `feature/device-configuration`, `feature/iot-telemetry` y `feature/operational-monitoring` en el frontend; y ramas personales o documentales para el informe. La integración se realizó sobre ramas compartidas, conservando commits pequeños y descriptivos que permiten reconstruir la evolución del producto.
+
+En el frontend, Operational Monitoring and Traceability se desarrolló después de Device and Operational Configuration para aprovechar su estructura y lenguaje visual. Se incorporaron progresivamente modelos de dominio, puerto de repositorio, adaptador Axios, casos de uso, estado de presentación, datos mock, tablero, alertas, incidencias, trazabilidad, rutas y acceso desde la barra lateral. Esta secuencia redujo el acoplamiento y permitió verificar el bounded context de manera independiente.
+
+Las siguientes gráficas resumen los commits alcanzados en todas las ramas locales/remotas disponibles al cierre del 3 de octubre de 2026. Las identidades duplicadas por nombre o correo se consolidaron por integrante. El conteo representa actividad versionada y no se interpreta por sí solo como medida de calidad o esfuerzo.
+
+```mermaid
+pie showData
+    title Commits del frontend por integrante — Sprint 1
+    "Hector (Khafna09)" : 22
+    "Leonardo (leitojunior36)" : 10
+    "Sebastian (Shiftinnnnn)" : 4
+    "Andrea (andreli-star)" : 1
+```
+
+```mermaid
+pie showData
+    title Commits del informe por integrante — hasta Sprint 1
+    "Miguel (Miguel26112001)" : 28
+    "Hector (Khafna09)" : 20
+    "Andrea (andreli-star)" : 18
+    "Leonardo (leitojunior36)" : 8
+    "Eric (EricMOB-afk)" : 6
+    "Sebastian (Shiftinnnnn)" : 2
+```
+
+La evidencia muestra una colaboración complementaria: el repositorio de producto concentra a quienes implementaron los primeros bounded contexts, mientras el repositorio del informe visibiliza el trabajo de modelado y documentación de los seis integrantes. Por ello, el equipo considera ambos repositorios al evaluar participación. La actividad puede consultarse en [los commits del frontend](https://github.com/1ASI0572-2620-8740-IOT/hydroguard-admin-web-frontend/commits) y [los commits del informe](https://github.com/1ASI0572-2620-8740-IOT/report/commits).
+
+Los principales retos de integración fueron mantener rutas y providers coherentes al agregar módulos, compartir el layout sin acoplar los dominios, alinear DTOs con contratos mock y sostener una interfaz homogénea. El equipo los afrontó mediante una arquitectura por capas, puertos de repositorio, tokens visuales compartidos, contratos versionados y verificación de compilación antes de integrar. Como mejora para el siguiente sprint, se acordó reforzar la revisión cruzada mediante pull requests, adjuntar evidencia de pruebas a cada historia, asociar commits con identificadores del Product Backlog y registrar decisiones de arquitectura cuando afecten a más de un bounded context.
+
+En conjunto, el sprint permitió trabajar de manera paralela sin perder una experiencia unificada. La separación de responsabilidades facilitó el liderazgo distribuido, mientras que las convenciones de código, las ramas por funcionalidad y la documentación común ofrecieron puntos concretos de coordinación.
 
 # Conclusiones
 
