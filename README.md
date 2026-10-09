@@ -3214,6 +3214,12 @@ Aqui se pueden ver las 9 secciones:
 
 ## 5.5. Applications Prototyping.
 
+Como complemento de los wireframes, mock-ups y flujos descritos en la sección 5.4, el equipo presenta el video de demostración del prototipo de HydroGuard. Este recurso permite revisar la propuesta de interacción y navegación del producto durante la revisión de su diseño UX/UI.
+
+**Video del prototipo:** [Ver demostración del prototipo de HydroGuard](https://youtu.be/lFp6UkqJ40U).
+
+La evidencia de ejecución de la aplicación web se documenta por separado en [6.2.1.6. Execution Evidence for Sprint Review](#6216-execution-evidence-for-sprint-review).
+
 ## 5.6 IoT Device Design
 
 Link: https://app.cirkitdesigner.com/project/cbdef7ec-8293-4e11-94d1-0bf2247bb2e8
