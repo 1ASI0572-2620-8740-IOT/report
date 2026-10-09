@@ -2854,6 +2854,18 @@ La acción `Aprobar corrección` solo aparecerá en `PENDIENTE_APROBACION_CORREC
 
 En todos los canales se respetará el comportamiento del botón Atrás, se conservará el foco visible para navegación por teclado en web, se utilizarán etiquetas accesibles para iconos y se informarán cambios de ruta o estado mediante títulos y encabezados consistentes.
 
+## 5.3. Landing Page UI Design
+
+*Pendiente de completar.*
+
+### 5.3.1. Landing Page Wireframe
+
+*Pendiente de completar.*
+
+### 5.3.2. Landing Page Mock-up
+
+*Pendiente de completar.*
+
 ## 5.4. Applications UX/UI Design.
 
 ### 5.4.1. Applications Wireframes.
@@ -3030,7 +3042,7 @@ Esta vista permite al Operario consultar la información asociada a su cuenta, g
 
 ### 5.4.2. Applications Wireflow Diagrams.
 
-
+*Pendiente de completar.*
 
 ### 5.4.3. Applications Mock-ups.
 
@@ -3220,7 +3232,7 @@ Como complemento de los wireframes, mock-ups y flujos descritos en la sección 5
 
 La evidencia de ejecución de la aplicación web se documenta por separado en [6.2.1.6. Execution Evidence for Sprint Review](#6216-execution-evidence-for-sprint-review).
 
-## 5.6 IoT Device Design
+## 5.6. IoT Device Design
 
 Link: https://app.cirkitdesigner.com/project/cbdef7ec-8293-4e11-94d1-0bf2247bb2e8
 
