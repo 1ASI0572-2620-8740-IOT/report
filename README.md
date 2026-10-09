@@ -3587,6 +3587,176 @@ El Sprint Backlog 1 reúne las historias seleccionadas para el incremento web de
 |  |  | T-28 | Automatizar la verificación de los bounded contexts | Scripts `verify:bc02` y `verify:bc05`, y sus guías de pruebas en `docs/`. | 6 | Rodriguez Macedo, Sebastian | Done |
 |  |  | T-29 | Documentar convenciones de código y matriz LACX | Secciones 6.1.3 y 6.2.1.2 del informe. | 3 | Prieto Mantari, Leonardo Fabrizzio Junior | Done |
 
+#### 6.2.1.6. Execution Evidence for Sprint Review
+
+Durante el Sprint 1 se desarrolló el primer incremento de la aplicación web del Administrador de HydroGuard. Las siguientes capturas documentan el recorrido por el registro empresarial, la gestión de Operarios, la estructura operativa y las vistas de supervisión. La evidencia se organiza por flujo funcional, presentando la acción o consulta y el resultado visible en pantalla.
+
+El escenario utiliza la empresa SomosTextiles, el grupo Planta Textil Surco, el Operario Hector Rios, el reservorio Revisar Maquina 03 y el dispositivo dev-115 (HydroGuard-Pro-V1). Las pantallas corresponden al entorno de demostración del frontend descrito en el Sprint 1, que contempla contratos y datos mock; las capturas con fecha visible registran la demostración del 9 de octubre de 2026.
+
+**Evidencias visuales de ejecución — aplicación web del Administrador**
+
+**1. Registro de empresa y acceso administrativo**
+
+El recorrido comienza con el registro de la empresa SomosTextiles, perteneciente al segmento de producción textil, junto con los datos de su Administrador. Después del registro, la pantalla de acceso presenta el mensaje «Empresa y administrador registrados correctamente. Ya puede iniciar sesión». Las vistas posteriores muestran el panel con una sesión de Administrador abierta. Estas evidencias corresponden al flujo de alta empresarial y acceso contemplado en US-39 y US-02.
+
+<p align="center">
+  <img src="assets/execution-evidence/sprint-1/01-registro-empresa.png" alt="EE-01: Formulario de registro de la empresa y su Administrador." width="650">
+</p>
+<p align="center"><em>EE-01. Formulario de registro de la empresa y su Administrador.</em></p>
+
+<p align="center">
+  <img src="assets/execution-evidence/sprint-1/02-confirmacion-registro-login.png" alt="EE-02: Confirmación del registro y pantalla de inicio de sesión." width="450">
+</p>
+<p align="center"><em>EE-02. Confirmación del registro y pantalla de inicio de sesión.</em></p>
+
+**2. Registro y consulta de cuentas de Operarios**
+
+Desde el módulo Operarios, el Administrador completa el formulario de creación de la cuenta de Hector Rios con su identificador de acceso y contraseña definitiva. La captura siguiente muestra al Operario en el listado con estado Activo y acciones de consulta y gestión. La secuencia evidencia el alta y la visualización de la cuenta; el perfil y las asignaciones se completan posteriormente. Se relaciona con US-01 y US-04.
+
+<p align="center">
+  <img src="assets/execution-evidence/sprint-1/03-registro-operario.png" alt="EE-03: Formulario de creación de la cuenta de Operario." width="900">
+</p>
+<p align="center"><em>EE-03. Formulario de creación de la cuenta de Operario.</em></p>
+
+<p align="center">
+  <img src="assets/execution-evidence/sprint-1/04-listado-operarios.png" alt="EE-04: Cuenta del Operario registrada y visible en estado Activo." width="900">
+</p>
+<p align="center"><em>EE-04. Cuenta del Operario registrada y visible en estado Activo.</em></p>
+
+**3. Creación del grupo de trabajo**
+
+El Administrador registra el grupo Planta Textil Surco e indica su propósito: desarrollar telas para distintas marcas. La vista de detalle muestra el grupo en estado Activo y el segmento Textil heredado de la empresa. En este momento del recorrido, las secciones de Operarios y reservorios todavía se encuentran vacías. La evidencia corresponde a la organización de la estructura operativa considerada en US-05.
+
+<p align="center">
+  <img src="assets/execution-evidence/sprint-1/05-creacion-grupo.png" alt="EE-05: Formulario de creación del grupo Planta Textil Surco." width="900">
+</p>
+<p align="center"><em>EE-05. Formulario de creación del grupo Planta Textil Surco.</em></p>
+
+<p align="center">
+  <img src="assets/execution-evidence/sprint-1/06-detalle-grupo.png" alt="EE-06: Detalle del grupo activo antes de incorporar sus recursos." width="900">
+</p>
+<p align="center"><em>EE-06. Detalle del grupo activo antes de incorporar sus recursos.</em></p>
+
+**4. Consulta del reservorio**
+
+La pantalla de detalle presenta el reservorio Revisar Maquina 03, asociado al grupo Planta Textil Surco, con su código, ubicación en Planta 2 y capacidad de 50 litros. Su estado es Activo, pero aún no tiene un dispositivo vinculado. Esta captura evidencia la consulta del recurso registrado y la identificación del vínculo pendiente; no muestra el formulario de creación del reservorio.
+
+<p align="center">
+  <img src="assets/execution-evidence/sprint-1/07-detalle-reservorio.png" alt="EE-07: Detalle del reservorio activo y todavía sin dispositivo vinculado." width="900">
+</p>
+<p align="center"><em>EE-07. Detalle del reservorio activo y todavía sin dispositivo vinculado.</em></p>
+
+**5. Registro y listado del dispositivo**
+
+El formulario de alta contiene el dispositivo dev-115, con alias HydroGuard-Pro-V1, modelo ESP32-HG-TX-010, entorno Prototipo académico y capacidades de lectura de pH y temperatura. La captura posterior lo muestra en el listado como Activo sin vincular, Sin comunicación registrada y Sin configuración publicada. La secuencia evidencia el registro administrativo del dispositivo, sin atribuirle todavía disponibilidad operativa ni transmisión de mediciones. Se relaciona con US-04 y US-05.
+
+<p align="center">
+  <img src="assets/execution-evidence/sprint-1/08-registro-dispositivo.png" alt="EE-08: Formulario de registro de dev-115 y sus capacidades." width="900">
+</p>
+<p align="center"><em>EE-08. Formulario de registro de dev-115 y sus capacidades.</em></p>
+
+<p align="center">
+  <img src="assets/execution-evidence/sprint-1/09-listado-dispositivos.png" alt="EE-09: Dispositivo registrado, sin vínculo, comunicación ni configuración publicada." width="900">
+</p>
+<p align="center"><em>EE-09. Dispositivo registrado, sin vínculo, comunicación ni configuración publicada.</em></p>
+
+**6. Vinculación del dispositivo con el reservorio**
+
+En el detalle de HydroGuard-Pro-V1 se selecciona el reservorio Revisar Maquina 03 mediante el campo de reservorios activos sin dispositivo. La pantalla ofrece la acción Vincular reservorio. El resultado del vínculo puede observarse más adelante en la selección del par reservorio-dispositivo y en el historial de asignaciones del Operario. Esta secuencia documenta la preparación de la unidad operativa.
+
+<p align="center">
+  <img src="assets/execution-evidence/sprint-1/10-vinculacion-reservorio-dispositivo.png" alt="EE-10: Selección del reservorio para vincularlo con HydroGuard-Pro-V1." width="900">
+</p>
+<p align="center"><em>EE-10. Selección del reservorio para vincularlo con HydroGuard-Pro-V1.</em></p>
+
+**7. Creación del perfil y asignación al Operario**
+
+El Administrador selecciona la cuenta de Hector Rios, el grupo Planta Textil Surco y el par Revisar Maquina 03 · dev-115 para crear el perfil. El detalle posterior muestra la asignación en estado Activo y el perfil Pendiente de primer acceso. También presenta el historial y la acción de cierre de asignación. Al no existir otros pares disponibles en el grupo, la opción Agregar asignaciones permanece deshabilitada. La evidencia corresponde a US-03.
+
+<p align="center">
+  <img src="assets/execution-evidence/sprint-1/11-creacion-perfil-operario.png" alt="EE-11: Creación del perfil con grupo y par reservorio-dispositivo." width="900">
+</p>
+<p align="center"><em>EE-11. Creación del perfil con grupo y par reservorio-dispositivo.</em></p>
+
+<p align="center">
+  <img src="assets/execution-evidence/sprint-1/12-perfil-asignaciones.png" alt="EE-12: Perfil del Operario con asignación activa e historial." width="900">
+</p>
+<p align="center"><em>EE-12. Perfil del Operario con asignación activa e historial.</em></p>
+
+**8. Generación del código de primer acceso**
+
+La aplicación muestra el mensaje de generación exitosa del código de primer acceso y lo presenta como código de activación de un solo uso en estado Activo. La misma vista indica el cumplimiento de las precondiciones: cuenta activa, grupo asociado, perfil creado y al menos un par reservorio-dispositivo activo asignado. Se evidencia la emisión del código prevista en US-01; su utilización en la aplicación móvil no está incluida en estas capturas.
+
+<p align="center">
+  <img src="assets/execution-evidence/sprint-1/13-codigo-primer-acceso.png" alt="EE-13: Código de primer acceso generado y comprobación de precondiciones." width="900">
+</p>
+<p align="center"><em>EE-13. Código de primer acceso generado y comprobación de precondiciones.</em></p>
+
+**9. Centro de monitoreo y estado operacional**
+
+El tablero presenta un dispositivo supervisado, ninguno en línea, uno que requiere atención, cero alertas activas y cero incidentes abiertos. La fila de HydroGuard-Pro-V1 indica Sin comunicación y Sin mediciones, con actualización Desactualizada. Los valores de pH y temperatura aparecen como guiones, diferenciando la ausencia de datos de una medición de valor cero. La captura evidencia la consulta del estado inicial del dispositivo en el tablero de monitoreo.
+
+<p align="center">
+  <img src="assets/execution-evidence/sprint-1/14-centro-monitoreo.png" alt="EE-14: Centro de monitoreo con un dispositivo sin comunicación ni mediciones." width="900">
+</p>
+<p align="center"><em>EE-14. Centro de monitoreo con un dispositivo sin comunicación ni mediciones.</em></p>
+
+**10. Consulta de alertas**
+
+La vista Alertas presenta el buscador y los controles de estado y severidad. Para la selección visible de estado Activa y severidad Todas, la tabla informa que no existen alertas y muestra un total de cero registros. Esta evidencia documenta la presentación del estado vacío de la consulta; no acredita la generación o atención de una alerta por pérdida de monitoreo de US-25.
+
+<p align="center">
+  <img src="assets/execution-evidence/sprint-1/15-alertas.png" alt="EE-15: Consulta de alertas con cero resultados." width="900">
+</p>
+<p align="center"><em>EE-15. Consulta de alertas con cero resultados.</em></p>
+
+**11. Vista de incidentes de calidad**
+
+El módulo Incidentes muestra el formulario con los campos dispositivo, tipo y descripción de la situación, además de la acción Registrar incidente. La sección de consulta ofrece filtros por estado y tipo y presenta cero incidentes. La captura evidencia el acceso al formulario y al listado asociado a US-24; no incluye un incidente registrado ni la confirmación de su creación.
+
+<p align="center">
+  <img src="assets/execution-evidence/sprint-1/16-incidentes.png" alt="EE-16: Formulario y listado vacío de incidentes de calidad." width="900">
+</p>
+<p align="center"><em>EE-16. Formulario y listado vacío de incidentes de calidad.</em></p>
+
+**12. Consulta de trazabilidad operacional**
+
+La vista de trazabilidad muestra la selección de dev-115, asociado a Revisar Maquina 03, y el periodo del 2 al 9 de octubre de 2026. El resumen no presenta valores de pH ni temperatura, y la línea temporal indica cero eventos para el periodo seleccionado. La acción Generar reporte se encuentra deshabilitada. La evidencia documenta el estado vacío de la consulta de US-30; no demuestra todavía la correlación de mediciones, ciclos correctivos y liberaciones.
+
+<p align="center">
+  <img src="assets/execution-evidence/sprint-1/17-trazabilidad.png" alt="EE-17: Consulta de trazabilidad sin eventos y con generación de reporte deshabilitada." width="900">
+</p>
+<p align="center"><em>EE-17. Consulta de trazabilidad sin eventos y con generación de reporte deshabilitada.</em></p>
+
+**13. Supervisión e historial de telemetría**
+
+La vista general de telemetría incluye dev-115 en el entorno Prototipo académico y presenta Sin comunicación registrada, sin registro de heartbeat y sin valores de pH o temperatura. Al acceder a su historial, el detalle muestra cero mediciones, controles de origen y fechas, y una tabla vacía. Estas capturas evidencian la navegación entre las vistas de US-11 y US-27 y su presentación sin datos; no acreditan recepción de telemetría ni monitoreo en tiempo real.
+
+<p align="center">
+  <img src="assets/execution-evidence/sprint-1/18-telemetria-general.png" alt="EE-18: Supervisión de telemetría sin heartbeat ni lecturas registradas." width="900">
+</p>
+<p align="center"><em>EE-18. Supervisión de telemetría sin heartbeat ni lecturas registradas.</em></p>
+
+<p align="center">
+  <img src="assets/execution-evidence/sprint-1/19-telemetria-dispositivo.png" alt="EE-19: Historial de dev-115 con cero mediciones." width="900">
+</p>
+<p align="center"><em>EE-19. Historial de dev-115 con cero mediciones.</em></p>
+
+**14. Consulta de procesos de tratamiento**
+
+El módulo Tratamientos presenta el buscador, el filtro por estado y las columnas de dispositivo, estado, medición, estrategia, ciclo, liberación y actualización. La tabla informa que no existen procesos para los filtros seleccionados y muestra cero registros. La captura evidencia el acceso a la vista de supervisión del Administrador, pero no la ejecución de una corrección, un ciclo de tratamiento o una liberación de agua.
+
+<p align="center">
+  <img src="assets/execution-evidence/sprint-1/20-tratamientos.png" alt="EE-20: Vista de supervisión de tratamientos sin procesos registrados." width="900">
+</p>
+<p align="center"><em>EE-20. Vista de supervisión de tratamientos sin procesos registrados.</em></p>
+
+**Alcance de la evidencia presentada**
+
+La secuencia muestra la incorporación de una empresa y su Administrador, el alta del Operario, la organización del grupo y reservorio, el registro y vínculo del dispositivo, la asignación al perfil y la emisión del código de primer acceso. Las vistas de monitoreo, alertas, incidentes, trazabilidad, telemetría y tratamientos documentan además cómo se presenta el sistema cuando aún no dispone de comunicación ni registros operativos.
+
+Para evidenciar la integración de extremo a extremo en una revisión posterior, será necesario complementar estas capturas con la recepción de heartbeat y mediciones, la aparición y atención de alertas, el registro efectivo de incidentes, los eventos de trazabilidad y la ejecución de tratamientos. Las imágenes actuales no acreditan comunicación con el dispositivo físico, uso del código en la app móvil ni integración con servicios reales.
+
 # Conclusiones
 
 ## Conclusiones y recomendaciones
