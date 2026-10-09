@@ -241,7 +241,6 @@ La evidencia verificable se encuentra en el [historial de commits del repositori
   - [Final Project Keynote](#final-project-keynote)
   - [Final Project Individual Member Performance Report (by Team Leader)](#final-project-individual-member-performance-report-by-team-leader)
   - [Archivos complementarios (.zip)](#archivos-complementarios-zip)
-  - [Videos de Exposiciones](#videos-de-exposiciones)
 ## Student Outcome
 
 **ABET – EAC - Student Outcome 5.** La capacidad de funcionar efectivamente en un equipo cuyos miembros juntos proporcionan liderazgo, crean un entorno de colaboración e inclusivo, establecen objetivos, planifican tareas y cumplen objetivos.
@@ -3733,6 +3732,8 @@ flowchart LR
     browser -->|"HTTPS"| pages
 ```
 
+#### Frontend Web Applications
+
 **Deployment Frontend Web Application:**
 
 El repositorio `hydroguard-admin-web-frontend` contiene `vercel.json`, que ejecuta `npm run build` y publica `dist/hydroguard-admin-web-frontend/browser`. La primera regla reenvía las solicitudes `/api/:path*` hacia `https://hydroguard-mock-api-8740.onrender.com/api/:path*`; de esta manera, Angular conserva una URL relativa `/api` y no acopla sus repositorios Axios al dominio del servidor temporal. La segunda regla reescribe las demás rutas hacia `/index.html`, lo que permite abrir directamente direcciones como `/users`, `/telemetry` o `/treatments` sin recibir un error 404 del servidor estático.
@@ -4240,6 +4241,8 @@ Repositorio: <https://github.com/1ASI0572-2620-8740-IOT/mock-api>. Los commits d
 
 Durante el Sprint se publicó el Landing Page en GitHub Pages y se prepararon configuraciones reproducibles para separar el frontend Angular y el Mock API. La aplicación web incluye `vercel.json`, mientras el repositorio `mock-api` incluye `render.yaml`. El frontend está disponible en Vercel y conserva la regla `/api/*` para comunicarse con el servicio configurado en Render.
 
+##### Landing Page — Deployment Evidence
+
 Link: https://1asi0572-2620-8740-iot.github.io/LandingPage/
 
 Este es el deploy de la landing page de HydroGuard en Github Pages.
@@ -4253,6 +4256,8 @@ Este es el deploy de la landing page de HydroGuard en Github Pages.
 | Mock API | Render | Desplegado en <https://hydroguard-mock-api-8740.onrender.com/>; su disponibilidad se comprueba mediante `GET /api/v1/health`. |
 
 El plan gratuito de Render reinicia el estado del Mock API desde `db.json` después de determinados reinicios o despliegues. Esta restricción es aceptable para una demostración repetible y debe explicarse durante la ejecución.
+
+##### Frontend Web Applications — Deployment Evidence
 
 Link: https://hydroguard-admin-web-frontend.vercel.app
 
