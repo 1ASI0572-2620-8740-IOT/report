@@ -3597,7 +3597,7 @@ El Sprint Backlog 1 reúne las historias seleccionadas para el incremento web de
 
 #### 6.2.1.5. Testing Suite Evidence for Sprint Review
 
-*Pendiente de completar.*
+En este entregable no hay entrega ni historias de usuario relacionadas con el backend de HydroGuard, por lo que no hay pruebas de testeo.
 
 #### 6.2.1.6. Execution Evidence for Sprint Review
 
@@ -3777,11 +3777,19 @@ Para evidenciar la integración de extremo a extremo en una revisión posterior,
 
 ##### Landing Page — Deployment Evidence
 
-*Pendiente de completar.*
+Link: https://1asi0572-2620-8740-iot.github.io/LandingPage/
+
+Este es el deploy de la landing page de HydroGuard en Github Pages.
+
+[![image.png](https://i.postimg.cc/mkxKf351/image.png)](https://postimg.cc/YG3dQFkt)
 
 ##### Frontend Web Applications — Deployment Evidence
 
-*Pendiente de completar.*
+Link: https://hydroguard-admin-web-frontend.vercel.app
+
+Este es el deploy del FrontEnd con una Mock Api de HydroGuard en Vercel.
+
+[![image.png](https://i.postimg.cc/G3k5TyN0/image.png)](https://postimg.cc/Dmwgt8n5)
 
 #### 6.2.1.9. Team Collaboration Insights during Sprint
 
