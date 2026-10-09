@@ -4357,16 +4357,3 @@ Vercel. (s. f.). *Project configuration*. Recuperado el 9 de octubre de 2026, de
 
 World Wide Web Consortium. (2024). *Web Content Accessibility Guidelines (WCAG) 2.2*. <https://www.w3.org/TR/WCAG22/>
 
-# Anexos
-
-## Final Project Keynote
-
-*Pendiente de incorporar el archivo o enlace de la presentación.*
-
-## Final Project Individual Member Performance Report (by Team Leader)
-
-*Pendiente de incorporar el informe elaborado por el Team Leader.*
-
-## Archivos complementarios (.zip)
-
-*Pendiente de incorporar el archivo .zip con videos, proyectos de software y documentos complementarios, según corresponda.*
