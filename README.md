@@ -3705,7 +3705,7 @@ En esta sesión, el equipo acordó orientar el Sprint 1 a construir el primer in
 | Sprint 0 Retrospective Summary | No aplica: el Sprint 1 es el primer Sprint del proyecto. |
 | **Sprint Goal & User Stories** | |
 | Sprint 1 Goal | **Nuestro enfoque** es publicar el *Landing Page* de HydroGuard y desarrollar las principales vistas de la aplicación web del Administrador para gestionar accesos, operarios y dispositivos, y consultar telemetría e incidencias.<br><br>**Creemos que** este primer incremento permitirá presentar la solución y validar la experiencia web antes de completar la integración con los servicios reales.<br><br>**Esto se confirmará cuando** el sitio esté publicado, las vistas administrativas implementadas puedan recorrerse y el frontend compile correctamente. |
-| Sprint 1 Velocity | 47 Story Points, correspondientes a las 17 User Stories cuyos Work-items aparecen como Done en el Sprint Backlog. |
+| Sprint 1 Velocity | 47 Story Points del alcance planificado para el incremento web/mock, correspondientes a las 17 User Stories cuyos Work-items aparecen como Done en el Sprint Backlog. Este cierre no implica completar los criterios integrales de las historias que dependen de móvil, backend productivo o IoT; las brechas se detallan en 6.2.1.3. |
 | Sum of Story Points | 47 Story Points, correspondientes a las User Stories incluidas en el Sprint Backlog y estimadas en el Product Backlog. |
 
 #### 6.2.1.2. Aspect Leaders and Collaborators
@@ -3725,18 +3725,80 @@ La matriz refleja la división por bounded contexts aplicada en el frontend: Hec
 
 #### 6.2.1.3. Sprint Backlog 1
 
-El Sprint Backlog 1 reúne las historias seleccionadas para el incremento web de HydroGuard y las tareas necesarias para implementarlas. Incluye el *Landing Page*, la aplicación web del Administrador y tareas transversales de desarrollo y verificación. Se consideran **29 Work-items**, con una estimación total de **118 horas**. Las 17 historias suman **47 Story Points** y figuran completadas. US-38 quedó cerrada después de publicar y comprobar que los tres accesos del Landing Page dirigen a `https://hydroguard-admin-web-frontend.vercel.app/login`.
+El Sprint Backlog 1 reúne las historias seleccionadas para el primer incremento de HydroGuard: el *Landing Page*, la aplicación web del Administrador y las tareas transversales de desarrollo y verificación. Al corte del **9 de octubre de 2026**, se registran **17 User Stories seleccionadas, 47 Story Points y 29 Work-items con una estimación total de 118 horas**. El cierre documentado de T-01 a T-29 corresponde a las interfaces, los flujos administrativos y las verificaciones del incremento web, utilizando una API mock cuando se requieren servicios.
+
+**Criterio de lectura del estado:** `Done` en este Sprint Backlog significa que se completó la tarea comprometida para el incremento web/mock. No significa que estén cumplidos todos los criterios de aceptación de la historia integral ni que exista integración de extremo a extremo con Flutter, backend productivo, base de datos persistente o dispositivos IoT. En particular, US-11 conserva su objetivo de monitoreo para el Operario: la vista administrativa y el heartbeat simulado son un avance, no una demostración de monitoreo móvil en tiempo real. US-37 tiene terminada la interfaz, pero todavía no envía ni registra solicitudes reales.
 
 **Sprint #:** Sprint 1
 
-**Tablero de Trello:**
+**Tablero de Trello actualizado:** [Hydroguard — Sprint 1 y Product Backlog](https://trello.com/b/6aafc8a787b6bbbecd455184).
+
+Se reorganizaron las tarjetas originales sin duplicar las US seleccionadas. Cada tarjeta del Sprint 1 conserva la historia y registra sus Story Points, tareas, responsables, alcance entregado, límites y referencias a las evidencias del informe. US-39 se alineó con la definición vigente de asignación automática de rol según el flujo de alta. También se incorporó TS-13, que ya figuraba en el Product Backlog del informe pero faltaba en el tablero.
+
+- **Sprint 1 — Done Landing:** US-34, US-35, US-36, US-37 y US-38; **10 SP**, T-01 a T-06 y **16 horas** estimadas. US-37 mantiene pendiente el envío y registro real de solicitudes.
+- **Sprint 1 — Done Web / API mock:** US-01, US-02, US-39, US-03, US-04, US-05, US-10, US-11, US-27, US-25, US-24 y US-30; **37 SP**, T-07 a T-25 y **81 horas** estimadas, con integración real pendiente.
+- **Pendiente — Integración posterior:** una tarjeta de resumen del Sprint 1 y seis tarjetas de brechas P01–P06. El resumen incluye las cuatro tareas transversales T-26 a T-29 (**21 horas** estimadas), que no agregan Story Points independientes. Las brechas no se incorporan retroactivamente a las 29 tareas del Sprint 1.
+- **Product Backlog — Próximos sprints:** **36 historias no seleccionadas** para este incremento: 23 US y 13 TS. Se mantienen para planificación posterior; no se presentan como tareas comprometidas e incumplidas del Sprint 1.
+
+**Capturas del tablero al corte de la revisión:**
 
 <p align="center">
-  <img src="assets/trello_backlog.jpg" alt="Lista Product Backlog del tablero de HydroGuard en Trello" width="800">
+  <img src="assets/trello-sprint-1-overview.jpg" alt="Trello Sprint 1: cinco US del Landing Page, doce US Web con API mock y resumen con pendientes de integración" width="850">
 </p>
-<p align="center"><em>Lista Product Backlog del tablero de HydroGuard en Trello.</em></p>
+<p align="center"><em>Vista inicial: selección del Sprint 1, alcance Done y primeras brechas pendientes. Los contadores 5 y 12 corresponden a las 17 US; la tercera lista contiene un resumen y seis pendientes.</em></p>
 
-**URL público del Board:** Pendiente de incorporar.
+<p align="center">
+  <img src="assets/trello-sprint-1-web.jpg" alt="Trello Sprint 1: US-04, US-05, US-10 y US-27 del incremento Web y pendientes posteriores" width="850">
+</p>
+<p align="center"><em>Continuación de las historias Web: supervisión, segmento y perfil base, consulta de configuración e historial.</em></p>
+
+<p align="center">
+  <img src="assets/trello-sprint-1-pending.jpg" alt="Trello Sprint 1: US-27, US-11, US-25, US-24 y US-30; pendientes de móvil, IoT, tratamiento y notificaciones" width="850">
+</p>
+<p align="center"><em>Parte inferior de las listas: telemetría, alertas, incidentes y trazabilidad, junto con las brechas de integración. Las tres capturas son vistas complementarias del mismo tablero, no tres backlogs distintos.</em></p>
+
+**Historias seleccionadas y resultado del incremento:**
+
+La columna «Entregado» describe las tareas cerradas en este Sprint; la columna «Pendiente» identifica lo que impide afirmar el cierre integral de la historia. Los SP son los del Product Backlog y suman 47, no una medición de funcionalidades productivas completamente aceptadas.
+
+| User Story / tarjeta | SP | Entregado en Sprint 1 | Pendiente o límite del alcance |
+|:--|:--:|:--|:--|
+| [US-34 — Comprensión de la propuesta de valor](https://trello.com/c/AMUu8UFa) | 2 | Hero, propuesta de valor y tokens de estilo del Landing Page publicados; T-01 y T-02. | Sin pendiente identificado para el alcance informativo de estas tareas. |
+| [US-35 — Explicación del funcionamiento de la solución](https://trello.com/c/SmiIyCAz) | 2 | Sección que explica el funcionamiento de la solución; T-03. | La explicación publicada no demuestra la ejecución física del proceso. |
+| [US-36 — Segmentos y casos de uso](https://trello.com/c/RCzT9SOw) | 2 | Sección de casos de uso textiles e hidropónicos; T-04. | Sin pendiente identificado para el alcance informativo de esta tarea. |
+| [US-37 — Solicitud de contacto o demostración](https://trello.com/c/FGUUsKI8) | 3 | Formulario, validación de campos y mensaje informativo; T-05. | Enviar y registrar solicitudes reales. El código actual indica que el formulario aún no realiza envíos. |
+| [US-38 — Acceso a la plataforma](https://trello.com/c/4j1xk9C4) | 1 | Los tres accesos del Landing Page conducen al [login desplegado](https://hydroguard-admin-web-frontend.vercel.app/login); T-06 y commit `d764e49`. | Sin pendiente identificado para la navegación Landing → Web del Sprint 1. |
+| [US-01 — Registro de operario](https://trello.com/c/3uHkp6es) | 2 | Alta de cuenta y generación, consulta y revocación del código de primer acceso desde la Web; T-07 a T-09. | Consumo del código desde móvil y persistencia/autenticación en servicios reales. |
+| [US-02 — Autenticación de usuario](https://trello.com/c/Vsvu25oN) | 3 | Login del Administrador, sesión, guard de rutas y cierre de sesión con API mock; T-10 y T-11. | Autenticación del Operario móvil y validación segura de sesiones en backend productivo. |
+| [US-39 — Asignación automática de rol según el flujo de alta](https://trello.com/c/yIDZVP4X) | 2 | Registro de empresa y su única cuenta Administradora, sin selección manual de roles; T-12. | Persistencia y autorización de roles en backend real. No se contempla añadir un segundo Administrador. |
+| [US-03 — Asignación de dispositivo a operario](https://trello.com/c/6FqbJTDZ) | 2 | Perfiles por grupo, asignación de pares reservorio-dispositivo y cierre con historial; T-13. | Aplicar las restricciones del Operario desde móvil y backend real. |
+| [US-04 — Supervisión de operarios y dispositivos](https://trello.com/c/MdNu9vZr) | 3 | Listados, detalles, filtros, estados y asignaciones vigentes; T-14 y T-15. | Alimentar disponibilidad y estados desde servicios y dispositivos reales. |
+| [US-05 — Asignación de segmento y perfil base al dispositivo](https://trello.com/c/tbeYxbE4) | 3 | Grupos por segmento, reservorios, alta y vinculación de dispositivos; T-16 y T-17. | Aplicación del perfil base y sincronización de configuración con el dispositivo real. |
+| [US-10 — Consulta de configuración de cualquier dispositivo](https://trello.com/c/W3MDbfEj) | 2 | Consulta de configuración vigente e historial de versiones con datos mock; T-18. | Publicación desde móvil y sincronización real; la vista no prueba el envío de parámetros al hardware. |
+| [US-11 — Monitoreo de mediciones en tiempo real](https://trello.com/c/3YUuAmSn) | 3 | Vista administrativa de última medición y cálculo simulado de disponibilidad; T-19 y T-20. | Monitoreo del Operario móvil, adquisición IoT e ingesta Edge con mediciones reales. |
+| [US-27 — Consulta del historial de cualquier dispositivo](https://trello.com/c/A9S55F2b) | 3 | Historial por dispositivo con paginación y ordenamiento; T-21. | Almacenamiento y consulta persistente de mediciones reales. |
+| [US-25 — Alerta por pérdida de monitoreo](https://trello.com/c/D2AqioST) | 3 | Dashboard y consulta/gestión de alertas con estados simulados; T-22 y T-23. | Detección automática por heartbeat real y notificaciones externas. |
+| [US-24 — Registro de incidente de calidad](https://trello.com/c/Qc8r6jY7) | 3 | Registro, consulta y cierre de incidentes con API mock; T-24. | Persistencia y correlación con mediciones/incidentes reales en backend productivo. |
+| [US-30 — Trazabilidad de tratamiento y liberación](https://trello.com/c/xlK3l0sH) | 8 | Consulta de eventos correlacionados por dispositivo/periodo y reporte CSV sencillo con datos mock; T-25. | Eventos reales de evaluación, corrección y liberación e integración del motor de tratamiento y la actuación física. |
+
+**Trabajo no completado en la solución integral:**
+
+Las siguientes brechas se registraron durante la revisión del incremento y permanecen **To-do**. No representan seis nuevas US ni tareas originalmente estimadas en las 118 horas; se descompondrán y estimarán al planificar la integración posterior.
+
+1. [P01 — Contacto real](https://trello.com/c/t6jFn5Qe): enviar y registrar solicitudes válidas de US-37 y demostrar su recepción. La validación visual ya está implementada.
+2. [P02 — Backend, persistencia y seguridad](https://trello.com/c/HcNBnvKY): sustituir los contratos mock por servicios y base de datos reales, verificando autenticación, autorización y aislamiento por empresa. Afecta IAM, configuración, incidentes e historial.
+3. [P03 — Aplicación móvil y primer acceso](https://trello.com/c/tpDa0mvm): consumir el código desde Flutter, autenticar al Operario y restringir el monitoreo y las consultas a sus dispositivos asignados; relacionadas US-01, US-02, US-11, US-12, US-26 y US-33.
+4. [P04 — Integración IoT/Edge y telemetría](https://trello.com/c/jMSHCfTv): adquirir, validar e ingresar mediciones y heartbeat del dispositivo/prototipo o simulador; demostrar historial y detección real de pérdida de comunicación. Relacionadas US-11, US-25 y US-27, y las TS de identidad, adquisición, ingesta y disponibilidad.
+5. [P05 — Tratamiento y actuación](https://trello.com/c/KTbOLYEI): integrar evaluación, corrección, sincronización de parámetros, ejecución/confirmación de comandos, liberación y parada de emergencia. La supervisión web y los eventos mock no prueban actuación sobre hardware; relacionadas US-06 a US-10, US-13 a US-21, US-30, US-40 y TS-05, TS-07, TS-08 y TS-13.
+6. [P06 — Alertas y notificaciones](https://trello.com/c/w8UXdUIb): generar alertas a partir de condiciones reales y comprobar el envío mediante un servicio externo; relacionadas US-22, US-23, US-25, US-32, TS-10 y TS-11.
+
+**Historias no seleccionadas para Sprint 1:** US-06, US-07, US-08, US-09, US-12, US-13, US-14, US-15, US-16, US-17, US-18, US-19, US-20, US-21, US-22, US-23, US-26, US-28, US-29, US-31, US-32, US-33 y US-40, más TS-01 a TS-13. Permanecen en el Product Backlog para planificación posterior. Esto no implica ausencia absoluta de avances auxiliares: por ejemplo, la Web ya permite gestionar alertas y descargar un CSV sencillo, pero no se declara la aceptación integral de US-32, US-28 o US-29 dentro de este Sprint.
+
+El alcance se contrastó con los commits de [Development Evidence](#6214-development-evidence-for-sprint-review), las verificaciones de [Testing Suite Evidence](#6215-testing-suite-evidence-for-sprint-review), las capturas de [Execution Evidence](#6216-execution-evidence-for-sprint-review) y el estado de [Software Deployment Evidence](#6218-software-deployment-evidence-for-sprint-review). Los límites de integración se apoyan también en la [guía de pruebas manuales del frontend](https://github.com/1ASI0572-2620-8740-IOT/hydroguard-admin-web-frontend/blob/develop/docs/guia-pruebas-manuales-integrales.md); el pendiente de contacto se observa en [script.js del Landing Page](https://github.com/1ASI0572-2620-8740-IOT/LandingPage/blob/main/script.js).
+
+**Detalle de los Work-items comprometidos:**
+
+Se conserva la estimación, la asignación y el cierre de las 29 tareas documentadas. El estado `Done` debe interpretarse con el alcance y los pendientes descritos anteriormente.
 
 | Story Id | Story Title | Task Id | Task Title | Task Description | Estimation (Hours) | Assigned To | Status (To-do / InProcess / ToReview / Done) |
 |:--|:--|:--|:--|:--|:--:|:--|:--|
@@ -3744,7 +3806,7 @@ El Sprint Backlog 1 reúne las historias seleccionadas para el incremento web de
 |  |  | T-02 | Aplicar los tokens de la guía de estilo | Usar la tipografía, la paleta y los espaciados definidos en la sección 5.1 en el Landing Page. | 2 | Rios Pacheco, Hector Javier | Done |
 | US-35 | Explicación del funcionamiento de la solución | T-03 | Maquetar la sección de funcionamiento | Explicar las etapas de lectura, evaluación, corrección, espera y liberación. | 3 | Rios Pacheco, Hector Javier | Done |
 | US-36 | Segmentos y casos de uso | T-04 | Maquetar la sección de segmentos | Describir los casos de uso del segmento textil y del hidropónico. | 3 | Rios Pacheco, Hector Javier | Done |
-| US-37 | Solicitud de contacto o demostración | T-05 | Implementar el formulario de contacto | Formulario con validación de campos obligatorios y mensaje de confirmación. | 4 | Rios Pacheco, Hector Javier | Done |
+| US-37 | Solicitud de contacto o demostración | T-05 | Implementar el formulario de contacto | Formulario con validación de campos obligatorios y mensaje informativo; el envío y registro real quedan pendientes en P01. | 4 | Rios Pacheco, Hector Javier | Done |
 | US-38 | Acceso a la plataforma | T-06 | Enlazar el acceso con la aplicación web | El llamado a la acción dirige a la vista de inicio de sesión de la aplicación web. | 1 | Rios Pacheco, Hector Javier | Done |
 | US-01 | Registro de operario | T-07 | Implementar el caso de uso de alta de operario | Modelo de dominio, puerto de repositorio, adaptador Axios y caso de uso `create-operator-account`. | 3 | Rios Pacheco, Hector Javier | Done |
 |  |  | T-08 | Implementar la página de alta de operario | Página `operator-create` con validaciones de formulario y retroalimentación de errores. | 3 | Rios Pacheco, Hector Javier | Done |
