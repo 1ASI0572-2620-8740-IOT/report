@@ -58,6 +58,15 @@
 | AV1 | 20/09/2026 | Rios Pacheco, Hector Javier | Consolidó y completó las secciones del Student Outcome 5 para todos los integrantes según sus contribuciones técnicas; incorporó el capítulo de Conclusiones y recomendaciones, actualizando la tabla de contenidos. |
 | AV1 | 20/09/2026 | Rios Pacheco, Hector Javier | Actualizó la sección 2.2.3 de Análisis de entrevistas con sustento estadístico porcentual para los segmentos textil e hidropónico a partir de las 6 entrevistas registradas, vinculando características objetivas y subjetivas con los arquetipos de usuario. |
 | TB1 | 03/10/2026 | Prieto Mantari, Leonardo Fabrizzio Junior | Definió las guías generales de estilo y sus criterios para web, móvil e IoT; documentó las convenciones de código fuente, la matriz LACX de liderazgo y colaboración, y analizó la participación del equipo durante el Sprint 1 a partir de la evidencia de los repositorios. |
+| TB1 | 05/10/2026 | Rodriguez Macedo, Sebastian | Incorporó los wireframes de las aplicaciones de HydroGuard para representar las vistas principales de la experiencia administrativa y móvil. |
+| TB1 | 06/10/2026 | Rios Pacheco, Hector Javier | Incorporó Device Identity and Access como bounded context y alineó las especificaciones arquitectónicas y de UX/UI con el modelo operativo vigente. |
+| TB1 | 07/10/2026 | Rios Pacheco, Hector Javier | Refinó el EventStorming, los flujos de mensajes, los Bounded Context Canvases, el Context Mapping y sus diagramas para incorporar identidad de dispositivo y el ciclo de tratamiento acordado. |
+| TB1 | 07/10/2026 | Santur Tello, Andrea Elizabeth | Desarrolló la configuración del entorno y del capítulo VI, e incorporó los recursos visuales utilizados para explicar las herramientas del proyecto. |
+| TB1 | 08/10/2026 | Santur Tello, Andrea Elizabeth | Actualizó Source Code Management, GitFlow, el despliegue del Landing Page, Sprint Planning y Sprint Backlog 1. |
+| TB1 | 08/10/2026 | Gomez Hurtado, Miguel Angel | Incorporó y amplió los mock-ups, User Flow Diagrams y el diseño del dispositivo IoT, e integró la versión final de los mock-ups mediante pull request. |
+| TB1 | 09/10/2026 | Rios Pacheco, Hector Javier | Integró los cambios documentales posteriores al pull, incorporó los wireframes y mock-ups del Landing Page y conectó sus accesos con la aplicación web desplegada. |
+
+> **Pendiente para TB1:** registrar las modificaciones que se confirmen mediante commits posteriores al 8 de octubre de 2026. Cada fila debe conservar un solo autor y ser coherente con la evidencia de Project Report Collaboration Insights.
 
 
 ## Project Report Collaboration Insights
@@ -66,7 +75,22 @@ Las actividades del proyecto se planificarán, asignarán y evidenciarán progre
 
 ### TB1 — Project Report Collaboration Insights
 
-*Pendiente de completar.*
+Durante TB1, el informe evolucionó mediante responsabilidades complementarias. Leonardo formalizó las guías de estilo, las convenciones de código, la matriz LACX y el primer análisis de colaboración. Sebastian incorporó los wireframes. Hector refinó el diseño estratégico, incorporó la identidad técnica de dispositivos y alineó la documentación con los flujos implementados. Andrea desarrolló Software Configuration Management, GitFlow, el despliegue del Landing Page y la planificación del Sprint. Miguel completó los mock-ups, User Flows y el diseño del dispositivo IoT. Estas contribuciones fueron integradas progresivamente en la rama de trabajo compartida y pueden relacionarse con las entradas del Registro de Versiones.
+
+Los siguientes valores corresponden a los commits incorporados en la rama actual del repositorio `report` entre el 21 de septiembre y el 8 de octubre de 2026. Las identidades `Andrea Santur` y `andreli-star` se consolidan como una misma participante.
+
+| Integrante | Commits de TB1 en `report` | Contribución principal |
+|:--|--:|:--|
+| Rios Pacheco, Hector Javier | 13 | Refinamiento de arquitectura, DDD estratégico y alineación de especificaciones. |
+| Santur Tello, Andrea Elizabeth | 9 | Capítulo VI, GitFlow, despliegue del Landing Page y planificación del Sprint. |
+| Gomez Hurtado, Miguel Angel | 8 | Mock-ups, User Flows y diseño del dispositivo IoT. |
+| Prieto Mantari, Leonardo Fabrizzio Junior | 6 | Guías de estilo, convenciones, matriz LACX y colaboración. |
+| Rodriguez Macedo, Sebastian | 1 | Wireframes de las aplicaciones. |
+| Olivera Barzola, Eric Marlon | 0 | No registra un commit de TB1 incorporado en la rama actual al corte analizado. |
+
+El análisis muestra participación distribuida en los artefactos principales, aunque con diferente concentración según el rol asumido. Antes del cierre debe incorporarse una contribución versionada de Eric en el informe y comprobarse que las cifras coincidan con el corte definitivo de la entrega.
+
+> **Evidencia visual pendiente:** incorporar capturas de los analíticos de colaboración y del historial de commits de GitHub para el repositorio `report`.
 
 
 ## Tabla de Contenidos
@@ -223,7 +247,7 @@ Las actividades del proyecto se planificarán, asignarán y evidenciarán progre
   - [Final Project Keynote](#final-project-keynote)
   - [Final Project Individual Member Performance Report (by Team Leader)](#final-project-individual-member-performance-report-by-team-leader)
   - [Archivos complementarios (.zip)](#archivos-complementarios-zip)
-
+  - [Videos de Exposiciones](#videos-de-exposiciones)
 ## Student Outcome
 
 **ABET – EAC - Student Outcome 5.** La capacidad de funcionar efectivamente en un equipo cuyos miembros juntos proporcionan liderazgo, crean un entorno de colaboración e inclusivo, establecen objetivos, planifican tareas y cumplen objetivos.
@@ -232,8 +256,10 @@ En el siguiente cuadro se describirán las acciones realizadas y las conclusione
 
 | Criterios específicos | Acciones realizadas | Conclusiones |
 |:--|:--|:--|
-| Trabaja en equipo para proporcionar liderazgo en forma conjunta. | **Gomez Hurtado, Miguel Angel — AV1:** Asumió el liderazgo técnico de la arquitectura del backend, guiando las decisiones de diseño del sistema. Formuló y estructuró las 4 capas de arquitectura limpia (Domain, Application, Interface, Infrastructure) para todos los Bounded Contexts, asegurando el cumplimiento de las reglas de negocio y los estándares tácticos de DDD y CQRS.<br><br>**Olivera Barzola, Eric Marlon — AV1:** Ejerció liderazgo conjunto estructurando y diseñando la fase de DDD estratégico mediante Design-Level EventStorming, Candidate Context Discovery, Domain Message Flows Modeling y los Bounded Context Canvases de todos los subdominios del sistema.<br><br>**Prieto Mantari, Leonardo Fabrizzio Junior — AV1:** Asumió el liderazgo del diseño centrado en el usuario, investigando y modelando los arquetipos de User Personas para ambos segmentos, la User Task Matrix, los User Journey Maps y los Empathy Maps, además de conducir y registrar la entrevista al productor hidropónico (Entrevista 4).<br><br>**Rios Pacheco, Hector Javier — AV1:** Inició y estructuró el informe compartido (portada y esquema de capítulos). Guió las decisiones tempranas del equipo desarrollando el análisis 5W2H, los segmentos objetivo, las referencias, el análisis competitivo, el diseño de entrevistas y el Lean UX Canvas, artefactos base que permitieron alinear la propuesta de valor y los requisitos del sistema.<br><br>**Rodriguez Macedo, Sebastian — AV1:** Participó activamente en la definición de la arquitectura del sistema, proponiendo la separación de responsabilidades a partir de los Bounded Contexts identificados y su posterior representación mediante microservicios. Asimismo, elaboró los diagramas C4 de System Landscape, System Context y Container, además del Deployment Diagram.<br><br>**Santur Tello, Andrea Elizabeth — AV1:** Lideró la alineación entre el negocio y el equipo técnico mediante el desarrollo del *Big Picture EventStorming* y el *Ubiquitous Language*. Además, estructuró los requerimientos clave a través del *Impact Mapping* y las *User Stories* priorizadas. | **Gomez Hurtado, Miguel Angel — AV1:** Demostró liderazgo conjunto al unificar los criterios de arquitectura y modelado de datos del backend, facilitando directrices claras y reutilizables para todo el equipo.<br><br>**Olivera Barzola, Eric Marlon — AV1:** Ejerció liderazgo conjunto al establecer los límites contextuales y las interacciones entre subdominios, asegurando una transición coherente del análisis estratégico al diseño táctico.<br><br>**Prieto Mantari, Leonardo Fabrizzio Junior — AV1:** Demostró liderazgo conjunto al fundamentar la empatía con los usuarios, asegurando que las decisiones funcionales y arquitectónicas resolvieran problemas reales de la operación de campo.<br><br>**Rios Pacheco, Hector Javier — AV1:** Demostró liderazgo conjunto al establecer las bases documentales y analíticas del proyecto, aportando entregables habilitadores que facilitaron el trabajo de los demás integrantes y la toma de decisiones compartidas.<br><br>**Rodriguez Macedo, Sebastian — AV1:** Demostró liderazgo conjunto al orientar las decisiones arquitectónicas del proyecto y convertir los requerimientos y dominios identificados por el equipo en una estructura técnica de microservicios comprensible.<br><br>**Santur Tello, Andrea Elizabeth — AV1:** Ejerció liderazgo conjunto al establecer un lenguaje unificado y flujos visuales claros mediante EventStorming y User Stories, facilitando al equipo el diseño posterior de la arquitectura y los microservicios. |
-| Crea un entorno colaborativo e inclusivo, establece metas, planifica tareas y cumple objetivos. | **Gomez Hurtado, Miguel Angel — AV1:** Planificó, diseñó y entregó la totalidad de los modelos de datos y diagramas técnicos del proyecto, incluyendo los diagramas de clases de dominio en PlantUML, los modelos relacionales de base de datos (DDL/ERD) y los diagramas de componentes C4 (Nivel 3) para todos los microservicios. Cumplió los objetivos técnicos planificados facilitando artefactos indispensables para el desarrollo técnico del equipo.<br><br>**Olivera Barzola, Eric Marlon — AV1:** Planificó y ejecutó colaborativamente el desglose de comandos, políticas, agregados y flujos de mensajes en los Bounded Context Canvases, articulando con los diseñadores de la arquitectura para cumplir las metas del cronograma.<br><br>**Prieto Mantari, Leonardo Fabrizzio Junior — AV1:** Planificó y ejecutó las tareas de Needfinding, levantando información empírica de campo, sintetizando dolores y expectativas en artefactos colaborativos y sincronizando sus contribuciones en el repositorio Git de acuerdo con los plazos previstos.<br><br>**Rios Pacheco, Hector Javier — AV1:** Planificó y ejecutó entregables progresivos: formulación de la problemática, estudio de competidores, supuestos e hipótesis de Lean UX y el levantamiento y análisis de entrevistas del sector textil (Entrevistas 1 y 2). Integró las necesidades reales de los operarios para proveer insumos fundamentales al diseño del producto.<br><br>**Rodriguez Macedo, Sebastian — AV1:** Organizó progresivamente los entregables relacionados con la arquitectura, partiendo de la definición de los Bounded Contexts y su correspondencia con los microservicios hasta la construcción de los diagramas de arquitectura y despliegue, cumpliendo los objetivos fijados.<br><br>**Santur Tello, Andrea Elizabeth — AV1:** Organizó y priorizó las tareas del proyecto elaborando el *Product Backlog* y definiendo los criterios de aceptación en formato Gherkin. Asimismo, integró y estructuró las secciones de especificación de requerimientos en el informe final, cumpliendo con los objetivos en los plazos fijados. | **Gomez Hurtado, Miguel Angel — AV1:** Fomentó un entorno colaborativo y de soporte técnico continuo proveyendo especificaciones de software rigurosas, garantizando el cumplimiento de los estándares de desarrollo propuestos.<br><br>**Olivera Barzola, Eric Marlon — AV1:** Promovió la colaboración al clarificar el mapa de responsabilidades del sistema mediante diagramas accesibles, cumpliendo con los objetivos de diseño asignados en los plazos fijados.<br><br>**Prieto Mantari, Leonardo Fabrizzio Junior — AV1:** Fomentó un ambiente inclusivo y colaborativo al sintetizar los hallazgos de las entrevistas en artefactos de Needfinding compartidos, cumpliendo sus metas de trabajo en el tiempo previsto.<br><br>**Rios Pacheco, Hector Javier — AV1:** Fomentó la colaboración e inclusión al traducir las perspectivas de los usuarios en insumos de trabajo para todo el equipo, cumpliendo oportunamente los objetivos planificados y garantizando la coherencia global del informe.<br><br>**Rodriguez Macedo, Sebastian — AV1:** Contribuyó a un entorno colaborativo mediante la integración de los aportes funcionales de los integrantes dentro de una arquitectura común, cumpliendo con los entregables asignados y permitiendo que los componentes y responsabilidades quedaran claramente organizados.<br><br>**Santur Tello, Andrea Elizabeth — AV1:** Fomentó la colaboración al entregar un backlog organizado, priorizado y trazable, cumpliendo oportunamente con sus entregables y asegurando que todo el equipo comprendiera la prioridad de cada funcionalidad. |
+| Trabaja en equipo para proporcionar liderazgo en forma conjunta. | **Gomez Hurtado, Miguel Angel — AV1:** Asumió el liderazgo técnico de la arquitectura del backend, guiando las decisiones de diseño del sistema. Formuló y estructuró las 4 capas de arquitectura limpia (Domain, Application, Interface, Infrastructure) para todos los Bounded Contexts, asegurando el cumplimiento de las reglas de negocio y los estándares tácticos de DDD y CQRS.<br><br>**Gomez Hurtado, Miguel Angel — TB1:** Lideró la consolidación visual de los mock-ups y User Flows, y colaboró en la preparación del repositorio Mock API para el despliegue académico.<br><br>**Olivera Barzola, Eric Marlon — AV1:** Ejerció liderazgo conjunto estructurando y diseñando la fase de DDD estratégico mediante Design-Level EventStorming, Candidate Context Discovery, Domain Message Flows Modeling y los Bounded Context Canvases de todos los subdominios del sistema.<br><br>**Prieto Mantari, Leonardo Fabrizzio Junior — AV1:** Asumió el liderazgo del diseño centrado en el usuario, investigando y modelando los arquetipos de User Personas para ambos segmentos, la User Task Matrix, los User Journey Maps y los Empathy Maps, además de conducir y registrar la entrevista al productor hidropónico (Entrevista 4).<br><br>**Prieto Mantari, Leonardo Fabrizzio Junior — TB1:** Lideró Operational Monitoring and Traceability, las guías de estilo, las convenciones de código y la matriz LACX del Sprint 1.<br><br>**Rios Pacheco, Hector Javier — AV1:** Inició y estructuró el informe compartido (portada y esquema de capítulos). Guió las decisiones tempranas del equipo desarrollando el análisis 5W2H, los segmentos objetivo, las referencias, el análisis competitivo, el diseño de entrevistas y el Lean UX Canvas, artefactos base que permitieron alinear la propuesta de valor y los requisitos del sistema.<br><br>**Rios Pacheco, Hector Javier — TB1:** Lideró la integración del flujo administrativo del frontend, alineando IAM, configuración, telemetría, monitoreo y tratamiento en una experiencia web coherente.<br><br>**Rodriguez Macedo, Sebastian — AV1:** Participó activamente en la definición de la arquitectura del sistema, proponiendo la separación de responsabilidades a partir de los Bounded Contexts identificados y su posterior representación mediante microservicios. Asimismo, elaboró los diagramas C4 de System Landscape, System Context y Container, además del Deployment Diagram.<br><br>**Rodriguez Macedo, Sebastian — TB1:** Lideró Device and Operational Configuration y aportó los wireframes que organizaron los recorridos principales de las aplicaciones.<br><br>**Santur Tello, Andrea Elizabeth — AV1:** Lideró la alineación entre el negocio y el equipo técnico mediante el desarrollo del *Big Picture EventStorming* y el *Ubiquitous Language*. Además, estructuró los requerimientos clave a través del *Impact Mapping* y las *User Stories* priorizadas.<br><br>**Santur Tello, Andrea Elizabeth — TB1:** Lideró IoT Telemetry y la documentación de planificación, control de versiones y despliegue del Landing Page para TB1. | **Gomez Hurtado, Miguel Angel — AV1:** Demostró liderazgo conjunto al unificar los criterios de arquitectura y modelado de datos del backend, facilitando directrices claras y reutilizables para todo el equipo.<br><br>**Gomez Hurtado, Miguel Angel — TB1:** Convirtió decisiones de diseño e integración en artefactos compartidos que facilitaron la revisión conjunta del producto.<br><br>**Olivera Barzola, Eric Marlon — AV1:** Ejerció liderazgo conjunto al establecer los límites contextuales y las interacciones entre subdominios, asegurando una transición coherente del análisis estratégico al diseño táctico.<br><br>**Prieto Mantari, Leonardo Fabrizzio Junior — AV1:** Demostró liderazgo conjunto al fundamentar la empatía con los usuarios, asegurando que las decisiones funcionales y arquitectónicas resolvieran problemas reales de la operación de campo.<br><br>**Prieto Mantari, Leonardo Fabrizzio Junior — TB1:** Aportó criterios comunes de calidad y una implementación de monitoreo que orientaron el trabajo transversal del equipo.<br><br>**Rios Pacheco, Hector Javier — AV1:** Demostró liderazgo conjunto al establecer las bases documentales y analíticas del proyecto, aportando entregables habilitadores que facilitaron el trabajo de los demás integrantes y la toma de decisiones compartidas.<br><br>**Rios Pacheco, Hector Javier — TB1:** Su coordinación permitió integrar contribuciones independientes sin perder consistencia funcional ni visual.<br><br>**Rodriguez Macedo, Sebastian — AV1:** Demostró liderazgo conjunto al orientar las decisiones arquitectónicas del proyecto y convertir los requerimientos y dominios identificados por el equipo en una estructura técnica de microservicios comprensible.<br><br>**Rodriguez Macedo, Sebastian — TB1:** Articuló la estructura operativa del dominio con una representación visual comprensible para el equipo.<br><br>**Santur Tello, Andrea Elizabeth — AV1:** Ejerció liderazgo conjunto al establecer un lenguaje unificado y flujos visuales claros mediante EventStorming y User Stories, facilitando al equipo el diseño posterior de la arquitectura y los microservicios.<br><br>**Santur Tello, Andrea Elizabeth — TB1:** Relacionó la implementación de telemetría con una gestión del Sprint y del código claramente documentada. |
+| Crea un entorno colaborativo e inclusivo, establece metas, planifica tareas y cumple objetivos. | **Gomez Hurtado, Miguel Angel — AV1:** Planificó, diseñó y entregó la totalidad de los modelos de datos y diagramas técnicos del proyecto, incluyendo los diagramas de clases de dominio en PlantUML, los modelos relacionales de base de datos (DDL/ERD) y los diagramas de componentes C4 (Nivel 3) para todos los microservicios. Cumplió los objetivos técnicos planificados facilitando artefactos indispensables para el desarrollo técnico del equipo.<br><br>**Gomez Hurtado, Miguel Angel — TB1:** Integró mediante pull request los mock-ups finales y coordinó ajustes del Mock API y su configuración remota.<br><br>**Olivera Barzola, Eric Marlon — AV1:** Planificó y ejecutó colaborativamente el desglose de comandos, políticas, agregados y flujos de mensajes en los Bounded Context Canvases, articulando con los diseñadores de la arquitectura para cumplir las metas del cronograma.<br><br>**Prieto Mantari, Leonardo Fabrizzio Junior — AV1:** Planificó y ejecutó las tareas de Needfinding, levantando información empírica de campo, sintetizando dolores y expectativas en artefactos colaborativos y sincronizando sus contribuciones en el repositorio Git de acuerdo con los plazos previstos.<br><br>**Prieto Mantari, Leonardo Fabrizzio Junior — TB1:** Implementó monitoreo, alertas, incidentes y trazabilidad, añadió su verificación automatizada y documentó la colaboración del Sprint.<br><br>**Rios Pacheco, Hector Javier — AV1:** Planificó y ejecutó entregables progresivos: formulación de la problemática, estudio de competidores, supuestos e hipótesis de Lean UX y el levantamiento y análisis de entrevistas del sector textil (Entrevistas 1 y 2). Integró las necesidades reales de los operarios para proveer insumos fundamentales al diseño del producto.<br><br>**Rios Pacheco, Hector Javier — TB1:** Organizó el trabajo de IAM, el mock API y la integración de ramas, además de preparar guías para que el equipo pudiera comprobar los flujos implementados.<br><br>**Rodriguez Macedo, Sebastian — AV1:** Organizó progresivamente los entregables relacionados con la arquitectura, partiendo de la definición de los Bounded Contexts y su correspondencia con los microservicios hasta la construcción de los diagramas de arquitectura y despliegue, cumpliendo los objetivos fijados.<br><br>**Rodriguez Macedo, Sebastian — TB1:** Implementó grupos, reservorios, dispositivos, perfiles y asignaciones, e integró el bounded context a la rama de desarrollo.<br><br>**Santur Tello, Andrea Elizabeth — AV1:** Organizó y priorizó las tareas del proyecto elaborando el *Product Backlog* y definiendo los criterios de aceptación en formato Gherkin. Asimismo, integró y estructuró las secciones de especificación de requerimientos en el informe final, cumpliendo con los objetivos en los plazos fijados.<br><br>**Santur Tello, Andrea Elizabeth — TB1:** Implementó las vistas y contratos de telemetría y completó Sprint Planning, Sprint Backlog, GitFlow y la evidencia del Landing Page. | **Gomez Hurtado, Miguel Angel — AV1:** Fomentó un entorno colaborativo y de soporte técnico continuo proveyendo especificaciones de software rigurosas, garantizando el cumplimiento de los estándares de desarrollo propuestos.<br><br>**Gomez Hurtado, Miguel Angel — TB1:** Cumplió entregables de diseño e integración que conectan la propuesta visual con la demostración técnica.<br><br>**Olivera Barzola, Eric Marlon — AV1:** Promovió la colaboración al clarificar el mapa de responsabilidades del sistema mediante diagramas accesibles, cumpliendo con los objetivos de diseño asignados en los plazos fijados.<br><br>**Prieto Mantari, Leonardo Fabrizzio Junior — AV1:** Fomentó un ambiente inclusivo y colaborativo al sintetizar los hallazgos de las entrevistas en artefactos de Needfinding compartidos, cumpliendo sus metas de trabajo en el tiempo previsto.<br><br>**Prieto Mantari, Leonardo Fabrizzio Junior — TB1:** Planificó y completó un incremento verificable, dejando reglas y evidencias reutilizables por el equipo.<br><br>**Rios Pacheco, Hector Javier — AV1:** Fomentó la colaboración e inclusión al traducir las perspectivas de los usuarios en insumos de trabajo para todo el equipo, cumpliendo oportunamente los objetivos planificados y garantizando la coherencia global del informe.<br><br>**Rios Pacheco, Hector Javier — TB1:** Cumplió los objetivos asignados y dejó criterios y procedimientos compartidos que facilitaron la revisión del incremento por los demás integrantes.<br><br>**Rodriguez Macedo, Sebastian — AV1:** Contribuyó a un entorno colaborativo mediante la integración de los aportes funcionales de los integrantes dentro de una arquitectura común, cumpliendo con los entregables asignados y permitiendo que los componentes y responsabilidades quedaran claramente organizados.<br><br>**Rodriguez Macedo, Sebastian — TB1:** Cumplió el alcance asignado y proporcionó una base funcional utilizada por telemetría, tratamiento y monitoreo.<br><br>**Santur Tello, Andrea Elizabeth — AV1:** Fomentó la colaboración al entregar un backlog organizado, priorizado y trazable, cumpliendo oportunamente con sus entregables y asegurando que todo el equipo comprendiera la prioridad de cada funcionalidad.<br><br>**Santur Tello, Andrea Elizabeth — TB1:** Cumplió objetivos técnicos y documentales que permitieron comprobar el incremento y mantener su trazabilidad. |
+
+> **Pendiente de Student Outcome TB1:** incorporar las acciones y conclusiones de Olivera Barzola, Eric Marlon cuando exista una contribución de TB1 verificable en los repositorios o artefactos de la entrega.
 
 ### TB1 — Student Outcome
 
@@ -2878,15 +2904,89 @@ En todos los canales se respetará el comportamiento del botón Atrás, se conse
 
 ## 5.3. Landing Page UI Design
 
-*Pendiente de completar.*
+El Landing Page demuestra el valor de HydroGuard mediante un breve recorrido para visitantes de los segmentos textil e hidropónico. La jerarquía conduce desde el problema y la solución hacia el funcionamiento, los sectores atendidos, los beneficios, el equipo y el contacto. Las llamadas a la acción permiten conocer el producto o acceder a la aplicación administrativa, manteniendo consistencia con el sistema de navegación definido en 5.2.5.
 
 ### 5.3.1. Landing Page Wireframe
 
-*Pendiente de completar.*
+El wireframe de escritorio debe evidenciar una cabecera con navegación global, una sección principal con propuesta de valor y llamada a la acción, bloques secuenciales para solución, producto, sectores, beneficios y equipo, y un cierre con contacto. La distribución emplea una retícula amplia y alterna texto con recursos visuales para facilitar el escaneo.
+
+La versión móvil conserva la misma secuencia, transforma las composiciones horizontales en una sola columna y presenta la navegación mediante un control desplegable. Los botones mantienen un área táctil suficiente, el contenido esencial aparece antes de los elementos decorativos y los campos del formulario conservan etiqueta y mensaje de validación.
+
+Estas decisiones aplican jerarquía visual, proximidad, alineación y repetición. El diseño inclusivo se sostiene mediante orden semántico, foco visible, navegación por teclado, etiquetas accesibles y contenido que no depende únicamente del color.
+
+A continuación, se presentan las secciones que estructuran el wireframe del Landing Page:
+
+#### Wireframe 01 - Hero y Propuesta de Solución
+
+Muestra la barra de navegación superior, la propuesta de valor centrada en decisiones hídricas confiables, una demostración visual de telemetría y los tres pilares del flujo (detectar, orientar y proteger).
+
+<p align="center">
+  <img src="assets/landing-page-wireframe-1.jpg" alt="Wireframe 01 - Hero y Propuesta de Solución" width="850">
+</p>
+
+#### Wireframe 02 - Producto y Segmentación por Sectores
+
+Estructura el bloque multimedia para el video explicativo de tecnología y detalla las propuestas adaptadas para los sectores textil (supervisión de descargas) e hidropónico (solución de riego).
+
+<p align="center">
+  <img src="assets/landing-page-wireframe-2.jpg" alt="Wireframe 02 - Producto y Segmentación por Sectores" width="850">
+</p>
+
+#### Wireframe 03 - Capacidades Operativas y Equipo
+
+Presenta las funcionalidades esenciales del sistema (perfiles configurables, alertas, trazabilidad y cierre de emergencia) junto con el equipo de HydroLink y su propósito de impacto local.
+
+<p align="center">
+  <img src="assets/landing-page-wireframe-3.jpg" alt="Wireframe 03 - Capacidades Operativas y Equipo" width="850">
+</p>
+
+#### Wireframe 04 - Contacto y Pie de Página
+
+Dispone el formulario interactivo para captar consultas operativas según el sector del usuario y consolida los enlaces de navegación global, políticas y créditos institucionales en el pie de página.
+
+<p align="center">
+  <img src="assets/landing-page-wireframe-4.jpg" alt="Wireframe 04 - Contacto y Pie de Página" width="850">
+</p>
 
 ### 5.3.2. Landing Page Mock-up
 
-*Pendiente de completar.*
+Los mock-ups aplican el Design System de HydroGuard mediante fondos `Paper` y `Cream`, texto `Ink`, acentos `Aqua` y `Aqua Deep`, tipografía Manrope para la lectura principal y DM Mono para datos o etiquetas técnicas. La forma redondeada de botones, tarjetas y controles comunica una solución cercana sin perder el tono serio requerido por un sistema de supervisión de calidad del agua.
+
+La versión de escritorio utiliza espacios amplios y contrastes de sección para separar la narrativa comercial. La versión móvil conserva contenido, etiquetas y acciones, reduce elementos secundarios y evita desplazamiento horizontal. Los estados interactivos deben incluir foco visible, mensajes comprensibles y contraste suficiente conforme con WCAG 2.2 AA.
+
+A continuación, se presentan las vistas de alta fidelidad del Landing Page:
+
+#### Mock-up 01 - Hero y Propuesta de Solución
+
+Aplica el Design System con fondo Cream, tipografía Manrope y acento Aqua en llamadas a la acción, integrando la tarjeta interactiva de telemetría y los pilares del servicio.
+
+<p align="center">
+  <img src="assets/landing-page-mockup-1.jpg" alt="Mock-up 01 - Hero y Propuesta de Solución" width="850">
+</p>
+
+#### Mock-up 02 - Producto y Segmentación por Sectores
+
+Presenta la sección multimedia con contraste en Ink para el hardware IoT y tarjetas visuales diferenciadas para operaciones textiles e hidropónicas.
+
+<p align="center">
+  <img src="assets/landing-page-mockup-2.jpg" alt="Mock-up 02 - Producto y Segmentación por Sectores" width="850">
+</p>
+
+#### Mock-up 03 - Capacidades Operativas y Equipo
+
+Organiza los módulos clave del sistema en tarjetas con bordes redondeados e introduce la narrativa del equipo fundador con fotografía de contexto.
+
+<p align="center">
+  <img src="assets/landing-page-mockup-3.jpg" alt="Mock-up 03 - Capacidades Operativas y Equipo" width="850">
+</p>
+
+#### Mock-up 04 - Contacto y Pie de Página
+
+Muestra el formulario de contacto con estados accesibles y botón de envío en Aqua, concluyendo con el footer institucional en contraste oscuro.
+
+<p align="center">
+  <img src="assets/landing-page-mockup-4.jpg" alt="Mock-up 04 - Contacto y Pie de Página" width="850">
+</p>
 
 ## 5.4. Applications UX/UI Design.
 
@@ -3064,9 +3164,27 @@ Esta vista permite al Operario consultar la información asociada a su cuenta, g
 
 ### 5.4.2. Applications Wireflow Diagrams.
 
-*Pendiente de completar.*
+Los Wireflows se organizan alrededor de los objetivos indispensables de cada actor y muestran cómo cambia la interfaz después de cada acción. Para evitar recorridos redundantes, las operaciones relacionadas se agrupan en cinco flujos principales:
+
+| Aplicación / User Persona | User Goal | Flujo representado |
+|:--|:--|:--|
+| Web / Administrador | Acceder o registrar una empresa | Inicio de sesión → validación → área administrativa; como alternativa, registro de empresa y su único Administrador → sesión iniciada. |
+| Web / Administrador | Preparar una unidad operativa y asignarla | Crear grupo → crear reservorio → registrar y vincular dispositivo → crear cuenta y perfil de Operario → asignar dispositivo y reservorio → generar código de acceso. |
+| Web / Administrador | Supervisar la operación | Consultar telemetría → seleccionar dispositivo → revisar mediciones y tratamiento → consultar o atender alerta/incidente → revisar trazabilidad o generar reporte. |
+| Móvil / Operario | Activar su acceso y completar la configuración | Ingresar código recibido → autenticar cuenta → seleccionar asignación → completar parámetros operativos → confirmar configuración. |
+| Móvil / Operario | Supervisar y autorizar un tratamiento | Seleccionar reservorio → revisar medición y estrategia → aprobar una vez la corrección → seguir ciclos automáticos → confirmar liberación cuando corresponda o ejecutar parada de emergencia. |
+
+Cada Wireflow debe reflejar estados de carga, validación, vacío, error y confirmación cuando alteren la decisión del usuario. En el flujo operativo, el sistema no permite aprobar una corrección sin estrategia, liberar agua no apta ni operar un recurso fuera de las asignaciones vigentes.
+
+> **Evidencia pendiente:** incorporar los cinco diagramas Wireflow elaborados en FigJam, LucidChart u Overflow a partir de los wireframes existentes.
 
 ### 5.4.3. Applications Mock-ups.
+
+Los mock-ups aplican una estructura visual común para que el Administrador identifique rápidamente su ubicación y las acciones disponibles. La aplicación web utiliza una barra lateral persistente agrupada por acceso, estructura operativa y supervisión; las páginas conservan encabezado, contexto, acción principal, filtros y contenido. Las listas priorizan reconocimiento sobre memoria y los detalles presentan primero el estado actual antes del historial o las acciones de riesgo.
+
+El color refuerza, pero no reemplaza, las etiquetas de estado. Las acciones destructivas o irreversibles requieren confirmación; los formularios muestran instrucciones y errores junto al campo correspondiente; y los estados de carga, vacío y fallo se distinguen explícitamente. El diseño utiliza los tokens de color, tipografía, espaciado, radios y elevación definidos en 5.1, junto con componentes de Angular Material adaptados al lenguaje visual de HydroGuard.
+
+En móvil, la información se reduce a la asignación y al proceso que el Operario debe atender. Las acciones operativas se muestran únicamente cuando el estado lo permite, con controles táctiles amplios y mensajes directos. Esta separación evita presentar capacidades administrativas en el canal móvil y mantiene una arquitectura de información acorde con cada rol.
 
 Link del figma: https://www.figma.com/design/zwubZlZ5k3BaILJMHbYa7E/Hydroguard---Mockups?node-id=2-2&t=ViQYkj32RbslL2e6-1
 
@@ -3157,6 +3275,18 @@ Link del figma: https://www.figma.com/design/zwubZlZ5k3BaILJMHbYa7E/Hydroguard--
 [![10.jpg](https://i.postimg.cc/zXfRRjgd/10.jpg)](https://postimg.cc/bdKv71Lb)
 
 ### 5.4.4. Applications User Flow Diagrams.
+
+Los User Flows utilizan los mismos objetivos definidos para los Wireflows y reemplazan la representación estructural por los mock-ups de alta fidelidad. Las rutas esperadas y alternativas se interpretan de la siguiente manera:
+
+| User Goal | Happy path | Unhappy paths y condiciones principales |
+|:--|:--|:--|
+| Acceder o registrar una empresa | El Administrador ingresa credenciales válidas o registra una empresa y accede al área protegida. | Credenciales inválidas, correo o RUC duplicado, campos incompletos y servicio no disponible. Solo puede existir un Administrador por empresa. |
+| Preparar una unidad operativa y asignarla | Se crea grupo, reservorio y dispositivo; luego se crea el Operario, su perfil, la asignación exclusiva y el código de acceso. | Recurso inactivo, dispositivo ya vinculado, reservorio ocupado, Operario sin cuenta completa o intento de asignar un dispositivo compartido. |
+| Supervisar la operación | El Administrador consulta telemetría, proceso, alertas, incidentes y trazabilidad del dispositivo seleccionado. | Dispositivo sin mediciones, pérdida de monitoreo, filtros sin resultados, recurso de otra organización o error de comunicación. |
+| Activar acceso y configurar desde móvil | El Operario utiliza el código recibido, inicia sesión y completa la configuración de su asignación. | Código inexistente o revocado, credenciales inválidas, asignación cerrada o configuración incompleta. |
+| Autorizar y seguir un tratamiento | El Operario revisa la estrategia, aprueba una vez, observa los ciclos automáticos y confirma la liberación únicamente cuando el sistema marca el agua como apta. | Estrategia no disponible, proceso fallido, emergencia, límites de ciclos alcanzados o intento de liberar agua no apta. |
+
+Las decisiones de cada diagrama deben estar etiquetadas y las rutas alternativas deben regresar a un estado recuperable o explicar por qué el proceso queda bloqueado. La aplicación web actualmente implementada permite comprobar los flujos administrativos y de supervisión; los flujos móviles documentan el comportamiento planificado y no deben presentarse como funcionalidad ejecutable en TB1.
 
 Link: https://www.figma.com/board/aA4hZeydBIROAefYuThSnW/IOT?node-id=3-318&t=q4MvEYSWK2j0nY4e-1
 
@@ -3254,6 +3384,16 @@ Como complemento de los wireframes, mock-ups y flujos descritos en la sección 5
 
 La evidencia de ejecución de la aplicación web se documenta por separado en [6.2.1.6. Execution Evidence for Sprint Review](#6216-execution-evidence-for-sprint-review).
 
+
+
+Los prototipos deben permitir recorrer los mismos cinco objetivos definidos en los Wireflows y User Flows. La navegación de escritorio conserva la barra lateral como referencia global y utiliza breadcrumbs o enlaces contextuales para pasar de grupo a reservorio, dispositivo, telemetría y tratamiento. En móvil, la navegación prioriza la asignación activa, el estado del reservorio y las acciones operativas disponibles.
+
+Las interacciones deben simular validación de formularios, confirmaciones, estados de carga, vacío y error, apertura de detalles y retorno sin pérdida innecesaria de contexto. Las acciones condicionadas por el dominio solo deben habilitarse en el estado correspondiente: aprobación única de la estrategia, continuación automática de ciclos, liberación cuando el agua está apta y parada de emergencia durante un proceso activo.
+
+> **Evidencias pendientes:** añadir los enlaces a los prototipos navegables de escritorio y móvil, así como una captura y el enlace del video de navegación de cada aplicación en Microsoft Stream/Clipchamp.
+
+
+
 ## 5.6. IoT Device Design
 
 Link: https://app.cirkitdesigner.com/project/cbdef7ec-8293-4e11-94d1-0bf2247bb2e8
@@ -3287,6 +3427,23 @@ Esta sección define las reglas, estándares y herramientas establecidas para ga
 ### 6.1.1. Software Development Environment Configuration.
 
 Para asegurar un flujo de trabajo colaborativo y estandarizado, el equipo ha configurado el siguiente entorno de desarrollo, cumpliendo con las restricciones tecnológicas del proyecto:
+
+| Actividad | Producto | Propósito en HydroGuard | Referencia |
+|:--|:--|:--|:--|
+| Gestión del proyecto | Trello | Administrar Product Backlog, Sprint Backlog y estados de trabajo. | <https://trello.com/> |
+| Comunicación | Discord | Reuniones de planificación y coordinación síncrona. | <https://discord.com/download> |
+| UX/UI | Figma y FigJam | Elaborar wireframes, mock-ups, prototipos, Wireflows y User Flows. | <https://www.figma.com/> |
+| Modelado de dominio | Miro | Elaborar EventStorming y Context Mapping colaborativos. | <https://miro.com/> |
+| Investigación UX | UXPressia | Elaborar User Personas, Journey Maps y Empathy Maps. | <https://uxpressia.com/> |
+| Desarrollo web | WebStorm | Editar, depurar y mantener el proyecto Angular y TypeScript. | <https://www.jetbrains.com/webstorm/download/> |
+| Runtime y dependencias | Node.js 22 y npm 11 | Ejecutar Angular CLI, el Mock API y las verificaciones automatizadas. | <https://nodejs.org/en/download> |
+| Frontend web | Angular, Angular Material y Axios | Implementar la aplicación administrativa, sus componentes y la comunicación HTTP. | <https://angular.dev/> / <https://material.angular.dev/> / <https://axios-http.com/> |
+| Control de versiones | Git y GitHub | Aplicar GitFlow, Conventional Commits, revisión e integración del código. | <https://git-scm.com/downloads> / <https://github.com/> |
+| Pruebas del incremento | Node.js Assert y guías manuales | Ejecutar comprobaciones HTTP reproducibles y validar los flujos desde la interfaz. | <https://nodejs.org/api/assert.html> |
+| Documentación de servicios | OpenAPI y Swagger | Especificar y publicar los contratos del futuro backend REST. | <https://swagger.io/specification/> |
+| Despliegue | GitHub Pages, Vercel y Render | Publicar respectivamente el Landing Page, el frontend Angular y el Mock API académico. | <https://pages.github.com/> / <https://vercel.com/> / <https://render.com/> |
+| Backend y Edge planificados | Spring Boot y Flask | Implementar posteriormente el backend cloud y el Edge API definidos en la arquitectura. | <https://spring.io/projects/spring-boot> / <https://flask.palletsprojects.com/> |
+| Dispositivo IoT | C++, ESP32 y Cirkit Designer | Programar y representar el prototipo físico y su circuito. | <https://docs.espressif.com/projects/arduino-esp32/> / <https://www.cirkitdesigner.com/> |
 
 **Project & Requirements Management**
 *   **Trello** Plataforma principal para la gestión ágil del proyecto, administración del Product Backlog, y seguimiento de los Sprint Backlogs. (SaaS: trello.com)
@@ -3344,11 +3501,9 @@ Para asegurar un flujo de trabajo colaborativo y estandarizado, el equipo ha con
   <img src="assets/wireframes/github.png" alt="GitHub" width="120">
 </p>
 
-*   **Firebase / GitHub Pages:** Plataformas utilizadas para el despliegue continuo de la aplicación web (*Hosting*) y el *Landing Page*, facilitando la configuración de entornos y publicación rápida del frontend.
-
-<p align="center">
-  <img src="assets/wireframes/firebase.png" alt="Firebase" width="120">
-</p>
+*   **GitHub Pages:** Plataforma utilizada para publicar el Landing Page estático desde su repositorio.
+*   **Vercel:** Plataforma seleccionada para desplegar la aplicación web Angular del Administrador y publicar cada versión integrada del frontend.
+*   **Render:** Plataforma seleccionada para desplegar el Mock API durante esta etapa académica y ofrecer al frontend una URL HTTPS configurable mediante variables de entorno.
 
 ### 6.1.2. Source Code Management
 
@@ -3357,6 +3512,7 @@ Para el seguimiento de las modificaciones del código fuente, el equipo utiliza 
 * **Informe del proyecto:** <https://github.com/1ASI0572-2620-8740-IOT/report>
 * **Frontend Web Application (Administrador):** <https://github.com/1ASI0572-2620-8740-IOT/hydroguard-admin-web-frontend>
 * **Landing Page:** <https://github.com/1ASI0572-2620-8740-IOT/LandingPage>
+* **Mock API:** <https://github.com/1ASI0572-2620-8740-IOT/mock-api>
  
 Para la gestión de versiones, el equipo adopta **GitFlow**, el modelo de ramificación descrito por Vincent Driessen en el artículo *A successful Git branching model*. Este modelo permite establecer claramente las convenciones de ramificación que se aplican en el proyecto: cada funcionalidad se desarrolla en su propia rama, el código en integración se mantiene separado del código publicado y cada versión publicada queda identificada.
  
@@ -3466,6 +3622,8 @@ Los tipos aceptados incluyen `feat`, `fix`, `docs`, `test`, `refactor`, `style`,
 
 ### 6.1.4. Software Deployment Configuration
 
+Esta sección reúne la configuración necesaria para publicar los productos incluidos en el alcance actual de TB1: el Landing Page en GitHub Pages, la aplicación web Angular del Administrador en Vercel y el Mock API en Render. La aplicación web debe consumir la URL pública del servicio mediante configuración de entorno, sin incorporar direcciones dependientes del despliegue directamente en el código fuente.
+
 **Deployment Landing Page:**
 La Landing Page de HydroGuard se publica en GitHub Pages desde la rama `main` y la carpeta raíz del repositorio.
 
@@ -3501,9 +3659,30 @@ flowchart LR
     repo --> action --> pages
     browser -->|"HTTPS"| pages
 ```
-#### Frontend Web Applications
 
-*Pendiente de completar.*
+**Deployment Frontend Web Application:**
+
+El repositorio `hydroguard-admin-web-frontend` contiene `vercel.json`, que ejecuta `npm run build` y publica `dist/hydroguard-admin-web-frontend/browser`. La primera regla reenvía las solicitudes `/api/:path*` hacia `https://hydroguard-mock-api-8740.onrender.com/api/:path*`; de esta manera, Angular conserva una URL relativa `/api` y no acopla sus repositorios Axios al dominio del servidor temporal. La segunda regla reescribe las demás rutas hacia `/index.html`, lo que permite abrir directamente direcciones como `/users`, `/telemetry` o `/treatments` sin recibir un error 404 del servidor estático.
+
+El procedimiento de publicación consiste en importar en Vercel el repositorio de GitHub, conservar el comando y el directorio indicados por `vercel.json`, desplegar y comprobar primero `/login`; después se accede directamente a una ruta protegida para verificar el fallback de Angular Router. La aplicación está publicada en <https://hydroguard-admin-web-frontend.vercel.app/> y su ruta raíz redirige correctamente a `/login`. Si Render asigna otro dominio, debe actualizarse únicamente el destino de la regla `/api/:path*` antes de volver a desplegar.
+
+> **Evidencias pendientes:** incorporar capturas de la configuración de Vercel y del despliegue satisfactorio.
+
+**Deployment Mock API:**
+
+El repositorio `mock-api` incluye `render.yaml` para crear un Web Service gratuito denominado `hydroguard-mock-api-8740`. Render ejecuta `npm ci` durante la construcción y `npm run mock:api` para iniciar el servidor con Node.js 22. El proceso escucha en el valor de `PORT` suministrado por Render y utiliza `HOST=0.0.0.0`, por lo que puede recibir solicitudes externas.
+
+El endpoint `GET /api/v1/health` permite comprobar que el servicio se encuentra disponible y devuelve el estado del servidor y la URL base calculada. El Mock API acepta los métodos `GET`, `POST`, `PATCH` y `OPTIONS`, junto con los encabezados `Content-Type`, `Authorization` y `X-Correlation-Id`. Para el prototipo académico se permite CORS; en el backend real deberá restringirse a los orígenes autorizados.
+
+El archivo `db.json` se almacena en el sistema de archivos efímero del plan gratuito. Por ello, los datos vuelven a su semilla después de un reinicio o nuevo despliegue. Este comportamiento es útil para repetir la demostración desde un estado conocido, pero no representa una estrategia de persistencia productiva.
+
+> **Evidencias pendientes:** comprobar públicamente `/api/v1/health` e incorporar capturas de la configuración de Render, sus logs y la URL HTTPS definitiva utilizada por Vercel.
+
+**Deployment Diagram:**
+
+Para TB1, el diagrama debe representar al navegador del Administrador accediendo por HTTPS a la aplicación Angular alojada en Vercel. Vercel entrega los archivos estáticos y reenvía las solicitudes `/api/*` al Mock API desplegado en Render. Render inicia el servidor Node.js y utiliza una copia efímera de `db.json`. De forma independiente, GitHub Pages publica el Landing Page desde su repositorio. Los repositorios de GitHub actúan como origen de los tres procesos de publicación.
+
+> **Evidencia gráfica pendiente:** actualizar e incorporar el Deployment Diagram con GitHub Pages, Vercel, Render, los tres repositorios y sus conexiones HTTPS.
 
 ## 6.2. Landing Page, Services & Applications Implementation
 Esta sección detalla la ejecución técnica y colaborativa del desarrollo de HydroGuard. Se documentan las ceremonias, el diseño técnico y las evidencias de código que transforman los requisitos y modelos de arquitectura en componentes de software desplegables, estructurados de manera iterativa por *Sprints*.
@@ -3526,7 +3705,7 @@ En esta sesión, el equipo acordó orientar el Sprint 1 a construir el primer in
 | Sprint 0 Retrospective Summary | No aplica: el Sprint 1 es el primer Sprint del proyecto. |
 | **Sprint Goal & User Stories** | |
 | Sprint 1 Goal | **Nuestro enfoque** es publicar el *Landing Page* de HydroGuard y desarrollar las principales vistas de la aplicación web del Administrador para gestionar accesos, operarios y dispositivos, y consultar telemetría e incidencias.<br><br>**Creemos que** este primer incremento permitirá presentar la solución y validar la experiencia web antes de completar la integración con los servicios reales.<br><br>**Esto se confirmará cuando** el sitio esté publicado, las vistas administrativas implementadas puedan recorrerse y el frontend compile correctamente. |
-| Sprint 1 Velocity | 37 Story Points, correspondientes a las User Stories cuyos Work-items aparecen como Done en el Sprint Backlog. |
+| Sprint 1 Velocity | 47 Story Points, correspondientes a las 17 User Stories cuyos Work-items aparecen como Done en el Sprint Backlog. |
 | Sum of Story Points | 47 Story Points, correspondientes a las User Stories incluidas en el Sprint Backlog y estimadas en el Product Backlog. |
 
 #### 6.2.1.2. Aspect Leaders and Collaborators
@@ -3546,7 +3725,7 @@ La matriz refleja la división por bounded contexts aplicada en el frontend: Hec
 
 #### 6.2.1.3. Sprint Backlog 1
 
-El Sprint Backlog 1 reúne las historias seleccionadas para el incremento web de HydroGuard y las tareas necesarias para implementarlas. Incluye el *Landing Page*, la aplicación web del Administrador y tareas transversales de desarrollo y verificación. Se consideran **29 Work-items**, con una estimación total de **118 horas**. Las 17 historias suman **47 Story Points**; las que figuran completadas representan **37 Story Points**.
+El Sprint Backlog 1 reúne las historias seleccionadas para el incremento web de HydroGuard y las tareas necesarias para implementarlas. Incluye el *Landing Page*, la aplicación web del Administrador y tareas transversales de desarrollo y verificación. Se consideran **29 Work-items**, con una estimación total de **118 horas**. Las 17 historias suman **47 Story Points** y figuran completadas. US-38 quedó cerrada después de publicar y comprobar que los tres accesos del Landing Page dirigen a `https://hydroguard-admin-web-frontend.vercel.app/login`.
 
 **Sprint #:** Sprint 1
 
@@ -3561,12 +3740,12 @@ El Sprint Backlog 1 reúne las historias seleccionadas para el incremento web de
 
 | Story Id | Story Title | Task Id | Task Title | Task Description | Estimation (Hours) | Assigned To | Status (To-do / InProcess / ToReview / Done) |
 |:--|:--|:--|:--|:--|:--:|:--|:--|
-| US-34 | Comprensión de la propuesta de valor | T-01 | Maquetar la sección principal del Landing Page | Presentar el problema del control manual del agua y la propuesta de valor de HydroGuard. | 3 | Por confirmar | Por confirmar |
-|  |  | T-02 | Aplicar los tokens de la guía de estilo | Usar la tipografía, la paleta y los espaciados definidos en la sección 5.1 en el Landing Page. | 2 | Por confirmar | Por confirmar |
-| US-35 | Explicación del funcionamiento de la solución | T-03 | Maquetar la sección de funcionamiento | Explicar las etapas de lectura, evaluación, corrección, espera y liberación. | 3 | Por confirmar | Por confirmar |
-| US-36 | Segmentos y casos de uso | T-04 | Maquetar la sección de segmentos | Describir los casos de uso del segmento textil y del hidropónico. | 3 | Por confirmar | Por confirmar |
-| US-37 | Solicitud de contacto o demostración | T-05 | Implementar el formulario de contacto | Formulario con validación de campos obligatorios y mensaje de confirmación. | 4 | Por confirmar | Por confirmar |
-| US-38 | Acceso a la plataforma | T-06 | Enlazar el acceso con la aplicación web | El llamado a la acción dirige a la vista de inicio de sesión de la aplicación web. | 1 | Por confirmar | Por confirmar |
+| US-34 | Comprensión de la propuesta de valor | T-01 | Maquetar la sección principal del Landing Page | Presentar el problema del control manual del agua y la propuesta de valor de HydroGuard. | 3 | Rios Pacheco, Hector Javier | Done |
+|  |  | T-02 | Aplicar los tokens de la guía de estilo | Usar la tipografía, la paleta y los espaciados definidos en la sección 5.1 en el Landing Page. | 2 | Rios Pacheco, Hector Javier | Done |
+| US-35 | Explicación del funcionamiento de la solución | T-03 | Maquetar la sección de funcionamiento | Explicar las etapas de lectura, evaluación, corrección, espera y liberación. | 3 | Rios Pacheco, Hector Javier | Done |
+| US-36 | Segmentos y casos de uso | T-04 | Maquetar la sección de segmentos | Describir los casos de uso del segmento textil y del hidropónico. | 3 | Rios Pacheco, Hector Javier | Done |
+| US-37 | Solicitud de contacto o demostración | T-05 | Implementar el formulario de contacto | Formulario con validación de campos obligatorios y mensaje de confirmación. | 4 | Rios Pacheco, Hector Javier | Done |
+| US-38 | Acceso a la plataforma | T-06 | Enlazar el acceso con la aplicación web | El llamado a la acción dirige a la vista de inicio de sesión de la aplicación web. | 1 | Rios Pacheco, Hector Javier | Done |
 | US-01 | Registro de operario | T-07 | Implementar el caso de uso de alta de operario | Modelo de dominio, puerto de repositorio, adaptador Axios y caso de uso `create-operator-account`. | 3 | Rios Pacheco, Hector Javier | Done |
 |  |  | T-08 | Implementar la página de alta de operario | Página `operator-create` con validaciones de formulario y retroalimentación de errores. | 3 | Rios Pacheco, Hector Javier | Done |
 |  |  | T-09 | Implementar el código de primer acceso | Casos de uso y página `first-access-code` para generar, consultar y revocar el código. | 3 | Rios Pacheco, Hector Javier | Done |
@@ -3593,13 +3772,70 @@ El Sprint Backlog 1 reúne las historias seleccionadas para el incremento web de
 
 #### 6.2.1.4. Development Evidence for Sprint Review
 
-*Pendiente de completar.*
+Durante el Sprint 1 se implementó el Landing Page, la primera versión de la aplicación web administrativa y el Mock API utilizado para demostrar los flujos sin depender del backend productivo. El frontend se organizó por bounded contexts y utiliza puertos, casos de uso, adaptadores Axios y páginas standalone. La selección siguiente excluye commits de fusión y conserva los cambios representativos de implementación y despliegue.
+
+| Repository | Branch | Commit Id | Commit Message | Commit Message Body | Committed on (Date) |
+|:--|:--|:--|:--|:--|:--:|
+| `LandingPage` | `main` | `9c4b932` | `feat: add first version of landing page` | — | 2026-09-07 |
+| `LandingPage` | `main` | `56e90bf` | `feat(landing): add metadata and platform access` | — | 2026-09-30 |
+| `LandingPage` | `main` | `d764e49` | `fix(landing): link access to deployed frontend` | Los tres accesos públicos dirigen a la pantalla de inicio de sesión desplegada en Vercel. | 2026-10-09 |
+| `hydroguard-admin-web-frontend` | `develop` | `4e58957` | `feat(mock-api): implement local mock server and seed data for operators and auth` | — | 2026-09-28 |
+| `hydroguard-admin-web-frontend` | `develop` | `cc202ca` | `feat(core): configure layout shell, routing hierarchy and admin auth guard` | — | 2026-09-29 |
+| `hydroguard-admin-web-frontend` | `develop` | `4ee9c0c` | `feat(iam): add organization and administrator registration onboarding flow` | — | 2026-09-29 |
+| `hydroguard-admin-web-frontend` | `develop` | `bdb314f` | `feat(configuration): implement BC-02 operational configuration` | — | 2026-10-01 |
+| `hydroguard-admin-web-frontend` | `develop` | `69e54b9` | `feat(mock-api): add mock routes and seed datasets for operational monitoring (BC-05)` | — | 2026-10-03 |
+| `hydroguard-admin-web-frontend` | `develop` | `27bee0f` | `feat(monitoring): build monitoring dashboard and operational alerts views` | — | 2026-10-03 |
+| `hydroguard-admin-web-frontend` | `develop` | `49464de` | `feat(monitoring): implement quality incidents and batch traceability views` | — | 2026-10-03 |
+| `hydroguard-admin-web-frontend` | `develop` | `b5f5dcc` | `feat(telemetry): implement overview table, detail view, dialog and register routes` | — | 2026-10-04 |
+| `hydroguard-admin-web-frontend` | `develop` | `1740108` | `feat(device-identity): add credential lifecycle flow` | — | 2026-10-06 |
+| `hydroguard-admin-web-frontend` | `develop` | `b7687b7` | `feat(monitoring): complete simple incident lifecycle` | — | 2026-10-08 |
+| `hydroguard-admin-web-frontend` | `develop` | `fbbbbe9` | `feat(treatment): add administrative process supervision` | — | 2026-10-08 |
+| `hydroguard-admin-web-frontend` | `develop` | `f4d10be` | `chore(deploy): configure vercel and render mock` | — | 2026-10-08 |
+| `mock-api` | `master` | `86294b2` | `Add foundational setup for admin layout, authentication flows, and operational monitoring features` | — | 2026-10-08 |
+| `mock-api` | `master` | `f6824ac` | `Update mock API server to use dynamic host configuration and HTTPS support for base URL` | — | 2026-10-08 |
+| `mock-api` | `master` | `7737072` | `fix: fix file to mock api deploy` | — | 2026-10-08 |
 
 #### 6.2.1.5. Testing Suite Evidence for Sprint Review
 
-En este entregable no hay entrega ni historias de usuario relacionadas con el backend de HydroGuard, por lo que no hay pruebas de testeo.
+El incremento dispone de verificaciones HTTP automatizadas que levantan el Mock API sobre una copia temporal de `db.json`, ejecutan solicitudes con datos controlados y eliminan la copia al finalizar. Por su alcance, estas verificaciones se consideran pruebas de integración del contrato mock y comprobaciones de aceptación técnica; no son pruebas unitarias del frontend ni reemplazan las pruebas end-to-end de interfaz.
+
+| Comando | Alcance relacionado | Resultado obtenido el 2026-10-09 |
+|:--|:--|:--|
+| `npm run build` | Compilación de producción de la aplicación Angular. | Aprobado; bundle generado en `dist/hydroguard-admin-web-frontend`. |
+| `npm run verify:bc02` | US-03, US-04, US-05 y US-10: exclusividad, aislamiento por organización, persistencia, identidad técnica e historial. | 88 comprobaciones HTTP aprobadas. |
+| `npm run verify:bc04` | US-30 y supervisión administrativa del tratamiento: consulta, estados, detalle y aislamiento. | 12 comprobaciones HTTP aprobadas. |
+| `npm run verify:bc05` | US-24, US-25 y US-30: alertas, incidentes, correlación, reportes y aislamiento. | 18 comprobaciones HTTP aprobadas. |
+
+| Repository | Branch | Commit Id | Commit Message | Commit Message Body | Committed on (Date) |
+|:--|:--|:--|:--|:--|:--:|
+| `hydroguard-admin-web-frontend` | `develop` | `bdb314f` | `feat(configuration): implement BC-02 operational configuration` | Incluye la primera versión de `verify-bc02.mjs`. | 2026-10-01 |
+| `hydroguard-admin-web-frontend` | `develop` | `eddf312` | `test(monitoring): add automated verification script and npm script for BC-05` | — | 2026-10-03 |
+| `hydroguard-admin-web-frontend` | `develop` | `1740108` | `feat(device-identity): add credential lifecycle flow` | Amplía la verificación de BC-02 con identidad técnica. | 2026-10-06 |
+| `hydroguard-admin-web-frontend` | `develop` | `a4ac772` | `test(monitoring): make BC05 verification date independent` | — | 2026-10-08 |
+| `hydroguard-admin-web-frontend` | `develop` | `fbbbbe9` | `feat(treatment): add administrative process supervision` | Incluye `verify-bc04.mjs`. | 2026-10-08 |
+| `hydroguard-admin-web-frontend` | `develop` | `b7687b7` | `feat(monitoring): complete simple incident lifecycle` | Amplía los casos verificados de BC-05. | 2026-10-08 |
+
+No se han implementado pruebas unitarias, pruebas end-to-end de la interfaz ni escenarios BDD en archivos `.feature`; estas categorías no se presentan como completadas para TB1.
+
+> **Evidencia visual pendiente:** incorporar una captura legible de la compilación y de la salida aprobada de cada comando.
 
 #### 6.2.1.6. Execution Evidence for Sprint Review
+
+Al cierre del Sprint 1, el Landing Page puede recorrerse desde su propuesta de valor hasta el formulario de contacto. La aplicación administrativa permite registrar una empresa con su único Administrador, iniciar y cerrar sesión, crear Operarios, gestionar el código de primer acceso y administrar la estructura operativa. También permite consultar telemetría, supervisar tratamientos, atender alertas, registrar o cerrar incidentes, consultar trazabilidad y generar un reporte sencillo.
+
+| Área ejecutable | Vistas o acciones principales | Limitación actual |
+|:--|:--|:--|
+| Acceso | Registro de empresa y Administrador, login, protección de rutas y logout. | La sesión y las credenciales pertenecen al Mock API académico. |
+| Operarios | Listado, filtros, alta, detalle, baja lógica y código de primer acceso. | El Operario todavía no consume estas credenciales desde una aplicación móvil. |
+| Configuración | Grupos, reservorios, dispositivos, identidad técnica, vinculaciones, perfiles, asignaciones e historial de configuración. | No existe comunicación con un dispositivo físico ni backend real. |
+| Telemetría | Resumen por dispositivo, última medición e historial con filtros y ordenamiento. | Las mediciones proceden de datos semilla o simulados. |
+| Tratamiento | Listado, filtros y detalle del estado, estrategia y ciclos de tratamiento. | La web supervisa el proceso; la aprobación y actuación física del Operario no están implementadas en móvil. |
+| Monitoreo | Estado operacional, alertas, incidentes, trazabilidad y generación de reporte. | Las notificaciones FCM y la exportación avanzada no forman parte del incremento. |
+
+La compilación de producción fue ejecutada satisfactoriamente el 9 de octubre de 2026. La guía `docs/guia-pruebas-manuales-integrales.md` contiene el orden reproducible para recorrer las capacidades anteriores y sus variantes de error.
+
+> **Evidencia pendiente:** incorporar el enlace al video de ejecución y navegación del Sprint 1. Las capturas de las vistas principales se presentan a continuación.
+
 
 Durante el Sprint 1 se desarrolló el primer incremento de la aplicación web del Administrador de HydroGuard. Las siguientes capturas documentan el recorrido por el registro empresarial, la gestión de Operarios, la estructura operativa y las vistas de supervisión. La evidencia se organiza por flujo funcional, presentando la acción o consulta y el resultado visible en pantalla.
 
@@ -3771,11 +4007,66 @@ Para evidenciar la integración de extremo a extremo en una revisión posterior,
 
 #### 6.2.1.7. Services Documentation Evidence for Sprint Review
 
-*Pendiente de completar.*
+Para TB1 se utiliza un Mock API Node.js con base `/api/v1`. Salvo el endpoint de salud, el registro de organización y el inicio de sesión, las operaciones requieren `Authorization: Bearer <token>`. El servidor deriva `organizationId` de la sesión administrativa y rechaza el acceso cruzado; el cliente no decide el ámbito organizacional.
+
+| Capacidad | Método y endpoint | Entrada principal | Resultado esperado |
+|:--|:--|:--|:--|
+| Estado | `GET /health` | Sin parámetros. | `200` con `name`, `status`, `baseUrl` y mensaje de disponibilidad. |
+| Registro | `POST /organization-registrations` | `organization{name,ruc,phone,segment}` y `administrator{displayName,email,password}`. | `201` con empresa y Administrador creados; `409` para RUC o correo duplicado. |
+| Autenticación | `POST /authentication/sign-in` | `identifier`, `password`. | `200` con token, rol, organización y expiración; `401` para credenciales inválidas. |
+| Autenticación | `POST /authentication/sign-out` | Bearer token. | `204` y sesión invalidada. |
+| Operarios | `GET /operators` | `searchTerm`, `status`, `page`, `pageSize`. | Página de Operarios de la organización autenticada. |
+| Operarios | `POST /operators` | `displayName`, `identifier`, `password`. | `201` con la cuenta activa; `409` si el identificador ya existe. |
+| Operarios | `GET /operators/{operatorId}` | Identificador en ruta. | Detalle de la cuenta o `404`. |
+| Operarios | `PATCH /operators/{operatorId}/status` | `{status:"INACTIVE"}`. | `204`; puede devolver `409` si existe un proceso activo. |
+| Primer acceso | `GET /operators/{operatorId}/access-summary` | Identificador en ruta. | Cuenta, perfil, asignaciones y precondiciones de acceso. |
+| Primer acceso | `GET /operators/{operatorId}/first-access-code` | `operatorProfileId` opcional. | Último código encontrado o `404`. |
+| Primer acceso | `POST /operators/{operatorId}/first-access-code` | `operatorProfileId`. | `201` con código no temporal; `409` si faltan perfil o asignación válidos. |
+| Primer acceso | `POST /first-access-codes/{codeId}/revoke` | Identificador en ruta. | `204` si el código activo fue revocado. |
+| Organización | `GET /organizations/current` | Bearer token. | Organización actual con segmento. |
+| Grupos | `GET /groups`, `POST /groups` | Filtros de listado o datos del grupo. | Página de grupos o grupo creado. |
+| Grupos | `GET /groups/{groupId}`, `PATCH /groups/{groupId}/status` | ID; para baja, `{status:"INACTIVE"}`. | Detalle con miembros y reservorios, o baja lógica. |
+| Reservorios | `GET /reservoirs`, `POST /reservoirs` | Filtros o datos del reservorio y grupo. | Página de reservorios o reservorio creado. |
+| Reservorios | `GET /reservoirs/{reservoirId}`, `PATCH /reservoirs/{reservoirId}/status` | ID y estado de baja. | Detalle con dispositivo o baja lógica. |
+| Dispositivos | `GET /devices`, `POST /devices` | Filtros o identificación, entorno y capacidades. | Página de dispositivos o dispositivo activo creado. |
+| Dispositivos | `GET /devices/{deviceId}`, `PATCH /devices/{deviceId}/status` | ID y estado de baja. | Detalle o baja lógica controlada. |
+| Vinculación | `POST /devices/{deviceId}/link`, `POST /devices/{deviceId}/unlink` | `reservoirId` para vincular. | Dispositivo vinculado o desvinculado, respetando exclusividad. |
+| Identidad técnica | `POST /device-identities/{deviceId}/revoke` | ID del dispositivo. | Credencial técnica revocada. |
+| Configuración | `GET /devices/{deviceId}/configurations` | ID del dispositivo. | Historial ordenado de versiones de configuración. |
+| Perfiles | `GET /operator-profiles`, `POST /operator-profiles` | Filtros o `userId` y `groupId`. | Página de perfiles o perfil creado. |
+| Perfiles | `GET /operator-profiles/{profileId}`, `PATCH /operator-profiles/{profileId}/status` | ID y estado de baja. | Detalle del perfil o baja lógica. |
+| Asignaciones | `POST /operator-profiles/{profileId}/assignments` | Pares de dispositivo y reservorio. | Asignaciones exclusivas añadidas. |
+| Asignaciones | `POST /assignments/{assignmentId}/close` | ID de asignación. | Asignación cerrada si no existe proceso activo. |
+| Catálogos | `GET /operational-options`, `GET /available-pairs` | Para pares: `groupId`. | Opciones activas y pares disponibles para asignar. |
+| Telemetría | `GET /telemetry/devices`, `GET /telemetry/devices/{deviceId}` | Filtros o ID. | Resumen de dispositivos y detalle telemétrico. |
+| Mediciones | `GET /devices/{deviceId}/water-measurements/latest` | ID. | Última medición disponible. |
+| Mediciones | `GET /devices/{deviceId}/water-measurements` | Fechas, página, tamaño y orden. | Historial paginado de pH y temperatura. |
+| Tratamiento | `GET /treatments`, `GET /treatments/{processId}` | Filtros/paginación o ID. | Procesos de la organización y detalle con estrategia y ciclos. |
+| Monitoreo | `GET /monitoring/overview` | Bearer token. | Resumen operacional de dispositivos. |
+| Alertas | `GET /monitoring/alerts`, `PATCH /monitoring/alerts/{alertId}/status` | Filtros; para actualizar, nuevo estado. | Página de alertas o alerta actualizada. |
+| Incidentes | `GET /monitoring/incidents`, `POST /monitoring/incidents` | Filtros o dispositivo, tipo, severidad y descripción. | Página de incidentes o incidente creado. |
+| Incidentes | `PATCH /monitoring/incidents/{incidentId}/status` | Nuevo estado. | Incidente actualizado o cerrado. |
+| Trazabilidad | `GET /monitoring/devices/{deviceId}/traceability` | ID del dispositivo. | Línea de tiempo correlacionada de mediciones, procesos, alertas e incidentes. |
+| Reportes | `POST /monitoring/reports/generate` | Dispositivo y rango solicitado. | Reporte sencillo generado para descarga desde la web. |
+
+Ejemplo mínimo de autenticación:
+
+```http
+POST /api/v1/authentication/sign-in
+Content-Type: application/json
+
+{"identifier":"admin.textil@hydroguard.pe","password":"adminpassword123"}
+```
+
+La respuesta satisfactoria contiene `token`, `role`, `organizationId` y `expiresAt`. Los errores mantienen el contrato `{ "message": "Descripción comprensible" }` y utilizan códigos `401`, `403`, `404`, `409` o `422` según la condición.
+
+Repositorio: <https://github.com/1ASI0572-2620-8740-IOT/mock-api>. Los commits de preparación del servicio para TB1 incluyen `86294b2`, `f6824ac` y `7737072`.
+
+> **Evidencias pendientes:** generar la especificación OpenAPI/Swagger, publicar su URL e incorporar capturas de interacción con datos de muestra. La tabla anterior documenta el Mock API académico y no debe confundirse con el futuro backend Spring Boot.
 
 #### 6.2.1.8. Software Deployment Evidence for Sprint Review
 
-##### Landing Page — Deployment Evidence
+Durante el Sprint se publicó el Landing Page en GitHub Pages y se prepararon configuraciones reproducibles para separar el frontend Angular y el Mock API. La aplicación web incluye `vercel.json`, mientras el repositorio `mock-api` incluye `render.yaml`. El frontend está disponible en Vercel y conserva la regla `/api/*` para comunicarse con el servicio configurado en Render.
 
 Link: https://1asi0572-2620-8740-iot.github.io/LandingPage/
 
@@ -3783,7 +4074,13 @@ Este es el deploy de la landing page de HydroGuard en Github Pages.
 
 [![image.png](https://i.postimg.cc/mkxKf351/image.png)](https://postimg.cc/YG3dQFkt)
 
-##### Frontend Web Applications — Deployment Evidence
+| Producto | Plataforma | Estado documental y técnico |
+|:--|:--|:--|
+| Landing Page | GitHub Pages | Desplegado y disponible en <https://1asi0572-2620-8740-iot.github.io/LandingPage/>. |
+| Frontend Angular | Vercel | Desplegado y comprobado el 2026-10-09 en <https://hydroguard-admin-web-frontend.vercel.app/>; la ruta raíz dirige a `/login`. |
+| Mock API | Render | Blueprint y endpoint de salud definidos. Falta confirmar desde una URL pública cuál de los dominios configurados es el definitivo. |
+
+El plan gratuito de Render reinicia el estado del Mock API desde `db.json` después de determinados reinicios o despliegues. Esta restricción es aceptable para una demostración repetible y debe explicarse durante la ejecución.
 
 Link: https://hydroguard-admin-web-frontend.vercel.app
 
@@ -3791,35 +4088,32 @@ Este es el deploy del FrontEnd con una Mock Api de HydroGuard en Vercel.
 
 [![image.png](https://i.postimg.cc/G3k5TyN0/image.png)](https://postimg.cc/Dmwgt8n5)
 
+La ejecución `pages-build-deployment #3`, asociada al commit `d764e49`, finalizó correctamente. Se comprobó en la URL pública que los tres accesos dirigen a la pantalla de inicio de sesión desplegada en Vercel.
+
+> **Evidencias pendientes:** confirmar la disponibilidad estable y la URL definitiva del Mock API en Render, incorporar su captura y demostrar que el frontend desplegado consume el servicio.
+
 #### 6.2.1.9. Team Collaboration Insights during Sprint
 
 Durante el Sprint 1, el equipo distribuyó el trabajo por bounded contexts y utilizó ramas de funcionalidad para mantener aislados los cambios: `feature/iam-operator-management`, `feature/device-configuration`, `feature/iot-telemetry` y `feature/operational-monitoring` en el frontend; y ramas personales o documentales para el informe. La integración se realizó sobre ramas compartidas, conservando commits pequeños y descriptivos que permiten reconstruir la evolución del producto.
 
 En el frontend, Operational Monitoring and Traceability se desarrolló después de Device and Operational Configuration para aprovechar su estructura y lenguaje visual. Se incorporaron progresivamente modelos de dominio, puerto de repositorio, adaptador Axios, casos de uso, estado de presentación, datos mock, tablero, alertas, incidencias, trazabilidad, rutas y acceso desde la barra lateral. Esta secuencia redujo el acoplamiento y permitió verificar el bounded context de manera independiente.
 
-Las siguientes gráficas resumen los commits alcanzados en todas las ramas locales/remotas disponibles al cierre del 3 de octubre de 2026. Las identidades duplicadas por nombre o correo se consolidaron por integrante. El conteo representa actividad versionada y no se interpreta por sí solo como medida de calidad o esfuerzo.
+Las tablas siguientes resumen los commits incorporados entre el 21 de septiembre y el 8 de octubre de 2026. Se consolidaron las identidades alternativas de una misma persona. El conteo incluye commits de integración y representa actividad versionada, pero no se interpreta por sí solo como medida de calidad o esfuerzo.
 
-```mermaid
-pie showData
-    title Commits del frontend por integrante — Sprint 1
-    "Hector (Khafna09)" : 22
-    "Leonardo (leitojunior36)" : 10
-    "Sebastian (Shiftinnnnn)" : 4
-    "Andrea (andreli-star)" : 1
-```
+| Integrante | Frontend | Mock API | Landing Page | Informe |
+|:--|--:|--:|--:|--:|
+| Rios Pacheco, Hector Javier | 41 | 1 | 3 | 13 |
+| Prieto Mantari, Leonardo Fabrizzio Junior | 10 | 0 | 0 | 6 |
+| Santur Tello, Andrea Elizabeth | 9 | 0 | 0 | 9 |
+| Rodriguez Macedo, Sebastian | 4 | 0 | 0 | 1 |
+| Gomez Hurtado, Miguel Angel | 0 | 5 | 0 | 8 |
+| Olivera Barzola, Eric Marlon | 0 | 0 | 0 | 0 |
 
-```mermaid
-pie showData
-    title Commits del informe por integrante — hasta Sprint 1
-    "Miguel (Miguel26112001)" : 28
-    "Hector (Khafna09)" : 20
-    "Andrea (andreli-star)" : 18
-    "Leonardo (leitojunior36)" : 8
-    "Eric (EricMOB-afk)" : 6
-    "Sebastian (Shiftinnnnn)" : 2
-```
+La distribución evidencia especialización por producto y bounded context. Hector concentró IAM, integración, tratamiento, despliegue y Landing Page; Leonardo implementó Monitoring y formalizó estándares; Andrea desarrolló Telemetry y documentación de gestión; Sebastian implementó Configuration y los wireframes; Miguel contribuyó con UX/UI, el dispositivo IoT y la preparación del repositorio Mock API. Eric no registra durante el intervalo analizado una contribución incorporada a estos cuatro repositorios, por lo que debe completar una actividad verificable antes del cierre de TB1.
 
-La evidencia muestra una colaboración complementaria: el repositorio de producto concentra a quienes implementaron los primeros bounded contexts, mientras el repositorio del informe visibiliza el trabajo de modelado y documentación de los seis integrantes. Por ello, el equipo considera ambos repositorios al evaluar participación. La actividad puede consultarse en [los commits del frontend](https://github.com/1ASI0572-2620-8740-IOT/hydroguard-admin-web-frontend/commits) y [los commits del informe](https://github.com/1ASI0572-2620-8740-IOT/report/commits).
+La actividad puede consultarse en [los commits del frontend](https://github.com/1ASI0572-2620-8740-IOT/hydroguard-admin-web-frontend/commits), [los commits del Mock API](https://github.com/1ASI0572-2620-8740-IOT/mock-api/commits), [los commits del Landing Page](https://github.com/1ASI0572-2620-8740-IOT/LandingPage/commits) y [los commits del informe](https://github.com/1ASI0572-2620-8740-IOT/report/commits).
+
+> **Evidencia visual pendiente:** incorporar capturas de los analíticos de colaboración y commits de GitHub para cada repositorio, utilizando el mismo corte temporal de las tablas.
 
 Los principales retos de integración fueron mantener rutas y providers coherentes al agregar módulos, compartir el layout sin acoplar los dominios, alinear DTOs con contratos mock y sostener una interfaz homogénea. El equipo los afrontó mediante una arquitectura por capas, puertos de repositorio, tokens visuales compartidos, contratos versionados y verificación de compilación antes de integrar. Como mejora para el siguiente sprint, se acordó reforzar la revisión cruzada mediante pull requests, adjuntar evidencia de pruebas a cada historia, asociar commits con identificadores del Product Backlog y registrar decisiones de arquitectura cuando afecten a más de un bounded context.
 
@@ -3829,11 +4123,11 @@ En conjunto, el sprint permitió trabajar de manera paralela sin perder una expe
 
 ## Conclusiones y recomendaciones
 
-* **Resultados frente al Problem Statement:** El diseño de HydroGuard responde con eficacia a la problemática de las micro y pequeñas empresas textiles y pequeños productores hidropónicos, resolviendo la dependencia de mediciones manuales aisladas y registros dispersos. La arquitectura basada en Domain-Driven Design (DDD) y microservicios demostró la viabilidad de unificar la lógica operativa de ambos sectores en un núcleo común configurable, capaz de supervisar pH y temperatura, ejecutar la dosificación correctiva por ciclos, decidir automáticamente si debe continuar o detenerse y asegurar la liberación controlada del agua según normativas VMA o requerimientos agrícolas. En el prototipo académico, el LED representa la actuación mientras una persona del equipo realiza manualmente la corrección por falta de dosificadores físicos.
+* **Resultados frente al Problem Statement:** El diseño y el primer incremento de HydroGuard abordan la dependencia de mediciones manuales aisladas y registros dispersos en pequeñas organizaciones textiles e hidropónicas. La aplicación web y el Mock API permiten comprobar la administración de la estructura operativa, la consulta de telemetría, el seguimiento del tratamiento y la trazabilidad. La arquitectura DDD plantea un núcleo configurable capaz de evaluar pH y temperatura, aplicar correcciones por ciclos y controlar la liberación; su integración con backend, Edge y dispositivo físico todavía debe validarse en los siguientes Sprints. En el prototipo académico, el LED representa la actuación mientras una persona del equipo realiza manualmente la corrección por falta de dosificadores físicos.
 
-* **Contrastación de Assumptions frente al comportamiento real:** Las validaciones de campo ratificaron que ambos segmentos comparten el mismo flujo base (medir, corregir, esperar y liberar) y valoran la supervisión remota mediante smartphones para evitar desplazamientos continuos. Como contraste clave, se identificó que el sector textil se beneficia de la liberación automática al alcanzar valores conformes, mientras que en hidroponía los productores exigen mantener la confirmación manual final antes del riego para resguardar sus cultivos frente a contingencias.
+* **Contrastación preliminar de Assumptions:** Las entrevistas de descubrimiento respaldan que ambos segmentos comparten el flujo base de medir, corregir, esperar y liberar, y valoran la supervisión remota para reducir desplazamientos. También muestran una diferencia relevante: el sector textil puede beneficiarse de una liberación automática al alcanzar conformidad, mientras que en hidroponía se conserva la confirmación manual final antes del riego. Estas observaciones todavía deben contrastarse mediante entrevistas de validación sobre los productos implementados.
 
-* **Validación de Hypotheses Statements y Criterios de Éxito:** Se confirmaron las hipótesis de Lean UX (H-01 a H-04). Los perfiles configurables permiten adaptar el sistema a distintos contextos sin modificar el software base; el panel de telemetría y la máquina de estados reducen la incertidumbre y el error humano durante los intervalos de estabilización; y las políticas de válvula cerrada por defecto junto a la parada de emergencia garantizan la mitigación de vertimientos indebidos y pérdidas de producción.
+* **Estado de Hypotheses Statements y Criterios de Éxito:** Las hipótesis H-01 a H-04 cuentan con soporte preliminar en las entrevistas y en la capacidad del prototipo para representar perfiles configurables, telemetría, estados del proceso y reglas de seguridad. Aún no pueden considerarse confirmadas porque faltan las sesiones de validación con usuarios, la medición de los criterios de éxito y la integración de extremo a extremo con Edge y el dispositivo IoT.
 
 * **Recomendaciones para el Roadmap de productos digitales:** Para los siguientes ciclos se recomienda priorizar la integración de los microservicios en Spring Boot con las aplicaciones web (Angular) y móviles (Flutter), afianzar la comunicación con el dispositivo IoT (ESP32 y simulador Wokwi) incorporando almacenamiento local temporal ante caídas de red, y realizar pruebas piloto en entornos operativos reales. A mediano plazo, se sugiere evaluar la incorporación modular de nuevos parámetros (como conductividad eléctrica) y herramientas de analítica histórica.
 
@@ -3843,6 +4137,10 @@ En conjunto, el sprint permitió trabajar de manera paralela sin perder una expe
 Autoridad Nacional del Agua. (s. f.). *Solicitar la autorización de vertimiento de aguas residuales tratadas a los cuerpos naturales de agua*. Plataforma Digital Única del Estado Peruano. Recuperado el 1 de septiembre de 2026, de <https://www.gob.pe/10822-solicitar-la-autorizacion-de-vertimiento-de-aguas-residuales-tratadas-a-los-cuerpos-naturales-de-agua>
 
 Angular. (s. f.). *Style guide*. Recuperado el 3 de octubre de 2026, de <https://angular.dev/style-guide>
+
+Angular. (s. f.). *Angular Material*. Recuperado el 9 de octubre de 2026, de <https://material.angular.dev/>
+
+Axios. (s. f.). *Getting started*. Recuperado el 9 de octubre de 2026, de <https://axios-http.com/docs/intro>
 
 Bluelab. (s. f.). *Bluelab Pro Controller Wi-Fi*. Recuperado el 3 de septiembre de 2026, de <https://bluelab.com/products/bluelab-pro-controller-wi-fi>
 
@@ -3858,6 +4156,8 @@ Google. (s. f.). *Google Java Style Guide*. Recuperado el 3 de octubre de 2026, 
 
 Google. (s. f.). *Google TypeScript Style Guide*. Recuperado el 3 de octubre de 2026, de <https://google.github.io/styleguide/tsguide.html>
 
+GitHub. (s. f.). *GitHub Pages documentation*. Recuperado el 9 de octubre de 2026, de <https://docs.github.com/en/pages>
+
 Hach. (s. f.). *SC4500 Controller, Claros-enabled, LAN + mA output, 2 analog UPW pH/ORP sensors*. Recuperado el 3 de septiembre de 2026, de <https://uk.hach.com/controllers-analogue/sc4500-analog-controller/family?productCategoryId=68824439962>
 
 Hanna Instruments. (s. f.). *HALO2 wireless pH meter*. Recuperado el 3 de septiembre de 2026, de <https://hannainst.com/halo2/>
@@ -3870,9 +4170,17 @@ Ministerio de Trabajo y Promoción del Empleo. (s. f.). *Registro de la Micro y 
 
 Ministerio de Vivienda, Construcción y Saneamiento. (2019). *Decreto Supremo N.° 010-2019-VIVIENDA, Reglamento de Valores Máximos Admisibles para las descargas de aguas residuales no domésticas en el sistema de alcantarillado sanitario*. Diario Oficial El Peruano. <https://busquedas.elperuano.pe/dispositivo/NL/1748339-3>
 
+Node.js. (s. f.). *Assert*. Recuperado el 9 de octubre de 2026, de <https://nodejs.org/api/assert.html>
+
 Ocas Sifuentes, M., Vilcapoma Aquino, D., Meza Montalvo, A., Mestanza Velasco, S., & Borjas Ventura, R. (2025). *Cultivo hidropónico de hortalizas de hoja*. Instituto Nacional de Innovación Agraria. <http://hdl.handle.net/20.500.12955/2782>
 
+OpenAPI Initiative. (s. f.). *OpenAPI Specification*. Recuperado el 9 de octubre de 2026, de <https://spec.openapis.org/oas/latest.html>
+
+Render. (s. f.). *Blueprint YAML reference*. Recuperado el 9 de octubre de 2026, de <https://render.com/docs/blueprint-spec>
+
 Superintendencia Nacional de Servicios de Saneamiento. (2020). *Resolución de Consejo Directivo N.° 011-2020-SUNASS-CD: Norma complementaria al Reglamento de Valores Máximos Admisibles*. Plataforma Digital Única del Estado Peruano. <https://www.gob.pe/institucion/sunass/normas-legales/992245-011-2020-sunass-cd>
+
+Vercel. (s. f.). *Project configuration*. Recuperado el 9 de octubre de 2026, de <https://vercel.com/docs/project-configuration>
 
 World Wide Web Consortium. (2024). *Web Content Accessibility Guidelines (WCAG) 2.2*. <https://www.w3.org/TR/WCAG22/>
 
