@@ -3849,7 +3849,6 @@ El incremento dispone de verificaciones HTTP automatizadas que levantan el Mock 
 
 No se han implementado pruebas unitarias, pruebas end-to-end de la interfaz ni escenarios BDD en archivos `.feature`; estas categorías no se presentan como completadas para TB1.
 
-> **Evidencia visual pendiente:** incorporar una captura legible de la compilación y de la salida aprobada de cada comando.
 
 #### 6.2.1.6. Execution Evidence for Sprint Review
 
