@@ -127,6 +127,7 @@ La evidencia verificable se encuentra en el [historial de commits del repositori
   - [2.5. Ubiquitous Language](#25-ubiquitous-language)
 - [Capítulo III: Requirements Specification](#capítulo-iii-requirements-specification)
   - [3.1. User Stories](#31-user-stories)
+    - [Reglas verificables compartidas](#reglas-verificables-compartidas)
   - [3.2. Impact Mapping](#32-impact-mapping)
   - [3.3. Product Backlog](#33-product-backlog)
 - [Capítulo IV: Solution Software Design](#capítulo-iv-solution-software-design)
@@ -743,6 +744,8 @@ A partir del análisis cuantitativo de la muestra global de seis (6) entrevistas
 
 En conclusión, los hallazgos cuantitativos y cualitativos recopilados de las seis entrevistas registradas demuestran una alta convergencia operativa entre ambos sectores en cuanto a la necesidad de automatizar la lectura, alertar desviaciones y retener el flujo. A la vez, sustentan la flexibilidad de HydroGuard para adaptarse a las particularidades de cada industria (liberación automática en efluentes versus liberación manual supervisada en soluciones de cultivo) mediante rangos y políticas de liberación configurables.
 
+Estos porcentajes describen únicamente los hallazgos exploratorios de las seis entrevistas y no constituyen resultados experimentales ni validación estadística del producto. La rentabilidad, la disposición de pago, la reducción efectiva de tiempos y la accesibilidad económica permanecen como supuestos que deberán comprobarse mediante pruebas del prototipo, estimación de costos y validación con usuarios.
+
 ## 2.3. Needfinding
 ### 2.3.1. User Personas
 
@@ -763,33 +766,18 @@ En esta sección, el equipo presenta a los user persona de acuerdo a los segment
 
 ### 2.3.2. User Task Matrix
 
-En esta sección se detallan las tareas que realizan los diferentes segmentos de usuarios representados por los User Personas de HydroGuard, con el objetivo de cumplir sus metas relacionadas con la vigilancia y acondicionamiento oportuno del agua, ya sea para el control y cumplimiento normativo en descargas textiles o para la preparación y dosificación segura de soluciones de riego hidropónico.
+Esta matriz compara las mismas tareas para ambos User Personas. La frecuencia y la importancia se expresan como `frecuencia / importancia`, lo que permite identificar coincidencias y diferencias operativas sin separar los segmentos en listas independientes.
 
-### Marcelino Valencia – Jefe de Planta / Operario Textil
-
-| Actividades | Frecuencia | Importancia |
-| :--- | :--- | :--- |
-| Monitorear lecturas de pH y temperatura de la poza de descarga | Frecuentemente | Alta |
-| Atender alertas por parámetros fuera de rango VMA antes del vertimiento | Frecuentemente | Alta |
-| Realizar la corrección química y mezcla manual según las indicaciones | Ocasionalmente | Alta |
-| Configurar los tiempos de espera y el límite de ciclos de corrección | Ocasionalmente | Media |
-| Accionar el cierre de emergencia ante desbordes o fallos en la poza | Rara vez | Alta |
-| Verificar la apertura y cierre de la válvula (modo automático) | Frecuentemente | Alta |
-| Consultar el historial de descargas y eventos para auditorías internas | Ocasionalmente | Media |
-
----
-
-### Lucía Paredes – Productora y Operaria Hidropónica
-
-| Actividades | Frecuencia | Importancia |
-| :--- | :--- | :--- |
-| Verificar temperatura y pH de la solución nutritiva desde el móvil | Frecuentemente | Alta |
-| Configurar los perfiles de rango deseado según el cultivo (NFT) | Ocasionalmente | Alta |
-| Ajustar manualmente sales o correctores tras recibir notificación de desvío | Ocasionalmente | Alta |
-| Autorizar manualmente la apertura de la válvula para iniciar el riego | Frecuentemente | Alta |
-| Detener el riego o ejecutar el cierre de emergencia ante variaciones bruscas | Rara vez | Alta |
-| Supervisar el tiempo de estabilización tras mezclar la solución | Ocasionalmente | Media |
-| Revisar el historial de mediciones para evaluar el rendimiento del cultivo | Ocasionalmente | Media |
+| Tarea común | Marcelino Valencia — Operación textil | Lucía Paredes — Operación hidropónica | Comparación relevante |
+|:--|:--|:--|:--|
+| Consultar pH y temperatura | Frecuente / Alta | Frecuente / Alta | Ambos necesitan supervisión remota y valores actualizados. |
+| Atender una desviación o alerta | Frecuente / Alta | Frecuente / Alta | En textil se prioriza evitar un vertimiento fuera de VMA; en hidroponía, proteger el cultivo. |
+| Aplicar la corrección y mezclar | Ocasional / Alta | Ocasional / Alta | Ambos corrigen manualmente en el prototipo; cambian la sustancia y el objetivo del proceso. |
+| Configurar rangos y reglas del proceso | Ocasional / Media | Ocasional / Alta | Textil configura límites de descarga; hidroponía adapta el perfil al cultivo. |
+| Esperar y reevaluar después de corregir | Ocasional / Alta | Ocasional / Alta | Los dos segmentos repiten el ciclo hasta obtener una medición conforme o un fallo. |
+| Confirmar o supervisar la liberación | Frecuente / Alta | Frecuente / Alta | Textil puede utilizar modo automático; hidroponía prioriza la confirmación manual del riego. |
+| Ejecutar una parada de emergencia | Rara vez / Alta | Rara vez / Alta | En ambos casos prevalece el cierre seguro de la válvula. |
+| Consultar historial y trazabilidad | Ocasional / Media | Ocasional / Media | Textil lo usa para control y auditoría; hidroponía para revisar el comportamiento del cultivo. |
 
 ### 2.3.3. User Journey Mapping
 
@@ -818,13 +806,13 @@ Un mapa de empatía es una herramienta visual y colaborativa que permite compren
 ### Segmento 1:
 
 <p align="center">
-  <img src="assets/Marcelino Valencia EM.png" alt="Marcelino-Valencia-EM" width="800">
+  <img src="assets/Marcelino Valencia EM.png" alt="Marcelino-Valencia-EM" width="550">
 </p>
 
 ### Segmento 2:
 
 <p align="center">
-  <img src="assets/Lucia Paredes EM.png" alt="Lucia-Paredes-EM" width="800">
+  <img src="assets/Lucia Paredes EM.png" alt="Lucia-Paredes-EM" width="550">
 </p>
 
 ## 2.4. Big Picture EventStorming
@@ -833,7 +821,7 @@ En esta sección, el equipo presenta el resultado de nuestra sesión colaborativ
 
 A través de este mapeo, trazamos la línea de tiempo del negocio (de izquierda a derecha), explorando las interacciones desde la configuración inicial del sistema hasta la captura de telemetría y la toma de decisiones críticas (corrección, bloqueos por límite de intentos, liberación segura del agua y trazabilidad de los eventos). 
 
-Tras un refinamiento arquitectónico basado en el feedback del equipo, hemos estructurado este flujo transaccional agrupando las interacciones en cinco Bounded Contexts (Contextos Delimitados) para separar adecuadamente las responsabilidades del sistema: Autenticación, Configuración, Telemetría IoT, Calidad de Agua y Tratamiento (nuestro Core Domain), y Monitoreo y Trazabilidad.
+Tras un refinamiento arquitectónico basado en el feedback del equipo, hemos estructurado este flujo transaccional agrupando las interacciones en seis Bounded Contexts (Contextos Delimitados) para separar adecuadamente las responsabilidades del sistema: identidad humana, identidad técnica del dispositivo, configuración, telemetría IoT, calidad de agua y tratamiento (nuestro Core Domain), y monitoreo y trazabilidad.
 
 Utilizamos la siguiente convención estándar:
 
@@ -925,10 +913,26 @@ El Ubiquitous Language establece un vocabulario común entre los integrantes del
 | **EP-09: Landing Page y Comunicación de la Propuesta de Valor**<br>Sitio web estático de HydroGuard orientado a comunicar el problema, la propuesta de valor y los beneficios de la solución frente a alternativas existentes. | • US-34: Comprensión de la propuesta de valor<br>• US-35: Explicación del funcionamiento de la solución<br>• US-36: Segmentos y casos de uso<br>• US-37: Solicitud de contacto o demostración<br>• US-38: Acceso a la plataforma |
 | **EP-10: Integración IoT, Edge y Servicios Digitales**<br>Comunicación técnica entre el dispositivo, el servicio Edge y los servicios digitales, incluyendo telemetría, ejecución y confirmación de actuaciones correctivas, control del flujo y adaptación al producto integral, la simulación y el prototipo académico mediante contratos comunes. | • TS-01: Registro y autenticación del dispositivo<br>• TS-02: Identificación del entorno de origen del dispositivo<br>• TS-03: Adquisición y validación de mediciones<br>• TS-04: Ingesta de telemetría en el Edge API<br>• TS-05: Sincronización de parámetros vigentes<br>• TS-06: Exposición de servicios de consulta de mediciones y resultados<br>• TS-07: Control del actuador de flujo<br>• TS-08: Ejecución de la parada de emergencia en el dispositivo<br>• TS-09: Almacenamiento temporal ante pérdida de conexión<br>• TS-10: Estado de disponibilidad del dispositivo<br>• TS-11: Integración con servicio externo de notificaciones<br>• TS-12: Exposición de configuración mediante API RESTful<br>• TS-13: Ejecución y confirmación de la actuación correctiva |
 
+### Reglas verificables compartidas
+
+Las expresiones “válido”, “completo”, “reciente” y “variación útil” utilizadas en los criterios de aceptación se interpretan mediante reglas configurables y comprobables:
+
+| Regla | Condición verificable para el alcance académico |
+|:--|:--|
+| Alta de Operario | `displayName` entre 2 y 100 caracteres, `identifier` con formato de correo y único dentro de la organización, y contraseña entre 8 y 72 caracteres. |
+| Medición válida | Incluye `measurementId`, `measuredAt`, pH y temperatura; pH entre 0 y 14 y temperatura entre 0 °C y 100 °C. |
+| Medición reciente | Su antigüedad no supera `measurementFreshnessSeconds`; el perfil académico usa 60 segundos como valor inicial. |
+| Tiempo de espera | `correctionWaitSeconds` es mayor que cero y no supera 1800 segundos; el perfil inicial usa 900 segundos, coherente con las esperas de 15 a 30 minutos observadas. |
+| Variación útil | El cambio ocurre en la dirección esperada y alcanza el umbral configurado para la estrategia; como valores iniciales se usan 0.1 unidades de pH o 0.5 °C. |
+| Disponibilidad | El dispositivo envía heartbeat cada 30 segundos. Tres intervalos consecutivos sin heartbeat o medición válida —90 segundos— producen pérdida de monitoreo. |
+| Configuración completa | Incluye rangos de pH y temperatura, estrategia, dosis o intensidad, espera, límite de ciclos, modo de liberación y número de versión. |
+
+Estos valores son parámetros iniciales del prototipo, no límites universales del dominio. Cada perfil puede ajustarlos sin modificar las reglas de seguridad: una medición inválida o desactualizada no permite evaluar conformidad ni liberar agua.
+
 | Epic / Story ID | Título | Descripción | Criterios de Aceptación | Relacionado con (Epic ID) |
 | :--- | :--- | :--- | :--- | :--- |
 | **EP-01** | **Gestión de Cuentas y Dispositivos** | Administración de perfiles de operarios y administradores, autenticación y asignación de dispositivos IoT a los operarios responsables de su monitoreo. | N/A | - |
-| **US-01** | Registro de operario | Como administrador, quiero registrar operarios con sus datos básicos, para habilitar su participación en el monitoreo de un dispositivo asignado. | **Escenario 1:** Given el administrador proporciona datos válidos y completos, When registra al operario, Then el sistema crea la cuenta del operario en estado activo. <br><br>**Escenario 2:** Given los datos obligatorios están incompletos, When el administrador intenta registrar al operario, Then el sistema rechaza el registro e indica los datos faltantes. <br><br>**Escenario 3:** Given ya existe un operario registrado con el mismo identificador, When el administrador intenta registrarlo nuevamente, Then el sistema rechaza la duplicación. | EP-01 |
+| **US-01** | Registro de operario | Como administrador, quiero registrar operarios con sus datos básicos, para habilitar su participación en el monitoreo de un dispositivo asignado. | **Escenario 1:** Given el administrador proporciona `displayName` de 2 a 100 caracteres, `identifier` con formato de correo y una contraseña de 8 a 72 caracteres, When registra al operario, Then el sistema crea la cuenta en estado activo dentro de su organización. <br><br>**Escenario 2:** Given falta uno de esos campos o incumple su longitud o formato, When el administrador intenta registrar al operario, Then el sistema rechaza el registro e identifica el campo inválido. <br><br>**Escenario 3:** Given ya existe en la organización un operario con el mismo `identifier`, When el administrador intenta registrarlo nuevamente, Then el sistema rechaza la duplicación. | EP-01 |
 | **US-02** | Autenticación de usuario | Como usuario, quiero autenticarme con mis credenciales, para acceder únicamente a las funciones correspondientes a mi rol (operario o administrador). | **Escenario 1:** Given el usuario posee credenciales válidas, When envía la solicitud de acceso, Then el sistema concede el acceso a las funciones autorizadas para su rol. <br><br>**Escenario 2:** Given las credenciales proporcionadas no son válidas, When el usuario intenta autenticarse, Then el sistema deniega el acceso y registra el intento fallido. <br><br>**Escenario 3:** Given un usuario autenticado intenta acceder a una función que no corresponde a su rol, When realiza la solicitud, Then el sistema rechaza la operación. | EP-01 |
 | **US-03** | Asignación de dispositivo a operario | Como administrador, quiero asignar un dispositivo IoT a un operario, para delegar la responsabilidad de su monitoreo, dado que el alcance actual contempla un operario por dispositivo. | **Escenario 1:** Given un dispositivo sin operario asignado, When el administrador lo vincula a un operario activo, Then el sistema actualiza la asignación y otorga al operario los permisos correspondientes sobre ese dispositivo. <br><br>**Escenario 2:** Given un dispositivo ya cuenta con un operario asignado, When el administrador intenta asignarlo a otro operario, Then el sistema reemplaza la asignación anterior y notifica el cambio. <br><br>**Escenario 3:** Given un operario no está activo, When el administrador intenta asignarle un dispositivo, Then el sistema rechaza la asignación. | EP-01 |
 | **US-04** | Supervisión de operarios y dispositivos | Como administrador, quiero consultar el estado de los operarios y los dispositivos del sistema, para mantener control sobre las asignaciones vigentes, dado que no cuento con un dispositivo propio. | **Escenario 1:** Given existen operarios y dispositivos registrados, When el administrador consulta la relación entre ellos, Then el sistema muestra las asignaciones vigentes. <br><br>**Escenario 2:** Given un dispositivo no tiene operario asignado, When el administrador consulta el listado, Then el sistema lo identifica como pendiente de asignación. | EP-01 |
@@ -942,14 +946,14 @@ El Ubiquitous Language establece un vocabulario común entre los integrantes del
 | **US-10** | Consulta de configuración de cualquier dispositivo | Como administrador, quiero consultar los rangos, el tiempo de espera, el límite de ciclos y el modo de liberación vigentes de cualquier dispositivo, para supervisar la configuración operativa establecida por cada operario. | **Escenario 1:** Given existe una configuración vigente para un dispositivo, When el administrador la consulta, Then el sistema muestra los rangos, el tiempo de espera, el límite de ciclos y el modo de liberación activos. <br><br>**Escenario 2:** Given un dispositivo no posee una configuración vigente, When el administrador realiza la consulta, Then el sistema informa que no existe una configuración disponible. | EP-02 |
 | **US-40** | Configuración de estrategia correctiva | Como operario, quiero configurar la estrategia de corrección (ej. reducir pH, enfriamiento activo), para definir qué acción aplicará el sistema ante una desviación. | **Escenario 1:** Given un dispositivo con perfil activo, When el operario selecciona una estrategia correctiva y la guarda, Then el sistema la asocia a las reglas de flujo. | EP-02 |
 | **EP-03** | **Monitoreo de Calidad del Agua** | Adquisición, visualización y consulta histórica de las mediciones de pH y temperatura provenientes del dispositivo, durante el estado de lectura del proceso. | N/A | - |
-| **US-11** | Monitoreo de mediciones en tiempo real | Como operario, quiero observar las mediciones actuales de pH y temperatura de mi dispositivo, para conocer el estado del agua durante el proceso. | **Escenario 1:** Given existe una medición reciente disponible, When el operario consulta el estado del dispositivo, Then el sistema muestra los valores de pH, temperatura y el momento de la medición. <br><br>**Escenario 2:** Given no existen mediciones recientes disponibles, When el operario consulta el estado, Then el sistema informa que no dispone de una medición actualizada. | EP-03 |
-| **US-12** | Monitoreo desde aplicación móvil | Como operario, quiero consultar el estado de mi dispositivo desde una aplicación móvil, para supervisar el proceso cuando no me encuentro frente al panel principal. | **Escenario 1:** Given existen mediciones válidas disponibles, When el operario consulta el estado mediante la aplicación móvil, Then el sistema entrega los mismos valores disponibles en la aplicación web. <br><br>**Escenario 2:** Given no existe conexión con el servicio, When el operario intenta consultar el estado desde la aplicación móvil, Then el sistema informa que la información no pudo actualizarse. | EP-03 |
+| **US-11** | Monitoreo de mediciones en tiempo real | Como operario, quiero observar las mediciones actuales de pH y temperatura de mi dispositivo, para conocer el estado del agua durante el proceso. | **Escenario 1:** Given existe una medición válida cuya antigüedad no supera `measurementFreshnessSeconds`, When el operario consulta el estado del dispositivo, Then el sistema muestra pH, temperatura, `measuredAt` y el estado actualizado. <br><br>**Escenario 2:** Given la última medición supera `measurementFreshnessSeconds` o no existe, When el operario consulta el estado, Then el sistema la identifica como desactualizada y no la utiliza para autorizar la liberación. | EP-03 |
+| **US-12** | Monitoreo desde aplicación móvil | Como operario, quiero consultar el estado de mi dispositivo desde una aplicación móvil, para supervisar el proceso cuando no me encuentro frente al panel principal. | **Escenario 1:** Given existe una medición con identificador, fecha, pH y temperatura dentro de sus límites físicos, When el operario consulta el estado mediante la aplicación móvil, Then el sistema entrega los mismos valores y la misma vigencia disponibles en los servicios de consulta. <br><br>**Escenario 2:** Given no existe conexión con el servicio, When el operario intenta consultar el estado desde la aplicación móvil, Then el sistema informa que la información no pudo actualizarse. | EP-03 |
 | **EP-04** | **Evaluación y Tratamiento Correctivo del Agua** | Determinación de la conformidad del agua respecto a los rangos configurados y gestión del ciclo de corrección (lectura, corrección, espera, reevaluación) cuando los parámetros se encuentran fuera de rango, hasta alcanzar el estado listo o el estado de fallo. | N/A | - |
 | **US-13** | Evaluación de conformidad | Como operario, quiero que el sistema evalúe cada medición respecto a los rangos configurados, para conocer si el agua es conforme o requiere tratamiento. | **Escenario 1:** Given los valores de pH y temperatura están dentro de los rangos configurados, When se evalúa la medición, Then el sistema clasifica el agua como conforme y el proceso pasa al estado listo. <br><br>**Escenario 2:** Given uno o más valores están fuera de los rangos configurados y el tratamiento todavía no fue aprobado, When el sistema selecciona la estrategia, Then clasifica el agua como no conforme y pasa el proceso a pendiente de aprobación de corrección. <br><br>**Escenario 3:** Given la corrección ya fue aprobada para el proceso y una reevaluación continúa fuera de rango, When quedan ciclos disponibles, Then el sistema continúa automáticamente con el siguiente ciclo sin solicitar una nueva aprobación. | EP-04 |
 | **US-14** | Retención de agua no conforme | Como operario, quiero que el agua no conforme permanezca retenida, para evitar que continúe hacia la liberación antes de completar el tratamiento correspondiente. | **Escenario 1:** Given el agua es clasificada como no conforme, When se confirma la clasificación, Then el sistema mantiene la válvula cerrada. <br><br>**Escenario 2:** Given el agua pasa al estado listo, When se confirma el cumplimiento de los rangos, Then el sistema libera la condición de retención. | EP-04 |
 | **US-15** | Aprobación y ejecución de la acción correctiva | Como operario, quiero revisar y aprobar una sola vez la estrategia seleccionada por el sistema antes de comenzar el tratamiento, para autorizar los ciclos correctivos de ese proceso. | **Escenario 1:** Given el agua es no conforme y el sistema seleccionó una estrategia válida, When todavía no existe aprobación, Then el proceso permanece pendiente, la válvula continúa cerrada y no se emite ninguna orden correctiva. <br><br>**Escenario 2:** Given el proceso está pendiente de aprobación, When el operario responsable aprueba la estrategia, Then el sistema registra actor y fecha, ordena la primera actuación y considera autorizados los ciclos restantes del mismo proceso. <br><br>**Escenario 3:** Given la actuación fue confirmada, When finaliza el tiempo de espera y una nueva medición continúa fuera de rango con ciclos disponibles, Then el sistema inicia automáticamente otro ciclo sin pedir una nueva aprobación. <br><br>**Escenario 4:** Given el prototipo académico ejecuta una orden aprobada, When comienza la corrección, Then activa el LED mientras una persona del equipo realiza la corrección manual sustitutiva. | EP-04 |
 | **US-16** | Inicio de un ciclo de corrección | Como operario, quiero que el sistema registre el inicio de cada ciclo cuando acepta una actuación correctiva, para llevar un conteo inequívoco de los intentos realizados. | **Escenario 1:** Given el agua está clasificada como no conforme y no se ha alcanzado el límite configurado, When la orden de actuación correctiva es aceptada, Then el sistema registra el inicio del ciclo y su número de intento. <br><br>**Escenario 2:** Given finaliza el tiempo de espera y se registra una nueva medición, When el sistema la reevalúa, Then cierra el ciclo vigente y decide si inicia otro o detiene el tratamiento. <br><br>**Escenario 3:** Given el agua se encuentra en estado listo, When se evalúa una nueva medición, Then el sistema no inicia un ciclo de corrección. | EP-04 |
-| **US-17** | Bloqueo por límite de ciclos sin efecto | Como operario, quiero que el sistema detenga el proceso y pase al estado de fallo cuando se alcanza el límite de ciclos configurado sin lograr una variación útil de los valores, para evitar intentos indefinidos ante una posible falla. | **Escenario 1:** Given se alcanza el número máximo de ciclos configurado sin que los valores varíen en la dirección esperada, When el sistema evalúa el último ciclo, Then el proceso pasa al estado de fallo y la válvula permanece cerrada. <br><br>**Escenario 2:** Given el número de ciclos realizados es menor al límite configurado, When una nueva medición continúa fuera de rango, Then el sistema permite iniciar un nuevo ciclo de corrección. <br><br>**Escenario 3:** Given los valores varían en la dirección esperada aunque no alcancen aún el rango configurado, When se evalúa el ciclo, Then el sistema permite continuar con los ciclos restantes en lugar de pasar al estado de fallo. | EP-04 |
+| **US-17** | Bloqueo por límite de ciclos sin efecto | Como operario, quiero que el sistema detenga el proceso y pase al estado de fallo cuando se alcanza el límite de ciclos configurado sin lograr una variación útil de los valores, para evitar intentos indefinidos ante una posible falla. | **Escenario 1:** Given se alcanza el número máximo de ciclos sin que el cambio llegue al umbral configurado —inicialmente 0.1 unidades de pH o 0.5 °C en la dirección esperada—, When el sistema evalúa el último ciclo, Then el proceso pasa a fallo y la válvula permanece cerrada. <br><br>**Escenario 2:** Given el número de ciclos realizados es menor al límite configurado, When una nueva medición continúa fuera de rango, Then el sistema permite iniciar un nuevo ciclo de corrección. <br><br>**Escenario 3:** Given el cambio alcanza el umbral útil configurado aunque todavía no entra en rango, When se evalúa el ciclo, Then el sistema permite continuar con los ciclos restantes. | EP-04 |
 | **US-18** | Reevaluación posterior al tratamiento | Como operario, quiero que el sistema reevalúe el agua después de cada tiempo de espera, para comprobar si los parámetros cumplen las condiciones establecidas. | **Escenario 1:** Given finaliza el tiempo de espera configurado tras una corrección, When se registra una nueva medición, Then el sistema determina nuevamente el estado de conformidad del agua. <br><br>**Escenario 2:** Given la nueva medición cumple los rangos configurados, When finaliza la reevaluación, Then el agua queda clasificada como conforme y el proceso pasa al estado listo. | EP-04 |
 | **EP-05** | **Control de Válvula y Liberación** | Gestión de la apertura, cierre y parada de emergencia de la válvula según el modo de liberación configurado y el estado de conformidad del agua, aplicando siempre la regla de apertura solo desde el estado listo. | N/A | - |
 | **US-19** | Liberación automática | Como operario, quiero que la válvula se abra automáticamente cuando el agua alcanza el estado listo y el modo automático está configurado, para agilizar el proceso sin intervención manual. | **Escenario 1:** Given el modo automático está configurado y el agua se encuentra en estado listo, When se confirma dicho estado, Then el sistema autoriza y ejecuta la apertura de la válvula. <br><br>**Escenario 2:** Given el agua no se encuentra en estado listo, When se evalúa el estado, Then el sistema no autoriza la apertura de la válvula aunque el modo automático esté configurado. | EP-05 |
@@ -959,7 +963,7 @@ El Ubiquitous Language establece un vocabulario común entre los integrantes del
 | **US-22** | Alerta por parámetro fuera de rango | Como operario, quiero recibir una alerta cuando una medición se encuentre fuera del rango configurado, para actuar antes de una liberación no conforme. | **Escenario 1:** Given existe una configuración vigente, When una medición presenta un parámetro fuera del rango establecido, Then el sistema genera una alerta de calidad dirigida al operario. <br><br>**Escenario 2:** Given todos los parámetros se encuentran dentro de los rangos establecidos, When se procesa la medición, Then el sistema no genera una alerta. | EP-06 |
 | **US-23** | Alerta por bloqueo del proceso | Como operario, quiero recibir una alerta crítica cuando el proceso pasa al estado de fallo por alcanzar el límite de ciclos sin efecto, para identificar una posible falla del sensor o del tratamiento. | **Escenario 1:** Given el proceso alcanza el estado de fallo por límite de ciclos, When el sistema registra el bloqueo, Then genera una alerta crítica dirigida al operario y al administrador. | EP-06 |
 | **US-24** | Registro de incidente de calidad | Como administrador, quiero registrar y consultar los incidentes relacionados con agua no conforme, para mantener trazabilidad de las situaciones que requirieron intervención. | **Escenario 1:** Given se detecta una condición no conforme, When el sistema registra el incidente, Then el registro incluye el parámetro afectado, el dispositivo y el momento de detección. <br><br>**Escenario 2:** Given un incidente fue registrado, When el administrador consulta el historial de incidentes, Then el sistema entrega la información correspondiente. | EP-06 |
-| **US-25** | Alerta por pérdida de monitoreo | Como administrador, quiero recibir una alerta cuando un dispositivo deje de enviar mediciones durante el intervalo esperado, para identificar oportunamente una interrupción del monitoreo. | **Escenario 1:** Given el dispositivo está configurado para enviar mediciones periódicas, When transcurre el intervalo esperado sin una nueva medición, Then el sistema genera una alerta de pérdida de monitoreo. <br><br>**Escenario 2:** Given existe una alerta de pérdida de monitoreo activa, When se recibe una nueva medición válida, Then el sistema registra la recuperación del dispositivo. | EP-06 |
+| **US-25** | Alerta por pérdida de monitoreo | Como administrador, quiero recibir una alerta cuando un dispositivo deje de enviar mediciones durante el intervalo esperado, para identificar oportunamente una interrupción del monitoreo. | **Escenario 1:** Given el dispositivo debe enviar heartbeat cada 30 segundos, When transcurren tres intervalos consecutivos —90 segundos— sin heartbeat ni medición válida, Then el sistema genera una única alerta activa de pérdida de monitoreo. <br><br>**Escenario 2:** Given existe una alerta de pérdida de monitoreo activa, When se recibe un nuevo heartbeat o medición válida, Then el sistema registra la recuperación y relaciona la alerta con su resolución. | EP-06 |
 | **EP-07** | **Historial, Reportes y Trazabilidad** | Consulta y exportación de la información histórica de mediciones, evaluaciones, tratamientos, alertas y liberaciones para su análisis y seguimiento, tanto a nivel de un dispositivo como del conjunto del sistema. | N/A | - |
 | **US-26** | Consulta del historial de mi dispositivo | Como operario, quiero consultar el historial de lecturas, ciclos y liberaciones de mi dispositivo, para evaluar el rendimiento del proceso o sustentar una auditoría interna. | **Escenario 1:** Given existen mediciones y eventos registrados para mi dispositivo, When el operario consulta el historial, Then el sistema entrega los registros manteniendo su relación temporal. <br><br>**Escenario 2:** Given no existen registros en el periodo solicitado, When el operario consulta el historial, Then el sistema informa que no existen datos disponibles. | EP-07 |
 | **US-27** | Consulta del historial de cualquier dispositivo | Como administrador, quiero consultar el historial completo de cualquier dispositivo, para conocer la evolución del proceso y las acciones realizadas por los operarios. | **Escenario 1:** Given existen mediciones y eventos registrados, When el administrador consulta el historial de un dispositivo, Then el sistema entrega los registros manteniendo su relación temporal. <br><br>**Escenario 2:** Given no existen registros en el periodo solicitado, When se consulta el historial, Then el sistema informa que no existen datos disponibles. | EP-07 |
@@ -974,7 +978,7 @@ El Ubiquitous Language establece un vocabulario común entre los integrantes del
 | **US-34** | Comprensión de la propuesta de valor | Como visitante, quiero comprender el problema que enfrenta el control de calidad del agua en los procesos productivos, para conocer la necesidad que aborda HydroGuard. | **Escenario 1:** Given el visitante accede al sitio web, When consulta la información principal, Then encuentra una explicación del problema y de la propuesta de valor. <br><br>**Escenrio 2:** Given el visitante revisa la propuesta de valor, When explora la información presentada, Then puede identificar los principales beneficios de la solución frente a alternativas de medición no conectadas. | EP-09 |
 | **US-35** | Explicación del funcionamiento de la solución | Como visitante, quiero conocer cómo funciona la solución, para comprender su propuesta tecnológica y operativa. | **Escenario 1:** Given el visitante consulta la información del producto, When explora el funcionamiento, Then identifica las etapas de lectura, evaluación, corrección, espera y liberación del proceso. | EP-09 |
 | **US-36** | Segmentos y casos de uso | Como visitante, quiero conocer los segmentos y casos de aplicación de la solución, para determinar si responde a una necesidad de mi organización. | **Escenario 1:** Given el visitante consulta los casos de aplicación, When explora la información, Then identifica los segmentos textil e hidropónico a los que se dirige la solución. <br><br>**Escenario 2:** Given el visitante pertenece a uno de los segmentos objetivo, When consulta la información correspondiente, Then encuentra beneficios relacionados con sus necesidades de monitoreo. | EP-09 |
-| **US-37** | Solicitud de contacto o demostración | Como visitante, quiero solicitar información o una demostración de la solución, para conocer con mayor detalle sus capacidades antes de adoptarla. | **Escenario 1:** Given el visitante proporciona información de contacto válida y completa, When envía la solicitud, Then el sistema registra la solicitud de contacto. <br><br>**Escenario 2:** Given la información obligatoria de contacto está incompleta, When el visitante envía la solicitud, Then el sistema rechaza el registro e indica los datos faltantes. | EP-09 |
+| **US-37** | Solicitud de contacto o demostración | Como visitante, quiero solicitar información o una demostración de la solución, para conocer con mayor detalle sus capacidades antes de adoptarla. | **Escenario 1:** Given el visitante proporciona nombre, correo con formato válido y mensaje no vacío, When envía la solicitud, Then el sistema registra la solicitud de contacto. <br><br>**Escenario 2:** Given falta uno de esos campos o el correo no tiene un formato válido, When el visitante envía la solicitud, Then el sistema rechaza el registro e identifica el campo que debe corregirse. | EP-09 |
 | **US-38** | Acceso a la plataforma | Como visitante, quiero dirigirme desde el sitio web hacia el ingreso a mi cuenta operativa, para continuar hacia el proceso de autenticación. | **Escenario 1:** Given el visitante posee una cuenta registrada, When solicita el ingreso a la plataforma, Then el sistema lo dirige al proceso de autenticación. | EP-09 |
 | **EP-10** | **Integración IoT, Edge y Servicios Digitales** | Comunicación técnica entre el dispositivo (físico o simulado en Wokwi), el servicio Edge y los servicios digitales, incluyendo la ejecución de acciones sobre el actuador de flujo bajo un mismo contrato de telemetría. | N/A | - |
 | **TS-01** | Provisionamiento y autenticación del dispositivo | Como Developer, quiero que cada dispositivo disponga de una identidad y credencial únicas vinculadas con su organización, para permitir únicamente comunicaciones autorizadas. | **Escenario 1:** Given un Administrador registra un dispositivo válido, When el backend completa el provisionamiento, Then crea su identidad en estado activo, vincula `deviceId` con `organizationId` y entrega la credencial original una sola vez. <br><br>**Escenario 2:** Given el dispositivo presenta una credencial válida por HTTPS, When solicita autenticación, Then el servicio emite un token de corta duración con su identidad, organización, audiencia y permisos. <br><br>**Escenario 3:** Given la identidad no existe, está revocada o la credencial es inválida, When solicita autenticación, Then el servicio rechaza la solicitud sin revelar información sensible. <br><br>**Escenario 4:** Given el Administrador revoca la identidad, When el dispositivo intenta enviar telemetría o consultar comandos, Then Edge rechaza la operación. | EP-10 |
@@ -982,13 +986,13 @@ El Ubiquitous Language establece un vocabulario común entre los integrantes del
 | **TS-03** | Adquisición y validación de mediciones | Como Developer, quiero que el dispositivo obtenga y valide las lecturas de pH y temperatura, para entregar únicamente mediciones utilizables por el proceso de calidad del agua. | **Escenario 1:** Given los sensores entregan un valor de pH entre 0 y 14 y una temperatura entre 0 °C y 100 °C, When el dispositivo realiza una medición, Then genera un registro completo con ambos valores. <br><br>**Escenario 2:** Given un sensor entrega un valor fuera de esos límites físicos, When el dispositivo procesa la lectura, Then la descarta como medición no válida. | EP-10 |
 | **TS-04** | Ingesta HTTPS de telemetría en Edge API | Como Developer, quiero que Edge API reciba por HTTPS/REST las mediciones de dispositivos autenticados, para procesarlas con una identidad confiable. | **Escenario 1:** Given un token válido y un payload con temperatura, pH, marca temporal e identificador idempotente, When el dispositivo realiza `POST /edge/v1/telemetry`, Then Edge obtiene `deviceId` y `organizationId` del token y confirma la recepción. <br><br>**Escenario 2:** Given el token falta, venció o pertenece a una identidad revocada, When se intenta enviar la medición, Then Edge rechaza la solicitud. <br><br>**Escenario 3:** Given se reintenta una medición ya aceptada, When Edge valida su identificador, Then devuelve el resultado previo sin duplicar el registro. | EP-10 |
 | **TS-05** | Sincronización de parámetros vigentes | Como Developer, quiero que el dispositivo consulte la versión vigente de rangos, estrategia correctiva, sustancia, dosis o intensidad, tiempo de espera, límite de ciclos y modo de liberación, para operar según la configuración establecida. | **Escenario 1:** Given existe una configuración vigente y compatible con las capacidades del dispositivo, When este la solicita, Then el servicio responde con todos sus parámetros y su número de versión. <br><br>**Escenario 2:** Given el servicio no dispone de una configuración vigente, When el dispositivo la solicita, Then informa la ausencia y el dispositivo conserva la última configuración válida sin habilitar un proceso nuevo con datos incompletos. <br><br>**Escenario 3:** Given la configuración exige una capacidad no declarada por el dispositivo, When se intenta sincronizarla, Then el servicio rechaza su activación e informa la incompatibilidad. | EP-10 |
-| **TS-06** | Exposición de servicios de consulta de mediciones y resultados | Como Developer, quiero exponer servicios RESTful para consultar mediciones, evaluaciones y reportes, para que las aplicaciones web y móvil consuman la información del dominio. | **Escenario 1:** Given una solicitud válida con parámetros de consulta correctos, When el servicio la procesa, Then responde con los registros correspondientes. <br><br>**Escenario 2:** Given una solicitud con parámetros inválidos, When el servicio la procesa, Then responde con un error de validación. | EP-10 |
+| **TS-06** | Exposición de servicios de consulta de mediciones y resultados | Como Developer, quiero exponer servicios RESTful para consultar mediciones, evaluaciones y reportes, para que las aplicaciones web y móvil consuman la información del dominio. | **Escenario 1:** Given una sesión autorizada, un `deviceId` perteneciente a su organización, fechas ISO 8601 coherentes y paginación positiva, When el servicio procesa la consulta, Then responde con los registros correspondientes y sus marcas temporales. <br><br>**Escenario 2:** Given el dispositivo pertenece a otra organización, la fecha inicial supera a la final o la paginación no es positiva, When el servicio procesa la solicitud, Then responde con `403` o `422` según corresponda. | EP-10 |
 | **TS-07** | Control del actuador de flujo | Como Developer, quiero emitir una orden de apertura o cierre hacia el actuador de la válvula (servomotor físico o representación en Wokwi), para ejecutar la decisión de liberación o retención del agua. | **Escenario 1:** Given el agua posee una autorización de liberación vigente, When el sistema emite la orden de apertura, Then el dispositivo ejecuta la acción sobre el actuador (o su representación visual mediante LED en el entorno simulado) y confirma el resultado. <br><br>**Escenario 2:** Given el agua no posee autorización de liberación, When se intenta emitir una orden de apertura, Then la orden es rechazada. | EP-10 |
 | **TS-08** | Ejecución de la parada de emergencia en el dispositivo | Como Developer, quiero que el dispositivo priorice y ejecute de inmediato una orden de parada de emergencia, para garantizar el cierre de la válvula ante cualquier rutina en curso. | **Escenario 1:** Given el dispositivo recibe una orden de parada de emergencia, When la procesa, Then interrumpe cualquier rutina automática en ejecución y ejecuta el cierre del actuador. <br><br>**Escenario 2:** Given el actuador fue cerrado por una parada de emergencia, When se recibe una nueva orden automática de apertura, Then el dispositivo la ignora hasta recibir una orden explícita de restablecimiento por parte del operario. | EP-10 |
 | **TS-09** | Almacenamiento temporal ante pérdida de conexión | Como Developer, quiero conservar temporalmente las mediciones cuando no exista comunicación con el servicio, para evitar la pérdida de información del proceso. | **Escenario 1:** Given el dispositivo posee una medición válida y no existe comunicación con el servicio, When intenta transmitirla, Then la conserva temporalmente. <br><br>**Escenario 2:** Given existen mediciones pendientes de transmisión, When se restablece la comunicación, Then el dispositivo las transmite y deja de considerarlas pendientes. | EP-10 |
-| **TS-10** | Estado de disponibilidad del dispositivo | Como Developer, quiero que el dispositivo comunique periódicamente su disponibilidad, para detectar interrupciones en el monitoreo. | **Escenario 1:** Given el dispositivo está operativo y conectado, When transcurre el intervalo configurado, Then el servicio recibe una señal de disponibilidad válida. <br><br>**Escenario 2:** Given no se recibe la señal esperada durante el periodo definido, When el servicio evalúa la disponibilidad, Then identifica al dispositivo como no disponible. | EP-10 |
+| **TS-10** | Estado de disponibilidad del dispositivo | Como Developer, quiero que el dispositivo comunique periódicamente su disponibilidad, para detectar interrupciones en el monitoreo. | **Escenario 1:** Given el dispositivo está operativo y conectado, When transcurren 30 segundos, Then envía un heartbeat autenticado con `deviceId`, marca temporal e identificador idempotente. <br><br>**Escenario 2:** Given transcurren 90 segundos sin heartbeat ni medición válida, When el servicio evalúa la disponibilidad, Then identifica al dispositivo como no disponible sin duplicar la alerta activa. | EP-10 |
 | **TS-11** | Integración de notificaciones con FCM | Como Developer, quiero integrar Firebase Cloud Messaging, para comunicar oportunamente las alertas a la aplicación móvil del Operario. | **Escenario 1:** Given existe una alerta persistida y un token FCM vigente, When Monitoring solicita el envío, Then FCM acepta la notificación y se registra el resultado. <br><br>**Escenario 2:** Given FCM rechaza o no entrega la solicitud, When Monitoring procesa el fallo, Then conserva la alerta como fuente de verdad y registra el intento para reintento. <br><br>**Escenario 3:** Given el Operario abre una notificación, When la aplicación procesa sus datos, Then navega al proceso o alerta correspondiente dentro de sus asignaciones. | EP-10 |
-| **TS-12** | Exposición de configuración mediante API RESTful | Como Developer, quiero disponer de servicios RESTful para consultar y modificar las configuraciones del dispositivo, para integrar las aplicaciones digitales con el dominio de calidad del agua. | **Escenario 1:** Given una solicitud válida para registrar una configuración, When el servicio valida los datos, Then confirma la configuración aceptada. <br><br>**Escenario 2:** Given una solicitud con datos inválidos, When el servicio la procesa, Then responde con un error de validación sin aplicar la configuración. | EP-10 |
+| **TS-12** | Exposición de configuración mediante API RESTful | Como Developer, quiero disponer de servicios RESTful para consultar y modificar las configuraciones del dispositivo, para integrar las aplicaciones digitales con el dominio de calidad del agua. | **Escenario 1:** Given una sesión autorizada y una configuración completa con rangos coherentes, espera entre 1 y 1800 segundos, límite de ciclos positivo, estrategia compatible y modo de liberación válido, When el servicio valida los datos, Then persiste una nueva versión y confirma su número. <br><br>**Escenario 2:** Given falta un campo, los rangos se invierten o la estrategia excede las capacidades del dispositivo, When el servicio procesa la solicitud, Then responde con `422` sin activar una configuración parcial. | EP-10 |
 | **TS-13** | Ejecución y confirmación de la actuación correctiva | Como Developer, quiero que el dispositivo procese de manera idempotente una orden correctiva con la sustancia o acción, dosis o intensidad y ciclo correspondiente, para ejecutar la dosificación física o su representación académica y devolver un resultado verificable. | **Escenario 1:** Given el producto integral recibe una orden válida compatible con sus capacidades, When la procesa, Then ejecuta la dosificación o actuación física únicamente durante la etapa correctiva y confirma su finalización con el mismo identificador de comando. <br><br>**Escenario 2:** Given el simulador recibe una orden válida, When la procesa, Then activa el indicador correspondiente y confirma la representación; una modificación posterior del sensor representa el efecto para la siguiente medición. <br><br>**Escenario 3:** Given el prototipo académico recibe una orden válida, When la procesa, Then mantiene encendido el LED durante la corrección manual sustitutiva realizada por el equipo y confirma la representación al finalizar. <br><br>**Escenario 4:** Given el dispositivo recibe nuevamente un identificador de comando ya procesado, When valida la orden, Then devuelve el resultado registrado sin repetir la actuación. <br><br>**Escenario 5:** Given la orden es incompatible, inválida o no puede ejecutarse, When el dispositivo la procesa, Then no inicia la actuación y responde con estado rechazado o fallido y un código de error. | EP-10 |
 
 
@@ -1000,7 +1004,18 @@ El Ubiquitous Language establece un vocabulario común entre los integrantes del
 
 ## 3.3. Product Backlog.
 
-A continuación se detalla la lista de requerimientos priorizados por valor de negocio, comenzando con el sitio web estático y las funcionalidades principales de consolidación y flujos de intervención, dejando la autenticación para iteraciones posteriores.
+A continuación se detalla la prioridad de producto. Los primeros cinco elementos validan comunicación y acceso desde el Landing Page; a partir de allí, la ejecución técnica no sigue libremente el número de la lista, sino las dependencias habilitadoras que se indican a continuación. De esta manera, una capacidad de negocio puede conservar una prioridad alta sin implementarse antes de la identidad, configuración o comunicación que necesita.
+
+| Secuencia técnica mínima | Capacidades habilitadoras | Capacidades que habilita |
+|:--:|:--|:--|
+| 1 | Registro inicial, rol de Administrador y autenticación (`US-39`, `US-02`) | Acceso seguro a cualquier función administrativa. |
+| 2 | Alta de Operarios, identidad del dispositivo y asignación (`US-01`, `TS-01`, `US-03`, `US-05`) | Asociación inequívoca entre organización, responsable, reservorio y dispositivo. |
+| 3 | Configuración y sincronización (`US-06` a `US-10`, `US-40`, `TS-05`, `TS-12`) | Reglas vigentes para evaluar mediciones y decidir actuaciones. |
+| 4 | Adquisición e ingesta (`TS-03`, `TS-04`, `US-11`) | Telemetría válida, autenticada y visible. |
+| 5 | Evaluación, tratamiento y liberación (`US-13` a `US-21`, `TS-07`, `TS-13`) | Ciclos correctivos y liberación segura. |
+| 6 | Alertas, monitoreo, historial y reportes (`US-22` a `US-33`, `TS-10`, `TS-11`) | Supervisión y trazabilidad sobre eventos ya producidos. |
+
+La prioridad visual utilizada en la presentación debe mostrar esta misma secuencia técnica cuando explique implementación. La rentabilidad y la accesibilidad económica no se presentan como resultados demostrados: `BA-05` continúa siendo un supuesto que se validará comparando el costo del prototipo y del producto mínimo con alternativas del mercado y con la disposición de pago de los segmentos.
 
 | # Orden | User Story Id | Título | Descripción | Story Points (1/2/3/5/8) |
 |:--:|:--|:--|:--|:--:|
@@ -1072,6 +1087,17 @@ En esta sección se define el diseño estratégico del dominio mediante Domain-D
 ### 4.1.1. Design-Level EventStorming
 
 El EventStorming de Nivel de Diseño es la evolución directa del modelo de Big Picture. Su objetivo es pasar del entendimiento general a un modelo de diseño que exponga actores, comandos, eventos, políticas y reglas relevantes. Los artefactos siguientes incorporan la identidad técnica del dispositivo, la aprobación única del tratamiento y la comunicación HTTPS/REST.
+
+Para mantener una lectura uniforme en todos los diagramas se aplica una misma convención: actores en amarillo, comandos en azul, eventos de dominio en naranja y redactados en pasado, políticas o decisiones automáticas en lila, restricciones o puntos críticos en rojo y límites de agregado mediante un contenedor rotulado. Cuando un elemento externo aparece en el flujo, se representa fuera del límite del bounded context correspondiente.
+
+| Flujo de diseño | Agregado que controla la consistencia |
+|:--|:--|
+| Autenticación y acceso humano | `UserAccount` |
+| Provisionamiento y autenticación técnica | `DeviceIdentity` |
+| Asignación y configuración operativa | `IoTDevice` y `DeviceConfiguration` |
+| Recepción y disponibilidad | `MeasurementStream` y `DeviceAvailability` |
+| Evaluación, corrección y liberación | `WaterTreatmentProcess` |
+| Alertas, incidentes y trazabilidad | `OperationalAlert`, `QualityIncident` y `EventCorrelation` |
 
 **Autenticación y acceso**
 Inicio de sesión, validación de credenciales y control de acceso por rol
@@ -1317,6 +1343,8 @@ Este contexto administra exclusivamente la identidad técnica de los dispositivo
 
 El Context Mapping se elaboró a partir de los eventos, comandos, políticas y capacidades identificados en EventStorming. El equipo agrupó inicialmente las capacidades por propósito y propiedad de datos, y después evaluó si moverlas, dividirlas o compartirlas reducía el acoplamiento sin fragmentar innecesariamente el flujo de tratamiento.
 
+El refinamiento se realizó en cinco pasos: (1) se partió de los cinco grupos funcionales identificados en el Big Picture; (2) se protegió Treatment como Core Domain y se separaron configuración, telemetría y monitoreo; (3) se detectó que las credenciales técnicas no pertenecían a Human IAM ni a Configuration y se creó Device Identity and Access como sexto contexto; (4) se compararon las alternativas de división, unificación y duplicación mostradas en la tabla siguiente; y (5) se seleccionaron relaciones DDD explícitas y contratos HTTPS/REST. Durante la revisión se corrigió la asignación de responsabilidades entre `Water Quality Treatment and Release` y `Operational Monitoring and Traceability`: Treatment decide y cambia el proceso; Monitoring observa, proyecta y reporta.
+
 Para comparar los diseños candidatos se utilizaron cuatro criterios: protección del Core Domain, coherencia del lenguaje ubicuo, propiedad exclusiva de los datos y simplicidad operativa para el alcance académico. Se analizaron únicamente alternativas que podían modificar de forma relevante los límites ya identificados.
 
 | Alternativa evaluada | Cambio considerado | Consecuencia principal | Decisión |
@@ -1462,6 +1490,19 @@ Cada dispositivo declara capacidades como `PH_MEASUREMENT`, `TEMPERATURE_MEASURE
 | Operational Monitoring and Traceability | Alertas, incidentes, proyecciones de consulta, historial y reportes. | Consume eventos publicados; no modifica los agregados ni las bases de los otros contextos. |
 
 Cada contexto mantiene su propio esquema o base lógica. No se permiten tablas compartidas, uniones directas entre bases ni escritura en datos ajenos. En el alcance actual, los dispositivos se comunican con Edge exclusivamente mediante HTTPS/REST; no se incorpora un broker MQTT. Las integraciones internas pueden utilizar APIs REST y eventos versionados según la necesidad, manteniendo idempotencia y reintentos.
+
+##### Manejadores de integración entre contextos
+
+| Evento o solicitud | Consumidor y manejador | Resultado |
+|:--|:--|:--|
+| `DeviceRegistered` | `ProvisionDeviceIdentityHandler` en Device Identity and Access | Crea la identidad técnica y devuelve la credencial una sola vez. |
+| `ConfiguracionPublicada` | `SynchronizeDeviceConfigurationHandler` en IoT Telemetry | Conserva la versión vigente que el dispositivo puede consultar mediante Edge. |
+| `MedicionRegistrada` | `EvaluateMeasurementHandler` en Treatment | Inicia o continúa la evaluación utilizando la versión de configuración del proceso. |
+| `ActuacionCorrectivaConfirmada` o `ActuacionCorrectivaRechazada` | `HandleCorrectiveActionResultHandler` en Treatment | Inicia la espera o lleva el proceso a fallo sin duplicar el ciclo. |
+| Eventos de Treatment y Telemetry | `ProjectOperationalEventHandler` en Monitoring | Actualiza estado, historial, correlaciones, alertas e incidentes. |
+| `AlertaGenerada` | `RequestOperatorNotificationHandler` en Monitoring | Invoca `NotificationPort`; `FirebaseCloudMessagingAdapter` adapta la solicitud a FCM y registra el resultado. |
+
+Los manejadores consumen `messageId`, `correlationId`, `organizationId` y `deviceId` del sobre común. Registrar el mismo `messageId` más de una vez no puede repetir una actuación ni crear una segunda alerta o correlación.
 
 ##### Contratos HTTPS/REST para dispositivos
 
@@ -1780,7 +1821,7 @@ WHERE role = 'ROLE_ADMIN' AND status = 'ACTIVE';
 ##### C. Commands (Comandos - CQRS)
 
 * **`RegisterIotDeviceCommand(String serialNumber, String alias, String deviceModel, OperatingEnvironment environment, Set<DeviceCapability> capabilities)`**: Registrar un nuevo dispositivo IoT (Administrador) y coordinar su provisionamiento técnico.
-* **`AssignIotDeviceCommand(Long deviceId, Long operatorId)`**: Asignar un dispositivo IoT a un operario (Administrador).
+* **`AssignIotDeviceCommand(String deviceId, Long operatorId)`**: Asignar un dispositivo IoT a un operario (Administrador).
 * **`ConfigureOperatingRangesCommand(Long configurationId, OperatingRange vmaRange, OperatingRange cropRange)`**: Establecer los rangos operativos (Operario).
 * **`ConfigureCorrectiveStrategyCommand(Long configurationId, CorrectiveStrategy strategy)`**: Configurar la estrategia correctiva de pH o Térmica (Operario).
 * **`ConfigureWaitTimeCommand(Long configurationId, WaitTime waitTime)`**: Establecer los tiempos de espera del ciclo (Operario).
@@ -1791,9 +1832,9 @@ WHERE role = 'ROLE_ADMIN' AND status = 'ACTIVE';
 
 ##### D. Queries (Consultas - CQRS)
 
-* **`GetIotDeviceByIdQuery(Long deviceId)`**
-* **`GetConfigurationByDeviceIdQuery(Long deviceId)`**
-* **`GetPublishedConfigurationQuery(Long deviceId)`**
+* **`GetIotDeviceByIdQuery(String deviceId)`**
+* **`GetConfigurationByDeviceIdQuery(String deviceId)`**
+* **`GetPublishedConfigurationQuery(String deviceId)`**
 
 ---
 
@@ -1847,7 +1888,7 @@ WHERE role = 'ROLE_ADMIN' AND status = 'ACTIVE';
 * **`ConfigureWaitTimeResource(Integer waitTimeSeconds)`**
 * **`ConfigureReleaseModeResource(String releaseMode)`**
 * **`IotDeviceResource(Long id, String serialNumber, Long operatorId)`**
-* **`DeviceConfigurationResource(Long id, Long deviceId, String status, String releaseMode)`**
+* **`DeviceConfigurationResource(Long id, String deviceId, String status, String releaseMode)`**
 
 ---
 
@@ -1891,7 +1932,7 @@ WHERE role = 'ROLE_ADMIN' AND status = 'ACTIVE';
   * `Optional<IotDevice> findBySerialNumber(String serialNumber)`
 
 * **`DeviceConfigurationRepository` (JPA Repository)**
-  * `Optional<DeviceConfiguration> findByDeviceIdAndStatus(Long deviceId, ConfigurationStatus status)`
+  * `Optional<DeviceConfiguration> findByDeviceIdAndStatus(String deviceId, ConfigurationStatus status)`
 
 #### 4.2.2.5. Bounded Context Software Architecture Component Level Diagrams
 
@@ -1926,7 +1967,7 @@ A continuación se detalla la definición DDL de la base de datos relacional enc
 ```sql
 CREATE TABLE iot_devices
 (
-  id INT NOT NULL,
+  id VARCHAR(64) NOT NULL,
   serial_number VARCHAR(50) NOT NULL,
   device_model VARCHAR(255) NOT NULL,
   operator_id INT NULL,
@@ -1953,7 +1994,7 @@ CREATE TABLE device_configurations
   wait_time_seconds INT NOT NULL,
   created_at DATE NOT NULL,
   updated_at DATE NOT NULL,
-  device_id INT NOT NULL,
+  device_id VARCHAR(64) NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (device_id) REFERENCES iot_devices(id),
   UNIQUE (id)
@@ -2108,7 +2149,7 @@ Para la persistencia de las métricas enviadas por los dispositivos IoT, se esta
 CREATE TABLE water_measurements
 (
   id INT NOT NULL,
-  device_id INT NOT NULL,
+  device_id VARCHAR(64) NOT NULL,
   ph FLOAT NOT NULL,
   temperature FLOAT NOT NULL,
   measurement_timestamp INT NOT NULL,
@@ -2155,7 +2196,7 @@ CREATE TABLE water_measurements
 
 ##### C. Commands (Comandos - CQRS)
 
-* **`StartTreatmentProcessCommand(Long deviceId)`**: Inicia un nuevo ciclo de proceso de tratamiento.
+* **`StartTreatmentProcessCommand(String deviceId)`**: Inicia un nuevo ciclo de proceso de tratamiento.
 * **`EvaluateMeasurementCommand(Long processId, Double ph, Double temperature)`**: Evalúa las condiciones físicas actuales del agua contra los rangos configurados.
 * **`ApplyCorrectionStrategyCommand(Long processId, CorrectionStrategyType strategyType)`**: Registra la selección y aplicación de una estrategia de corrección.
 * **`ApproveCorrectionCommand(Long processId, Long operatorId, Long configurationVersion)`**: Aprueba una sola vez la estrategia propuesta para el proceso.
@@ -2168,8 +2209,8 @@ CREATE TABLE water_measurements
 ##### D. Queries (Consultas - CQRS)
 
 * **`GetTreatmentProcessByIdQuery(Long processId)`**
-* **`GetActiveTreatmentProcessByDeviceIdQuery(Long deviceId)`**
-* **`GetTreatmentHistoryByDeviceIdQuery(Long deviceId)`**
+* **`GetActiveTreatmentProcessByDeviceIdQuery(String deviceId)`**
+* **`GetTreatmentHistoryByDeviceIdQuery(String deviceId)`**
 
 ---
 
@@ -2209,12 +2250,12 @@ CREATE TABLE water_measurements
 
 ##### B. Resources / DTOs (Objetos de Transferencia de Datos)
 
-* **`StartTreatmentProcessResource(Long deviceId)`**
+* **`StartTreatmentProcessResource(String deviceId)`**
 * **`EvaluateMeasurementResource(Double ph, Double temperature)`**
 * **`ApproveCorrectionResource(Long configurationVersion)`**: El Operario se obtiene de la sesión autenticada, no del cuerpo de la solicitud.
 * **`AuthorizeReleaseResource(String releaseType)`**
 * **`ResetProcessResource(Long operatorId, String reason)`**
-* **`WaterTreatmentProcessResource(Long id, Long deviceId, String conformity, String status, Integer cycleCount)`**
+* **`WaterTreatmentProcessResource(Long id, String deviceId, String conformity, String status, Integer cycleCount)`**
 
 ---
 
@@ -2253,8 +2294,8 @@ CREATE TABLE water_measurements
 ##### A. Persistence & Repositories (Persistencia y Repositorios)
 
 * **`WaterTreatmentProcessRepository` (JPA Repository)**
-* `Optional<WaterTreatmentProcess> findByDeviceIdAndStatusNotIn(Long deviceId, List<TreatmentStatus> closedStatuses)`
-* `List<WaterTreatmentProcess> findByDeviceIdOrderByCreatedAtDesc(Long deviceId)`
+* `Optional<WaterTreatmentProcess> findByDeviceIdAndStatusNotIn(String deviceId, List<TreatmentStatus> closedStatuses)`
+* `List<WaterTreatmentProcess> findByDeviceIdOrderByCreatedAtDesc(String deviceId)`
 
 #### 4.2.4.5. Bounded Context Software Architecture Component Level Diagrams
 
@@ -2290,23 +2331,58 @@ A continuación se detalla la definición DDL de la base de datos relacional enc
 CREATE TABLE water_treatment_processes
 (
   id INT NOT NULL,
-  device_id INT NOT NULL,
+  device_id VARCHAR(64) NOT NULL,
   conformity VARCHAR(20) NOT NULL,
   status VARCHAR(20) NOT NULL,
   current_strategy VARCHAR(20) NOT NULL,
   cycle_count INT NOT NULL,
   useful_variation FLOAT NOT NULL,
-  created_at INT NOT NULL,
-  updated_at INT NOT NULL,
+  created_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP NOT NULL,
   PRIMARY KEY (id),
   UNIQUE (id)
+);
+
+CREATE TABLE treatment_cycles
+(
+  id INT NOT NULL,
+  process_id INT NOT NULL,
+  cycle_number INT NOT NULL,
+  strategy_type VARCHAR(50) NOT NULL,
+  command_id VARCHAR(64) NOT NULL,
+  status VARCHAR(20) NOT NULL,
+  started_at TIMESTAMP NOT NULL,
+  completed_at TIMESTAMP NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (process_id) REFERENCES water_treatment_processes(id),
+  UNIQUE (process_id, cycle_number),
+  UNIQUE (command_id)
+);
+
+CREATE TABLE treatment_evaluations
+(
+  id INT NOT NULL,
+  process_id INT NOT NULL,
+  cycle_id INT NULL,
+  measurement_id VARCHAR(64) NOT NULL,
+  ph FLOAT NOT NULL,
+  temperature FLOAT NOT NULL,
+  conformity VARCHAR(20) NOT NULL,
+  useful_variation FLOAT NULL,
+  evaluated_at TIMESTAMP NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (process_id) REFERENCES water_treatment_processes(id),
+  FOREIGN KEY (cycle_id) REFERENCES treatment_cycles(id),
+  UNIQUE (process_id, measurement_id)
 );
 
 ```
 
 ---
 
-* **`water_treatment_processes`**: Mantiene la trazabilidad y persistencia de cada flujo de tratamiento asignado a un dispositivo (`device_id`), registrando las métricas de ciclo (`cycle_count`, `useful_variation`), las estrategias aplicadas y las decisiones de liberación o retención por fallo.
+* **`water_treatment_processes`**: Conserva el estado y resumen vigente de cada proceso asignado a un dispositivo.
+* **`treatment_cycles`**: Registra cada actuación correctiva, su número, estrategia, comando idempotente, resultado y tiempos de ejecución.
+* **`treatment_evaluations`**: Conserva la medición evaluada antes o después de un ciclo, el resultado de conformidad y la variación útil calculada. Junto con `treatment_cycles`, permite reconstruir el historial prometido sin depender únicamente del resumen del proceso.
 
 ### 4.2.5. Bounded Context: Monitoring
 
@@ -2343,21 +2419,21 @@ CREATE TABLE water_treatment_processes
 
 ##### C. Commands (Comandos - CQRS)
 
-* **`CreateOperationalAlertCommand(Long deviceId, String severity, String description)`**: Solicita la creación de una alerta operativa.
-* **`RegisterIncidentCommand(Long deviceId, IncidentType incidentType, String description)`**: Registra un incidente de calidad o pérdida de monitoreo.
-* **`CorrelateEventsCommand(Long deviceId, Long cycleId, List<Long> eventIds)`**: Correlaciona eventos con ciclos operativos específicos.
-* **`UpdateStatusViewCommand(Long deviceId, StatusView statusView)`**: Actualiza la vista de estado del sistema.
-* **`GenerateUpdatedReportCommand(Long deviceId, String reportType)`**: Genera el estado consolidado o reporte actualizado.
+* **`CreateOperationalAlertCommand(String deviceId, String severity, String description)`**: Solicita la creación de una alerta operativa.
+* **`RegisterIncidentCommand(String deviceId, IncidentType incidentType, String description)`**: Registra un incidente de calidad o pérdida de monitoreo.
+* **`CorrelateEventsCommand(String deviceId, Long cycleId, List<String> eventIds)`**: Correlaciona eventos con ciclos operativos específicos.
+* **`UpdateStatusViewCommand(String deviceId, StatusView statusView)`**: Actualiza la vista de estado del sistema.
+* **`GenerateUpdatedReportCommand(String deviceId, String reportType)`**: Genera el estado consolidado o reporte actualizado.
 
 ---
 
 ##### D. Queries (Consultas - CQRS)
 
-* **`GetActiveAlertsByDeviceIdQuery(Long deviceId)`**
-* **`GetIncidentsByDeviceIdQuery(Long deviceId)`**
+* **`GetActiveAlertsByDeviceIdQuery(String deviceId)`**
+* **`GetIncidentsByDeviceIdQuery(String deviceId)`**
 * **`GetCorrelatedEventsByCycleQuery(Long cycleId)`**
-* **`GetStatusViewByDeviceIdQuery(Long deviceId)`**
-* **`GetTraceabilityReportQuery(Long deviceId)`**
+* **`GetStatusViewByDeviceIdQuery(String deviceId)`**
+* **`GetTraceabilityReportQuery(String deviceId)`**
 
 ---
 
@@ -2399,12 +2475,12 @@ CREATE TABLE water_treatment_processes
 
 ##### B. Resources / DTOs (Objetos de Transferencia de Datos)
 
-* **`CreateOperationalAlertResource(Long deviceId, String severity, String description)`**
-* **`RegisterIncidentResource(Long deviceId, String incidentType, String description)`**
-* **`CorrelateEventsResource(Long deviceId, Long cycleId, List<Long> eventIds)`**
-* **`UpdateStatusViewResource(Long deviceId, String status)`**
-* **`GenerateReportResource(Long deviceId, String reportType)`**
-* **`OperationalAlertResource(Long id, Long deviceId, String severity, String description, String createdAt)`**
+* **`CreateOperationalAlertResource(String deviceId, String severity, String description)`**
+* **`RegisterIncidentResource(String deviceId, String incidentType, String description)`**
+* **`CorrelateEventsResource(String deviceId, Long cycleId, List<String> eventIds)`**
+* **`UpdateStatusViewResource(String deviceId, String status)`**
+* **`GenerateReportResource(String deviceId, String reportType)`**
+* **`OperationalAlertResource(Long id, String deviceId, String severity, String description, String createdAt)`**
 
 ---
 
@@ -2444,9 +2520,9 @@ CREATE TABLE water_treatment_processes
 ##### A. Persistence & Repositories (Persistencia y Repositorios)
 
 * **`OperationalAlertRepository` (JPA Repository)**
-  * `List<OperationalAlert> findByDeviceIdOrderByCreatedAtDesc(Long deviceId)`
+  * `List<OperationalAlert> findByDeviceIdOrderByCreatedAtDesc(String deviceId)`
 * **`QualityIncidentRepository` (JPA Repository)**
-  * `List<QualityIncident> findByDeviceId(Long deviceId)`
+  * `List<QualityIncident> findByDeviceId(String deviceId)`
 * **`EventCorrelationRepository` (JPA Repository)**
   * `Optional<EventCorrelation> findByCycleId(Long cycleId)`
 
@@ -2485,7 +2561,7 @@ A continuación se presenta el diagrama de clases correspondiente a la capa de d
 CREATE TABLE event_correlations
 (
   id INT NOT NULL,
-  device_id INT NOT NULL,
+  device_id VARCHAR(64) NOT NULL,
   cycle_id INT NOT NULL,
   created_at DATE NOT NULL,
   updated_at DATE NOT NULL,
@@ -2493,10 +2569,22 @@ CREATE TABLE event_correlations
   UNIQUE (id)
 );
 
+CREATE TABLE event_correlation_items
+(
+  id INT NOT NULL,
+  correlation_id INT NOT NULL,
+  event_id VARCHAR(64) NOT NULL,
+  event_type VARCHAR(80) NOT NULL,
+  occurred_at TIMESTAMP NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (correlation_id) REFERENCES event_correlations(id),
+  UNIQUE (correlation_id, event_id)
+);
+
 CREATE TABLE quality_incidents
 (
   id INT NOT NULL,
-  device_id INT NOT NULL,
+  device_id VARCHAR(64) NOT NULL,
   incident_type VARCHAR(15) NOT NULL,
   description VARCHAR(100) NOT NULL,
   created_at DATE NOT NULL,
@@ -2510,7 +2598,7 @@ CREATE TABLE quality_incidents
 CREATE TABLE operational_alerts
 (
   id INT NOT NULL,
-  device_id INT NOT NULL,
+  device_id VARCHAR(64) NOT NULL,
   severity VARCHAR(15) NOT NULL,
   description VARCHAR(100) NOT NULL,
   created_at DATE NOT NULL,
@@ -2522,7 +2610,8 @@ CREATE TABLE operational_alerts
 );
 ```
 
-* **`event_correlations`**: Registra las agrupaciones de eventos del sistema por ciclos operativos y dispositivos IoT.
+* **`event_correlations`**: Registra la cabecera de cada agrupación por ciclo operativo y dispositivo IoT.
+* **`event_correlation_items`**: Persiste los identificadores, tipos y fechas de los eventos incluidos en cada correlación, de modo que `eventIds` tenga una representación durable y consultable.
 * **`quality_incidents`**: Almacena las incidencias técnicas y de calidad detectadas, enlazadas mediante clave foránea (`correlation_id`) a la trazabilidad de eventos origen.
 * **`operational_alerts`**: Mantiene las alertas dirigidas a los operadores, vinculadas a su incidente disparador (`incident_id`) para permitir un análisis inmediato de causa raíz.
 
