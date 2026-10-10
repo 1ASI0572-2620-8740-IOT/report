@@ -3259,7 +3259,97 @@ Los Wireflows se organizan alrededor de los objetivos indispensables de cada act
 
 Cada Wireflow debe reflejar estados de carga, validación, vacío, error y confirmación cuando alteren la decisión del usuario. En el flujo operativo, el sistema no permite aprobar una corrección sin estrategia, liberar agua no apta ni operar un recurso fuera de las asignaciones vigentes.
 
-> **Evidencia pendiente:** incorporar los cinco diagramas Wireflow elaborados en FigJam, LucidChart u Overflow a partir de los wireframes existentes.
+### Aplicación web — Administrador
+
+---
+
+#### **WF-WEB-01 · Inicio de sesión y registro de empresa**
+- User Goal: Iniciar sesión o registrar una empresa para acceder a la plataforma.
+- User Persona: Administrador de empresa.
+
+El administrador accede a la pantalla de inicio → si ya tiene una cuenta, ingresa sus credenciales y el sistema valida la información. Si son correctas → accede al panel de resumen; si son incorrectas → se muestra un mensaje de error con la opción de reintentar. Si no tiene una cuenta → inicia el registro de empresa, completa los datos de la organización y posteriormente los del administrador. Al revisar y confirmar la información → el sistema valida los campos. Si encuentra errores → permite corregir el formulario; si los datos son válidos → se crea la cuenta y se redirige al inicio de sesión.
+
+<a href="./assets/wireframes/WF-WEB-01.png">
+  <img src="./assets/wireframes/WF-WEB-01.png" width="1200">
+</a>
+
+---
+
+#### **WF-WEB-02 · Registro y asignación de operarios**
+- User Goal: Registrar un operario y asignarle los recursos necesarios para sus actividades.
+- User Persona: Administrador de empresa.
+
+Desde el panel de resumen, el administrador ingresa a la sección de operarios → selecciona "Registrar operario" y completa sus datos de cuenta. Si la información es incorrecta → se muestra un error para corregirla; si es válida → continúa con el perfil del operario. Posteriormente, selecciona el grupo, reservorio y dispositivo que tendrá asignados. El sistema verifica la disponibilidad del dispositivo → si no está disponible, solicita elegir otro; si está disponible, permite revisar y confirmar la asignación. Finalmente, se genera un código de primer acceso y se muestra la confirmación del registro, dejando al operario pendiente de completar su acceso inicial.
+
+<a href="./assets/wireframes/WF-WEB-02.png">
+  <img src="./assets/wireframes/WF-WEB-02.png" width="1200">
+</a>
+
+---
+
+#### **WF-WEB-03 · Supervisión de dispositivos y revisión de incidencias**
+- User Goal: Supervisar el funcionamiento de un dispositivo y consultar las incidencias registradas.
+- User Persona: Administrador de empresa.
+
+Desde el panel de resumen, el administrador selecciona un dispositivo → consulta sus datos operativos y accede a la telemetría para revisar las mediciones de pH, temperatura y el proceso relacionado. Si no existen alertas activas → continúa con el monitoreo; si existe una alerta → accede al listado y consulta su detalle. Cuando la alerta tiene una incidencia asociada → revisa su información y trazabilidad, incluyendo el proceso, responsable y eventos registrados. Posteriormente, consulta el historial y puede exportar un reporte. Si no se generó una incidencia → regresa a la telemetría para continuar supervisando el dispositivo.
+
+<a href="./assets/wireframes/WF-WEB-03.png">
+  <img src="./assets/wireframes/WF-WEB-03.png" width="1200">
+</a>
+
+---
+
+### Aplicación móvil — Operario
+
+---
+
+#### **WF-MOB-01 · Primer acceso e inicio de sesión**
+- User Goal: Completar el primer acceso e iniciar sesión en la aplicación móvil.
+- User Persona: Operario.
+
+El operario ingresa a la pantalla de primer acceso → introduce el código proporcionado por el administrador y el sistema verifica su validez. Si el código es incorrecto → se muestra un mensaje de error con la opción de reintentar; si es válido → accede al formulario para establecer su identificador y contraseña. Al completar sus credenciales → se muestra la confirmación del acceso y sus reservorios asignados. Posteriormente, ingresa a la pantalla de inicio de sesión y proporciona sus credenciales. Si son correctas → accede al inicio de la aplicación; si son incorrectas → se muestra el error correspondiente y puede volver a intentarlo.
+
+<a href="./assets/wireframes/WF-MOB-01.png">
+  <img src="./assets/wireframes/WF-MOB-01.png" width="1200">
+</a>
+
+---
+
+#### **WF-MOB-02 · Consulta del estado de reservorios**
+- User Goal: Consultar las mediciones y el estado operativo de un reservorio asignado.
+- User Persona: Operario.
+
+Desde la pantalla de inicio, el operario accede a "Mis reservorios" → selecciona uno de los reservorios asignados y consulta su detalle, donde se muestran las mediciones de pH y temperatura, el estado del agua y la última actualización. Al seleccionar "Consultar mediciones" → revisa los valores de pH y temperatura junto con sus rangos autorizados y el estado actual del reservorio. Desde el detalle también puede navegar hacia cuatro secciones: Proceso, para supervisar el tratamiento; Configuración, para consultar los parámetros operativos; Alertas, para revisar eventos activos; e Historial, para consultar mediciones y trazabilidad. Finalmente, puede regresar al detalle del reservorio para continuar con su supervisión.
+
+<a href="./assets/wireframes/WF-MOB-02.png">
+  <img src="./assets/wireframes/WF-MOB-02.png" width="1200">
+</a>
+
+---
+
+#### **WF-MOB-03 · Supervisión del tratamiento y liberación segura del agua**
+- User Goal: Supervisar el tratamiento y liberar el agua únicamente cuando cumpla las condiciones de seguridad.
+- User Persona: Operario.
+
+Desde el detalle del reservorio, el operario accede al proceso actual → revisa las mediciones de pH y temperatura y verifica si el agua se encuentra dentro de los rangos permitidos. Si cumple las condiciones → el agua pasa al estado "LISTO" y se evalúa el modo de liberación. En modo automático → se autoriza la apertura de la válvula; en modo manual → el operario confirma la acción antes de completar la liberación. Si las mediciones están fuera de rango → se inicia un ciclo de corrección, se ejecuta la acción correctiva y se espera una nueva medición. Si el agua continúa fuera de rango y quedan ciclos disponibles → se repite el tratamiento; si se alcanza el máximo de ciclos → se registra el fallo, se genera una alerta y la válvula permanece cerrada. Adicionalmente, el operario puede solicitar una parada de emergencia → al confirmarla, se detiene el proceso y se cierra la válvula para impedir la liberación del agua.
+
+<a href="./assets/wireframes/WF-MOB-03.png">
+  <img src="./assets/wireframes/WF-MOB-03.png" width="1200">
+</a>
+
+---
+
+#### **WF-MOB-04 · Atención de alertas y consulta de trazabilidad**
+- User Goal: Atender una alerta activa y consultar su trazabilidad operativa.
+- User Persona: Operario.
+
+Desde la pantalla de inicio, el operario identifica una alerta activa → ingresa a la sección de alertas y selecciona el evento que desea revisar. Al consultar su detalle → visualiza la severidad, fecha, medición fuera de rango y proceso relacionado. Posteriormente, accede a la información del reservorio y dispositivo involucrados → consulta el proceso de tratamiento asociado y revisa su historial operativo. Al seleccionar la opción de trazabilidad → examina las mediciones, ciclos de corrección y actuaciones registradas durante el evento. Finalmente, regresa al detalle del reservorio para comprobar su estado actual y continuar con la supervisión.
+
+<a href="./assets/wireframes/WF-MOB-04.png">
+  <img src="./assets/wireframes/WF-MOB-04.png" width="1200">
+</a>
+
+---
 
 ### 5.4.3. Applications Mock-ups.
 
