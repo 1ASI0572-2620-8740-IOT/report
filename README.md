@@ -2022,48 +2022,67 @@ Abstracciones para la lectura de información del dominio sin alterar su estado:
 
 ##### F. Services (Servicios de Comando y Consulta)
 
-* **`WorkGroupCommandService`**
-  * `Optional<WorkGroup> handle(CreateWorkGroupCommand)`: Crea un grupo operativo.
-  * `void handle(DeactivateWorkGroupCommand)`: Desactiva un grupo.
+* **`WorkGroupCommandService` (Interfaz de Servicio de Dominio / Aplicación)**
+  * **Descripción:** Coordina las operaciones que modifican el estado de los grupos operativos.
+  * **Métodos principales:**
+    * `Optional<WorkGroup> handle(CreateWorkGroupCommand command)`: Crea un grupo operativo.
+    * `void handle(DeactivateWorkGroupCommand command)`: Desactiva un grupo (solo si no tiene reservorios ni perfiles activos).
 
-* **`WorkGroupQueryService`**
-  * `Page<WorkGroup> handle(ListWorkGroupsQuery)`: Lista paginada de grupos.
-  * `Optional<WorkGroupDetail> handle(GetWorkGroupByIdQuery)`: Retorna el grupo con miembros y reservorios.
+* **`WorkGroupQueryService` (Interfaz de Servicio de Dominio / Aplicación)**
+  * **Descripción:** Atiende las lecturas de grupos operativos.
+  * **Métodos principales:**
+    * `Page<WorkGroup> handle(ListWorkGroupsQuery query)`: Lista paginada de grupos con filtros.
+    * `Optional<WorkGroupDetail> handle(GetWorkGroupByIdQuery query)`: Retorna el grupo con miembros y reservorios.
 
-* **`ReservoirCommandService`**
-  * `Optional<Reservoir> handle(CreateReservoirCommand)`: Crea un reservorio.
-  * `void handle(DeactivateReservoirCommand)`: Desactiva un reservorio.
+* **`ReservoirCommandService` (Interfaz de Servicio de Dominio / Aplicación)**
+  * **Descripción:** Coordina las operaciones que modifican el estado de los reservorios.
+  * **Métodos principales:**
+    * `Optional<Reservoir> handle(CreateReservoirCommand command)`: Crea un reservorio dentro de un grupo.
+    * `void handle(DeactivateReservoirCommand command)`: Desactiva un reservorio (solo si no tiene asignaciones ni dispositivo vinculado).
 
-* **`ReservoirQueryService`**
-  * `Page<Reservoir> handle(ListReservoirsQuery)`: Lista paginada de reservorios.
-  * `Optional<ReservoirDetail> handle(GetReservoirByIdQuery)`: Retorna el reservorio con dispositivo vinculado.
+* **`ReservoirQueryService` (Interfaz de Servicio de Dominio / Aplicación)**
+  * **Descripción:** Atiende las lecturas de reservorios.
+  * **Métodos principales:**
+    * `Page<Reservoir> handle(ListReservoirsQuery query)`: Lista paginada de reservorios con filtros.
+    * `Optional<ReservoirDetail> handle(GetReservoirByIdQuery query)`: Retorna el reservorio con dispositivo vinculado.
 
-* **`DeviceCommandService`**
-  * `RegisteredDevice handle(RegisterDeviceCommand)`: Registra un dispositivo y genera su credencial.
-  * `void handle(RevokeDeviceIdentityCommand)`: Revoca la identidad técnica.
-  * `void handle(LinkDeviceCommand)`: Vincula un dispositivo con un reservorio.
-  * `void handle(UnlinkDeviceCommand)`: Desvincula un dispositivo.
-  * `void handle(DeactivateDeviceCommand)`: Desactiva un dispositivo.
+* **`DeviceCommandService` (Interfaz de Servicio de Dominio / Aplicación)**
+  * **Descripción:** Coordina las operaciones que modifican el estado de los dispositivos y su identidad técnica.
+  * **Métodos principales:**
+    * `RegisteredDevice handle(RegisterDeviceCommand command)`: Registra un dispositivo y genera su credencial técnica.
+    * `void handle(RevokeDeviceIdentityCommand command)`: Revoca la identidad técnica de un dispositivo.
+    * `void handle(LinkDeviceCommand command)`: Vincula un dispositivo libre con un reservorio libre.
+    * `void handle(UnlinkDeviceCommand command)`: Desvincula un dispositivo de su reservorio.
+    * `void handle(DeactivateDeviceCommand command)`: Desactiva un dispositivo.
 
-* **`DeviceQueryService`**
-  * `Page<Device> handle(ListDevicesQuery)`: Lista paginada de dispositivos con filtros.
-  * `Optional<DeviceDetail> handle(GetDeviceByIdQuery)`: Retorna el dispositivo con reservorio y responsable.
-  * `DeviceConfigurations handle(GetDeviceConfigurationsQuery)`: Retorna las versiones de configuración del dispositivo.
+* **`DeviceQueryService` (Interfaz de Servicio de Dominio / Aplicación)**
+  * **Descripción:** Atiende las lecturas de dispositivos.
+  * **Métodos principales:**
+    * `Page<Device> handle(ListDevicesQuery query)`: Lista paginada de dispositivos con filtros.
+    * `Optional<DeviceDetail> handle(GetDeviceByIdQuery query)`: Retorna el dispositivo con reservorio y responsable.
+    * `DeviceConfigurations handle(GetDeviceConfigurationsQuery query)`: Retorna las versiones de configuración del dispositivo.
 
-* **`OperatorProfileCommandService`**
-  * `Optional<OperatorProfile> handle(CreateOperatorProfileCommand)`: Crea un perfil con asignaciones.
-  * `void handle(AddAssignmentsCommand)`: Agrega asignaciones a un perfil.
-  * `void handle(CloseAssignmentCommand)`: Cierra una asignación activa.
-  * `void handle(DeactivateOperatorProfileCommand)`: Desactiva un perfil.
+* **`OperatorProfileCommandService` (Interfaz de Servicio de Dominio / Aplicación)**
+  * **Descripción:** Coordina las operaciones que modifican el estado de los perfiles operativos y sus asignaciones.
+  * **Métodos principales:**
+    * `Optional<OperatorProfile> handle(CreateOperatorProfileCommand command)`: Crea un perfil con asignaciones iniciales.
+    * `void handle(AddAssignmentsCommand command)`: Agrega asignaciones a un perfil.
+    * `void handle(CloseAssignmentCommand command)`: Cierra una asignación activa.
+    * `void handle(DeactivateOperatorProfileCommand command)`: Desactiva un perfil de operario.
 
-* **`OperatorProfileQueryService`**
-  * `Page<OperatorProfile> handle(ListOperatorProfilesQuery)`: Lista paginada de perfiles.
-  * `Optional<OperatorProfileDetail> handle(GetOperatorProfileByIdQuery)`: Retorna el perfil con asignaciones.
+* **`OperatorProfileQueryService` (Interfaz de Servicio de Dominio / Aplicación)**
+  * **Descripción:** Atiende las lecturas de perfiles operativos.
+  * **Métodos principales:**
+    * `Page<OperatorProfile> handle(ListOperatorProfilesQuery query)`: Lista paginada de perfiles.
+    * `Optional<OperatorProfileDetail> handle(GetOperatorProfileByIdQuery query)`: Retorna el perfil con sus asignaciones.
 
-* **`OperationalCatalogQueryService`**
-  * `OrganizationContext handle(GetOrganizationContextQuery)`: Retorna la organización actual.
-  * `OperationalOptions handle(GetOperationalOptionsQuery)`: Retorna grupos, reservorios y operarios.
-  * `List<AvailablePair> handle(GetAvailablePairsQuery)`: Retorna pares reservorio-dispositivo libres por grupo.
+* **`OperationalCatalogQueryService` (Interfaz de Servicio de Dominio / Aplicación)**
+  * **Descripción:** Atiende las consultas del catálogo operativo (organización, opciones, pares disponibles).
+  * **Métodos principales:**
+    * `OrganizationContext handle(GetOrganizationContextQuery query)`: Retorna la organización actual.
+    * `OperationalOptions handle(GetOperationalOptionsQuery query)`: Retorna grupos, reservorios y operarios disponibles.
+    * `List<AvailablePair> handle(GetAvailablePairsQuery query)`: Retorna pares reservorio-dispositivo libres por grupo.
+
 
 #### 4.2.2.2. Interface Layer
 
