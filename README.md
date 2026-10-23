@@ -2580,7 +2580,7 @@ WHERE role = 'ADMINISTRATOR';
 
 ##### C. Commands (Comandos - CQRS)
 
-No existen endpoints de mutación expuestos al frontend administrativo. Las mediciones se registran internamente por el backend cuando el Edge Agent envía datos (fuera del alcance de la API REST administrativa).
+* **`RecordWaterMeasurementCommand(String deviceId, String organizationId, String measurementId, Double ph, Double temperature, Long timestamp)`**: Intención creada por Edge a partir de una solicitud HTTPS autenticada para registrar una nueva lectura de agua. Se valida el identificador idempotente y se invoca `TelemetryCommandService`.
 
 ---
 
@@ -2594,6 +2594,11 @@ Abstracciones para la lectura de información del dominio sin alterar su estado:
 ---
 
 ##### E. Services (Servicios de Comando y Consulta)
+
+* **`TelemetryCommandService` (Interfaz de Servicio de Dominio / Aplicación)**
+  * **Descripción:** Atiende el registro de mediciones de agua recibidas desde el Edge Agent.
+  * **Métodos principales:**
+    * `Optional<WaterMeasurement> handle(RecordWaterMeasurementCommand command)`: Procesa y persiste la lectura recibida desde los sensores.
 
 * **`TelemetryQueryService` (Interfaz de Servicio de Dominio / Aplicación)**
   * **Descripción:** Atiende las operaciones de lectura de telemetría.
@@ -2616,10 +2621,19 @@ Proyecciones de lectura que combinan datos de `tel` con datos de `cfg` (cross-BC
 
 ##### A. Controllers (Controladores REST)
 
+Son los puntos de entrada HTTP (Inbound Adapters) que exponen los endpoints de la API REST del Bounded Context.
+
 * **`WaterMeasurementsController`**
+  * **Descripción:** Expone los endpoints de consulta de mediciones de agua de un dispositivo.
   * **Endpoints:**
-    * `GET /api/v1/devices/{deviceId}/water-measurements`: Consulta el historial de mediciones de un dispositivo (`WaterMeasurementResource`).
-    * `GET /api/v1/devices/{deviceId}/water-measurements/latest`: Obtiene la última medición registrada.
+    * `GET /api/v1/devices/{deviceId}/water-measurements`: Lista paginada de mediciones con filtros opcionales (`from`, `to`, `source`, `page`, `pageSize`, `sortBy`, `sortDirection`).
+    * `GET /api/v1/devices/{deviceId}/water-measurements/latest`: Obtiene la última medición registrada o `404` si no tiene.
+
+* **`TelemetryDevicesController`**
+  * **Descripción:** Expone los endpoints de resumen de telemetría de dispositivos.
+  * **Endpoints:**
+    * `GET /api/v1/telemetry/devices`: Lista paginada de resúmenes de telemetría de dispositivos con filtros (`searchTerm`, `status`, `availability`, `operatingEnvironment`, `page`, `pageSize`).
+    * `GET /api/v1/telemetry/devices/{deviceId}`: Retorna el resumen de telemetría de un dispositivo (snapshot + última medición).
 
 * **`EdgeTelemetryController` (Inbound Adapter)**
   * **Descripción:** Recibe `POST /edge/v1/telemetry` por HTTPS/REST después de que Edge autentica el token del dispositivo.
@@ -2629,34 +2643,58 @@ Proyecciones de lectura que combinan datos de `tel` con datos de `cfg` (cross-BC
 
 ##### B. Resources / DTOs (Objetos de Transferencia de Datos)
 
-* **`RecordWaterMeasurementResource(String measurementId, Double ph, Double temperature, Long timestamp)`**
-* **`WaterMeasurementResource(Long id, String deviceId, Double ph, Double temperature, String recordedAt)`**
+Definen las estructuras de datos aceptadas en las peticiones (Requests) y enviadas en las respuestas (Responses) de la API REST:
+
+* **`RecordWaterMeasurementResource(String measurementId, Double ph, Double temperature, Long timestamp)`**: DTO de entrada para registrar una medición desde Edge.
+* **`WaterMeasurementResource(String id, String deviceId, Double ph, Double temperature, String measuredAt, String source)`**: DTO de salida que expone una medición de agua.
+* **`WaterMeasurementPageResource(List<WaterMeasurementResource> items, int total, int page, int pageSize)`**: DTO de salida paginado para la lista de mediciones.
+* **`TelemetryDeviceResource(String id, String serialNumber, String alias, String deviceModel, String operatingEnvironment, String availability, String reservoirName, String lastCommunicationAt)`**: DTO de salida que expone el snapshot de un dispositivo en telemetría.
+* **`DeviceTelemetrySummaryResource(TelemetryDeviceResource device, WaterMeasurementResource latestMeasurement)`**: DTO de salida que combina el snapshot del dispositivo con su última medición.
 
 ---
 
 ##### C. Transformers / Mappers
 
+Clases de transformación encargadas de mapear entre los DTOs/Resources de la capa de interfaz y los objetos de la capa de aplicación/dominio (Commands, Queries y Agregados).
+
 * **`RecordWaterMeasurementCommandFromResourceAssembler`**: Transforma el payload REST y el principal autenticado en `RecordWaterMeasurementCommand`.
 * **`WaterMeasurementResourceFromEntityAssembler`**: Mapea la entidad `WaterMeasurement` hacia `WaterMeasurementResource`.
+* **`WaterMeasurementPageResourceFromEntityAssembler`**: Mapea una página de `WaterMeasurement` hacia `WaterMeasurementPageResource`.
+* **`TelemetryDeviceResourceFromEntityAssembler`**: Mapea el snapshot del dispositivo hacia `TelemetryDeviceResource`.
+* **`DeviceTelemetrySummaryResourceFromEntityAssembler`**: Mapea un `DeviceTelemetrySummary` hacia `DeviceTelemetrySummaryResource`.
 
 #### 4.2.3.3. Application Layer
 
 ##### A. Command Services & Handlers (Servicios de Comandos)
 
+Procesan las intenciones de cambio de estado recibiendo *Commands*, orquestando la lógica de negocio junto con los agregados del dominio y persistiendo los cambios mediante los repositorios.
+
 * **`TelemetryCommandServiceImpl`**
-  * **Descripción:** Implementa la lógica de procesamiento de telemetría proveniente del sensado de dispositivos.
+  * **Descripción:** Implementación de la interfaz `TelemetryCommandService`. Procesa y persiste las lecturas de agua recibidas desde el Edge Agent.
   * **Flujos de trabajo / Handlers:**
-    * **`handle(RecordWaterMeasurementCommand command)`**: Verifica la correspondencia entre organización y dispositivo publicada por Configuration, evita duplicados por `measurementId`, instancia `WaterMeasurement`, persiste el registro y emite `WaterMeasurementRecordedEvent`. La credencial ya fue validada por Edge y Device Identity and Access.
+    * **`handle(RecordWaterMeasurementCommand command)`**: Verifica la correspondencia entre organización y dispositivo, valida el identificador idempotente, persiste la medición y actualiza la disponibilidad del dispositivo.
 
 ---
 
 ##### B. Query Services & Handlers (Servicios de Consulta)
 
+Atienden las lecturas de información recibiendo objetos *Query*, optimizando el acceso a los datos sin alterar el estado del dominio.
+
 * **`TelemetryQueryServiceImpl`**
+  * **Descripción:** Implementación de la interfaz `TelemetryQueryService` enfocada en la recuperación eficiente de mediciones y resúmenes.
   * **Flujos de trabajo / Handlers:**
-    * **`handle(GetWaterMeasurementByIdQuery query)`**: Busca una medición por su identificador único.
-    * **`handle(GetWaterMeasurementsByDeviceIdQuery query)`**: Retorna la lista histórica de sensado para un dispositivo.
-    * **`handle(GetLatestWaterMeasurementByDeviceIdQuery query)`**: Recupera de manera optimizada el último registro ingresado.
+    * **`handle(ListMeasurementsQuery query)`**: Lista paginada de mediciones de un dispositivo con filtros por rango de fechas y origen.
+    * **`handle(GetLatestMeasurementQuery query)`**: Retorna la última medición de un dispositivo o null.
+    * **`handle(ListDeviceSummariesQuery query)`**: Lista paginada de resúmenes de telemetría de dispositivos con filtros.
+    * **`handle(GetDeviceSummaryQuery query)`**: Retorna el resumen de telemetría de un dispositivo (snapshot + última medición).
+
+---
+
+##### C. Outbound Services / Ports (Servicios de Salida)
+
+Interfaces y abstracciones requeridas por la capa de aplicación para comunicarse con el exterior sin acoplarse a tecnologías específicas.
+
+* **`TelemetryIngestionService`**: Puerto para la recepción de mediciones desde el Edge Agent (validación idempotente, persistencia).
 
 #### 4.2.3.4. Infrastructure Layer
 
