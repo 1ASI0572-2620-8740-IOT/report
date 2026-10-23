@@ -2392,17 +2392,25 @@ Clases que configuran componentes del framework y la documentación del microser
 
 ##### 4.2.2.6.1. Bounded Context Domain Layer Class Diagrams
 
-A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Configuración, detallando los agregados `IotDevice` y `DeviceConfiguration`, sus objetos de valor, comandos, consultas y servicios del patrón CQRS:
+A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Configuration, donde se estructuran los agregados, entidades, objetos de valor, comandos, consultas y servicios bajo el patrón CQRS y DDD:
 
 ---
 
-[![uml.png](https://i.postimg.cc/vmLxzZvV/uml.png)](https://postimg.cc/4Ky34Zqf)
+[![CFG-DOMAIN-CLASES.png](https://i.postimg.cc/sXVzC0kJ/CFG-DOMAIN-CLASES.png)](https://postimg.cc/yJrtFnYJ)
 
 ---
 
-* **`IotDevice`**: Encapsula el registro del hardware físico y su vinculación con el operario asignado.
-* **`DeviceConfiguration`**: Modela los parámetros dinámicos de operación, aplanando los objetos de valor (`OperatingRange`, `CorrectiveStrategy`, `WaitTime`) para un control preciso de ciclos y liberación.
-* **Patrón CQRS**: Separa la orquestación de mutaciones de parámetros mediante comandos específicos de las operaciones de lectura orientadas a la consulta del dispositivo.
+* **`WorkGroup` (Agregado)**: Encapsula un grupo operativo dentro de una organización. Rechaza nombres duplicados y no se desactiva si tiene reservorios o perfiles activos.
+* **`Reservoir` (Agregado)**: Encapsula un reservorio dentro de un grupo. El código es único por grupo y no se desactiva si tiene asignaciones o dispositivo vinculado.
+* **`Device` (Agregado)**: Encapsula el dispositivo IoT (serial, alias, modelo, entorno, capacidades, estado, disponibilidad). Contiene a `DeviceIdentity` como entidad interna.
+* **`OperatorProfile` (Agregado)**: Vincula una cuenta de operario con un grupo y sus asignaciones. Contiene a `DeviceAssignment` como entidad interna.
+* **`ConfigurationVersion` (Agregado)**: Encapsula una versión de configuración (rangos, modo, compatibilidad, estado). Inmutable una vez publicada.
+* **`DeviceIdentity` (Entity)**: Identidad técnica del dispositivo (credencial, estado, fechas de activación/revocación). Se crea automáticamente con el dispositivo.
+* **`DeviceAssignment` (Entity)**: Asignación exclusiva de un par reservorio-dispositivo a un perfil. Se gestiona desde el perfil.
+* **Value Objects (12)**: `ResourceStatus`, `ReservoirType`, `OperatingEnvironment`, `DeviceLifecycleStatus`, `DeviceAvailability`, `DeviceCapability`, `DeviceIdentityStatus`, `ConfigurationVersionStatus`, `OperatorProfileStatus`, `AssignmentStatus`, `ReleaseMode`, `ConfigurationStatus` (derivado).
+* **Commands (13)**: CreateWorkGroup, DeactivateWorkGroup, CreateReservoir, DeactivateReservoir, RegisterDevice, RevokeDeviceIdentity, LinkDevice, UnlinkDevice, DeactivateDevice, CreateOperatorProfile, AddAssignments, CloseAssignment, DeactivateOperatorProfile.
+* **Queries (12)**: ListWorkGroups, GetWorkGroupById, ListReservoirs, GetReservoirById, ListDevices, GetDeviceById, GetDeviceConfigurations, ListOperatorProfiles, GetOperatorProfileById, GetOrganizationContext, GetOperationalOptions, GetAvailablePairs.
+* **Services (9)**: WorkGroupCommand/Query, ReservoirCommand/Query, DeviceCommand/Query, OperatorProfileCommand/Query, OperationalCatalogQuery.
 
 ##### 4.2.2.6.2. Bounded Context Database Design Diagram
 
