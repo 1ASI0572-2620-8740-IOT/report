@@ -2088,42 +2088,115 @@ Abstracciones para la lectura de información del dominio sin alterar su estado:
 
 ##### A. Controllers (Controladores REST)
 
-* **`IotDevicesController`**
-  * **Endpoints:**
-    * `POST /api/v1/iot-devices`: Registra inventario, activa el dispositivo y coordina el provisionamiento de Device Identity and Access. La respuesta inicial puede incluir la credencial técnica una sola vez.
-    * `POST /api/v1/iot-devices/{deviceId}/assignments`: Permite asignar un dispositivo a un operario (`AssignIotDeviceResource`).
+Son los puntos de entrada HTTP (Inbound Adapters) que exponen los endpoints de la API REST del Bounded Context.
 
-* **`ConfigurationsController`**
+* **`WorkGroupsController`**
+  * **Descripción:** Gestiona las operaciones sobre grupos operativos.
   * **Endpoints:**
-    * `PUT /api/v1/configurations/{configurationId}/operating-ranges`: Actualiza rangos operativos VMA/Cultivo.
-    * `PUT /api/v1/configurations/{configurationId}/corrective-strategy`: Configura estrategia correctiva pH/Térmica.
-    * `PUT /api/v1/configurations/{configurationId}/wait-time`: Establece el tiempo de espera.
-    * `PUT /api/v1/configurations/{configurationId}/release-mode`: Modifica el modo de liberación (Auto/Manual).
-    * `POST /api/v1/configurations/{configurationId}/publish`: Publica la configuración final.
-    * `GET /api/v1/devices/{deviceId}/configuration`: Consulta la configuración de un dispositivo.
+    * `GET /api/v1/groups`: Lista paginada de grupos con filtros opcionales (`searchTerm`, `status`, `page`, `pageSize`).
+    * `GET /api/v1/groups/{groupId}`: Retorna el grupo con sus miembros y reservorios.
+    * `POST /api/v1/groups`: Crea un grupo operativo (`name`, `purpose`, `classification`).
+    * `PATCH /api/v1/groups/{groupId}/status`: Desactiva un grupo (`status → INACTIVE`).
+
+* **`ReservoirsController`**
+  * **Descripción:** Gestiona las operaciones sobre reservorios.
+  * **Endpoints:**
+    * `GET /api/v1/reservoirs`: Lista paginada de reservorios con filtros opcionales (`searchTerm`, `status`, `page`, `pageSize`).
+    * `GET /api/v1/reservoirs/{reservoirId}`: Retorna el reservorio con su grupo y dispositivo vinculado.
+    * `POST /api/v1/reservoirs`: Crea un reservorio (`groupId`, `name`, `code`, `reservoirType`, `location`, `capacityLiters`).
+    * `PATCH /api/v1/reservoirs/{reservoirId}/status`: Desactiva un reservorio (`status → INACTIVE`).
+
+* **`DevicesController`**
+  * **Descripción:** Gestiona las operaciones sobre dispositivos e identidades técnicas.
+  * **Endpoints:**
+    * `GET /api/v1/devices`: Lista paginada de dispositivos con filtros (`searchTerm`, `status`, `availability`, `operatingEnvironment`, `configurationStatus`, `page`, `pageSize`).
+    * `GET /api/v1/devices/{deviceId}`: Retorna el dispositivo con su reservorio y responsable.
+    * `POST /api/v1/devices`: Registra un dispositivo y genera su credencial técnica (entregada una sola vez).
+    * `POST /api/v1/device-identities/{deviceId}/revoke`: Revoca la identidad técnica de un dispositivo.
+    * `POST /api/v1/devices/{deviceId}/link`: Vincula un dispositivo libre con un reservorio libre (`{ reservoirId }`).
+    * `POST /api/v1/devices/{deviceId}/unlink`: Desvincula un dispositivo de su reservorio.
+    * `PATCH /api/v1/devices/{deviceId}/status`: Desactiva un dispositivo (`status → INACTIVE`).
+    * `GET /api/v1/devices/{deviceId}/configurations`: Retorna las versiones de configuración del dispositivo.
+
+* **`OperatorProfilesController`**
+  * **Descripción:** Gestiona las operaciones sobre perfiles de operario y asignaciones.
+  * **Endpoints:**
+    * `GET /api/v1/operator-profiles`: Lista paginada de perfiles con filtros (`searchTerm`, `status`, `page`, `pageSize`).
+    * `GET /api/v1/operator-profiles/{profileId}`: Retorna el perfil con sus asignaciones.
+    * `POST /api/v1/operator-profiles`: Crea un perfil de operario (`userId`, `groupId`, `reservoirIds`).
+    * `POST /api/v1/operator-profiles/{profileId}/assignments`: Agrega asignaciones a un perfil (`{ reservoirIds }`).
+    * `POST /api/v1/assignments/{assignmentId}/close`: Cierra una asignación activa.
+    * `PATCH /api/v1/operator-profiles/{profileId}/status`: Desactiva un perfil (`status → INACTIVE`).
+
+* **`OperationalCatalogController`**
+  * **Descripción:** Expone el catálogo operativo para formularios y selección.
+  * **Endpoints:**
+    * `GET /api/v1/organizations/current`: Retorna el contexto de la organización actual (`id`, `name`, `segment`).
+    * `GET /api/v1/operational-options`: Retorna grupos, reservorios y operarios disponibles.
+    * `GET /api/v1/available-pairs`: Retorna pares reservorio-dispositivo libres por grupo (`?groupId=...`).
 
 ---
 
 ##### B. Resources / DTOs (Objetos de Transferencia de Datos)
 
-* **`RegisterIotDeviceResource(String serialNumber, String alias, String deviceModel, String operatingEnvironment, Set<String> capabilities)`**
-* **`RegisteredIotDeviceResource(IotDeviceResource device, String identityStatus, String activationCredential)`**: Respuesta exclusiva del alta; `activationCredential` no aparece en consultas posteriores.
-* **`AssignIotDeviceResource(Long operatorId)`**
-* **`ConfigureOperatingRangesResource(Double minVma, Double maxVma, Double minCrop, Double maxCrop)`**
-* **`ConfigureCorrectiveStrategyResource(String strategyType, Double thresholdValue)`**
-* **`ConfigureWaitTimeResource(Integer waitTimeSeconds)`**
-* **`ConfigureReleaseModeResource(String releaseMode)`**
-* **`IotDeviceResource(Long id, String serialNumber, Long operatorId)`**
-* **`DeviceConfigurationResource(Long id, String deviceId, String status, String releaseMode)`**
+Definen las estructuras de datos aceptadas en las peticiones (Requests) y enviadas en las respuestas (Responses) de la API REST:
+
+* **`WorkGroupResource(String name, String purpose, String classification)`**: DTO de entrada para crear un grupo.
+* **`WorkGroupResponseResource(String id, String name, String purpose, String classification, String segment, String status)`**: DTO de salida de un grupo.
+* **`WorkGroupDetailResource(WorkGroupResponseResource group, List<GroupMemberResource> members, List<ReservoirResponseResource> reservoirs)`**: DTO de salida del detalle de un grupo.
+* **`ReservoirResource(String groupId, String name, String code, String reservoirType, String location, BigDecimal capacityLiters)`**: DTO de entrada para crear un reservorio.
+* **`ReservoirResponseResource(String id, String groupId, String name, String code, String reservoirType, String location, BigDecimal capacityLiters, String status)`**: DTO de salida de un reservorio.
+* **`ReservoirDetailResource(ReservoirResponseResource reservoir, String groupName, DeviceResponseResource device)`**: DTO de salida del detalle de un reservorio.
+* **`RegisterDeviceResource(String serialNumber, String alias, String deviceModel, String operatingEnvironment, Set<String> capabilities)`**: DTO de entrada para registrar un dispositivo.
+* **`DeviceResponseResource(String id, String serialNumber, String alias, String deviceModel, String operatingEnvironment, Set<String> capabilities, String lifecycleStatus, String availability, String reservoirId, String lastCommunicationAt, String configurationStatus, Integer currentConfigurationVersion, String identityStatus)`**: DTO de salida de un dispositivo.
+* **`DeviceDetailResource(DeviceResponseResource device, String reservoirName, String responsibleProfileId)`**: DTO de salida del detalle de un dispositivo.
+* **`RegisteredDeviceResource(DeviceResponseResource device, String activationCredential)`**: DTO de salida del registro (credencial entregada una sola vez).
+* **`ConfigurationVersionResource(String id, String deviceId, Integer configurationVersion, String status, Boolean compatible, List<String> incompatibilityReasons, Instant createdAt, Instant publishedAt, Double phMin, Double phMax, Double temperatureMin, Double temperatureMax, String releaseMode)`**: DTO de salida de una versión de configuración.
+* **`ConfigurationVersionsResource(DeviceResponseResource device, List<ConfigurationVersionResource> versions)`**: DTO de salida de las versiones de un dispositivo.
+* **`OperatorProfileResource(String userId, String groupId, List<String> reservoirIds)`**: DTO de entrada para crear un perfil.
+* **`OperatorProfileResponseResource(String id, String userId, String groupId, String displayName, String groupName, String status)`**: DTO de salida de un perfil.
+* **`OperatorProfileDetailResource(OperatorProfileResponseResource profile, List<AssignmentResource> assignments)`**: DTO de salida del detalle de un perfil.
+* **`AssignmentResource(String id, String operatorProfileId, String reservoirId, String reservoirName, String deviceId, String deviceSerialNumber, String status, Instant assignedAt, Instant closedAt)`**: DTO de salida de una asignación.
+* **`AddAssignmentsResource(List<String> reservoirIds)`**: DTO de entrada para agregar asignaciones.
+* **`CloseAssignmentResource()`**: Sin cuerpo (void).
+* **`DeactivateResource(String status)`**: DTO de entrada para desactivar (`status = 'INACTIVE'`).
+* **`OrganizationContextResource(String id, String name, String segment)`**: DTO de salida del contexto de organización.
+* **`OperationalOptionsResource(List<CatalogOptionResource> groups, List<ReservoirOptionResource> reservoirs, List<CatalogOptionResource> operators)`**: DTO de salida de opciones operativas.
+* **`AvailablePairResource(String reservoirId, String reservoirName, String deviceId, String deviceSerialNumber)`**: DTO de salida de un par disponible.
 
 ---
 
 ##### C. Transformers / Mappers
 
-* **`RegisterIotDeviceCommandFromResourceAssembler`**: Mapea `RegisterIotDeviceResource` a `RegisterIotDeviceCommand`.
-* **`AssignIotDeviceCommandFromResourceAssembler`**: Mapea `AssignIotDeviceResource` a `AssignIotDeviceCommand`.
-* **`ConfigureOperatingRangesCommandFromResourceAssembler`**: Mapea la petición de rangos a su respectivo `Command`.
-* **`DeviceConfigurationResourceFromEntityAssembler`**: Mapea la entidad `DeviceConfiguration` hacia `DeviceConfigurationResource`.
+Clases de transformación encargadas de mapear entre los DTOs/Resources de la capa de interfaz y los objetos de la capa de aplicación/dominio (Commands, Queries y Agregados).
+
+* **`CreateWorkGroupCommandFromResourceAssembler`**: Mapea `WorkGroupResource` a `CreateWorkGroupCommand`.
+* **`DeactivateWorkGroupCommandFromResourceAssembler`**: Mapea `DeactivateResource` a `DeactivateWorkGroupCommand`.
+* **`CreateReservoirCommandFromResourceAssembler`**: Mapea `ReservoirResource` a `CreateReservoirCommand`.
+* **`DeactivateReservoirCommandFromResourceAssembler`**: Mapea `DeactivateResource` a `DeactivateReservoirCommand`.
+* **`RegisterDeviceCommandFromResourceAssembler`**: Mapea `RegisterDeviceResource` a `RegisterDeviceCommand`.
+* **`RevokeDeviceIdentityCommandFromResourceAssembler`**: Mapea el path param a `RevokeDeviceIdentityCommand`.
+* **`LinkDeviceCommandFromResourceAssembler`**: Mapea `{ reservoirId }` a `LinkDeviceCommand`.
+* **`UnlinkDeviceCommandFromResourceAssembler`**: Mapea el path param a `UnlinkDeviceCommand`.
+* **`DeactivateDeviceCommandFromResourceAssembler`**: Mapea `DeactivateResource` a `DeactivateDeviceCommand`.
+* **`CreateOperatorProfileCommandFromResourceAssembler`**: Mapea `OperatorProfileResource` a `CreateOperatorProfileCommand`.
+* **`AddAssignmentsCommandFromResourceAssembler`**: Mapea `AddAssignmentsResource` a `AddAssignmentsCommand`.
+* **`CloseAssignmentCommandFromResourceAssembler`**: Mapea el path param a `CloseAssignmentCommand`.
+* **`DeactivateOperatorProfileCommandFromResourceAssembler`**: Mapea `DeactivateResource` a `DeactivateOperatorProfileCommand`.
+* **`WorkGroupResponseResourceFromEntityAssembler`**: Mapea `WorkGroup` a `WorkGroupResponseResource`.
+* **`WorkGroupDetailResourceFromEntityAssembler`**: Mapea `WorkGroupDetail` a `WorkGroupDetailResource`.
+* **`ReservoirResponseResourceFromEntityAssembler`**: Mapea `Reservoir` a `ReservoirResponseResource`.
+* **`ReservoirDetailResourceFromEntityAssembler`**: Mapea `ReservoirDetail` a `ReservoirDetailResource`.
+* **`DeviceResponseResourceFromEntityAssembler`**: Mapea `Device` a `DeviceResponseResource`.
+* **`DeviceDetailResourceFromEntityAssembler`**: Mapea `DeviceDetail` a `DeviceDetailResource`.
+* **`RegisteredDeviceResourceFromEntityAssembler`**: Mapea `RegisteredDevice` a `RegisteredDeviceResource`.
+* **`ConfigurationVersionResourceFromEntityAssembler`**: Mapea `ConfigurationVersion` a `ConfigurationVersionResource`.
+* **`OperatorProfileResponseResourceFromEntityAssembler`**: Mapea `OperatorProfile` a `OperatorProfileResponseResource`.
+* **`OperatorProfileDetailResourceFromEntityAssembler`**: Mapea `OperatorProfileDetail` a `OperatorProfileDetailResource`.
+* **`AssignmentResourceFromEntityAssembler`**: Mapea `Assignment` a `AssignmentResource`.
+* **`OrganizationContextResourceFromEntityAssembler`**: Mapea `OrganizationContext` a `OrganizationContextResource`.
+* **`OperationalOptionsResourceFromEntityAssembler`**: Mapea `OperationalOptions` a `OperationalOptionsResource`.
+* **`AvailablePairResourceFromEntityAssembler`**: Mapea `AvailablePair` a `AvailablePairResource`.
 
 #### 4.2.2.3. Application Layer
 
