@@ -1909,82 +1909,161 @@ ON first_access_codes (operator_account_id);
 
 ##### A. Aggregates (Agregados)
 
-* **`IotDevice` (Agregado)**
-  * **Descripción:** Representa al dispositivo IoT registrado en el sistema y su asignación operativa.
+* **`WorkGroup` (Agregado)**
+  * **Descripción:** Encapsula un grupo operativo dentro de una organización: nombre, propósito, clasificación y estado.
   * **Comportamiento y Reglas de Negocio:**
-    * Validar la unicidad del identificador físico/MAC o número de serie del dispositivo durante el registro.
-    * Asignar o reasignar un operario responsable verificando el estado del dispositivo.
-    * Registrar entorno y capacidades; el dispositivo se activa al completar el registro y queda inicialmente sin responsable si todavía no existe una asignación.
+    * Rechaza nombres duplicados dentro de la misma organización.
+    * No puede desactivarse si tiene reservorios o perfiles activos.
+    * El segmento se deriva de la organización (no se almacena en la tabla).
 
-* **`WorkGroup` y `Reservoir` (Agregados)**
-  * Un Operario pertenece a un solo grupo; un grupo contiene uno o varios reservorios.
-  * Cada reservorio se vincula con una única unidad de dispositivo. Un dispositivo no puede compartirse entre reservorios.
-
-* **`OperatorProfile` y `OperationalAssignment` (Agregados)**
-  * El perfil enlaza la cuenta humana con su grupo y asignaciones operativas.
-  * Un Operario puede administrar uno o varios pares reservorio-dispositivo dentro de su grupo, pero un par no se comparte con otros Operarios.
-  * Al desvincularlo, el reservorio y el dispositivo quedan sin responsable; toda reasignación se realiza explícitamente desde el perfil del nuevo Operario.
-
-* **`DeviceConfiguration` (Agregado Principal)**
-  * **Descripción:** Agregado que encapsula los parámetros, rangos operativos, tiempos de espera y estrategias correctivas asociadas a un dispositivo o cultivo (hereda de `AuditableAbstractAggregateRoot`).
+* **`Reservoir` (Agregado)**
+  * **Descripción:** Encapsula un reservorio dentro de un grupo: nombre, código, tipo, ubicación, capacidad y estado.
   * **Comportamiento y Reglas de Negocio:**
-    * Definir y validar rangos operativos de VMA (Valores Máximos Admisibles) y parámetros del cultivo (temperatura, pH, humedad).
-    * Configurar la estrategia correctiva (pH / Térmica) garantizando que los valores de ajuste sean coherentes.
-    * Definir tiempos de espera para ciclos de control.
-    * Alternar el modo de liberación entre `AUTOMATIC` y `MANUAL`.
-    * Publicar la configuración final cambiando su estado a publicado para su consumo por los dispositivos.
+    * El código es único dentro del grupo.
+    * No puede desactivarse si tiene asignaciones activas o un dispositivo vinculado.
+    * Se vincula con un dispositivo (0..1).
+
+* **`Device` (Agregado Principal)**
+  * **Descripción:** Encapsula el dispositivo IoT: número de serie, alias, modelo, entorno operativo, capacidades, estado de ciclo de vida, disponibilidad, vínculo con reservorio, última comunicación.
+  * **Comportamiento y Reglas de Negocio:**
+    * El número de serie es único por organización.
+    * Un dispositivo puede estar sin reservorio (`reservoirId` null).
+    * La disponibilidad y última comunicación son snapshots del edge.
+    * `configurationStatus` y `currentConfigurationVersion` se derivan de `configuration_versions` (no se almacenan).
+    * Contiene a `DeviceIdentity` como entidad interna (se crea automáticamente al registrar el dispositivo).
+
+* **`OperatorProfile` (Agregado)**
+  * **Descripción:** Encapsula el perfil operativo: vincula una cuenta de operario con un grupo y sus asignaciones.
+  * **Comportamiento y Reglas de Negocio:**
+    * Un operario pertenece a un solo grupo.
+    * El `displayName` se denormaliza de `iam.users` para autonomía de `cfg`.
+    * Pasa de `PENDING_FIRST_ACCESS` a `ACTIVE` al consumir el código de primer acceso.
+    * Contiene a `DeviceAssignment` como entidad interna (se gestionan desde el perfil).
+
+* **`ConfigurationVersion` (Agregado)**
+  * **Descripción:** Encapsula una versión de configuración de un dispositivo: rangos de pH/temperatura, modo de liberación, compatibilidad, estado (borrador/publicada).
+  * **Comportamiento y Reglas de Negocio:**
+    * El número de versión es único por dispositivo.
+    * Una versión publicada es inmutable (no se modifica).
+    * Se valida la compatibilidad con las capacidades del dispositivo.
 
 ---
 
-##### B. Value Objects (Objetos de Valor)
+##### B. Entities (Entidades dentro de Agregados)
 
-* **`OperatingRange`**: Modela el rango operativo (mínimo, máximo, objetivo) para variables VMA/Cultivo.
-* **`CorrectiveStrategy`**: Encapsula el tipo de corrección (pH, Térmica) y sus reglas de dosificación/accionamiento.
-* **`WaitTime`**: Modela los intervalos de espera entre mediciones o acciones correctivas.
-* **`ReleaseMode`**: Enum que define el modo de liberación (`AUTOMATIC`, `MANUAL`).
-* **`ConfigurationStatus`**: Enum que define el estado de la configuración (`DRAFT`, `PUBLISHED`).
+* **`DeviceIdentity` (Entity dentro de `Device`)**
+  * **Descripción:** Encapsula la identidad técnica del dispositivo: hash de credencial, estado (PENDING/ACTIVE/REVOKED), fechas de activación y revocación.
+  * **Comportamiento y Reglas de Negocio:**
+    * Se crea automáticamente al registrar un dispositivo.
+    * La credencial se entrega una sola vez (nunca se persiste en texto plano).
+    * Puede revocarse sin borrar el dispositivo.
+    * No tiene invariantes independientes del `Device`; se accede siempre a través de `Device`.
 
----
-
-##### C. Commands (Comandos - CQRS)
-
-* **`RegisterIotDeviceCommand(String serialNumber, String alias, String deviceModel, OperatingEnvironment environment, Set<DeviceCapability> capabilities)`**: Registrar un nuevo dispositivo IoT (Administrador) y coordinar su provisionamiento técnico.
-* **`AssignIotDeviceCommand(String deviceId, Long operatorId)`**: Asignar un dispositivo IoT a un operario (Administrador).
-* **`ConfigureOperatingRangesCommand(Long configurationId, OperatingRange vmaRange, OperatingRange cropRange)`**: Establecer los rangos operativos (Operario).
-* **`ConfigureCorrectiveStrategyCommand(Long configurationId, CorrectiveStrategy strategy)`**: Configurar la estrategia correctiva de pH o Térmica (Operario).
-* **`ConfigureWaitTimeCommand(Long configurationId, WaitTime waitTime)`**: Establecer los tiempos de espera del ciclo (Operario).
-* **`ConfigureReleaseModeCommand(Long configurationId, ReleaseMode releaseMode)`**: Configurar el modo de liberación Auto/Manual (Operario).
-* **`PublishConfigurationCommand(Long configurationId)`**: Publicar la configuración activa para el dispositivo (Operario).
+* **`DeviceAssignment` (Entity dentro de `OperatorProfile`)**
+  * **Descripción:** Encapsula una asignación exclusiva de un par reservorio-dispositivo a un perfil de operario.
+  * **Comportamiento y Reglas de Negocio:**
+    * Solo una asignación activa por par reservorio-dispositivo (índice parcial).
+    * Al cerrar, el par queda libre para reasignarse.
+    * Se conserva el historial (no se borra).
+    * Se gestiona desde el perfil (agregar/cerrar). No tiene invariantes independientes del `OperatorProfile`.
 
 ---
 
-##### D. Queries (Consultas - CQRS)
+##### C. Value Objects (Objetos de Valor)
+* **`ResourceStatus`**: Estado del recurso (`ACTIVE`, `INACTIVE`).
+* **`ReservoirType`**: Tipo de reservorio (`SUMP`, `TANK`, `RESERVOIR`).
+* **`OperatingEnvironment`**: Entorno operativo (`INTEGRAL_PRODUCT`, `SIMULATION`, `ACADEMIC_PROTOTYPE`).
+* **`DeviceLifecycleStatus`**: Estado del ciclo de vida (`ACTIVE_UNLINKED`, `ACTIVE_UNASSIGNED`, `ACTIVE_ASSIGNED`, `MAINTENANCE`, `INACTIVE`).
+* **`DeviceAvailability`**: Disponibilidad (`ONLINE`, `DELAYED`, `OFFLINE`, `UNKNOWN`).
+* **`DeviceCapability`**: Capacidad del dispositivo (`PH_SENSOR`, `TEMPERATURE_SENSOR`, `DOSING`, `HEATING`, `COOLING`, `RELEASE_VALVE`).
+* **`DeviceIdentityStatus`**: Estado de la identidad técnica (`PENDING`, `ACTIVE`, `REVOKED`).
+* **`ConfigurationVersionStatus`**: Estado de la versión (`DRAFT`, `PUBLISHED`).
+* **`OperatorProfileStatus`**: Estado del perfil (`PENDING_FIRST_ACCESS`, `ACTIVE`, `INACTIVE`).
+* **`AssignmentStatus`**: Estado de la asignación (`ACTIVE`, `CLOSED`).
+* **`ReleaseMode`**: Modo de liberación (`MANUAL`, `AUTOMATIC`).
+* **`ConfigurationStatus`**: Estado de compatibilidad (`MISSING`, `COMPATIBLE`, `INCOMPATIBLE`) — derivado, no almacenado.
 
-* **`GetIotDeviceByIdQuery(String deviceId)`**
-* **`GetConfigurationByDeviceIdQuery(String deviceId)`**
-* **`GetPublishedConfigurationQuery(String deviceId)`**
+---
+
+##### D. Commands (Comandos - CQRS)
+Representan las intenciones del usuario o sistema para modificar el estado del dominio:
+* **`CreateWorkGroupCommand(String organizationId, String name, String purpose, String classification)`**: Crea un grupo operativo.
+* **`DeactivateWorkGroupCommand(String organizationId, String groupId)`**: Desactiva un grupo (solo si no tiene reservorios ni perfiles activos).
+* **`CreateReservoirCommand(String organizationId, String groupId, String name, String code, ReservoirType reservoirType, String location, BigDecimal capacityLiters)`**: Crea un reservorio dentro de un grupo.
+* **`DeactivateReservoirCommand(String organizationId, String reservoirId)`**: Desactiva un reservorio (solo si no tiene asignaciones ni dispositivo vinculado).
+* **`RegisterDeviceCommand(String organizationId, String serialNumber, String alias, String deviceModel, OperatingEnvironment environment, Set<DeviceCapability> capabilities)`**: Registra un dispositivo y genera su credencial técnica.
+* **`RevokeDeviceIdentityCommand(String organizationId, String deviceId)`**: Revoca la identidad técnica de un dispositivo.
+* **`LinkDeviceCommand(String organizationId, String deviceId, String reservoirId)`**: Vincula un dispositivo libre con un reservorio libre.
+* **`UnlinkDeviceCommand(String organizationId, String deviceId)`**: Desvincula un dispositivo de su reservorio.
+* **`DeactivateDeviceCommand(String organizationId, String deviceId)`**: Desactiva un dispositivo.
+* **`CreateOperatorProfileCommand(String organizationId, String userId, String groupId, List<String> reservoirIds)`**: Crea un perfil de operario con asignaciones.
+* **`AddAssignmentsCommand(String organizationId, String profileId, List<String> reservoirIds)`**: Agrega asignaciones a un perfil.
+* **`CloseAssignmentCommand(String organizationId, String assignmentId)`**: Cierra una asignación activa.
+* **`DeactivateOperatorProfileCommand(String organizationId, String profileId)`**: Desactiva un perfil de operario.
 
 ---
 
-##### E. Services (Servicios de Comando y Consulta)
-
-* **`ConfigurationCommandService` (Interfaz)**
-  * **Métodos principales:**
-    * `Optional<IotDevice> handle(RegisterIotDeviceCommand command)`
-    * `Optional<IotDevice> handle(AssignIotDeviceCommand command)`
-    * `Optional<DeviceConfiguration> handle(ConfigureOperatingRangesCommand command)`
-    * `Optional<DeviceConfiguration> handle(ConfigureCorrectiveStrategyCommand command)`
-    * `Optional<DeviceConfiguration> handle(ConfigureWaitTimeCommand command)`
-    * `Optional<DeviceConfiguration> handle(ConfigureReleaseModeCommand command)`
-    * `Optional<DeviceConfiguration> handle(PublishConfigurationCommand command)`
-
-* **`ConfigurationQueryService` (Interfaz)**
-  * **Métodos principales:**
-    * `Optional<IotDevice> handle(GetIotDeviceByIdQuery query)`
-    * `Optional<DeviceConfiguration> handle(GetConfigurationByDeviceIdQuery query)`
-    * `Optional<DeviceConfiguration> handle(GetPublishedConfigurationQuery query)`
+##### E. Queries (Consultas - CQRS)
+Abstracciones para la lectura de información del dominio sin alterar su estado:
+* **`ListWorkGroupsQuery(String organizationId, String searchTerm, String status, int page, int pageSize)`**
+* **`GetWorkGroupByIdQuery(String organizationId, String groupId)`**
+* **`ListReservoirsQuery(String organizationId, String searchTerm, String status, int page, int pageSize)`**
+* **`GetReservoirByIdQuery(String organizationId, String reservoirId)`**
+* **`ListDevicesQuery(String organizationId, String searchTerm, String status, String availability, String operatingEnvironment, String configurationStatus, int page, int pageSize)`**
+* **`GetDeviceByIdQuery(String organizationId, String deviceId)`**
+* **`GetDeviceConfigurationsQuery(String organizationId, String deviceId)`**
+* **`ListOperatorProfilesQuery(String organizationId, String searchTerm, String status, int page, int pageSize)`**
+* **`GetOperatorProfileByIdQuery(String organizationId, String profileId)`**
+* **`GetOrganizationContextQuery()`**: Retorna la organización actual (id, name, segment).
+* **`GetOperationalOptionsQuery()`**: Retorna grupos, reservorios y operarios disponibles.
+* **`GetAvailablePairsQuery(String organizationId, String groupId)`**: Retorna pares reservorio-dispositivo libres por grupo.
 
 ---
+
+##### F. Services (Servicios de Comando y Consulta)
+
+* **`WorkGroupCommandService`**
+  * `Optional<WorkGroup> handle(CreateWorkGroupCommand)`: Crea un grupo operativo.
+  * `void handle(DeactivateWorkGroupCommand)`: Desactiva un grupo.
+
+* **`WorkGroupQueryService`**
+  * `Page<WorkGroup> handle(ListWorkGroupsQuery)`: Lista paginada de grupos.
+  * `Optional<WorkGroupDetail> handle(GetWorkGroupByIdQuery)`: Retorna el grupo con miembros y reservorios.
+
+* **`ReservoirCommandService`**
+  * `Optional<Reservoir> handle(CreateReservoirCommand)`: Crea un reservorio.
+  * `void handle(DeactivateReservoirCommand)`: Desactiva un reservorio.
+
+* **`ReservoirQueryService`**
+  * `Page<Reservoir> handle(ListReservoirsQuery)`: Lista paginada de reservorios.
+  * `Optional<ReservoirDetail> handle(GetReservoirByIdQuery)`: Retorna el reservorio con dispositivo vinculado.
+
+* **`DeviceCommandService`**
+  * `RegisteredDevice handle(RegisterDeviceCommand)`: Registra un dispositivo y genera su credencial.
+  * `void handle(RevokeDeviceIdentityCommand)`: Revoca la identidad técnica.
+  * `void handle(LinkDeviceCommand)`: Vincula un dispositivo con un reservorio.
+  * `void handle(UnlinkDeviceCommand)`: Desvincula un dispositivo.
+  * `void handle(DeactivateDeviceCommand)`: Desactiva un dispositivo.
+
+* **`DeviceQueryService`**
+  * `Page<Device> handle(ListDevicesQuery)`: Lista paginada de dispositivos con filtros.
+  * `Optional<DeviceDetail> handle(GetDeviceByIdQuery)`: Retorna el dispositivo con reservorio y responsable.
+  * `DeviceConfigurations handle(GetDeviceConfigurationsQuery)`: Retorna las versiones de configuración del dispositivo.
+
+* **`OperatorProfileCommandService`**
+  * `Optional<OperatorProfile> handle(CreateOperatorProfileCommand)`: Crea un perfil con asignaciones.
+  * `void handle(AddAssignmentsCommand)`: Agrega asignaciones a un perfil.
+  * `void handle(CloseAssignmentCommand)`: Cierra una asignación activa.
+  * `void handle(DeactivateOperatorProfileCommand)`: Desactiva un perfil.
+
+* **`OperatorProfileQueryService`**
+  * `Page<OperatorProfile> handle(ListOperatorProfilesQuery)`: Lista paginada de perfiles.
+  * `Optional<OperatorProfileDetail> handle(GetOperatorProfileByIdQuery)`: Retorna el perfil con asignaciones.
+
+* **`OperationalCatalogQueryService`**
+  * `OrganizationContext handle(GetOrganizationContextQuery)`: Retorna la organización actual.
+  * `OperationalOptions handle(GetOperationalOptionsQuery)`: Retorna grupos, reservorios y operarios.
+  * `List<AvailablePair> handle(GetAvailablePairsQuery)`: Retorna pares reservorio-dispositivo libres por grupo.
 
 #### 4.2.2.2. Interface Layer
 
