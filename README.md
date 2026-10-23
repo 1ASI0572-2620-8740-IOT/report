@@ -1812,7 +1812,9 @@ Clases que configuran componentes del framework y la documentación del microser
 
 #### 4.2.1.5. Bounded Context Software Architecture Component Level Diagrams
 
-[![Component.png](https://i.postimg.cc/C5XyWn8B/Component.png)](https://postimg.cc/N26PXMpB)
+[![Iam-Component-Diagram-dark.png](https://i.postimg.cc/mk222MR8/Iam-Component-Diagram-dark.png)](https://postimg.cc/Kkwy011M)
+
+*Figura: Diagrama de componentes del bounded context IAM. Muestra los componentes del backend Spring Boot (controllers, services, repositories, adapters) y sus relaciones con las bases de datos PostgreSQL por microservicio. El API Gateway enruta las peticiones únicamente a los controllers de cada microservicio.*
 
 #### 4.2.1.6. Bounded Context Software Architecture Code Level Diagrams
 
