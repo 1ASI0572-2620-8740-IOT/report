@@ -2556,55 +2556,61 @@ WHERE role = 'ADMINISTRATOR';
 * **`device_assignments`**: Registra asignaciones exclusivas de pares reservorio-dispositivo a perfiles, conservando historial.
 * **`configuration_versions`**: Almacena versiones de configuración (rangos, modo de liberación, compatibilidad) por dispositivo. Una versión publicada es inmutable.
 
-
 ### 4.2.3. Bounded Context: IOT Telemetry
 
 #### 4.2.3.1. Domain Layer
 
 ##### A. Aggregates (Agregados)
 
-* **`WaterMeasurement` (Agregado Principal)**
-  * **Descripción:** Representa el registro inmutable del sensado de las variables del agua enviadas por un dispositivo IoT (hereda de `AuditableAbstractAggregateRoot`).
+* **`WaterMeasurement` (Agregado)**
+  * **Descripción:** Representa el registro inmutable del sensado de las variables del agua enviadas por un dispositivo IoT.
   * **Comportamiento y Reglas de Negocio:**
     * Capturar e interpretar las lecturas enviadas por los sensores del dispositivo.
     * Validar la integridad de los datos de la medición (rangos físicos válidos para pH y temperatura).
     * Registrar la fecha y hora precisa de la captura.
+    * El `source` distingue mediciones del dispositivo físico (`DEVICE`) de las del simulador (`SIMULATOR`).
 
 ---
 
 ##### B. Value Objects (Objetos de Valor)
-
-* **`WaterMetrics`**: Encapsula los valores numéricos de pH y temperatura en °C.
-* **`DeviceId`**: Identificador único del dispositivo IoT emisor de la telemetría.
-* **`MeasurementTimestamp`**: Marca de tiempo inmutable del momento en que el sensor realizó la lectura.
+* **`MeasurementSource`**: Origen de la medición (`DEVICE`, `SIMULATOR`).
+* **`TelemetryAvailability`**: Disponibilidad del dispositivo (`ONLINE`, `DELAYED`, `OFFLINE`, `UNKNOWN`).
 
 ---
 
 ##### C. Commands (Comandos - CQRS)
 
-* **`RecordWaterMeasurementCommand(String deviceId, String organizationId, String measurementId, Double ph, Double temperature, Long timestamp)`**: Intención creada por Edge a partir de una solicitud HTTPS autenticada para registrar una nueva lectura de agua.
+No existen endpoints de mutación expuestos al frontend administrativo. Las mediciones se registran internamente por el backend cuando el Edge Agent envía datos (fuera del alcance de la API REST administrativa).
 
 ---
 
 ##### D. Queries (Consultas - CQRS)
-
-* **`GetWaterMeasurementByIdQuery(Long measurementId)`**
-* **`GetWaterMeasurementsByDeviceIdQuery(String deviceId)`**
-* **`GetLatestWaterMeasurementByDeviceIdQuery(String deviceId)`**
+Abstracciones para la lectura de información del dominio sin alterar su estado:
+* **`ListMeasurementsQuery(String deviceId, String from, String to, String source, int page, int pageSize, String sortBy, String sortDirection)`**: Lista paginada de mediciones de un dispositivo con filtros por rango de fechas y origen.
+* **`GetLatestMeasurementQuery(String deviceId)`**: Retorna la última medición de un dispositivo o null si no tiene.
+* **`ListDeviceSummariesQuery(String searchTerm, String status, String availability, String operatingEnvironment, int page, int pageSize, String sortBy, String sortDirection)`**: Lista paginada de resúmenes de telemetría de dispositivos con filtros.
+* **`GetDeviceSummaryQuery(String deviceId)`**: Retorna el resumen de telemetría de un dispositivo (snapshot + última medición).
 
 ---
 
 ##### E. Services (Servicios de Comando y Consulta)
 
-* **`TelemetryCommandService` (Interfaz)**
+* **`TelemetryQueryService` (Interfaz de Servicio de Dominio / Aplicación)**
+  * **Descripción:** Atiende las operaciones de lectura de telemetría.
   * **Métodos principales:**
-    * `Optional<WaterMeasurement> handle(RecordWaterMeasurementCommand command)`: Procesa y persiste la lectura recibida desde los sensores.
+    * `Page<WaterMeasurement> handle(ListMeasurementsQuery query)`: Lista paginada de mediciones de un dispositivo.
+    * `Optional<WaterMeasurement> handle(GetLatestMeasurementQuery query)`: Retorna la última medición o null.
+    * `Page<DeviceTelemetrySummary> handle(ListDeviceSummariesQuery query)`: Lista paginada de resúmenes de dispositivos.
+    * `DeviceTelemetrySummary handle(GetDeviceSummaryQuery query)`: Retorna el resumen de un dispositivo.
 
-* **`TelemetryQueryService` (Interfaz)**
-  * **Métodos principales:**
-    * `Optional<WaterMeasurement> handle(GetWaterMeasurementByIdQuery query)`
-    * `List<WaterMeasurement> handle(GetWaterMeasurementsByDeviceIdQuery query)`
-    * `Optional<WaterMeasurement> handle(GetLatestWaterMeasurementByDeviceIdQuery query)`
+---
+
+##### F. Read Models (Modelos de Lectura)
+
+Proyecciones de lectura que combinan datos de `tel` con datos de `cfg` (cross-BC). No son agregados; son vistas materializadas para la presentación.
+
+* **`DeviceTelemetrySummary`**: Combina `TelemetryDeviceSnapshot` (de `cfg.devices`) con `latestMeasurement` (de `tel.water_measurements`).
+* **`TelemetryDeviceSnapshot`**: Snapshot del dispositivo (id, serialNumber, alias, deviceModel, operatingEnvironment, availability, reservoirName, lastCommunicationAt).
 
 #### 4.2.3.2. Interface Layer
 
