@@ -2743,7 +2743,9 @@ Clases que configuran componentes del framework y la documentación del microser
 
 #### 4.2.3.5. Bounded Context Software Architecture Component Level Diagrams
 
-[![component.png](https://i.postimg.cc/YCSn1Cmc/component.png)](https://postimg.cc/dLzjFvBn)
+[![Telemetry-Component-Diagram-dark.png](https://i.postimg.cc/sfp91HZ7/Telemetry-Component-Diagram-dark.png)](https://postimg.cc/K48gHNf8)
+
+*Figura: Diagrama de componentes del bounded context Telemetry. El API Gateway enruta las peticiones a los controladores `WaterMeasurementsController`, `TelemetryDevicesController` y `EdgeTelemetryController`; estos invocan los servicios de aplicación `TelemetryQueryServiceImpl` y `TelemetryCommandServiceImpl`, que operan sobre el agregado `WaterMeasurement` y persisten a través del puerto `TelemetryIngestionService` y del `WaterMeasurementRepository` en la base de datos PostgreSQL del schema `tel`.*
 
 #### 4.2.3.6. Bounded Context Software Architecture Code Level Diagrams
 
