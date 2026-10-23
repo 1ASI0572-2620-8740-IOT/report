@@ -1764,8 +1764,23 @@ Proporciona las implementaciones concretas para el almacenamiento y recuperació
 * **`UserRepository` (JPA Repository)**
   * **Descripción:** Interfaz que extiende de `JpaRepository` para la gestión directa de las operaciones CRUD y consultas personalizadas sobre la entidad `User`.
   * **Métodos principales:**
-    * `Optional<User> findByUsername(String username)`: Recupera un usuario basándose en su nombre de usuario único.
-    * `boolean existsByUsername(String username)`: Verifica la existencia de un usuario antes del registro para evitar duplicados.
+    * `Optional<User> findByIdentifier(String identifier)`: Recupera un usuario basándose en su identificador de login único (correo/username).
+    * `boolean existsByIdentifierAndOrganizationId(String identifier, UUID organizationId)`: Verifica la existencia de un usuario antes del registro para evitar duplicados por organización.
+    * `Page<User> findByOrganizationIdAndStatusAndIdentifierContaining(UUID organizationId, String status, String searchTerm, Pageable pageable)`: Lista paginada de operarios con filtros opcionales (`searchTerm`, `status`) para una organización.
+    * `Optional<User> findByIdAndOrganizationId(UUID userId, UUID organizationId)`: Recupera un usuario por su ID dentro de su organización.
+
+* **`FirstAccessCodeRepository` (JPA Repository)**
+  * **Descripción:** Interfaz que extiende de `JpaRepository` para la gestión de códigos de primer acceso.
+  * **Métodos principales:**
+    * `Optional<FirstAccessCode> findByOperatorAccountIdAndStatus(UUID operatorAccountId, FirstAccessCodeStatus status)`: Recupera el código activo de un operario.
+    * `Optional<FirstAccessCode> findByIdAndOperatorAccountId(UUID codeId, UUID operatorAccountId)`: Recupera un código por su ID y operario.
+    * `List<FirstAccessCode> findByOperatorAccountId(UUID operatorAccountId)`: Lista todos los códigos de un operario (historial).
+
+* **`OrganizationRepository` (JPA Repository)**
+  * **Descripción:** Interfaz para la gestión de organizaciones.
+  * **Métodos principales:**
+    * `boolean existsByRuc(String ruc)`: Verifica la existencia de una organización por RUC antes del registro.
+    * `Optional<Organization> findById(UUID organizationId)`: Recupera una organización por su ID.
 
 ---
 
@@ -1792,6 +1807,8 @@ Implementa los puertos de la capa de aplicación destinados al cifrado de contra
 Clases que configuran componentes del framework y la documentación del microservicio.
 
 * **`SecurityConfiguration`**: Define la cadena de filtros de seguridad (`SecurityFilterChain`), reglas de acceso a endpoints HTTP (CORS, CSRF) y la gestión de sesiones *stateless*.
+
+---
 
 #### 4.2.1.5. Bounded Context Software Architecture Component Level Diagrams
 
