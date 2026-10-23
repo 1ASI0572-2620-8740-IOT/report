@@ -2202,26 +2202,83 @@ Clases de transformación encargadas de mapear entre los DTOs/Resources de la ca
 
 ##### A. Command Services & Handlers (Servicios de Comandos)
 
-* **`ConfigurationCommandServiceImpl`**
-  * **Descripción:** Implementa la orquestación de la lógica de configuración y registro de dispositivos.
+Procesan las intenciones de cambio de estado recibiendo *Commands*, orquestando la lógica de negocio junto con los agregados del dominio y persistiendo los cambios mediante los repositorios.
+
+* **`WorkGroupCommandServiceImpl`**
+  * **Descripción:** Implementación de la interfaz `WorkGroupCommandService`. Coordina la creación y desactivación de grupos operativos.
   * **Flujos de trabajo / Handlers:**
-    * **`handle(RegisterIotDeviceCommand command)`**: Valida la unicidad, entorno y capacidades, crea el inventario y solicita el provisionamiento de identidad. Si el provisionamiento falla, devuelve un resultado coherente y reintentable sin duplicar el dispositivo.
-    * **`handle(AssignIotDeviceCommand command)`**: Actualiza la asignación del operario en el dispositivo.
-    * **`handle(ConfigureOperatingRangesCommand command)`**: Actualiza los objetos de valor de rangos VMA/Cultivo en el agregado `DeviceConfiguration`.
-    * **`handle(ConfigureCorrectiveStrategyCommand command)`**: Aplica la estrategia correctiva pH/Térmica.
-    * **`handle(ConfigureWaitTimeCommand command)`**: Modifica los parámetros de tiempo de espera.
-    * **`handle(ConfigureReleaseModeCommand command)`**: Establece el modo Auto/Manual.
-    * **`handle(PublishConfigurationCommand command)`**: Cambia el estado a `PUBLISHED`.
+    * **`handle(CreateWorkGroupCommand command)`**: Verifica la unicidad del nombre dentro de la organización y crea el grupo.
+    * **`handle(DeactivateWorkGroupCommand command)`**: Verifica que no tenga reservorios ni perfiles activos y desactiva el grupo.
+
+* **`ReservoirCommandServiceImpl`**
+  * **Descripción:** Implementación de la interfaz `ReservoirCommandService`. Coordina la creación y desactivación de reservorios.
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(CreateReservoirCommand command)`**: Verifica que el grupo esté activo, valida la capacidad y crea el reservorio.
+    * **`handle(DeactivateReservoirCommand command)`**: Verifica que no tenga asignaciones ni dispositivo vinculado y desactiva el reservorio.
+
+* **`DeviceCommandServiceImpl`**
+  * **Descripción:** Implementación de la interfaz `DeviceCommandService`. Coordina el registro, vinculación y desactivación de dispositivos.
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(RegisterDeviceCommand command)`**: Valida la unicidad del serial, crea el dispositivo y genera su credencial técnica.
+    * **`handle(RevokeDeviceIdentityCommand command)`**: Revoca la identidad técnica del dispositivo.
+    * **`handle(LinkDeviceCommand command)`**: Vincula un dispositivo libre con un reservorio libre.
+    * **`handle(UnlinkDeviceCommand command)`**: Desvincula un dispositivo de su reservorio.
+    * **`handle(DeactivateDeviceCommand command)`**: Desactiva un dispositivo.
+
+* **`OperatorProfileCommandServiceImpl`**
+  * **Descripción:** Implementación de la interfaz `OperatorProfileCommandService`. Coordina la creación de perfiles y la gestión de asignaciones.
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(CreateOperatorProfileCommand command)`**: Crea un perfil de operario con asignaciones iniciales.
+    * **`handle(AddAssignmentsCommand command)`**: Agrega asignaciones a un perfil existente.
+    * **`handle(CloseAssignmentCommand command)`**: Cierra una asignación activa.
+    * **`handle(DeactivateOperatorProfileCommand command)`**: Desactiva un perfil de operario.
 
 ---
 
 ##### B. Query Services & Handlers (Servicios de Consulta)
 
-* **`ConfigurationQueryServiceImpl`**
+Atienden las lecturas de información recibiendo objetos *Query*, optimizando el acceso a los datos sin alterar el estado del dominio.
+
+* **`WorkGroupQueryServiceImpl`**
+  * **Descripción:** Implementación de la interfaz `WorkGroupQueryService`.
   * **Flujos de trabajo / Handlers:**
-    * **`handle(GetIotDeviceByIdQuery query)`**: Recupera la información del dispositivo IoT.
-    * **`handle(GetConfigurationByDeviceIdQuery query)`**: Obtiene el estado actual de la configuración.
-    * **`handle(GetPublishedConfigurationQuery query)`**: Retorna únicamente la última configuración validada y publicada.
+    * **`handle(ListWorkGroupsQuery query)`**: Lista paginada de grupos con filtros.
+    * **`handle(GetWorkGroupByIdQuery query)`**: Retorna el grupo con miembros y reservorios.
+
+* **`ReservoirQueryServiceImpl`**
+  * **Descripción:** Implementación de la interfaz `ReservoirQueryService`.
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(ListReservoirsQuery query)`**: Lista paginada de reservorios con filtros.
+    * **`handle(GetReservoirByIdQuery query)`**: Retorna el reservorio con dispositivo vinculado.
+
+* **`DeviceQueryServiceImpl`**
+  * **Descripción:** Implementación de la interfaz `DeviceQueryService`.
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(ListDevicesQuery query)`**: Lista paginada de dispositivos con filtros.
+    * **`handle(GetDeviceByIdQuery query)`**: Retorna el dispositivo con reservorio y responsable.
+    * **`handle(GetDeviceConfigurationsQuery query)`**: Retorna las versiones de configuración del dispositivo.
+
+* **`OperatorProfileQueryServiceImpl`**
+  * **Descripción:** Implementación de la interfaz `OperatorProfileQueryService`.
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(ListOperatorProfilesQuery query)`**: Lista paginada de perfiles.
+    * **`handle(GetOperatorProfileByIdQuery query)`**: Retorna el perfil con sus asignaciones.
+
+* **`OperationalCatalogQueryServiceImpl`**
+  * **Descripción:** Implementación de la interfaz `OperationalCatalogQueryService`.
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(GetOrganizationContextQuery query)`**: Retorna la organización actual.
+    * **`handle(GetOperationalOptionsQuery query)`**: Retorna grupos, reservorios y operarios disponibles.
+    * **`handle(GetAvailablePairsQuery query)`**: Retorna pares reservorio-dispositivo libres por grupo.
+
+---
+
+##### C. Outbound Services / Ports (Servicios de Salida)
+
+Interfaces y abstracciones requeridas por la capa de aplicación para comunicarse con el exterior sin acoplarse a tecnologías específicas.
+
+* **`DeviceIdentityProvisioningService`**: Puerto para el provisionamiento de la identidad técnica del dispositivo (generación de credencial).
+* **`OperationalCatalogService`**: Puerto para la consulta del catálogo operativo (organización, opciones, pares disponibles).
 
 #### 4.2.2.4. Infrastructure Layer
 
