@@ -1716,9 +1716,17 @@ Procesan las intenciones de cambio de estado recibiendo *Commands*, orquestando 
 * **`UserCommandServiceImpl`**
   * **Descripción:** Implementación principal de la interfaz `UserCommandService`. Coordina las mutaciones del dominio y la publicación de eventos tras cambios exitosos.
   * **Flujos de trabajo / Handlers:**
-    * **`handle(RegisterOrganizationAdministratorCommand command)`**: Verifica la unicidad de la organización y crea su única cuenta administradora.
+    * **`handle(RegisterOrganizationAdministratorCommand command)`**: Verifica la unicidad de la organización (RUC) y crea su única cuenta administradora de manera atómica.
     * **`handle(CreateOperatorAccountCommand command)`**: Verifica que el actor sea el Administrador de la organización, cifra la contraseña permanente y crea la cuenta con rol `OPERATOR`.
-    * **`handle(SignInCommand command)`**: Recupera el usuario desde la capa de persistencia, valida la coincidencia de las credenciales mediante el servicio de hashing/seguridad, genera el token de acceso JWT y publica el evento `UserSignedInEvent`.
+    * **`handle(SignInCommand command)`**: Recupera el usuario por su `identifier`, valida la coincidencia de las credenciales mediante el servicio de hashing/seguridad, genera el token de acceso JWT y publica el evento `UserSignedInEvent`.
+    * **`handle(SignOutCommand command)`**: Invalida la sesión del administrador (revoca el token). En modo stateless, responde `204 No Content`.
+    * **`handle(DeactivateOperatorAccountCommand command)`**: Verifica que el actor sea el Administrador de la organización y desactiva la cuenta del operario (`status → INACTIVE`).
+
+* **`FirstAccessCodeCommandServiceImpl`**
+  * **Descripción:** Implementación de la interfaz `FirstAccessCodeCommandService`. Coordina la generación y revocación de códigos de primer acceso.
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(GenerateFirstAccessCodeCommand command)`**: Verifica que el perfil del Operario esté completo (perfil, grupo, asignaciones) y en estado `PENDING_FIRST_ACCESS`; genera un código único de un solo uso.
+    * **`handle(RevokeFirstAccessCodeCommand command)`**: Revoca un código activo, cambiando su estado a `REVOKED` y registrando `revokedAt`.
 
 ---
 
@@ -1730,7 +1738,13 @@ Atienden las lecturas de información recibiendo objetos *Query*, optimizando el
   * **Descripción:** Implementación de la interfaz `UserQueryService` enfocada exclusivamente en la recuperación eficiente de datos.
   * **Flujos de trabajo / Handlers:**
     * **`handle(GetUserByIdQuery query)`**: Consulta la persistencia para recuperar el agregado `User` correspondiente al identificador provisto.
-    * **`handle(GetUserByUsernameQuery query)`**: Busca y retorna el agregado `User` a partir de su nombre de usuario único.
+    * **`handle(ListOperatorAccountsQuery query)`**: Lista paginada de operarios con filtros opcionales (`searchTerm`, `status`, `page`, `pageSize`).
+    * **`handle(GetOperatorAccessSummaryQuery query)`**: Retorna el resumen de acceso del operario (perfil, grupo, asignaciones activas).
+
+* **`FirstAccessCodeQueryServiceImpl`**
+  * **Descripción:** Implementación de la interfaz `FirstAccessCodeQueryService` enfocada en la consulta de códigos de primer acceso.
+  * **Flujos de trabajo / Handlers:**
+    * **`handle(GetFirstAccessCodeQuery query)`**: Retorna el código activo del operario o `null` si no existe o fue revocado.
 
 ---
 
