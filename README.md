@@ -2751,17 +2751,20 @@ Clases que configuran componentes del framework y la documentación del microser
 
 ##### 4.2.3.6.1. Bounded Context Domain Layer Class Diagrams
 
-A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Telemetría IoT, detallando el agregado principal `WaterMeasurement`, sus objetos de valor inmutables (`DeviceId`, `WaterMetrics`, `MeasurementTimestamp`), comandos, consultas y servicios bajo el patrón CQRS:
+A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Telemetría IoT, donde se estructuran el agregado, los objetos de valor, el comando, las consultas, los modelos de lectura y los servicios bajo el patrón CQRS:
 
 ---
 
-[![uml.png](https://i.postimg.cc/8kW3p8tg/uml.png)](https://postimg.cc/4nfwPSDW)
+[![TEL-DOMAIN-CLASES.png](https://i.postimg.cc/25Q8nWd0/TEL-DOMAIN-CLASES.png)](https://postimg.cc/bGvhhsBn)
 
 ---
 
-* **`WaterMeasurement`**: Representa la entidad raíz del agregado que consolida y valida las métricas del agua recibidas de un dispositivo en un instante de tiempo.
-* **`WaterMetrics` / `MeasurementTimestamp**`: Objetos de valor que garantizan la inmutabilidad de los datos recolectados por el hardware sensado.
-* **CQRS Pattern**: Desacopla la inserción masiva de lecturas mediante `RecordWaterMeasurementCommand` de la consulta histórica optimizada mediante las queries correspondientes.
+* **`WaterMeasurement` (Agregado)**: Entidad raíz que representa el registro inmutable de las lecturas de pH y temperatura enviadas por un dispositivo IoT. Valida la integridad de los datos y distingue el origen de la medición (`DEVICE` o `SIMULATOR`).
+* **`MeasurementSource` / `TelemetryAvailability`**: Objetos de valor que garantizan la inmutabilidad del origen de la medición y del estado de disponibilidad del dispositivo.
+* **`RecordWaterMeasurementCommand`**: Comando que permite registrar una nueva medición recibida desde el Edge Agent, procesada por `TelemetryCommandService`.
+* **Queries (`ListMeasurementsQuery`, `GetLatestMeasurementQuery`, `ListDeviceSummariesQuery`, `GetDeviceSummaryQuery`)**: Abstracciones para la consulta paginada de mediciones históricas y de resúmenes de telemetría de dispositivos.
+* **Read Models (`TelemetryDeviceSnapshot`, `DeviceTelemetrySummary`)**: Proyecciones que combinan información del dispositivo (desde `cfg`) con la última medición registrada (desde `tel`).
+* **`TelemetryCommandService` / `TelemetryQueryService`**: Interfaces de servicio que desacoplan la ingesta de lecturas de las operaciones de consulta, siguiendo el patrón CQRS.
 
 ##### 4.2.3.6.2. Bounded Context Database Design Diagram
 
