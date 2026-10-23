@@ -2414,54 +2414,148 @@ A continuación se presenta el diagrama de clases correspondiente a la capa de d
 
 ##### 4.2.2.6.2. Bounded Context Database Design Diagram
 
-A continuación se detalla la definición DDL de la base de datos relacional encargada del almacenamiento de los dispositivos IoT y sus respectivas configuraciones operativas:
+﻿A continuación se detalla la definición DDL de la base de datos relacional encargada del almacenamiento de los dispositivos IoT y sus respectivas configuraciones operativas:
 
 ---
 
-[![database.png](https://i.postimg.cc/90N77gY7/database.png)](https://postimg.cc/wRLMKVPq)
+[![CFG-DB.png](https://i.postimg.cc/Z5MjS9Xw/CFG-DB.png)](https://postimg.cc/0z77GNkS)
 
 ---
 
 ```sql
-CREATE TABLE iot_devices
+CREATE TABLE work_groups
 (
-  id VARCHAR(64) NOT NULL,
-  serial_number VARCHAR(50) NOT NULL,
-  device_model VARCHAR(255) NOT NULL,
-  operator_id INT NULL,
-  created_at DATE NOT NULL,
-  updated_at DATE NOT NULL,
+  id UUID NOT NULL,
+  organization_id UUID NOT NULL,
+  name VARCHAR(200) NOT NULL,
+  purpose TEXT,
+  classification VARCHAR(100),
+  status VARCHAR(20) NOT NULL,
+  created_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP NOT NULL,
   PRIMARY KEY (id),
-  UNIQUE (id),
-  UNIQUE (serial_number)
+  FOREIGN KEY (organization_id) REFERENCES organizations(id)
 );
 
-CREATE TABLE device_configurations
+CREATE TABLE reservoirs
 (
-  id INT NOT NULL,
-  status VARCHAR(15) NOT NULL,
+  id UUID NOT NULL,
+  group_id UUID NOT NULL,
+  name VARCHAR(200) NOT NULL,
+  code VARCHAR(60) NOT NULL,
+  reservoir_type VARCHAR(20) NOT NULL,
+  location VARCHAR(200),
+  capacity_liters DECIMAL(12,2),
+  status VARCHAR(20) NOT NULL,
+  created_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (group_id, code),
+  FOREIGN KEY (group_id) REFERENCES work_groups(id)
+);
+
+CREATE TABLE devices
+(
+  id UUID NOT NULL,
+  organization_id UUID NOT NULL,
+  serial_number VARCHAR(100) NOT NULL,
+  alias VARCHAR(200),
+  device_model VARCHAR(100),
+  operating_environment VARCHAR(30) NOT NULL,
+  capabilities TEXT[] NOT NULL,
+  lifecycle_status VARCHAR(30) NOT NULL,
+  availability VARCHAR(20) NOT NULL,
+  reservoir_id UUID,
+  last_communication_at TIMESTAMP,
+  created_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (organization_id, serial_number),
+  FOREIGN KEY (reservoir_id) REFERENCES reservoirs(id)
+);
+
+CREATE TABLE device_identities
+(
+  id UUID NOT NULL,
+  device_id UUID NOT NULL,
+  credential_hash VARCHAR(255) NOT NULL,
+  status VARCHAR(20) NOT NULL,
+  activated_at TIMESTAMP,
+  revoked_at TIMESTAMP,
+  created_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (device_id),
+  FOREIGN KEY (device_id) REFERENCES devices(id)
+);
+
+CREATE TABLE operator_profiles
+(
+  id UUID NOT NULL,
+  user_id UUID NOT NULL,
+  group_id UUID NOT NULL,
+  display_name VARCHAR(200) NOT NULL,
+  status VARCHAR(30) NOT NULL,
+  created_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (user_id),
+  FOREIGN KEY (group_id) REFERENCES work_groups(id)
+);
+
+CREATE TABLE device_assignments
+(
+  id UUID NOT NULL,
+  operator_profile_id UUID NOT NULL,
+  reservoir_id UUID NOT NULL,
+  device_id UUID NOT NULL,
+  status VARCHAR(20) NOT NULL,
+  assigned_at TIMESTAMP NOT NULL,
+  closed_at TIMESTAMP,
+  created_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (operator_profile_id) REFERENCES operator_profiles(id),
+  FOREIGN KEY (reservoir_id) REFERENCES reservoirs(id),
+  FOREIGN KEY (device_id) REFERENCES devices(id)
+);
+
+CREATE TABLE configuration_versions
+(
+  id UUID NOT NULL,
+  device_id UUID NOT NULL,
+  configuration_version INT NOT NULL,
+  status VARCHAR(20) NOT NULL,
+  compatible BOOLEAN NOT NULL,
+  incompatibility_reasons TEXT[],
+  ph_min DECIMAL(6,2),
+  ph_max DECIMAL(6,2),
+  temperature_min DECIMAL(6,2),
+  temperature_max DECIMAL(6,2),
   release_mode VARCHAR(20) NOT NULL,
-  vma_min_value FLOAT NOT NULL,
-  vma_max_value FLOAT NOT NULL,
-  vma_target_value FLOAT NOT NULL,
-  crop_min_value FLOAT NOT NULL,
-  crop_max_value FLOAT NOT NULL,
-  crop_target_value FLOAT NOT NULL,
-  strategy_type VARCHAR(50) NOT NULL,
-  strategy_threshold_value FLOAT NOT NULL,
-  wait_time_seconds INT NOT NULL,
-  created_at DATE NOT NULL,
-  updated_at DATE NOT NULL,
-  device_id VARCHAR(64) NOT NULL,
+  created_at TIMESTAMP NOT NULL,
+  published_at TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (device_id) REFERENCES iot_devices(id),
-  UNIQUE (id)
+  UNIQUE (device_id, configuration_version),
+  FOREIGN KEY (device_id) REFERENCES devices(id)
 );
 
+CREATE UNIQUE INDEX ux_one_admin_per_organization
+ON users (organization_id)
+WHERE role = 'ADMINISTRATOR';
 ```
 
-* **`iot_devices`**: Almacena el inventario de hardware registrado, garantizando la unicidad mediante la restricción sobre `serial_number`.
-* **`device_configurations`**: Modela la configuración de umbrales y tiempos de espera de forma denormalizada para optimizar las lecturas por parte del microservicio, enlazada mediante la clave foránea `device_id` en una relación de 1 a N.
+---
+
+* **`work_groups`**: Almacena grupos operativos por organización. El segmento se deriva de la organización (no se almacena).
+* **`reservoirs`**: Almacena reservorios vinculados a un grupo. El código es único por grupo.
+* **`devices`**: Almacena dispositivos IoT con su número de serie (único por organización), entorno operativo y capacidades. `configuration_status` y `current_configuration_version` se derivan de `configuration_versions`.
+* **`device_identities`**: Almacena la identidad técnica del dispositivo (hash de credencial). La credencial se entrega una sola vez.
+* **`operator_profiles`**: Vincula una cuenta de operario con un grupo y sus asignaciones.
+* **`device_assignments`**: Registra asignaciones exclusivas de pares reservorio-dispositivo a perfiles, conservando historial.
+* **`configuration_versions`**: Almacena versiones de configuración (rangos, modo de liberación, compatibilidad) por dispositivo. Una versión publicada es inmutable.
+
 
 ### 4.2.3. Bounded Context: IOT Telemetry
 
