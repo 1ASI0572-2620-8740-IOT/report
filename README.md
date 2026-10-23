@@ -2284,11 +2284,103 @@ Interfaces y abstracciones requeridas por la capa de aplicación para comunicars
 
 ##### A. Persistence & Repositories (Persistencia y Repositorios)
 
-* **`IotDeviceRepository` (JPA Repository)**
-  * `Optional<IotDevice> findBySerialNumber(String serialNumber)`
+Proporciona las implementaciones concretas para el almacenamiento y recuperación de agregados mediante Spring Data JPA y la base de datos relacional (schema `cfg`).
 
-* **`DeviceConfigurationRepository` (JPA Repository)**
-  * `Optional<DeviceConfiguration> findByDeviceIdAndStatus(String deviceId, ConfigurationStatus status)`
+* **`WorkGroupRepository` (JPA Repository)**
+  * **Descripción:** Interfaz que extiende de `JpaRepository` para la gestión de grupos operativos.
+  * **Métodos principales:**
+    * `Page<WorkGroup> findByOrganizationIdAndStatusAndNameContaining(UUID organizationId, String status, String searchTerm, Pageable pageable)`: Lista paginada de grupos con filtros.
+    * `Optional<WorkGroup> findByIdAndOrganizationId(UUID groupId, UUID organizationId)`: Recupera un grupo por su ID dentro de su organización.
+    * `boolean existsByOrganizationIdAndNameAndStatus(UUID organizationId, String name, ResourceStatus status)`: Verifica la existencia de un grupo activo con el mismo nombre.
+    * `List<WorkGroup> findByOrganizationIdAndStatus(UUID organizationId, ResourceStatus status)`: Lista grupos activos de una organización.
+
+* **`ReservoirRepository` (JPA Repository)**
+  * **Descripción:** Interfaz para la gestión de reservorios.
+  * **Métodos principales:**
+    * `Page<Reservoir> findByOrganizationIdAndStatusAndNameContaining(UUID organizationId, String status, String searchTerm, Pageable pageable)`: Lista paginada de reservorios con filtros.
+    * `Optional<Reservoir> findByIdAndOrganizationId(UUID reservoirId, UUID organizationId)`: Recupera un reservorio por su ID.
+    * `Optional<Reservoir> findByGroupIdAndCode(UUID groupId, String code)`: Verifica la unicidad del código dentro del grupo.
+    * `List<Reservoir> findByOrganizationIdAndGroupIdAndStatus(UUID organizationId, UUID groupId, ResourceStatus status)`: Lista reservorios activos de un grupo.
+    * `boolean existsByReservoirIdAndStatus(UUID reservoirId, ResourceStatus status)`: Verifica si un reservorio tiene asignaciones activas.
+
+* **`DeviceRepository` (JPA Repository)**
+  * **Descripción:** Interfaz para la gestión de dispositivos.
+  * **Métodos principales:**
+    * `Page<Device> findByOrganizationIdAndFilters(UUID organizationId, String status, String availability, String operatingEnvironment, String searchTerm, Pageable pageable)`: Lista paginada de dispositivos con filtros múltiples.
+    * `Optional<Device> findByIdAndOrganizationId(UUID deviceId, UUID organizationId)`: Recupera un dispositivo por su ID.
+    * `Optional<Device> findByOrganizationIdAndSerialNumber(UUID organizationId, String serialNumber)`: Verifica la unicidad del serial por organización.
+    * `List<Device> findByOrganizationIdAndLifecycleStatus(UUID organizationId, DeviceLifecycleStatus status)`: Lista dispositivos por estado de ciclo de vida.
+    * `Optional<Device> findByReservoirIdAndLifecycleStatusNot(UUID reservoirId, DeviceLifecycleStatus status)`: Busca dispositivo vinculado a un reservorio (excluyendo inactivos).
+    * `List<Device> findByOrganizationIdAndReservoirId(UUID organizationId, UUID reservoirId)`: Lista dispositivos vinculados a un reservorio.
+
+* **`DeviceIdentityRepository` (JPA Repository)**
+  * **Descripción:** Interfaz para la gestión de identidades técnicas de dispositivos.
+  * **Métodos principales:**
+    * `Optional<DeviceIdentity> findByDeviceId(UUID deviceId)`: Recupera la identidad de un dispositivo.
+    * `Optional<DeviceIdentity> findByDeviceIdAndStatus(UUID deviceId, DeviceIdentityStatus status)`: Recupera la identidad activa de un dispositivo.
+
+* **`OperatorProfileRepository` (JPA Repository)**
+  * **Descripción:** Interfaz para la gestión de perfiles operativos.
+  * **Métodos principales:**
+    * `Page<OperatorProfile> findByOrganizationIdAndStatusAndDisplayNameContaining(UUID organizationId, String status, String searchTerm, Pageable pageable)`: Lista paginada de perfiles con filtros.
+    * `Optional<OperatorProfile> findByIdAndOrganizationId(UUID profileId, UUID organizationId)`: Recupera un perfil por su ID.
+    * `Optional<OperatorProfile> findByUserId(UUID userId)`: Recupera el perfil de un usuario.
+    * `List<OperatorProfile> findByOrganizationIdAndGroupIdAndStatus(UUID organizationId, UUID groupId, OperatorProfileStatus status)`: Lista perfiles activos de un grupo.
+
+* **`DeviceAssignmentRepository` (JPA Repository)**
+  * **Descripción:** Interfaz para la gestión de asignaciones.
+  * **Métodos principales:**
+    * `List<DeviceAssignment> findByOperatorProfileIdAndStatus(UUID profileId, AssignmentStatus status)`: Lista asignaciones activas/cerradas de un perfil.
+    * `Optional<DeviceAssignment> findByIdAndStatus(UUID assignmentId, AssignmentStatus status)`: Recupera una asignación por su ID.
+    * `boolean existsByReservoirIdAndDeviceIdAndStatus(UUID reservoirId, UUID deviceId, AssignmentStatus status)`: Verifica si existe una asignación activa para un par.
+    * `List<DeviceAssignment> findByReservoirIdAndStatus(UUID reservoirId, AssignmentStatus status)`: Lista asignaciones activas de un reservorio.
+
+* **`ConfigurationVersionRepository` (JPA Repository)**
+  * **Descripción:** Interfaz para la gestión de versiones de configuración.
+  * **Métodos principales:**
+    * `List<ConfigurationVersion> findByDeviceId(UUID deviceId)`: Lista todas las versiones de un dispositivo.
+    * `Optional<ConfigurationVersion> findByDeviceIdAndConfigurationVersion(UUID deviceId, Integer version)`: Recupera una versión específica.
+    * `Optional<ConfigurationVersion> findTopByDeviceIdAndStatusOrderByConfigurationVersionDesc(UUID deviceId, ConfigurationVersionStatus status)`: Recupera la última versión publicada.
+    * `Optional<ConfigurationVersion> findByIdAndDeviceId(UUID versionId, UUID deviceId)`: Recupera una versión por su ID.
+
+* **`OrganizationRepository` (JPA Repository)**
+  * **Descripción:** Interfaz para la gestión de organizaciones.
+  * **Métodos principales:**
+    * `Optional<Organization> findById(UUID organizationId)`: Recupera una organización por su ID.
+    * `boolean existsByRuc(String ruc)`: Verifica la existencia de una organización por RUC.
+
+---
+
+##### B. Device Identity & Cryptography Adapters (Adaptadores de Identidad de Dispositivo)
+
+Implementa los puertos de la capa de aplicación destinados al provisionamiento y verificación de la identidad técnica de los dispositivos IoT.
+
+* **`DeviceIdentityProvisioningServiceImpl`**
+  * **Descripción:** Implementación del puerto `DeviceIdentityProvisioningService`. Genera la credencial técnica del dispositivo al registrarlo y almacena únicamente su hash en `device_identities`.
+  * **Métodos:**
+    * `String provision(UUID deviceId)`: Genera un secreto criptográficamente seguro, almacena su hash (BCrypt/SHA-256) en `device_identities` con estado `ACTIVE` y retorna el secreto en texto plano (entregado una sola vez).
+    * `boolean verify(UUID deviceId, String rawCredential)`: Valida la credencial técnica presentada por el dispositivo contra el hash almacenado.
+
+---
+
+##### C. Catalog Adapters (Adaptadores de Catálogo Operativo)
+
+Implementa el puerto `OperationalCatalogService` de la capa de aplicación para la consulta del catálogo operativo filtrado por organización.
+
+* **`OperationalCatalogServiceImpl`**
+  * **Descripción:** Implementación del puerto `OperationalCatalogService`. Usa los repositorios JPA para consultar grupos, reservorios, operarios y pares disponibles, filtrados por la organización del token.
+  * **Métodos:**
+    * `OrganizationContext getOrganizationContext()`: Retorna la organización actual (id, name, segment) derivada del token.
+    * `OperationalOptions getOperationalOptions()`: Retorna grupos activos, reservorios activos (con su grupo) y operarios activos.
+    * `List<AvailablePair> getAvailablePairs(UUID groupId)`: Retorna pares reservorio-dispositivo libres dentro de un grupo.
+
+---
+
+##### D. Configuration & OpenAPI (Configuración de Infraestructura)
+
+Clases que configuran componentes del framework y la documentación del microservicio.
+
+* **`SecurityConfiguration`**: Define la cadena de filtros de seguridad (`SecurityFilterChain`), reglas de acceso a endpoints HTTP (CORS, CSRF) y la gestión de sesiones *stateless*.
 
 #### 4.2.2.5. Bounded Context Software Architecture Component Level Diagrams
 
