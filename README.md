@@ -2700,16 +2700,46 @@ Interfaces y abstracciones requeridas por la capa de aplicación para comunicars
 
 ##### A. Persistence & Repositories (Persistencia y Repositorios)
 
+Proporciona las implementaciones concretas para el almacenamiento y recuperación de mediciones mediante Spring Data JPA y la base de datos relacional (schema `tel`).
+
 * **`WaterMeasurementRepository` (JPA Repository)**
-  * `List<WaterMeasurement> findByDeviceIdOrderByCreatedAtDesc(String deviceId)`
-  * `Optional<WaterMeasurement> findFirstByDeviceIdOrderByCreatedAtDesc(String deviceId)`
+  * **Descripción:** Interfaz que extiende de `JpaRepository` para la gestión de mediciones de agua.
+  * **Métodos principales:**
+    * `Page<WaterMeasurement> findByDeviceIdAndMeasuredAtBetweenAndSource(UUID deviceId, Instant from, Instant to, String source, Pageable pageable)`: Lista paginada de mediciones con filtros por rango de fechas y origen.
+    * `Optional<WaterMeasurement> findTopByDeviceIdOrderByMeasuredAtDesc(UUID deviceId)`: Retorna la última medición de un dispositivo.
+    * `Page<WaterMeasurement> findByOrganizationIdAndFilters(UUID organizationId, String searchTerm, String status, String availability, String operatingEnvironment, Pageable pageable)`: Lista paginada de resúmenes de telemetría de dispositivos con filtros (requiere JOIN con cfg.devices).
+    * `Optional<WaterMeasurement> findByDeviceIdAndId(UUID deviceId, UUID measurementId)`: Recupera una medición por su ID.
 
 ---
 
 ##### B. Edge REST Adapter (Adaptador de Edge)
 
+Implementa el puerto de entrada para la recepción de mediciones desde el Edge Agent.
+
 * **`AuthenticatedEdgeRequestAdapter`**
   * **Descripción:** Convierte el principal autenticado y la solicitud HTTPS en comandos del contexto, aplica control de idempotencia y no permite que el payload reemplace la identidad validada.
+  * **Métodos:**
+    * `RecordWaterMeasurementCommand toCommand(Principal principal, WaterMeasurementPayload payload)`: Construye el comando con `deviceId` y `organizationId` del principal autenticado.
+    * `boolean isIdempotent(String measurementId)`: Verifica si la medición ya fue registrada (evita duplicados).
+
+---
+
+##### C. Telemetry Ingestion Adapter (Adaptador de Ingesta)
+
+Implementa el puerto `TelemetryIngestionService` para la persistencia de mediciones.
+
+* **`TelemetryIngestionServiceImpl`**
+  * **Descripción:** Implementación del puerto `TelemetryIngestionService`. Persiste la medición y actualiza la disponibilidad del dispositivo.
+  * **Métodos:**
+    * `Optional<WaterMeasurement> ingest(RecordWaterMeasurementCommand command)`: Persiste la medición si no existe (idempotente) y actualiza `last_communication_at` y `availability` del dispositivo.
+
+---
+
+##### D. Configuration & OpenAPI (Configuración de Infraestructura)
+
+Clases que configuran componentes del framework y la documentación del microservicio.
+
+* **`SecurityConfiguration`**: Define la cadena de filtros de seguridad (`SecurityFilterChain`), reglas de acceso a endpoints HTTP (CORS, CSRF) y la gestión de sesiones *stateless*.
 
 #### 4.2.3.5. Bounded Context Software Architecture Component Level Diagrams
 
