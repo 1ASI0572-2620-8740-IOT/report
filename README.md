@@ -1588,7 +1588,6 @@ Los scopes mínimos son `telemetry:write`, `commands:read` y `commands:ack`. Un 
 * **`OrganizationId`**: Límite de autorización obtenido de la sesión y nunca confiado desde el cuerpo de una petición.
 * **`AccountStatus`**: Estado de la cuenta (`ACTIVE`, `INACTIVE`).
 * **`FirstAccessCodeStatus`**: Estado del código (`ACTIVE`, `USED`, `REVOKED`).
-* **`OperatorProfileStatus`**: Estado del perfil operativo (`PENDING_FIRST_ACCESS`, `ACTIVE`, `INACTIVE`).
 
 ---
 
@@ -1820,28 +1819,35 @@ Clases que configuran componentes del framework y la documentación del microser
 
 ##### 4.2.1.6.1. Bounded Context Domain Layer Class Diagrams
 
-A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Autenticación, donde se estructuran los agregados, objetos de valor, comandos, consultas y servicios bajo el patrón CQRS y DDD:
+A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Identity and Access Management, donde se estructuran los agregados, objetos de valor, comandos, consultas y servicios bajo el patrón CQRS y DDD:
 
-[![UML-Image.png](https://i.postimg.cc/Jn4PLg6C/UML-Image.png)](https://postimg.cc/mcJQ3dWm)
+[![IAM-DOMAIN-CLASSES.png](https://i.postimg.cc/VvMCyp9r/IAM-DOMAIN-CLASSES.png)](https://postimg.cc/K3GzB9Hx)
 
-* **`User` (Agregado Principal)**: Modela las credenciales y el estado del usuario heredando de `AuditableAbstractAggregateRoot`.
-* **`Roles` y `Role` (Value Objects)**: Encapsulan el conjunto inmutable de permisos asignados a un usuario, garantizando que no existan duplicados.
-* **Separación CQRS**: Desacopla el alta de organización, la creación administrativa de Operarios y el inicio de sesión de las consultas de cuenta.
+* **`Organization` (Agregado Principal del Tenant)**: Encapsula la identidad de la empresa (nombre, RUC, teléfono, segmento, estado). Rechaza RUC duplicado y garantiza un solo Administrador por organización.
+* **`User` (Agregado de Cuenta de Acceso)**: Encapsula la cuenta humana (Administrador u Operario) con identificador de login, nombre visible, correo, contraseña cifrada, rol y estado. El `identifier` es único por organización.
+* **`FirstAccessCode` (Agregado de Código de Primer Acceso)**: Encapsula un código de un solo uso (ACTIVE/USED/REVOKED) vinculado a un perfil operativo y a una cuenta de operario.
+* **Value Objects**: `Role` (ADMINISTRATOR, OPERATOR), `AccountStatus` (ACTIVE, INACTIVE), `FirstAccessCodeStatus` (ACTIVE, USED, REVOKED).
+* **Commands (7)**: RegisterOrganizationAdministrator, CreateOperatorAccount, SignIn, SignOut, DeactivateOperatorAccount, GenerateFirstAccessCode, RevokeFirstAccessCode.
+* **Queries (4)**: GetUserById, ListOperatorAccounts, GetOperatorAccessSummary, GetFirstAccessCode.
+* **Services**: UserCommandService, UserQueryService, FirstAccessCodeCommandService, FirstAccessCodeQueryService.
 
 ##### 4.2.1.6.2. Bounded Context Database Design Diagram
 
-Para respaldar el modelo relacional de Human IAM, cada cuenta pertenece a una organización y posee un único rol. La base refuerza la regla de un solo Administrador activo por organización:
+﻿Para respaldar el modelo relacional de Human IAM, la base de datos utiliza tres tablas en el schema `iam`: `organizations` (raíz del tenant), `users` (cuentas de administrador y operario) y `first_access_codes` (códigos de primer acceso). Cada cuenta pertenece a una organización y posee un único rol. La base refuerza la regla de un solo Administrador activo por organización mediante un índice parcial. Los campos `external_id` y `username` fueron eliminados por normalización; el `organization_id` de `first_access_codes` se deriva de `users`.
 
-[![database.png](https://i.postimg.cc/Z0k8CDcP/database.png)](https://postimg.cc/wRVyr2n3)
+[![iam-db.png](https://i.postimg.cc/nzSkVyQN/iam-db.png)](https://postimg.cc/bDbb3FgR)
 
 ---
 
 ```sql
 CREATE TABLE organizations
 (
-  id BIGINT NOT NULL,
-  ruc VARCHAR(11) NOT NULL,
-  name VARCHAR(120) NOT NULL,
+  id UUID NOT NULL,
+  name VARCHAR(200) NOT NULL,
+  ruc VARCHAR(20) NOT NULL,
+  phone VARCHAR(30),
+  segment VARCHAR(20) NOT NULL,
+  status VARCHAR(20) NOT NULL,
   created_at TIMESTAMP NOT NULL,
   updated_at TIMESTAMP NOT NULL,
   PRIMARY KEY (id),
@@ -1850,30 +1856,52 @@ CREATE TABLE organizations
 
 CREATE TABLE users
 (
-  id BIGINT NOT NULL,
-  organization_id BIGINT NOT NULL,
-  username VARCHAR(50) NOT NULL,
+  id UUID NOT NULL,
+  organization_id UUID NOT NULL,
+  identifier VARCHAR(200) NOT NULL,
+  display_name VARCHAR(200) NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
-  role VARCHAR(20) NOT NULL,
-  status VARCHAR(16) NOT NULL,
+  email VARCHAR(200),
+  role VARCHAR(30) NOT NULL,
+  status VARCHAR(20) NOT NULL,
   created_at TIMESTAMP NOT NULL,
   updated_at TIMESTAMP NOT NULL,
   PRIMARY KEY (id),
-  UNIQUE (username),
+  UNIQUE (organization_id, identifier),
   FOREIGN KEY (organization_id) REFERENCES organizations(id),
-  CHECK (role IN ('ROLE_OPERATOR', 'ROLE_ADMIN'))
+  CHECK (role IN ('ADMINISTRATOR', 'OPERATOR'))
 );
 
 CREATE UNIQUE INDEX ux_one_admin_per_organization
 ON users (organization_id)
-WHERE role = 'ROLE_ADMIN' AND status = 'ACTIVE';
+WHERE role = 'ADMINISTRATOR';
 
+CREATE TABLE first_access_codes
+(
+  id UUID NOT NULL,
+  code VARCHAR(40) NOT NULL,
+  status VARCHAR(20) NOT NULL,
+  operator_profile_id UUID,
+  operator_account_id UUID NOT NULL,
+  generated_at TIMESTAMP,
+  used_at TIMESTAMP,
+  revoked_at TIMESTAMP,
+  created_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (operator_account_id) REFERENCES users(id)
+);
+
+CREATE INDEX ix_first_access_codes_operator
+ON first_access_codes (operator_account_id);
 ```
 
 ---
 
-* **`organizations`**: Mantiene el límite de pertenencia y la unicidad del RUC.
-* **`users`**: Almacena credenciales humanas, un único rol y estado. La restricción garantiza un solo Administrador activo por organización.
+* **`organizations`**: Mantiene el límite de pertenencia, la unicidad del RUC y el segmento organizacional.
+* **`users`**: Almacena credenciales humanas con identificador de login, rol y estado. La restricción garantiza un solo Administrador activo por organización.
+* **`first_access_codes`**: Almacena códigos de primer acceso de un solo uso vinculados a un operario y su perfil operativo (referencia lógica a `cfg.operator_profiles`). Se generan, consultan y revocan desde el frontend.
+
 
 ### 4.2.2. Bounded Context: Configuration
 
