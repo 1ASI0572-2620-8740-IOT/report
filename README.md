@@ -2768,34 +2768,35 @@ A continuación se presenta el diagrama de clases correspondiente a la capa de d
 
 ##### 4.2.3.6.2. Bounded Context Database Design Diagram
 
-Para la persistencia de las métricas enviadas por los dispositivos IoT, se establece el siguiente esquema relacional DDL diseñado para almacenar registros inmutables de telemetría:
+Para la persistencia de las métricas enviadas por los dispositivos IoT, se establece el siguiente esquema relacional DDL diseñado para almacenar registros inmutables de telemetría en el esquema `tel`:
 
 ---
 
-[![database.png](https://i.postimg.cc/L4TtBN8r/database.png)](https://postimg.cc/yWD37h9P)
+[![TEL-DB.png](https://i.postimg.cc/rF2TNsm3/TEL-DB.png)](https://postimg.cc/grs1YY3H)
 
 ---
 
 ```sql
-CREATE TABLE water_measurements
+CREATE TABLE tel.water_measurements
 (
-  id INT NOT NULL,
-  device_id VARCHAR(64) NOT NULL,
-  ph FLOAT NOT NULL,
-  temperature FLOAT NOT NULL,
-  measurement_timestamp INT NOT NULL,
-  created_at DATE NOT NULL,
-  updated_at DATE NOT NULL,
-  PRIMARY KEY (id),
-  UNIQUE (id)
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  organization_id UUID NOT NULL,
+  device_id UUID NOT NULL,
+  ph NUMERIC(6,2) NOT NULL,
+  temperature NUMERIC(6,2) NOT NULL,
+  measured_at TIMESTAMPTZ NOT NULL,
+  source VARCHAR(20) NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE INDEX idx_wm_device_measured ON tel.water_measurements (device_id, measured_at);
 ```
 
 ---
 
-* **`water_measurements`**: Almacena las lecturas físicas individuales (`ph`, `temperature`) indexadas por el identificador del dispositivo (`device_id`) y su correspondiente sello de tiempo (`measurement_timestamp`).
-* **Auditoría e Inmutabilidad**: Mantiene trazabilidad mediante los campos `created_at` y `updated_at`, sirviendo como fuente primaria para análisis histórico y consultas de última medición.
+* **`tel.water_measurements`**: Almacena las lecturas inmutables de pH y temperatura enviadas por los dispositivos IoT. Incluye `organization_id` como *snapshot* cross-BC para mantener la autonomía del microservicio de Telemetría. El campo `source` distingue el origen de la medición (`DEVICE` | `SIMULATOR`).
+* **`measured_at` vs `created_at`**: `measured_at` registra el momento exacto de captura por el dispositivo, mientras que `created_at` registra el momento de ingesta en el sistema.
+* **Inmutabilidad e Indexación**: Los registros no se actualizan. Las consultas históricas y la obtención de la última medición se optimizan mediante el índice compuesto `(device_id, measured_at)`.
 
 ### 4.2.4. Bounded Context: Treatment
 
