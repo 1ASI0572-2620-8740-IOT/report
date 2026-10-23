@@ -1556,37 +1556,60 @@ Los scopes mínimos son `telemetry:write`, `commands:read` y `commands:ack`. Un 
 
 ##### A. Aggregates (Agregados)
 
-* **`User` (Agregado Principal)**
-  * **Descripción:** Encapsula la identidad humana, credenciales, organización, rol y estado de la cuenta.
+* **`Organization` (Agregado Principal del Tenant)**
+  * **Descripción:** Encapsula la identidad de la empresa: nombre, RUC, teléfono, segmento organizacional y estado.
+  * **Comportamiento y Reglas de Negocio:**
+    * Rechaza RUC duplicado (restricción única).
+    * Garantiza exactamente una cuenta administradora por organización (índice parcial por rol `ADMINISTRATOR`).
+    * El segmento (`TEXTILE` / `HYDROPONIC`) condiciona reglas operativas en otros bounded contexts.
+
+* **`User` (Agregado de Cuenta de Acceso)**
+  * **Descripción:** Encapsula la cuenta humana (Administrador u Operario): identificador de login, nombre visible, correo, contraseña cifrada, rol y estado.
   * **Comportamiento y Reglas de Negocio:**
     * Validar los datos durante la creación/registro.
     * Autenticar credenciales mediante la verificación del hash de contraseña.
-    * Mantener exactamente un rol por cuenta (`ROLE_OPERATOR` o `ROLE_ADMIN`). El flujo público no permite escogerlo.
+    * Mantener exactamente un rol por cuenta (`ADMINISTRATOR` u `OPERATOR`). El flujo público solo permite crear Administradores junto con la organización.
+    * El `identifier` (correo/username de login) es único por organización.
+    * El `email` se almacena por separado para notificaciones y puede diferir del `identifier`.
 
-* **`Organization` (Agregado)**
-  * Se crea conjuntamente con su único Administrador durante el alta pública.
-  * Rechaza RUC duplicado y una segunda cuenta administradora para la misma organización.
+* **`FirstAccessCode` (Agregado de Código de Primer Acceso)**
+  * **Descripción:** Encapsula un código de un solo uso que permite al Operario activar su cuenta desde la aplicación móvil.
+  * **Comportamiento y Reglas de Negocio:**
+    * Se genera únicamente cuando el perfil del Operario está completo (perfil, grupo, asignaciones).
+    * Solo puede generarse si el perfil está en estado `PENDING_FIRST_ACCESS`.
+    * Puede estar en estado `ACTIVE`, `USED` (consumido una sola vez) o `REVOKED`.
+    * Se vincula a un `operatorProfileId` (referencia lógica a `cfg.operator_profiles`) y a un `operatorAccountId` (FK a `iam.users`).
+    * Una vez usado o revocado, no puede reutilizarse.
 
 ---
 
 ##### B. Value Objects (Objetos de Valor)
-* **`Role`**: Representa el rol dentro del sistema (`ROLE_OPERATOR`, `ROLE_ADMIN`).
+* **`Role`**: Representa el rol dentro del sistema (`ADMINISTRATOR`, `OPERATOR`).
 * **`OrganizationId`**: Límite de autorización obtenido de la sesión y nunca confiado desde el cuerpo de una petición.
+* **`AccountStatus`**: Estado de la cuenta (`ACTIVE`, `INACTIVE`).
+* **`FirstAccessCodeStatus`**: Estado del código (`ACTIVE`, `USED`, `REVOKED`).
+* **`OperatorProfileStatus`**: Estado del perfil operativo (`PENDING_FIRST_ACCESS`, `ACTIVE`, `INACTIVE`).
 
 ---
 
 ##### C. Commands (Comandos - CQRS)
 Representan las intenciones del usuario o sistema para modificar el estado del dominio:
-* **`RegisterOrganizationAdministratorCommand(OrganizationData organization, String username, String rawPassword)`**: Crea una organización y su único Administrador.
-* **`CreateOperatorAccountCommand(String organizationId, String username, String rawPassword)`**: Crea una cuenta de Operario desde la sesión del Administrador.
-* **`SignInCommand(String username, String rawPassword)`**: Intención de iniciar sesión en el sistema.
+* **`RegisterOrganizationAdministratorCommand(OrganizationData organization, String identifier, String displayName, String email, String rawPassword)`**: Crea una organización y su único Administrador de manera atómica.
+* **`CreateOperatorAccountCommand(String organizationId, String displayName, String identifier, String rawPassword)`**: Crea una cuenta de Operario con contraseña permanente desde la sesión del Administrador.
+* **`SignInCommand(String identifier, String rawPassword)`**: Intención de iniciar sesión en el sistema.
+* **`SignOutCommand(String sessionToken)`**: Invalida la sesión del administrador (revoca el token).
+* **`DeactivateOperatorAccountCommand(String organizationId, String operatorId)`**: Desactiva la cuenta de un operario (`status → INACTIVE`).
+* **`GenerateFirstAccessCodeCommand(String operatorId, String operatorProfileId)`**: Genera un código de primer acceso cuando el perfil está completo.
+* **`RevokeFirstAccessCodeCommand(String codeId)`**: Revoca un código de primer acceso activo.
 
 ---
 
 ##### D. Queries (Consultas - CQRS)
 Abstracciones para la lectura de información del dominio sin alterar su estado:
-* **`GetUserByIdQuery(Long userId)`**
-* **`GetUserByUsernameQuery(String username)`**
+* **`GetUserByIdQuery(String userId)`**
+* **`ListOperatorAccountsQuery(String organizationId, String searchTerm, String status, int page, int pageSize)`**
+* **`GetOperatorAccessSummaryQuery(String operatorId)`**
+* **`GetFirstAccessCodeQuery(String operatorId, String operatorProfileId)`**
 
 ---
 
@@ -1595,15 +1618,30 @@ Abstracciones para la lectura de información del dominio sin alterar su estado:
 * **`UserCommandService` (Interfaz de Servicio de Dominio / Aplicación)**
   * **Descripción:** Coordina las operaciones que modifican el estado del dominio procesando los *Commands*.
   * **Métodos principales:**
-    * `Optional<User> handle(RegisterOrganizationAdministratorCommand command)`: Crea conjuntamente la organización y su único Administrador durante el alta inicial.
+    * `Optional<User> handle(RegisterOrganizationAdministratorCommand command)`: Crea conjuntamente la organización y su única cuenta administradora durante el alta inicial.
     * `Optional<User> handle(CreateOperatorAccountCommand command)`: Permite al Administrador crear una cuenta de Operario con contraseña permanente.
-    * `Optional<String> handle(SignInCommand command)`: Valida las credenciales e inicia la sesión generando el token de autenticación.
+    * `Optional<AuthenticatedUser> handle(SignInCommand command)`: Valida las credenciales e inicia la sesión generando el token de autenticación.
+    * `void handle(SignOutCommand command)`: Invalida la sesión del administrador.
+    * `void handle(DeactivateOperatorAccountCommand command)`: Desactiva la cuenta de un operario.
 
 * **`UserQueryService` (Interfaz de Servicio de Dominio / Aplicación)**
   * **Descripción:** Atiende únicamente las operaciones de lectura recibiendo objetos *Query*.
   * **Métodos principales:**
     * `Optional<User> handle(GetUserByIdQuery query)`: Retorna el usuario por su `UserId`.
-    * `Optional<User> handle(GetUserByUsernameQuery query)`: Retorna el usuario por su `Username`.
+    * `Page<User> handle(ListOperatorAccountsQuery query)`: Lista paginada de operarios con filtros.
+    * `Optional<OperatorAccessSummary> handle(GetOperatorAccessSummaryQuery query)`: Retorna el resumen de acceso del operario (perfil, grupo, asignaciones).
+
+* **`FirstAccessCodeCommandService` (Interfaz de Servicio de Dominio / Aplicación)**
+  * **Descripción:** Coordina la generación y revocación de códigos de primer acceso.
+  * **Métodos principales:**
+    * `FirstAccessCode handle(GenerateFirstAccessCodeCommand command)`: Genera un código de primer acceso cuando el perfil está completo.
+    * `void handle(RevokeFirstAccessCodeCommand command)`: Revoca un código activo.
+
+* **`FirstAccessCodeQueryService` (Interfaz de Servicio de Dominio / Aplicación)**
+  * **Descripción:** Atiende la consulta de códigos de primer acceso.
+  * **Métodos principales:**
+    * `Optional<FirstAccessCode> handle(GetFirstAccessCodeQuery query)`: Retorna el código activo o null.
+
 
 #### 4.2.1.2. Interface Layer
 
@@ -1612,17 +1650,27 @@ Abstracciones para la lectura de información del dominio sin alterar su estado:
 Son los puntos de entrada HTTP (Inbound Adapters) que exponen los endpoints de la API REST del Bounded Context.
 
 * **`AuthenticationController`**
-  * **Descripción:** Expone el inicio de sesión y el alta inicial conjunta de organización y Administrador. Los Operarios no disponen de registro público.
+  * **Descripción:** Expone el inicio de sesión, el cierre de sesión y el alta inicial conjunta de organización y Administrador. Los Operarios no disponen de registro público.
   * **Endpoints:**
     * `POST /api/v1/authentication/sign-in`: Recibe un `SignInResource`, lo transforma a `SignInCommand`, lo envía a `UserCommandService` y retorna un `AuthenticatedUserResource` con el token generado.
-    * `POST /api/v1/authentication/register-organization`: Crea la organización y su única cuenta administradora de manera atómica.
+    * `POST /api/v1/authentication/sign-out`: Recibe el token de sesión, lo invalida y retorna `204 No Content`.
+    * `POST /api/v1/organization-registrations`: Crea la organización y su única cuenta administradora de manera atómica.
 
 * **`UsersController`**
-  * **Descripción:** Gestiona las operaciones de administración sobre la entidad de usuarios.
+  * **Descripción:** Gestiona las operaciones de administración sobre la entidad de usuarios y operarios.
   * **Endpoints:**
-    * `GET /api/v1/users/{userId}`: Recibe el ID, ejecuta `GetUserByIdQuery` mediante `UserQueryService` y retorna un `UserResource`.
+    * `GET /api/v1/operators`: Lista paginada de operarios con filtros opcionales (`searchTerm`, `status`, `page`, `pageSize`).
+    * `GET /api/v1/operators/{operatorId}`: Recibe el ID, ejecuta `GetUserByIdQuery` mediante `UserQueryService` y retorna un `UserResource`.
     * `POST /api/v1/operators`: Permite al único Administrador crear la cuenta de un Operario con contraseña permanente.
+    * `PATCH /api/v1/operators/{operatorId}/status`: Desactiva la cuenta de un Operario (`status → INACTIVE`).
+    * `GET /api/v1/operators/{operatorId}/access-summary`: Retorna el resumen de acceso del operario (perfil, grupo, asignaciones).
+
+* **`FirstAccessCodesController`**
+  * **Descripción:** Gestiona la generación, consulta y revocación de códigos de primer acceso para Operarios.
+  * **Endpoints:**
+    * `GET /api/v1/operators/{operatorId}/first-access-code`: Retorna el código activo o `404` si no existe / fue revocado.
     * `POST /api/v1/operators/{operatorId}/first-access-code`: Genera el código sin caducidad únicamente cuando su perfil, grupo, reservorio y dispositivo estén completos.
+    * `POST /api/v1/first-access-codes/{codeId}/revoke`: Revoca un código de primer acceso activo.
 
 ---
 
@@ -1630,11 +1678,17 @@ Son los puntos de entrada HTTP (Inbound Adapters) que exponen los endpoints de l
 
 Definen las estructuras de datos aceptadas en las peticiones (Requests) y enviadas en las respuestas (Responses) de la API REST:
 
-* **`SignInResource(String username, String password)`**: DTO de entrada con las credenciales enviadas en el login.
-* **`RegisterOrganizationAdministratorResource(OrganizationData organization, String username, String password)`**: DTO del alta inicial; el rol resultante siempre es `ADMINISTRATOR`.
-* **`CreateOperatorAccountResource(String username, String password)`**: DTO administrativo; la contraseña es permanente y no exige cambio en el primer acceso.
-* **`UserResource(Long id, String organizationId, String username, String role, String status)`**: DTO de salida que expone la información pública del usuario.
-* **`AuthenticatedUserResource(Long id, String organizationId, String username, String role, String token)`**: DTO de salida que retorna la sesión humana; la organización y el rol también forman parte de los claims firmados.
+* **`SignInResource(String identifier, String password)`**: DTO de entrada con las credenciales enviadas en el login.
+* **`RegisterOrganizationAdministratorResource(OrganizationData organization, String displayName, String email, String password)`**: DTO del alta inicial; el rol resultante siempre es `ADMINISTRATOR`. Incluye datos de la organización (nombre, RUC, teléfono, segmento) y del administrador (nombre, correo, contraseña).
+* **`CreateOperatorAccountResource(String displayName, String identifier, String password)`**: DTO administrativo; la contraseña es permanente y no exige cambio en el primer acceso.
+* **`UserResource(Long id, String displayName, String identifier, String status)`**: DTO de salida que expone la información pública del usuario (sin `organizationId` ni `role` en la respuesta).
+* **`AuthenticatedUserResource(Long id, String organizationId, String identifier, String role, String token)`**: DTO de salida que retorna la sesión humana; la organización y el rol también forman parte de los claims firmados.
+* **`OperatorAccountPageResource(List<UserResource> items, int total, int page, int pageSize)`**: DTO de salida paginado para la lista de operarios.
+* **`OperatorAccessSummaryResource(String operatorAccountId, String operatorProfileId, String profileStatus, String groupId, String groupName, List<OperatorAssignmentResource> assignments)`**: DTO de salida que expone el resumen de acceso del operario.
+* **`OperatorAssignmentResource(String assignmentId, String reservoirId, String reservoirName, String deviceId, String deviceSerialNumber, String status)`**: DTO de salida de una asignación operativa.
+* **`FirstAccessCodeResource(String id, String code, String status, String operatorProfileId, String operatorAccountId, String generatedAt, String usedAt, String revokedAt)`**: DTO de salida que expone el código de primer acceso.
+* **`GenerateFirstAccessCodeResource(String operatorProfileId)`**: DTO de entrada para generar un código de primer acceso.
+* **`DeactivateOperatorAccountResource(String status)`**: DTO de entrada para desactivar un operario (`status = 'INACTIVE'`).
 
 ---
 
@@ -1645,7 +1699,13 @@ Clases de transformación encargadas de mapear entre los DTOs/Resources de la ca
 * **`SignInCommandFromResourceAssembler`**: Transforma un `SignInResource` a un `SignInCommand`.
 * **`RegisterOrganizationAdministratorCommandFromResourceAssembler`**: Transforma el alta pública en el comando conjunto de organización y Administrador.
 * **`CreateOperatorAccountCommandFromResourceAssembler`**: Transforma la solicitud administrativa en el comando de creación de Operario.
+* **`SignOutCommandFromResourceAssembler`**: Transforma el token de sesión en un `SignOutCommand`.
+* **`DeactivateOperatorAccountCommandFromResourceAssembler`**: Transforma la solicitud de desactivación en un `DeactivateOperatorAccountCommand`.
 * **`UserResourceFromEntityAssembler`**: Transforma la entidad/agregado `User` a un `UserResource`.
+* **`OperatorAccountPageResourceFromEntityAssembler`**: Transforma una página de `User` a un `OperatorAccountPageResource`.
+* **`OperatorAccessSummaryResourceFromEntityAssembler`**: Transforma un `OperatorAccessSummary` a un `OperatorAccessSummaryResource`.
+* **`FirstAccessCodeResourceFromEntityAssembler`**: Transforma un `FirstAccessCode` a un `FirstAccessCodeResource`.
+* **`GenerateFirstAccessCodeCommandFromResourceAssembler`**: Transforma un `GenerateFirstAccessCodeResource` en un `GenerateFirstAccessCodeCommand`.
 
 #### 4.2.1.3. Application Layer
 
