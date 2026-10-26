@@ -3384,17 +3384,23 @@ Clases que configuran componentes del framework y la documentación del microser
 
 ##### 4.2.5.6.1. Bounded Context Domain Layer Class Diagrams
 
-A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Monitoreo y Trazabilidad, estructurando los agregados `OperationalAlert`, `QualityIncident` y `EventCorrelation`, sus objetos de valor asociados (`AlertSeverity`, `IncidentType`, `StatusView`, `CorrelationData`), junto con las interfaces para los comandos, consultas y servicios del patrón CQRS:
+A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Monitoreo y Trazabilidad, donde se estructuran los cuatro agregados `OperationalAlert`, `QualityIncident`, `TraceabilityEvent` y `TraceabilityReport`, sus seis objetos de valor, los cuatro comandos y cuatro consultas del patrón CQRS, los cinco modelos de lectura y las dos interfaces de servicio:
 
 ---
 
-[![uml.png](https://i.postimg.cc/jSBvVQCW/uml.png)](https://postimg.cc/Wd60gZGj)
+[![image.png](https://i.postimg.cc/85kNDQDW/image.png)](https://postimg.cc/7CRpMR5Y)
 
 ---
 
-* **`OperationalAlert`**: Agregado encargado de gestionar las notificaciones de eventos operacionales críticos en base a incidentes o anomalías del sistema.
-* **`QualityIncident`**: Encapsula la detección de fallos de calidad de agua o interrupciones de lectura en los sensores.
-* **`EventCorrelation`**: Mantiene la agrupación relacional de identificadores de eventos por ciclos de tratamiento para garantizar trazabilidad técnica.
+* **`OperationalAlert` (Agregado)**: Alerta operativa que conserva `organization_id` como *snapshot* del tenant, `device_id` como referencia lógica a `cfg` y los *snapshots* `device_serial_number` y `reservoir_name` para resolver la alerta sin depender de Configuration. Nace en estado `ACTIVE` y solo admite la atención `ACTIVE` → `ACKNOWLEDGED`, sellando `attended_at`; el estado `RESOLVED` representa el cierre definitivo de la condición que la originó.
+* **`QualityIncident` (Agregado)**: Incidente de calidad o de pérdida de monitoreo (`QUALITY_INCIDENT` | `MONITORING_LOSS`) que se abre en estado `OPEN` con un `correlation_id` que agrupa sus eventos y solo puede cerrarse `OPEN` → `CLOSED`. Genera los eventos de trazabilidad `INCIDENT_REGISTERED` (`WARNING`) al abrirse e `INCIDENT_CLOSED` (`SUCCESS`) al cerrarse, ambos bajo el mismo `correlation_id`.
+* **`TraceabilityEvent` (Agregado)**: Evento inmutable y de solo adición (*append-only*) de la línea temporal del dispositivo; registra `event_type` como texto libre, `actor`, `outcome` y la lectura opcional de pH y temperatura asociada al evento. `occurred_at` ordena la cronología y no admite actualización ni borrado.
+* **`TraceabilityReport` (Agregado)**: Reporte materializado de un dispositivo para un período (`from_date`–`to_date`) que valida el rango y la existencia de eventos, calcula los conteos por tipo de evento y congela en `generated_at` el *snapshot* de eventos (`JSONB`) junto con el serial del dispositivo y el reservorio.
+* **Objetos de Valor (`AlertSeverity`, `AlertStatus`, `IncidentType`, `IncidentStatus`, `EventOutcome`, `StatusView`)**: Enumeraciones inmutables que tipan la severidad y el estado de las alertas, el tipo y el estado de los incidentes, el resultado de los eventos de trazabilidad y el estado proyectado de la vista de monitoreo. `StatusView` no se persiste: se deriva de la disponibilidad del dispositivo y de la frescura de su última medición.
+* **Commands (`AcknowledgeOperationalAlertCommand`, `RegisterIncidentCommand`, `CloseIncidentCommand`, `GenerateTraceabilityReportCommand`)**: Comandos que cubren los cuatro endpoints de escritura del contexto: atención de alertas, apertura y cierre de incidentes y generación de reportes. La creación de alertas y la escritura de eventos de trazabilidad no se exponen como comandos HTTP porque las produce el propio contexto.
+* **Queries (`GetMonitoringOverviewQuery`, `ListOperationalAlertsQuery`, `ListQualityIncidentsQuery`, `GetDeviceTraceabilityQuery`)**: Consultas de solo lectura para el resumen operacional, la bandeja paginada de alertas e incidentes con filtros y la línea temporal de un dispositivo dentro de un rango de fechas.
+* **Read Models (`DeviceStatusView`, `MonitoringOverview`, `OperationalAlertView`, `QualityIncidentView`, `DeviceTraceabilityDetail`)**: Proyecciones que combinan lo persistido en `mon` con la disponibilidad y el estado del proceso de `cfg`/`trt` y con la última medición de `tel`. `MonitoringOverview` consolida los totales, la vista por dispositivo y las alertas recientes; `DeviceTraceabilityDetail` compone la vista del dispositivo con sus eventos.
+* **`MonitoringCommandService` / `MonitoringQueryService`**: Interfaces de servicio que separan la escritura de la lectura siguiendo el patrón CQRS; la primera atiende los cuatro comandos y la segunda compone los modelos de lectura.
 
 ##### 4.2.5.6.2. Bounded Context Database Design Diagram
 
