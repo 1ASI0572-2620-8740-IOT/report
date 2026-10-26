@@ -2939,9 +2939,56 @@ Interfaces y abstracciones requeridas por la capa de aplicación para comunicars
 
 ##### A. Persistence & Repositories (Persistencia y Repositorios)
 
-* **`WaterTreatmentProcessRepository` (JPA Repository)**
-* `Optional<WaterTreatmentProcess> findByDeviceIdAndStatusNotIn(String deviceId, List<TreatmentStatus> closedStatuses)`
-* `List<WaterTreatmentProcess> findByDeviceIdOrderByCreatedAtDesc(String deviceId)`
+Proporciona las implementaciones concretas para el almacenamiento y recuperación del agregado `WaterTreatmentProcess` y de sus entidades internas mediante Spring Data JPA y la base de datos relacional (schema `trt`).
+
+* **`TreatmentProcessRepository` (JPA Repository)**
+  * **Descripción:** Interfaz que extiende de `JpaRepository` para la gestión de procesos de tratamiento.
+  * **Métodos principales:**
+    * `Page<WaterTreatmentProcess> findByOrganizationIdAndFilters(UUID organizationId, String state, String searchTerm, Pageable pageable)`: Lista paginada de procesos con filtros por estado y término de búsqueda (requiere JOIN de solo lectura con `cfg.devices`, `cfg.reservoirs` y los perfiles de operario para resolver serial, reservorio y operario).
+    * `Optional<WaterTreatmentProcess> findByIdAndOrganizationId(UUID processId, UUID organizationId)`: Recupera un proceso por su ID dentro de su organización.
+    * `boolean existsByOrganizationIdAndDeviceIdAndStateNotIn(UUID organizationId, UUID deviceId, List<TreatmentState> finishedStates)`: Verifica si el dispositivo ya tiene un proceso no finalizado (estado distinto de `COMPLETED`), lo que impide abrir un segundo proceso sobre el mismo dispositivo.
+
+* **`TreatmentMeasurementRepository` (JPA Repository)**
+  * **Descripción:** Interfaz para la gestión de las mediciones `INITIAL` y `LATEST` del proceso.
+  * **Métodos principales:**
+    * `Optional<TreatmentMeasurement> findByProcessIdAndType(UUID processId, MeasurementType type)`: Recupera la medición inicial o la última medición, respetando la unicidad `(process_id, type)`.
+    * `List<TreatmentMeasurement> findByProcessId(UUID processId)`: Recupera las mediciones registradas del proceso para el detalle.
+
+* **`TreatmentCycleRepository` (JPA Repository)**
+  * **Descripción:** Interfaz para la gestión de los ciclos de corrección del proceso.
+  * **Métodos principales:**
+    * `List<TreatmentCycle> findByProcessIdOrderByNumberAsc(UUID processId)`: Recupera los ciclos ordenados por número secuencial (único por proceso).
+
+* **`TreatmentEventRepository` (JPA Repository)**
+  * **Descripción:** Interfaz para la gestión de los eventos de trazabilidad del proceso.
+  * **Métodos principales:**
+    * `List<TreatmentEvent> findByProcessIdOrderByOccurredAtAsc(UUID processId)`: Recupera la cronología de eventos del proceso.
+
+---
+
+##### B. Configuration Context Adapters (Adaptadores hacia Configuration)
+
+Implementan los puertos de salida de la capa de aplicación mediante consultas de solo lectura sobre el schema `cfg`, sin incorporar entidades de Configuration al dominio de Treatment. En un despliegue de microservicios estos adaptadores se sustituyen por clientes HTTPS contra la API de Configuration, conservando los mismos puertos.
+
+* **`DeviceOperationalContextServiceImpl`**
+  * **Descripción:** Implementación del puerto `DeviceOperationalContextService`. Construye el snapshot operativo del dispositivo a partir de `cfg.devices`, `cfg.reservoirs`, `cfg.device_assignments` y `cfg.operator_profiles`.
+  * **Métodos:**
+    * `Optional<DeviceOperationalSnapshot> findDevice(UUID organizationId, UUID deviceId)`: Retorna `deviceSerialNumber`, `reservoirName`, `operatorName`, si el dispositivo está activo (`lifecycle_status` distinto de `INACTIVE`) y si tiene reservorio vinculado; el operario se resuelve por la asignación `ACTIVE` del dispositivo. Retorna vacío si el dispositivo no existe en la organización.
+    * `Map<UUID, DeviceOperationalSnapshot> findDevices(UUID organizationId, Collection<UUID> deviceIds)`: Resuelve el snapshot de varios dispositivos en una sola consulta para enriquecer la lista paginada.
+
+* **`ConfigurationSnapshotServiceImpl`**
+  * **Descripción:** Implementación del puerto `ConfigurationSnapshotService`. Obtiene la versión de configuración publicada desde `cfg.configuration_versions`.
+  * **Métodos:**
+    * `Optional<ConfigurationSnapshot> findPublishedByDeviceId(UUID organizationId, UUID deviceId)`: Retorna la última versión con `status = PUBLISHED` del dispositivo, validando que este pertenezca a la organización, con `id`, `configurationVersion`, `phMin`, `phMax`, `temperatureMin`, `temperatureMax` y `releaseMode`; es la versión que se persiste en `configuration_versions_id` al crear el proceso.
+    * `Optional<ConfigurationSnapshot> findById(UUID configurationVersionId)`: Retorna la versión referenciada por `configuration_versions_id` para enriquecer el detalle del proceso.
+
+---
+
+##### C. Configuration & OpenAPI (Configuración de Infraestructura)
+
+Clases que configuran componentes del framework y la documentación del microservicio.
+
+* **`SecurityConfiguration`**: Define la cadena de filtros de seguridad (`SecurityFilterChain`), reglas de acceso a endpoints HTTP (CORS, CSRF) y la gestión de sesiones *stateless*.
 
 #### 4.2.4.5. Bounded Context Software Architecture Component Level Diagrams
 
