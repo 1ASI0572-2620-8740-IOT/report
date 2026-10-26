@@ -3299,17 +3299,80 @@ Interfaces y abstracciones requeridas por la capa de aplicación para comunicars
 
 ##### A. Persistence & Repositories (Persistencia y Repositorios)
 
+Proporciona las implementaciones concretas para el almacenamiento y recuperación de los cuatro agregados mediante Spring Data JPA y la base de datos relacional (schema `mon`). Cada raíz de agregado tiene su propio repositorio; no existen repositorios para entidades hijas porque el contexto no las define.
+
 * **`OperationalAlertRepository` (JPA Repository)**
-  * `List<OperationalAlert> findByDeviceIdOrderByCreatedAtDesc(String deviceId)`
+  * **Descripción:** Interfaz que extiende de `JpaRepository` para la gestión de alertas operativas.
+  * **Métodos principales:**
+    * `Page<OperationalAlert> findByOrganizationIdAndFilters(UUID organizationId, String status, String severity, UUID deviceId, String searchTerm, Pageable pageable)`: Lista paginada de alertas con filtros por estado, severidad y dispositivo; `searchTerm` busca sobre `device_serial_number`, `reservoir_name`, `description` y `source`.
+    * `Optional<OperationalAlert> findByIdAndOrganizationId(UUID alertId, UUID organizationId)`: Recupera una alerta por su ID dentro de su organización.
+    * `List<OperationalAlert> findByOrganizationIdAndStatusOrderByCreatedAtDesc(UUID organizationId, AlertStatus status, Pageable pageable)`: Retorna las alertas activas más recientes para el resumen operacional.
+    * `long countByOrganizationIdAndStatus(UUID organizationId, AlertStatus status)`: Cuenta las alertas activas de la organización.
+    * `List<DeviceAlertCount> countActiveByDevice(UUID organizationId, Collection<UUID> deviceIds)`: Proyección con el conteo de alertas `ACTIVE` por dispositivo, en una sola consulta, para la vista consolidada.
+
 * **`QualityIncidentRepository` (JPA Repository)**
-  * `List<QualityIncident> findByDeviceId(String deviceId)`
-* **`EventCorrelationRepository` (JPA Repository)**
-  * `Optional<EventCorrelation> findByCycleId(Long cycleId)`
+  * **Descripción:** Interfaz para la gestión de incidentes de calidad y de pérdida de monitoreo.
+  * **Métodos principales:**
+    * `Page<QualityIncident> findByOrganizationIdAndFilters(UUID organizationId, String status, String incidentType, UUID deviceId, String searchTerm, Pageable pageable)`: Lista paginada de incidentes con filtros por estado, tipo y dispositivo; `searchTerm` busca sobre `device_serial_number`, `reservoir_name` y `description`.
+    * `Optional<QualityIncident> findByIdAndOrganizationId(UUID incidentId, UUID organizationId)`: Recupera un incidente por su ID dentro de su organización.
+    * `long countByOrganizationIdAndStatus(UUID organizationId, IncidentStatus status)`: Cuenta los incidentes abiertos de la organización.
 
-##### B. Notification Adapter (Adaptador de notificaciones)
+* **`TraceabilityEventRepository` (JPA Repository)**
+  * **Descripción:** Interfaz para la gestión de la línea temporal de eventos de trazabilidad.
+  * **Métodos principales:**
+    * `List<TraceabilityEvent> findByOrganizationIdAndDeviceIdAndOccurredAtBetweenOrderByOccurredAtDesc(UUID organizationId, UUID deviceId, Instant from, Instant to)`: Recupera los eventos de un dispositivo en el rango, del más reciente al más antiguo, para la consulta de trazabilidad.
+    * `List<TraceabilityEvent> findByOrganizationIdAndDeviceIdAndOccurredAtBetweenOrderByOccurredAtAsc(UUID organizationId, UUID deviceId, Instant from, Instant to)`: Recupera los mismos eventos en orden cronológico ascendente para congelarlos como *snapshot* del reporte.
 
-* **`FirebaseCloudMessagingAdapter`**
-  * **Descripción:** Implementa `NotificationPort` mediante Firebase Cloud Messaging. Utiliza el token móvil vigente del Operario, registra el resultado de entrega y desactiva tokens rechazados sin alterar el estado de la alerta.
+* **`TraceabilityReportRepository` (JPA Repository)**
+  * **Descripción:** Interfaz para la persistencia de los reportes de trazabilidad generados.
+  * **Métodos principales:**
+    * `save(TraceabilityReport report)`: Heredado de `JpaRepository`; es la única operación que utiliza el contexto, porque ningún endpoint recupera reportes por ID.
+
+> **Vista de desarrollo:** `mon.device_status_view_dev` consolida dispositivo, última medición, estado del proceso y alertas activas en la base unificada de desarrollo. No la consume el código de aplicación: en microservicios la vista se compone con los puertos `DeviceOperationalContextService`, `TelemetrySnapshotService` y `TreatmentStateService`, y el dominio no la trata como entidad.
+
+---
+
+##### B. Configuration Context Adapter (Adaptador hacia Configuration)
+
+Implementa el puerto de salida de la capa de aplicación mediante consultas de solo lectura sobre el schema `cfg`, sin incorporar entidades de Configuration al dominio de Monitoring. En un despliegue de microservicios este adaptador se sustituye por un cliente HTTPS contra la API de Configuration, conservando el mismo puerto.
+
+* **`DeviceOperationalContextServiceImpl`**
+  * **Descripción:** Implementación del puerto `DeviceOperationalContextService`. Construye el snapshot operativo del dispositivo a partir de `cfg.devices`, `cfg.reservoirs`, `cfg.device_assignments` y `cfg.operator_profiles`.
+  * **Métodos:**
+    * `Optional<DeviceOperationalSnapshot> findDevice(UUID organizationId, UUID deviceId)`: Retorna `deviceSerialNumber`, `alias`, `reservoirName`, `operatorName`, `availability` y `lifecycleStatus`; el operario se resuelve por la asignación `ACTIVE` del dispositivo. Retorna vacío si el dispositivo no existe en la organización.
+    * `List<DeviceOperationalSnapshot> findActiveDevices(UUID organizationId)`: Retorna los dispositivos con `lifecycle_status` distinto de `INACTIVE` para alimentar el resumen operacional.
+
+---
+
+##### C. Telemetry Context Adapter (Adaptador hacia Telemetry)
+
+Implementa el puerto `TelemetrySnapshotService` con consultas de solo lectura sobre `tel.water_measurements`. En microservicios se sustituye por un cliente contra la API de Telemetry sin cambiar el contrato del puerto.
+
+* **`TelemetrySnapshotServiceImpl`**
+  * **Descripción:** Implementación del puerto `TelemetrySnapshotService`. Obtiene la última medición registrada por dispositivo.
+  * **Métodos:**
+    * `Optional<MeasurementSnapshot> findLatestMeasurement(UUID organizationId, UUID deviceId)`: Retorna `ph`, `temperature` y `measuredAt` de la medición más reciente del dispositivo; vacío si no tiene mediciones.
+    * `Map<UUID, MeasurementSnapshot> findLatestMeasurements(UUID organizationId, Collection<UUID> deviceIds)`: Resuelve la última medición de varios dispositivos con una consulta `DISTINCT ON (device_id)` ordenada por `measured_at DESC`, evitando el acceso por dispositivo en el resumen operacional.
+
+---
+
+##### D. Treatment Context Adapter (Adaptador hacia Treatment)
+
+Implementa el puerto `TreatmentStateService` mediante consultas de solo lectura sobre `trt.treatment_processes`. En microservicios se sustituye por un cliente contra la API de Treatment.
+
+* **`TreatmentStateServiceImpl`**
+  * **Descripción:** Implementación del puerto `TreatmentStateService`. Obtiene el estado vigente del proceso de tratamiento del dispositivo.
+  * **Métodos:**
+    * `Optional<String> findCurrentProcessState(UUID organizationId, UUID deviceId)`: Retorna el `state` del proceso más reciente del dispositivo (ordenado por `updated_at` y `created_at` descendente); vacío si el dispositivo nunca tuvo un proceso, caso en el que el resumen operacional asume `READING`.
+    * `Map<UUID, String> findCurrentProcessStates(UUID organizationId, Collection<UUID> deviceIds)`: Resuelve el estado vigente de varios dispositivos en una sola consulta.
+
+---
+
+##### E. Configuration & OpenAPI (Configuración de Infraestructura)
+
+Clases que configuran componentes del framework y la documentación del microservicio.
+
+* **`SecurityConfiguration`**: Define la cadena de filtros de seguridad (`SecurityFilterChain`), reglas de acceso a los endpoints `/api/v1/monitoring/**`, CORS, CSRF y la gestión de sesiones *stateless*. El `organization_id` se deriva del token autenticado y nunca se acepta desde el cuerpo o los parámetros de la petición.
 
 #### 4.2.5.5. Bounded Context Software Architecture Component Level Diagrams
 
