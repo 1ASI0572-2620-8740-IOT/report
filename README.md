@@ -3192,33 +3192,70 @@ Abstracciones para la lectura de información del dominio sin alterar su estado.
 
 ##### A. Controllers (Controladores REST)
 
-* **`MonitoringController`**
+Son los puntos de entrada HTTP (Inbound Adapters) que exponen los endpoints de la API REST del Bounded Context. El `organizationId` se obtiene del principal autenticado y nunca del cuerpo ni de los parámetros de la petición.
+
+* **`MonitoringOverviewController`**
+  * **Descripción:** Expone la vista consolidada del monitoreo operacional de la organización.
   * **Endpoints:**
-    * `POST /api/v1/monitoring/alerts`: Crea una nueva alerta operativa (`CreateOperationalAlertResource`).
-    * `POST /api/v1/monitoring/incidents`: Registra un incidente de calidad o pérdida de monitoreo (`RegisterIncidentResource`).
-    * `POST /api/v1/monitoring/correlations`: Ejecuta la correlación de eventos/ciclos (`CorrelateEventsResource`).
-    * `PUT /api/v1/monitoring/status-views`: Actualiza las vistas de estado (`UpdateStatusViewResource`).
-    * `POST /api/v1/monitoring/reports/generate`: Solicita la generación de un reporte de estado actualizado (`GenerateReportResource`).
-    * `GET /api/v1/monitoring/devices/{deviceId}/status-view`: Consulta la vista de estado actual.
+    * `GET /api/v1/monitoring/overview`: Retorna los totales de dispositivos (total, en línea y con atención requerida), alertas activas, incidentes abiertos, la vista por dispositivo (`DeviceStatusViewResource`) y las últimas alertas activas.
+
+* **`OperationalAlertsController`**
+  * **Descripción:** Expone la consulta y la atención de alertas operativas.
+  * **Endpoints:**
+    * `GET /api/v1/monitoring/alerts`: Lista paginada de alertas con filtros (`searchTerm`, `status`, `severity`, `deviceId`, `page`, `pageSize`, `sortBy`, `sortDirection`) y `200 OK` con `OperationalAlertPageResource`.
+    * `PATCH /api/v1/monitoring/alerts/{alertId}/status`: Atiende una alerta (`{ "status": "ACKNOWLEDGED" }`) y retorna `200 OK` con la alerta actualizada; responde `404` si no existe y `409` si ya no está en estado `ACTIVE`.
+
+* **`QualityIncidentsController`**
+  * **Descripción:** Expone el registro, la consulta y el cierre de incidentes de calidad o de pérdida de monitoreo.
+  * **Endpoints:**
+    * `GET /api/v1/monitoring/incidents`: Lista paginada de incidentes con filtros (`searchTerm`, `status`, `type`, `deviceId`, `page`, `pageSize`, `sortBy`, `sortDirection`) y `200 OK` con `QualityIncidentPageResource`.
+    * `POST /api/v1/monitoring/incidents`: Registra un incidente en estado `OPEN` y retorna `201 Created` con `QualityIncidentResource`; responde `404` si el dispositivo no pertenece a la organización y `422` si el tipo o la descripción no son válidos.
+    * `PATCH /api/v1/monitoring/incidents/{incidentId}/status`: Cierra un incidente (`{ "status": "CLOSED" }`) y retorna `200 OK` con el incidente actualizado y su `closedAt`; responde `404` si no existe y `409` si no está en estado `OPEN`.
+
+* **`TraceabilityController`**
+  * **Descripción:** Expone la línea temporal de un dispositivo y la generación de su reporte de trazabilidad.
+  * **Endpoints:**
+    * `GET /api/v1/monitoring/devices/{deviceId}/traceability`: Retorna la vista del dispositivo y sus eventos de trazabilidad ordenados del más reciente al más antiguo, con filtros opcionales `from` y `to`.
+    * `POST /api/v1/monitoring/reports/generate`: Genera un reporte de trazabilidad para un período y retorna `201 Created` con `TraceabilityReportResource`; responde `422` si el período no es válido o no existen eventos en el rango.
 
 ---
 
 ##### B. Resources / DTOs (Objetos de Transferencia de Datos)
 
-* **`CreateOperationalAlertResource(String deviceId, String severity, String description)`**
-* **`RegisterIncidentResource(String deviceId, String incidentType, String description)`**
-* **`CorrelateEventsResource(String deviceId, Long cycleId, List<String> eventIds)`**
-* **`UpdateStatusViewResource(String deviceId, String status)`**
-* **`GenerateReportResource(String deviceId, String reportType)`**
-* **`OperationalAlertResource(Long id, String deviceId, String severity, String description, String createdAt)`**
+Definen las estructuras de datos aceptadas en las peticiones (Requests) y enviadas en las respuestas (Responses) de la API REST:
+
+* **`DeviceStatusViewResource(String deviceId, String serialNumber, String alias, String reservoirName, String operatorName, String availability, String processState, String statusView, Double ph, Double temperature, String measuredAt, int activeAlertCount)`**: DTO de salida de la vista consolidada de un dispositivo.
+* **`MonitoringOverviewResource(int totalDevices, int onlineDevices, int devicesRequiringAttention, int activeAlerts, int openIncidents, List<DeviceStatusViewResource> devices, List<OperationalAlertResource> recentAlerts)`**: DTO de salida del resumen operacional.
+* **`OperationalAlertResource(String id, String deviceId, String deviceSerialNumber, String reservoirName, String severity, String description, String source, String status, String createdAt, String attendedAt)`**: DTO de salida de una alerta operativa.
+* **`OperationalAlertPageResource(List<OperationalAlertResource> items, int total, int page, int pageSize)`**: DTO de salida paginado para la lista de alertas.
+* **`QualityIncidentResource(String id, String deviceId, String deviceSerialNumber, String reservoirName, String incidentType, String description, String status, String correlationId, String createdAt, String closedAt)`**: DTO de salida de un incidente de calidad o de pérdida de monitoreo.
+* **`QualityIncidentPageResource(List<QualityIncidentResource> items, int total, int page, int pageSize)`**: DTO de salida paginado para la lista de incidentes.
+* **`RegisterIncidentResource(String deviceId, String incidentType, String description)`**: DTO de entrada para registrar un incidente.
+* **`UpdateStatusResource(String status)`**: DTO de entrada de los dos endpoints de cambio de estado; cada uno admite un único valor (`ACKNOWLEDGED` para alertas, `CLOSED` para incidentes).
+* **`TraceabilityEventResource(String id, String deviceId, String correlationId, String cycleId, String eventType, String title, String description, String actor, String outcome, Double ph, Double temperature, String occurredAt)`**: DTO de salida de un evento de trazabilidad; `cycleId`, `ph` y `temperature` son opcionales.
+* **`DeviceTraceabilityResource(DeviceStatusViewResource device, List<TraceabilityEventResource> events)`**: DTO de salida de la trazabilidad de un dispositivo.
+* **`GenerateReportResource(String deviceId, String from, String to)`**: DTO de entrada para generar un reporte de trazabilidad.
+* **`TraceabilityReportResource(String id, String deviceId, String deviceSerialNumber, String reservoirName, String from, String to, String generatedAt, int measurements, int correctionCycles, int alerts, int incidents, int releases, List<TraceabilityEventResource> events)`**: DTO de salida del reporte generado, con sus conteos y el *snapshot* de eventos.
 
 ---
 
 ##### C. Transformers / Mappers
 
-* **`CreateOperationalAlertCommandFromResourceAssembler`**: Mapea `CreateOperationalAlertResource` a `CreateOperationalAlertCommand`.
-* **`RegisterIncidentCommandFromResourceAssembler`**: Transforma el recurso de incidente en `RegisterIncidentCommand`.
-* **`OperationalAlertResourceFromEntityAssembler`**: Transforma la entidad `OperationalAlert` en `OperationalAlertResource`.
+Clases de transformación encargadas de mapear entre los DTOs/Resources de la capa de interfaz y los objetos de la capa de aplicación/dominio (Commands, Queries, Read Models y Agregados).
+
+* **`AcknowledgeOperationalAlertCommandFromResourceAssembler`**: Combina el path param `alertId` y `UpdateStatusResource` para construir `AcknowledgeOperationalAlertCommand`, validando que el estado solicitado sea `ACKNOWLEDGED`.
+* **`RegisterIncidentCommandFromResourceAssembler`**: Transforma `RegisterIncidentResource` y el principal autenticado en `RegisterIncidentCommand`.
+* **`CloseQualityIncidentCommandFromResourceAssembler`**: Combina el path param `incidentId` y `UpdateStatusResource` para construir `CloseIncidentCommand`, validando que el estado solicitado sea `CLOSED`.
+* **`GenerateTraceabilityReportCommandFromResourceAssembler`**: Transforma `GenerateReportResource` en `GenerateTraceabilityReportCommand`.
+* **`MonitoringOverviewResourceFromReadModelAssembler`**: Mapea el read model `MonitoringOverview` hacia `MonitoringOverviewResource`.
+* **`DeviceStatusViewResourceFromReadModelAssembler`**: Mapea el read model `DeviceStatusView` hacia `DeviceStatusViewResource`.
+* **`OperationalAlertResourceFromReadModelAssembler`**: Mapea el read model `OperationalAlertView` hacia `OperationalAlertResource`.
+* **`OperationalAlertPageResourceFromReadModelAssembler`**: Mapea una página de `OperationalAlertView` hacia `OperationalAlertPageResource`.
+* **`QualityIncidentResourceFromReadModelAssembler`**: Mapea el read model `QualityIncidentView` hacia `QualityIncidentResource`.
+* **`QualityIncidentPageResourceFromReadModelAssembler`**: Mapea una página de `QualityIncidentView` hacia `QualityIncidentPageResource`.
+* **`TraceabilityEventResourceFromEntityAssembler`**: Mapea el agregado `TraceabilityEvent` hacia `TraceabilityEventResource`.
+* **`DeviceTraceabilityResourceFromReadModelAssembler`**: Mapea el read model `DeviceTraceabilityDetail` hacia `DeviceTraceabilityResource`, incluyendo la vista del dispositivo y su lista de eventos.
+* **`TraceabilityReportResourceFromReadModelAssembler`**: Mapea el read model `TraceabilityReport` hacia `TraceabilityReportResource`, incluyendo sus conteos y el *snapshot* de eventos.
 
 #### 4.2.5.3. Application Layer
 
