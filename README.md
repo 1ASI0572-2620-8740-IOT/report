@@ -3376,7 +3376,9 @@ Clases que configuran componentes del framework y la documentación del microser
 
 #### 4.2.5.5. Bounded Context Software Architecture Component Level Diagrams
 
-[![Component.png](https://i.postimg.cc/259VV2RX/Component.png)](https://postimg.cc/kV8nHN5x)
+[![Monitoring-Component-Diagram-dark.png](https://i.postimg.cc/XN5wRTHW/Monitoring-Component-Diagram-dark.png)](https://postimg.cc/Hjpc5P1v)
+
+*Figura: Diagrama de componentes del bounded context Monitoring. El API Gateway enruta las peticiones a `MonitoringOverviewController`, `OperationalAlertsController`, `QualityIncidentsController` y `TraceabilityController`, que invocan `MonitoringQueryServiceImpl` para las lecturas y `MonitoringCommandServiceImpl` para los cambios de estado, la apertura de incidentes y la generación de reportes. El servicio de comandos opera sobre los agregados `OperationalAlert`, `QualityIncident`, `TraceabilityEvent` y `TraceabilityReport`, mientras que el de consultas compone la vista general, la bandeja de alertas, los incidentes y la línea temporal del dispositivo. Ambos servicios acceden a la persistencia mediante `OperationalAlertRepository`, `QualityIncidentRepository`, `TraceabilityEventRepository` y `TraceabilityReportRepository`, que escriben y leen en la base de datos PostgreSQL del schema `mon`. Los tres puertos de salida que conectan este contexto con Configuration, Telemetry y Treatment se detallan en las secciones 4.2.5.3 y 4.2.5.4.*
 
 #### 4.2.5.6. Bounded Context Software Architecture Code Level Diagrams
 
