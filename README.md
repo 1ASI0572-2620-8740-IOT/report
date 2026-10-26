@@ -3176,9 +3176,9 @@ Abstracciones para la lectura de información del dominio sin alterar su estado.
 
 * **`MonitoringCommandService` (Interfaz)**
   * **Métodos principales:**
-    * `OperationalAlert handle(AcknowledgeOperationalAlertCommand command)`: Valida el estado actual de la alerta y persiste la atención con su marca de tiempo.
+    * `Optional<OperationalAlert> handle(AcknowledgeOperationalAlertCommand command)`: Valida el estado actual de la alerta y persiste la atención con su marca de tiempo.
     * `QualityIncident handle(RegisterIncidentCommand command)`: Verifica que el dispositivo pertenezca a la organización, abre el incidente y registra su evento de apertura.
-    * `QualityIncident handle(CloseIncidentCommand command)`: Verifica que el incidente esté abierto, lo cierra y registra su evento de cierre.
+    * `Optional<QualityIncident> handle(CloseIncidentCommand command)`: Verifica que el incidente esté abierto, lo cierra y registra su evento de cierre.
     * `TraceabilityReport handle(GenerateTraceabilityReportCommand command)`: Valida el período, consolida los eventos del dispositivo y persiste el reporte con sus conteos.
 
 * **`MonitoringQueryService` (Interfaz)**
@@ -3186,7 +3186,7 @@ Abstracciones para la lectura de información del dominio sin alterar su estado.
     * `MonitoringOverview handle(GetMonitoringOverviewQuery query)`: Compone la vista consolidada de dispositivos (`DeviceStatusView`) a partir de la disponibilidad, la última medición, el estado del proceso y las alertas activas, y devuelve los totales y las alertas recientes.
     * `Page<OperationalAlertView> handle(ListOperationalAlertsQuery query)`: Retorna la página de alertas enriquecidas con el serial del dispositivo y el reservorio.
     * `Page<QualityIncidentView> handle(ListQualityIncidentsQuery query)`: Retorna la página de incidentes enriquecidos con el serial del dispositivo y el reservorio.
-    * `DeviceTraceabilityDetail handle(GetDeviceTraceabilityQuery query)`: Retorna la vista del dispositivo y sus eventos de trazabilidad ordenados cronológicamente dentro del rango solicitado.
+    * `Optional<DeviceTraceabilityDetail> handle(GetDeviceTraceabilityQuery query)`: Retorna la vista del dispositivo y sus eventos de trazabilidad ordenados cronológicamente dentro del rango solicitado.
 
 #### 4.2.5.2. Interface Layer
 
@@ -3261,26 +3261,39 @@ Clases de transformación encargadas de mapear entre los DTOs/Resources de la ca
 
 ##### A. Command Services & Handlers (Servicios de Comandos)
 
+Procesan las intenciones de cambio de estado recibiendo *Commands*, orquestando la lógica de negocio junto con los agregados del dominio y persistiendo los cambios mediante los repositorios.
+
 * **`MonitoringCommandServiceImpl`**
-  * **Descripción:** Coordina los flujos de trabajo de trazabilidad, registro de incidentes y correlación de eventos.
+  * **Descripción:** Implementación de la interfaz `MonitoringCommandService`. Concentra la atención de alertas, el ciclo de vida de los incidentes y la generación de reportes. Los eventos de trazabilidad que producen estos flujos se escriben dentro del mismo contexto, por lo que no requieren un puerto adicional.
   * **Flujos de trabajo / Handlers:**
-    * **`handle(CreateOperationalAlertCommand command)`**: Instancia la alerta operativa y la persiste.
-    * Después de persistir una alerta notificable, solicita el envío mediante `NotificationPort`. Un fallo externo se registra para reintento y no elimina ni resuelve la alerta.
-    * **`handle(RegisterIncidentCommand command)`**: Registra la incidencia de calidad o pérdida de monitoreo.
-    * **`handle(CorrelateEventsCommand command)`**: Correlaciona eventos del sistema con ciclos operativos.
-    * **`handle(UpdateStatusViewCommand command)`**: Actualiza la proyección de las vistas de estado para consulta rápida.
-    * **`handle(GenerateUpdatedReportCommand command)`**: Procesa el consolidado histórico y genera el reporte actualizado (`ReportGeneratedEvent`).
+    * **`handle(AcknowledgeOperationalAlertCommand command)`**: Recupera la alerta por `alertId` y la organización del principal; retorna `Optional.empty()` si no existe (404) y lanza la excepción de conflicto si su estado no es `ACTIVE` (409). Invoca `alert.acknowledge()`, persiste y retorna la alerta actualizada con `attended_at`.
+    * **`handle(RegisterIncidentCommand command)`**: Valida el dispositivo mediante `DeviceOperationalContextService` —debe existir y pertenecer a la organización— y toma de allí `deviceSerialNumber` y `reservoirName`. Crea el agregado `QualityIncident` en estado `OPEN` con un `correlation_id` nuevo, lo persiste y registra el evento `INCIDENT_REGISTERED` (`WARNING`) con el actor del principal autenticado.
+    * **`handle(CloseIncidentCommand command)`**: Recupera el incidente por `incidentId` y organización; retorna `Optional.empty()` si no existe (404) y rechaza con conflicto (409) si no está en `OPEN`. Invoca `incident.close()`, persiste y registra el evento `INCIDENT_CLOSED` (`SUCCESS`) reutilizando el `correlation_id` del incidente.
+    * **`handle(GenerateTraceabilityReportCommand command)`**: Valida que `from` ≤ `to` y obtiene el serial y el reservorio del dispositivo desde `DeviceOperationalContextService`. Recupera los eventos del rango, rechaza con `422` si no existe ninguno, calcula los conteos (`MEASUREMENT_RECORDED`, `cycle_id` distintos, `ALERT_CREATED`, `INCIDENT_REGISTERED` y `RELEASE_AUTHORIZED`) y persiste el `TraceabilityReport` con el *snapshot* de eventos en `generated_at`.
 
 ---
 
 ##### B. Query Services & Handlers (Servicios de Consulta)
 
+Atienden las lecturas de información recibiendo objetos *Query*, optimizando el acceso a los datos sin alterar el estado del dominio.
+
 * **`MonitoringQueryServiceImpl`**
+  * **Descripción:** Implementación de la interfaz `MonitoringQueryService`. Combina la información persistida en `mon` con los datos operativos de Configuration, de la última medición de Telemetry y del estado del proceso de Treatment para construir los *read models* de supervisión.
   * **Flujos de trabajo / Handlers:**
-    * **`handle(GetActiveAlertsByDeviceIdQuery query)`**: Obtiene las alertas activas del dispositivo.
-    * **`handle(GetIncidentsByDeviceIdQuery query)`**: Devuelve la lista de incidentes registrados.
-    * **`handle(GetCorrelatedEventsByCycleQuery query)`**: Recupera la información correlacionada por ciclo.
-    * **`handle(GetTraceabilityReportQuery query)`**: Devuelve el reporte de trazabilidad consolidado.
+    * **`handle(GetMonitoringOverviewQuery query)`**: Obtiene de `DeviceOperationalContextService` los dispositivos no inactivos de la organización y resuelve, en lote, la última medición de cada uno con `TelemetrySnapshotService` y su estado de proceso con `TreatmentStateService`. Cuenta las alertas `ACTIVE` por dispositivo desde `OperationalAlertRepository` y deriva `statusView` como `OUTDATED` cuando no hay medición o la disponibilidad es `DELAYED`, `OFFLINE` o `UNKNOWN`. Calcula `totalDevices`, `onlineDevices` y `devicesRequiringAttention` (`OUTDATED`, proceso en `FAILURE` o alertas activas), y retorna el `MonitoringOverview` con la vista por dispositivo y las cinco alertas activas más recientes.
+    * **`handle(ListOperationalAlertsQuery query)`**: Lista paginada de alertas de la organización filtrando por `searchTerm` (serial, reservorio, descripción y origen), `status`, `severity` y `deviceId`, con ordenamiento por `sortBy` y `sortDirection`. Retorna `Page<OperationalAlertView>` con los *snapshots* de serial y reservorio ya persistidos.
+    * **`handle(ListQualityIncidentsQuery query)`**: Lista paginada de incidentes filtrando por `searchTerm`, `status`, `incidentType` y `deviceId`, con ordenamiento configurable y `createdAt` descendente por defecto. Retorna `Page<QualityIncidentView>`.
+    * **`handle(GetDeviceTraceabilityQuery query)`**: Valida el dispositivo con `DeviceOperationalContextService`, compone su `DeviceStatusView` con la última medición y el estado del proceso, y recupera los eventos del rango `from`–`to` ordenados del más reciente al más antiguo. Retorna `DeviceTraceabilityDetail`; si el dispositivo no pertenece a la organización, retorna `Optional.empty()` (404).
+
+---
+
+##### C. Outbound Services / Ports (Servicios de Salida)
+
+Interfaces y abstracciones requeridas por la capa de aplicación para comunicarse con otros bounded contexts. `mon` no declara claves foráneas físicas hacia `cfg`, `tel` ni `trt`, de modo que en microservicios estos puertos se resuelven por API o por eventos.
+
+* **`DeviceOperationalContextService`**: Puerto hacia Configuration para obtener el dispositivo (existencia, estado de ciclo de vida, serial, alias, reservorio vinculado, operario responsable y disponibilidad). Expone `Optional<DeviceOperationalSnapshot> findDevice(UUID organizationId, UUID deviceId)` y `List<DeviceOperationalSnapshot> findActiveDevices(UUID organizationId)`.
+* **`TelemetrySnapshotService`**: Puerto hacia Telemetry para obtener la última medición de pH y temperatura. Expone `Optional<MeasurementSnapshot> findLatestMeasurement(UUID organizationId, UUID deviceId)` y `Map<UUID, MeasurementSnapshot> findLatestMeasurements(UUID organizationId, Collection<UUID> deviceIds)`, esta última para evitar consultas por dispositivo en el resumen operacional.
+* **`TreatmentStateService`**: Puerto hacia Treatment para obtener el estado vigente del proceso de tratamiento del dispositivo. Expone `Optional<String> findCurrentProcessState(UUID organizationId, UUID deviceId)` y `Map<UUID, String> findCurrentProcessStates(UUID organizationId, Collection<UUID> deviceIds)`.
 
 #### 4.2.5.4. Infrastructure Layer
 
