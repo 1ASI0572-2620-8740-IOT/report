@@ -2835,35 +2835,25 @@ CREATE INDEX idx_wm_device_measured ON tel.water_measurements (device_id, measur
 
 ##### D. Commands (Comandos - CQRS)
 
-* **`StartTreatmentProcessCommand(String deviceId)`**: Inicia un proceso de tratamiento para el dispositivo indicado.
-* **`EvaluateMeasurementCommand(UUID processId, Double ph, Double temperature)`**: Evalúa las lecturas actuales contra los rangos de la versión de configuración asociada.
-* **`ApproveCorrectionCommand(UUID processId)`**: Registra la aprobación única de la estrategia propuesta por el operario autenticado.
-* **`AuthorizeReleaseCommand(UUID processId, String releaseType)`**: Autoriza la liberación del agua tratada (manual o automática) cuando el proceso se encuentra en estado `READY`.
-* **`ExecuteEmergencyStopCommand(UUID processId)`**: Ejecuta la parada de emergencia, activa el estado `EMERGENCY` y cierra la válvula.
-* **`ResetProcessCommand(UUID processId)`**: Restablece el proceso tras una falla o parada de emergencia, previa revisión por parte del operario.
+No se exponen comandos en la API REST administrativa: las transiciones del proceso (`NOT_STARTED`, `MEASURING`, `EVALUATING`, `PENDING_CORRECTION_APPROVAL`, `CORRECTING`, `WAITING`, `REEVALUATING`, `READY`, `RELEASING`, `FAILED`, `EMERGENCY`, `COMPLETED`) son ejecutadas internamente por el motor de tratamiento y el dispositivo. El frontend administrativo solo realiza consultas de supervisión.
+
+---
 
 ##### E. Queries (Consultas - CQRS)
 
-* **`GetTreatmentProcessByIdQuery(UUID processId)`**: Obtiene el detalle completo del proceso de tratamiento.
-* **`GetActiveTreatmentProcessByDeviceIdQuery(UUID deviceId)`**: Obtiene el proceso activo (no finalizado) asociado a un dispositivo.
-* **`ListTreatmentsQuery(String searchTerm, String status, int page, int pageSize, String sortBy, String sortDirection)`**: Lista paginada de procesos de tratamiento con filtros.
+Abstracciones para la lectura de información del dominio sin alterar su estado:
 
-##### F. Services (Servicios de Comando y Consulta)
+* **`ListTreatmentsQuery(String searchTerm, String status, int page, int pageSize, String sortBy, String sortDirection)`**
+* **`GetTreatmentProcessByIdQuery(UUID processId)`**
 
-* **`TreatmentCommandService` (Interfaz)**
-  * **Métodos principales:**
-    * `WaterTreatmentProcess handle(StartTreatmentProcessCommand command)`
-    * `WaterTreatmentProcess handle(EvaluateMeasurementCommand command)`
-    * `WaterTreatmentProcess handle(ApproveCorrectionCommand command)`
-    * `WaterTreatmentProcess handle(AuthorizeReleaseCommand command)`
-    * `void handle(ExecuteEmergencyStopCommand command)`
-    * `WaterTreatmentProcess handle(ResetProcessCommand command)`
+---
+
+##### F. Services (Servicios de Consulta)
 
 * **`TreatmentQueryService` (Interfaz)**
   * **Métodos principales:**
-    * `TreatmentProcessDetail handle(GetTreatmentProcessByIdQuery query)`
-    * `Optional<WaterTreatmentProcess> handle(GetActiveTreatmentProcessByDeviceIdQuery query)`
-    * `Page<TreatmentProcessSummary> handle(ListTreatmentsQuery query)`
+    * `Page<TreatmentProcessSummary> handle(ListTreatmentsQuery query)`: Retorna la página de resúmenes de procesos, enriquecidos con el serial del dispositivo, el reservorio y el operario responsable obtenidos de `cfg`.
+    * `Optional<TreatmentProcessDetail> handle(GetTreatmentProcessByIdQuery query)`: Retorna el detalle del proceso (mediciones inicial/última, ciclos y eventos) enriquecido con los rangos y el modo de liberación de la versión de configuración.
 
 #### 4.2.4.2. Interface Layer
 
