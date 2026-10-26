@@ -2809,81 +2809,78 @@ CREATE TABLE tel.device_status
 
 #### 4.2.4.1. Domain Layer
 
+##### A. Aggregates (Agregados)
+
 * **`WaterTreatmentProcess` (Agregado Principal)**
-  * **Descripción:** Encapsula el ciclo de vida completo de evaluación, tratamiento, reevaluación y liberación o retención de agua para un dispositivo/cultivo específico (hereda de `AuditableAbstractAggregateRoot`).
+  * **Descripción:** Cabecera del proceso de tratamiento. Orquesta el ciclo de vida de evaluación, corrección, espera, reevaluación y liberación (o retención) del agua para un dispositivo, manteniendo `organization_id` como *snapshot* del tenant y `configuration_versions_id` como referencia lógica a la versión de configuración de `cfg`, desde la cual se enriquecen los rangos de pH/temperatura y el modo de liberación.
   * **Comportamiento y Reglas de Negocio:**
-    * Iniciar y contabilizar ciclos de tratamiento.
-    * Evaluar mediciones entrantes (pH, Temperatura) y determinar la conformidad del agua.
-    * Seleccionar la estrategia de corrección (pH+, pH-, Térmica) y esperar la aprobación única del Operario responsable antes de la primera actuación.
-    * Continuar automáticamente los ciclos posteriores del mismo proceso después de la aprobación, hasta conformidad o fallo.
-    * Comprobar variación útil y límites absolutos de ciclos para detectar fallos del sistema.
-    * Activar el estado de fallo con retención (cierre de válvula) al exceder límites permisibles.
-    * Autorizar la liberación automática o manual del agua tratada.
-    * Ejecutar parada de emergencia e interactuar con el restablecimiento explícito del proceso por parte del operario.
+    * Iniciar el proceso en estado `NOT_STARTED` para un dispositivo de la organización, fijando `maximum_cycles` como límite absoluto de ciclos.
+    * Validar las precondiciones de creación: dispositivo existente, activo y vinculado a un reservorio; versión de configuración publicada vigente en `cfg`; y ausencia de otro proceso activo para el mismo dispositivo (garantiza idempotencia de la creación).
+    * Registrar la medición inicial y la última medición (entidades `TreatmentMeasurement`) y determinar su conformidad contra los rangos (`ph_min`, `ph_max`, `temperature_min`, `temperature_max`) de la versión de configuración asociada.
+    * Evaluar la conformidad del agua y decidir si requiere corrección (`EVALUATING` → `READY`).
+    * Registrar en `strategy` la estrategia correctiva determinada por el motor y exigir la aprobación única del operario responsable antes de la primera actuación (`approval_status`).
+    * Ejecutar y numerar los ciclos de corrección (`treatment_cycles`), incrementando `current_cycle` hasta alcanzar la conformidad o agotar `maximum_cycles`.
+    * Respetar el intervalo de espera (`waiting_minutes`) antes de reevaluar el agua (`WAITING` → `REEVALUATING`).
+    * Gestionar la elegibilidad de liberación (`release_eligibility`: `NOT_ELIGIBLE` | `PENDING_CONFIRMATION` | `AUTHORIZED`); el modo de liberación (`MANUAL` | `AUTOMATIC`) no se persiste en el proceso, se enriquece desde `cfg.configuration_versions`.
+    * Pasar a estado `FAILED` (con `failure_reason`) o `EMERGENCY` (con `emergency_reason`) ante fallo, exceso de ciclos o parada de emergencia, manteniendo la válvula cerrada.
+    * Permitir el restablecimiento explícito del proceso tras revisión del operario.
+    * Registrar toda la cronología en `treatment_events` (`INFO` | `SUCCESS` | `WARNING` | `FAILURE`) y sellar `completed_at` al finalizar el proceso.
+
+##### B. Entities (Entidades)
+
+* **`TreatmentMeasurement`**: Medición del proceso (`INITIAL` | `LATEST`). Almacena `ph`, `temperature`, `measured_at` y `conforming` (calculado con los rangos de la versión de configuración). Solo puede existir una medición por tipo y proceso.
+* **`TreatmentCycle`**: Ciclo de corrección ejecutado dentro del proceso (`PENDING` | `EXECUTING` | `CONFIRMED` | `FAILED`). Contiene `number` (secuencial y único por proceso), `action`, `started_at`, `confirmed_at` y `result`.
+* **`TreatmentEvent`**: Evento de trazabilidad del proceso. Captura `title`, `description`, `outcome` (`INFO` | `SUCCESS` | `WARNING` | `FAILURE`) y `occurred_at`, ordenado cronológicamente para reconstruir la historia del proceso.
+
+##### C. Value Objects (Objetos de Valor)
+
+* **`TreatmentState`**: Estado del proceso (`NOT_STARTED` | `MEASURING` | `EVALUATING` | `PENDING_CORRECTION_APPROVAL` | `CORRECTING` | `WAITING` | `REEVALUATING` | `READY` | `RELEASING` | `FAILED` | `EMERGENCY` | `COMPLETED`).
+* **`ApprovalStatus`**: Estado de aprobación de la corrección (`NOT_REQUIRED` | `PENDING` | `APPROVED`).
+* **`ReleaseEligibility`**: Elegibilidad para liberación (`NOT_ELIGIBLE` | `PENDING_CONFIRMATION` | `AUTHORIZED`).
+* **`MeasurementType`**: Tipo de medición del proceso (`INITIAL` | `LATEST`).
+* **`CycleStatus`**: Estado del ciclo de corrección (`PENDING` | `EXECUTING` | `CONFIRMED` | `FAILED`).
+* **`EventOutcome`**: Resultado del evento de trazabilidad (`INFO` | `SUCCESS` | `WARNING` | `FAILURE`).
+
+##### D. Commands (Comandos - CQRS)
+
+El único comando de escritura del contexto es el de creación del proceso; el resto de transiciones de estado (`MEASURING`, `EVALUATING`, `PENDING_CORRECTION_APPROVAL`, `CORRECTING`, `WAITING`, `REEVALUATING`, `READY`, `RELEASING`, `FAILED`, `EMERGENCY`, `COMPLETED`) las ejecuta internamente el motor de tratamiento a partir de las mediciones y confirmaciones del dispositivo, por lo que no se exponen como endpoints del frontend administrativo.
+
+* **`StartTreatmentProcessCommand(String deviceId, Integer maximumCycles, Integer waitingMinutes)`**: Abre un nuevo proceso de tratamiento para el dispositivo indicado. La organización se toma del principal autenticado y la versión de configuración vigente (`configuration_versions_id`) se resuelve internamente contra `cfg`; `maximumCycles` y `waitingMinutes` son parámetros operativos opcionales que, si no se envían, toman el valor por defecto de la política (3 ciclos y 15 minutos).
 
 ---
 
-##### B. Value Objects (Objetos de Valor)
+##### E. Queries (Consultas - CQRS)
 
-* **`WaterConformity`**: Estado de evaluación del agua (`CONFORME`, `NO_CONFORME`).
-* **`TreatmentStatus`**: Estado del proceso (`SIN_INICIAR`, `MIDIENDO`, `EVALUANDO`, `PENDIENTE_APROBACION_CORRECCION`, `CORRIGIENDO`, `ESPERANDO`, `REEVALUANDO`, `LISTO`, `LIBERANDO`, `FALLO`, `EMERGENCIA`, `FINALIZADO`).
-* **`CorrectionApproval`**: Aprobación inmutable ligada a `processId`, Operario, estrategia, versión de configuración y fecha. Solo puede registrarse una vez por proceso.
-* **`TreatmentCycle`**: Contador inmutable de ciclos aplicados e intervalo de variación útil.
-* **`CorrectionStrategyType`**: Enum que representa el tipo de corrección (`PH_PLUS`, `PH_MINUS`, `THERMAL`).
+Abstracciones para la lectura de información del dominio sin alterar su estado:
 
----
-
-##### C. Commands (Comandos - CQRS)
-
-* **`StartTreatmentProcessCommand(String deviceId)`**: Inicia un nuevo ciclo de proceso de tratamiento.
-* **`EvaluateMeasurementCommand(UUID processId, Double ph, Double temperature)`**: Comando interno construido desde una medición validada por Telemetry; evalúa el agua contra la versión de reglas conservada por el proceso. No permite introducir libremente una lectura desde la interfaz de usuario.
-* **`ApplyCorrectionStrategyCommand(UUID processId, CorrectionStrategyType strategyType)`**: Comando interno que aplica la estrategia seleccionada por Treatment; no permite al cliente alterar una estrategia ya aprobada.
-* **`ApproveCorrectionCommand(UUID processId, UUID operatorId, Integer configurationVersion)`**: Aprueba una sola vez la estrategia propuesta para el proceso; el Operario se obtiene de la sesión.
-* **`AuthorizeReleaseCommand(UUID processId, String releaseType)`**: Autoriza la liberación (automática o manual) únicamente cuando el sistema marca el agua como apta.
-* **`ExecuteEmergencyStopCommand(UUID processId)`**: Dispara la parada de emergencia y el cierre de válvulas.
-* **`ResetProcessCommand(UUID processId, UUID operatorId)`**: Restablece el proceso tras una falla o parada de emergencia; el actor proviene de la sesión autenticada.
-
----
-
-##### D. Queries (Consultas - CQRS)
-
+* **`ListTreatmentsQuery(String searchTerm, String status, int page, int pageSize, String sortBy, String sortDirection)`**
 * **`GetTreatmentProcessByIdQuery(UUID processId)`**
-* **`GetActiveTreatmentProcessByDeviceIdQuery(String deviceId)`**
-* **`GetTreatmentHistoryByDeviceIdQuery(String deviceId)`**
 
 ---
 
-##### E. Services (Servicios de Comando y Consulta)
+##### F. Services (Servicios de Comando y Consulta)
 
-* **`QualityCommandService` (Interfaz)**
+* **`TreatmentCommandService` (Interfaz)**
   * **Métodos principales:**
-    * `Optional<WaterTreatmentProcess> handle(StartTreatmentProcessCommand command)`
-    * `Optional<WaterTreatmentProcess> handle(EvaluateMeasurementCommand command)`
-    * `Optional<WaterTreatmentProcess> handle(ApplyCorrectionStrategyCommand command)`
-    * `Optional<WaterTreatmentProcess> handle(ApproveCorrectionCommand command)`
-    * `Optional<WaterTreatmentProcess> handle(AuthorizeReleaseCommand command)`
-    * `Optional<WaterTreatmentProcess> handle(ExecuteEmergencyStopCommand command)`
-    * `Optional<WaterTreatmentProcess> handle(ResetProcessCommand command)`
+    * `WaterTreatmentProcess handle(StartTreatmentProcessCommand command)`: Valida las precondiciones de creación, resuelve la versión de configuración publicada del dispositivo y registra el proceso en estado `NOT_STARTED`.
 
-* **`QualityQueryService` (Interfaz)**
+* **`TreatmentQueryService` (Interfaz)**
   * **Métodos principales:**
-    * `Optional<WaterTreatmentProcess> handle(GetTreatmentProcessByIdQuery query)`
-    * `Optional<WaterTreatmentProcess> handle(GetActiveTreatmentProcessByDeviceIdQuery query)`
-    * `List<WaterTreatmentProcess> handle(GetTreatmentHistoryByDeviceIdQuery query)`
+    * `Page<TreatmentProcessSummary> handle(ListTreatmentsQuery query)`: Retorna la página de resúmenes de procesos, enriquecidos con el serial del dispositivo, el reservorio y el operario responsable obtenidos de `cfg`.
+    * `Optional<TreatmentProcessDetail> handle(GetTreatmentProcessByIdQuery query)`: Retorna el detalle del proceso (mediciones inicial/última, ciclos y eventos) enriquecido con los rangos y el modo de liberación de la versión de configuración.
 
 #### 4.2.4.2. Interface Layer
 
 ##### A. Controllers (Controladores REST)
 
-* **`QualityController`**
+Son los puntos de entrada HTTP (Inbound Adapters) que exponen los endpoints de la API REST del Bounded Context.
+
+* **`TreatmentsController`**
+  * **Descripción:** Expone la creación y la consulta de procesos de tratamiento. El `organizationId` se obtiene del principal autenticado, nunca del cuerpo de la petición.
   * **Endpoints:**
-    * `POST /api/v1/quality/processes`: Inicia un proceso de tratamiento para un dispositivo (`StartTreatmentProcessResource`).
-    * `POST /api/v1/quality/processes/{processId}/evaluations`: Integración interna autenticada que recibe una lectura validada por Telemetry (`EvaluateMeasurementResource`); no es una acción disponible para Administrador u Operario.
-    * `POST /api/v1/quality/processes/{processId}/correction-approval`: Registra de manera idempotente la aprobación única del Operario (`ApproveCorrectionResource`).
-    * `POST /api/v1/quality/processes/{processId}/release`: Permite la liberación manual de agua por un operario (`AuthorizeReleaseResource`).
-    * `POST /api/v1/quality/processes/{processId}/emergency-stop`: Ejecuta la parada de emergencia del tratamiento.
-    * `POST /api/v1/quality/processes/{processId}/reset`: Restablece el proceso detenido (`ResetProcessResource`).
-    * `GET /api/v1/quality/devices/{deviceId}/active-process`: Obtiene el estado del proceso en curso.
+    * `POST /api/v1/treatments`: Inicia un proceso de tratamiento para un dispositivo y retorna `201 Created` con el detalle del proceso creado. Es un endpoint de escritura del contexto que no consume el frontend administrativo: lo invoca el motor de tratamiento cuando la telemetría reporta agua no conforme.
+    * `GET /api/v1/treatments`: Lista paginada de procesos de tratamiento con filtros (`searchTerm`, `status`, `page`, `pageSize`, `sortBy`, `sortDirection`).
+    * `GET /api/v1/treatments/{processId}`: Obtiene el detalle completo de un proceso (mediciones, ciclos, eventos y rangos de la versión de configuración) o `404` si no existe.
 
 Las consultas administrativas `GET /api/v1/treatments` y `GET /api/v1/treatments/{processId}` se conservan como adaptadores de lectura del mismo servicio. No son otro microservicio ni deben renombrarse por coexistir con `/quality/processes`. La guía de endpoints del Administrador describe ese cliente; los contratos del Operario y del Edge deben documentarse adicionalmente, sin interpretar su ausencia en esa guía como un error ni sustituir las rutas ya utilizadas por las aplicaciones.
 
@@ -2891,143 +2888,227 @@ Las consultas administrativas `GET /api/v1/treatments` y `GET /api/v1/treatments
 
 ##### B. Resources / DTOs (Objetos de Transferencia de Datos)
 
-* **`StartTreatmentProcessResource(String deviceId)`**
-* **`EvaluateMeasurementResource(Double ph, Double temperature)`**
-* **`ApproveCorrectionResource(Integer configurationVersion)`**: El Operario se obtiene de la sesión autenticada, no del cuerpo de la solicitud.
-* **`AuthorizeReleaseResource(String releaseType)`**
-* **`ResetProcessResource(String reason)`**: El Operario se obtiene de la sesión, no de un identificador suministrado por el cliente.
-* **`WaterTreatmentProcessResource(String id, String deviceId, String conformity, String status, Integer cycleCount)`**: Los identificadores representan UUID serializados como cadenas.
+Definen las estructuras de datos aceptadas en las peticiones (Requests) y enviadas en las respuestas (Responses) de la API REST:
+
+* **`StartTreatmentProcessResource(String deviceId, Integer maximumCycles, Integer waitingMinutes)`**: DTO de entrada para crear un proceso. `maximumCycles` y `waitingMinutes` son opcionales; si se omiten, el backend aplica los valores por defecto de la política operativa.
+* **`TreatmentProcessSummaryResource(String id, String deviceId, String deviceSerialNumber, String reservoirName, String operatorName, String state, String strategy, String approvalStatus, int currentCycle, int maximumCycles, String releaseMode, String releaseEligibility, TreatmentMeasurementResource latestMeasurement, String startedAt, String updatedAt)`**: DTO de salida para cada proceso de la lista.
+* **`TreatmentProcessPageResource(List<TreatmentProcessSummaryResource> items, int total, int page, int pageSize)`**: DTO de salida paginado para la lista de procesos.
+* **`TreatmentProcessDetailResource(...)`**: DTO de salida del detalle; extiende el resumen con `configurationVersion`, `phMin`, `phMax`, `temperatureMin`, `temperatureMax`, `waitingMinutes`, `initialMeasurement`, `cycles`, `events`, `failureReason`, `emergencyReason` y `completedAt`.
+* **`TreatmentMeasurementResource(Double ph, Double temperature, String measuredAt, boolean conforming)`**: DTO de salida de una medición del proceso (inicial o última).
+* **`TreatmentCycleResource(int number, String action, String status, String startedAt, String confirmedAt, String result)`**: DTO de salida de un ciclo de corrección.
+* **`TreatmentEventResource(String id, String title, String description, String outcome, String occurredAt)`**: DTO de salida de un evento de trazabilidad del proceso.
 
 ---
 
 ##### C. Transformers / Mappers
 
-* **`StartTreatmentProcessCommandFromResourceAssembler`**: Mapea la petición de inicio a `StartTreatmentProcessCommand`.
-* **`EvaluateMeasurementCommandFromResourceAssembler`**: Transforma el recurso de evaluación a `EvaluateMeasurementCommand`.
-* **`WaterTreatmentProcessResourceFromEntityAssembler`**: Mapea la entidad `WaterTreatmentProcess` hacia `WaterTreatmentProcessResource`.
+Clases de transformación encargadas de mapear entre los DTOs/Resources de la capa de interfaz y los objetos de la capa de aplicación/dominio (Commands, Queries, Read Models y Agregados).
+
+* **`StartTreatmentProcessCommandFromResourceAssembler`**: Transforma el payload REST y el principal autenticado en `StartTreatmentProcessCommand`.
+* **`TreatmentProcessSummaryResourceFromReadModelAssembler`**: Mapea un `TreatmentProcessSummary` (read model enriquecido con datos de `cfg`) hacia `TreatmentProcessSummaryResource`.
+* **`TreatmentProcessPageResourceFromReadModelAssembler`**: Mapea una página de resúmenes hacia `TreatmentProcessPageResource`.
+* **`TreatmentProcessDetailResourceFromReadModelAssembler`**: Mapea un `TreatmentProcessDetail` hacia `TreatmentProcessDetailResource`, incluyendo sus ciclos y eventos.
+* **`TreatmentMeasurementResourceFromEntityAssembler`**: Mapea la entidad `TreatmentMeasurement` hacia `TreatmentMeasurementResource`.
+* **`TreatmentCycleResourceFromEntityAssembler`**: Mapea la entidad `TreatmentCycle` hacia `TreatmentCycleResource`.
+* **`TreatmentEventResourceFromEntityAssembler`**: Mapea la entidad `TreatmentEvent` hacia `TreatmentEventResource`.
 
 #### 4.2.4.3. Application Layer
 
 ##### A. Command Services & Handlers (Servicios de Comandos)
 
-* **`QualityCommandServiceImpl`**
-  * **Descripción:** Orquesta el flujo completo de evaluación, toma de decisiones y emergencias sobre el agua sensada.
+Procesan las intenciones de cambio de estado recibiendo *Commands*, orquestando la lógica de negocio junto con los agregados del dominio y persistiendo los cambios mediante los repositorios.
+
+* **`TreatmentCommandServiceImpl`**
+  * **Descripción:** Implementación de la interfaz `TreatmentCommandService`. Es el único servicio de escritura del contexto y concentra la creación del proceso; las transiciones posteriores las ejecuta el motor de tratamiento sobre el agregado ya persistido.
   * **Flujos de trabajo / Handlers:**
-    * **`handle(StartTreatmentProcessCommand command)`**: Instancia y persiste un nuevo `WaterTreatmentProcess` para el dispositivo.
-    * **`handle(EvaluateMeasurementCommand command)`**: Verifica la calidad del agua. Ante la primera no conformidad selecciona la estrategia y pasa a `PENDIENTE_APROBACION_CORRECCION`; después de una aprobación, una reevaluación no conforme inicia automáticamente el siguiente ciclo si aún es seguro continuar.
-    * **`handle(ApproveCorrectionCommand command)`**: Verifica que el Operario sea responsable del dispositivo y que coincida la versión de configuración, registra la aprobación una sola vez y emite la primera orden. Repetir la misma solicitud no duplica la actuación.
-    * **`handle(AuthorizeReleaseCommand command)`**: Autoriza la apertura únicamente si el proceso está `LISTO`. En modo manual requiere la confirmación del Operario; en modo automático se ejecuta sin esa confirmación. Ningún Operario puede sustituir la conformidad del sistema.
-    * **`handle(ExecuteEmergencyStopCommand command)`**: Cambia el estado a `EMERGENCIA`, solicita el cierre de la válvula y genera una alerta del sistema. Se mantiene separado del estado `FALLO`.
-    * **`handle(ResetProcessCommand command)`**: Permite el reingreso a operaciones tras la revisión directa del operario.
+    * **`handle(StartTreatmentProcessCommand command)`**: Obtiene el `organizationId` del principal autenticado; consulta al puerto `DeviceOperationalContextService` el dispositivo (existencia, estado activo y reservorio vinculado) y al puerto `ConfigurationSnapshotService` la versión de configuración publicada vigente; verifica que no exista otro proceso activo para el mismo dispositivo; instancia el agregado `WaterTreatmentProcess` en estado `NOT_STARTED` con `maximumCycles` y `waitingMinutes` provistos (o los valores por defecto de la política: 3 ciclos y 15 minutos), persiste y retorna el proceso creado.
 
 ---
 
 ##### B. Query Services & Handlers (Servicios de Consulta)
 
-* **`QualityQueryServiceImpl`**
+Atienden las lecturas de información recibiendo objetos *Query*, optimizando el acceso a los datos sin alterar el estado del dominio.
+
+* **`TreatmentQueryServiceImpl`**
+  * **Descripción:** Implementación de la interfaz `TreatmentQueryService`. Combina la información persistida en `trt` con el snapshot operativo obtenido de Configuration para construir los *read models* de supervisión.
   * **Flujos de trabajo / Handlers:**
-    * **`handle(GetTreatmentProcessByIdQuery query)`**: Retorna el detalle del tratamiento solicitado.
-    * **`handle(GetActiveTreatmentProcessByDeviceIdQuery query)`**: Consulta el tratamiento actual que no ha finalizado su ciclo.
-    * **`handle(GetTreatmentHistoryByDeviceIdQuery query)`**: Retorna el histórico de ejecuciones y evaluaciones de calidad.
+    * **`handle(ListTreatmentsQuery query)`**: Lista paginada de procesos de la organización filtrando por `searchTerm` (serial del dispositivo, reservorio u operario) y `status` (estado del proceso), con ordenamiento por `sortBy` y `sortDirection`. Enriquece cada `TreatmentProcessSummary` con `deviceSerialNumber`, `reservoirName` y `operatorName` desde `DeviceOperationalContextService`, con `releaseMode` desde `ConfigurationSnapshotService` y con la última medición del proceso.
+    * **`handle(GetTreatmentProcessByIdQuery query)`**: Recupera el proceso con sus mediciones inicial/última, ciclos y eventos; enriquece el `TreatmentProcessDetail` con `configurationVersion`, rangos de pH y temperatura y `releaseMode` de la versión de configuración asociada. Retorna `Optional.empty()` cuando el proceso no existe o no pertenece a la organización, lo que la capa de interfaz traduce en `404 Not Found`.
+
+---
+
+##### C. Outbound Services / Ports (Servicios de Salida)
+
+Interfaces y abstracciones requeridas por la capa de aplicación para comunicarse con el exterior sin acoplarse a tecnologías específicas.
+
+* **`DeviceOperationalContextService`**: Puerto hacia Configuration para obtener el snapshot operativo del dispositivo (existencia, estado activo, reservorio vinculado, serial, nombre del reservorio y operario responsable).
+* **`ConfigurationSnapshotService`**: Puerto hacia Configuration para obtener la versión de configuración publicada vigente del dispositivo (rangos de pH y temperatura, modo de liberación y parámetros operativos) y para resolver el `configuration_versions_id` que se almacena en el proceso.
 
 #### 4.2.4.4. Infrastructure Layer
 
 ##### A. Persistence & Repositories (Persistencia y Repositorios)
 
-* **`WaterTreatmentProcessRepository` (JPA Repository)**
-* `Optional<WaterTreatmentProcess> findByDeviceIdAndStatusNotIn(String deviceId, List<TreatmentStatus> closedStatuses)`
-* `List<WaterTreatmentProcess> findByDeviceIdOrderByCreatedAtDesc(String deviceId)`
+Proporciona las implementaciones concretas para el almacenamiento y recuperación del agregado `WaterTreatmentProcess` y de sus entidades internas mediante Spring Data JPA y la base de datos relacional (schema `trt`).
+
+* **`TreatmentProcessRepository` (JPA Repository)**
+  * **Descripción:** Interfaz que extiende de `JpaRepository` para la gestión de procesos de tratamiento.
+  * **Métodos principales:**
+    * `Page<WaterTreatmentProcess> findByOrganizationIdAndFilters(UUID organizationId, String state, String searchTerm, Pageable pageable)`: Lista paginada de procesos con filtros por estado y término de búsqueda (requiere JOIN de solo lectura con `cfg.devices`, `cfg.reservoirs` y los perfiles de operario para resolver serial, reservorio y operario).
+    * `Optional<WaterTreatmentProcess> findByIdAndOrganizationId(UUID processId, UUID organizationId)`: Recupera un proceso por su ID dentro de su organización.
+    * `boolean existsByOrganizationIdAndDeviceIdAndStateNotIn(UUID organizationId, UUID deviceId, List<TreatmentState> finishedStates)`: Verifica si el dispositivo ya tiene un proceso no finalizado (estado distinto de `COMPLETED`), lo que impide abrir un segundo proceso sobre el mismo dispositivo.
+
+* **`TreatmentMeasurementRepository` (JPA Repository)**
+  * **Descripción:** Interfaz para la gestión de las mediciones `INITIAL` y `LATEST` del proceso.
+  * **Métodos principales:**
+    * `Optional<TreatmentMeasurement> findByProcessIdAndType(UUID processId, MeasurementType type)`: Recupera la medición inicial o la última medición, respetando la unicidad `(process_id, type)`.
+    * `List<TreatmentMeasurement> findByProcessId(UUID processId)`: Recupera las mediciones registradas del proceso para el detalle.
+
+* **`TreatmentCycleRepository` (JPA Repository)**
+  * **Descripción:** Interfaz para la gestión de los ciclos de corrección del proceso.
+  * **Métodos principales:**
+    * `List<TreatmentCycle> findByProcessIdOrderByNumberAsc(UUID processId)`: Recupera los ciclos ordenados por número secuencial (único por proceso).
+
+* **`TreatmentEventRepository` (JPA Repository)**
+  * **Descripción:** Interfaz para la gestión de los eventos de trazabilidad del proceso.
+  * **Métodos principales:**
+    * `List<TreatmentEvent> findByProcessIdOrderByOccurredAtAsc(UUID processId)`: Recupera la cronología de eventos del proceso.
+
+---
+
+##### B. Configuration Context Adapters (Adaptadores hacia Configuration)
+
+Implementan los puertos de salida de la capa de aplicación mediante consultas de solo lectura sobre el schema `cfg`, sin incorporar entidades de Configuration al dominio de Treatment. En un despliegue de microservicios estos adaptadores se sustituyen por clientes HTTPS contra la API de Configuration, conservando los mismos puertos.
+
+* **`DeviceOperationalContextServiceImpl`**
+  * **Descripción:** Implementación del puerto `DeviceOperationalContextService`. Construye el snapshot operativo del dispositivo a partir de `cfg.devices`, `cfg.reservoirs`, `cfg.device_assignments` y `cfg.operator_profiles`.
+  * **Métodos:**
+    * `Optional<DeviceOperationalSnapshot> findDevice(UUID organizationId, UUID deviceId)`: Retorna `deviceSerialNumber`, `reservoirName`, `operatorName`, si el dispositivo está activo (`lifecycle_status` distinto de `INACTIVE`) y si tiene reservorio vinculado; el operario se resuelve por la asignación `ACTIVE` del dispositivo. Retorna vacío si el dispositivo no existe en la organización.
+    * `Map<UUID, DeviceOperationalSnapshot> findDevices(UUID organizationId, Collection<UUID> deviceIds)`: Resuelve el snapshot de varios dispositivos en una sola consulta para enriquecer la lista paginada.
+
+* **`ConfigurationSnapshotServiceImpl`**
+  * **Descripción:** Implementación del puerto `ConfigurationSnapshotService`. Obtiene la versión de configuración publicada desde `cfg.configuration_versions`.
+  * **Métodos:**
+    * `Optional<ConfigurationSnapshot> findPublishedByDeviceId(UUID organizationId, UUID deviceId)`: Retorna la última versión con `status = PUBLISHED` del dispositivo, validando que este pertenezca a la organización, con `id`, `configurationVersion`, `phMin`, `phMax`, `temperatureMin`, `temperatureMax` y `releaseMode`; es la versión que se persiste en `configuration_versions_id` al crear el proceso.
+    * `Optional<ConfigurationSnapshot> findById(UUID configurationVersionId)`: Retorna la versión referenciada por `configuration_versions_id` para enriquecer el detalle del proceso.
+
+---
+
+##### C. Configuration & OpenAPI (Configuración de Infraestructura)
+
+Clases que configuran componentes del framework y la documentación del microservicio.
+
+* **`SecurityConfiguration`**: Define la cadena de filtros de seguridad (`SecurityFilterChain`), reglas de acceso a endpoints HTTP (CORS, CSRF) y la gestión de sesiones *stateless*.
 
 #### 4.2.4.5. Bounded Context Software Architecture Component Level Diagrams
 
-[![component.png](https://i.postimg.cc/y6bkVfXg/component.png)](https://postimg.cc/rz58jNHM)
+[![Treatment-Component-Diagram-dark.png](https://i.postimg.cc/prqt69zy/Treatment-Component-Diagram-dark.png)](https://postimg.cc/sGQ8BgnR)
+
+*Figura: Diagrama de componentes del bounded context Treatment. El API Gateway enruta las peticiones a `TreatmentsController`, que invoca los servicios de aplicación `TreatmentCommandServiceImpl` y `TreatmentQueryServiceImpl`; el primero crea y valida el agregado `WaterTreatmentProcess`, mientras que el segundo lee los procesos, mediciones, ciclos y eventos a través de `TreatmentProcessRepository`, `TreatmentMeasurementRepository`, `TreatmentCycleRepository` y `TreatmentEventRepository`, que persisten en la base de datos PostgreSQL del schema `trt`.*
 
 #### 4.2.4.6. Bounded Context Software Architecture Code Level Diagrams
 
 ##### 4.2.4.6.1. Bounded Context Domain Layer Class Diagrams
 
-A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Tratamiento y Calidad del Agua, detallando el agregado principal `WaterTreatmentProcess`, sus objetos de valor (`WaterConformity`, `TreatmentStatus`, `CorrectionStrategyType`, `TreatmentCycle`), comandos, consultas y servicios del patrón CQRS:
+A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Tratamiento y Calidad del Agua, donde se estructuran el agregado, sus entidades, los objetos de valor, el comando, las consultas, los modelos de lectura y los servicios bajo el patrón CQRS:
 
 ---
 
-[![uml.png](https://i.postimg.cc/g2S1dnnY/uml.png)](https://postimg.cc/CR8csMGt)
+[![TRT-DOMAIN-CLASSES.png](https://i.postimg.cc/Xq3syQZf/TRT-DOMAIN-CLASSES.png)](https://postimg.cc/TL7VzjJ1)
 
 ---
 
-* **`WaterTreatmentProcess`**: Encapsula las reglas del ciclo de evaluación, control de estados del agua, toma de decisiones correctivas e intervenciones manuales o de emergencia.
-* **Objetos de Valor**: Definen de manera explícita e inmutable los estados (`WaterConformity`, `TreatmentStatus`), tipos de corrección (`CorrectionStrategyType`) y métricas de iteración del ciclo (`TreatmentCycle`).
-* **Patrón CQRS**: Separa limpiamente la ejecución de comandos de cambio de estado sobre el tratamiento de la consulta de procesos activos e históricos.
+* **`WaterTreatmentProcess` (Agregado)**: Entidad raíz que orquesta el ciclo de vida del tratamiento —evaluación, corrección, espera, reevaluación y liberación o retención del agua—. Mantiene `organization_id` como *snapshot* del tenant y `configuration_versions_id` como referencia lógica a Configuration, y aplica las precondiciones de creación: dispositivo existente, activo y vinculado a un reservorio, configuración publicada vigente y ausencia de otro proceso activo para el mismo dispositivo.
+* **`TreatmentMeasurement` / `TreatmentCycle` / `TreatmentEvent` (Entidades)**: Registran la medición inicial y la última medición con su resultado de conformidad, los ciclos de corrección numerados con su acción, estado y resultado, y la cronología de eventos del proceso con su resultado (`INFO` | `SUCCESS` | `WARNING` | `FAILURE`).
+* **Objetos de Valor (`TreatmentState`, `ApprovalStatus`, `ReleaseEligibility`, `MeasurementType`, `CycleStatus`, `EventOutcome`)**: Enumeraciones inmutables que tipan los doce estados del proceso, la aprobación única del operario, la elegibilidad de liberación y los estados de mediciones, ciclos y eventos. La estrategia correctiva (`strategy`) se modela como texto libre porque la determina el motor de tratamiento.
+* **`StartTreatmentProcessCommand`**: Comando que abre un proceso para un dispositivo con `maximumCycles` y `waitingMinutes` opcionales, atendido por `TreatmentCommandService`. El resto de transiciones de estado las ejecuta internamente el motor de tratamiento, por lo que no se exponen como comandos HTTP.
+* **Queries (`ListTreatmentsQuery`, `GetTreatmentProcessByIdQuery`)**: Abstracciones para la consulta paginada de procesos con filtros por estado y término de búsqueda, y para la obtención del detalle de un proceso.
+* **Read Models (`TreatmentProcessSummary`, `TreatmentProcessDetail`)**: Proyecciones que combinan el proceso persistido en `trt` con el serial del dispositivo, el reservorio y el operario obtenidos de `cfg`, y con los rangos y el modo de liberación de `configuration_versions`. El detalle extiende el resumen con las mediciones, los ciclos y los eventos del proceso.
+* **`TreatmentCommandService` / `TreatmentQueryService`**: Interfaces de servicio que desacoplan la creación del proceso de las operaciones de consulta, siguiendo el patrón CQRS.
 
 ##### 4.2.4.6.2. Bounded Context Database Design Diagram
 
-A continuación se detalla la definición DDL de la base de datos relacional encargada del almacenamiento y persistencia del flujo de tratamiento de agua:
+Para la persistencia del ciclo de tratamiento se establece el siguiente esquema relacional DDL, diseñado para almacenar los procesos, sus mediciones, ciclos y eventos en el esquema `trt`:
 
 ---
 
-[![database.png](https://i.postimg.cc/G3XFXYNs/database.png)](https://postimg.cc/z3RHBLqJ)
+[![TRT-DB.png](https://i.postimg.cc/yY7VVKN4/TRT-DB.png)](https://postimg.cc/6T1s0DRY)
 
 ---
 
 ```sql
-CREATE TABLE water_treatment_processes
+CREATE TABLE trt.treatment_processes
 (
-  id UUID NOT NULL,
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   organization_id UUID NOT NULL,
   device_id UUID NOT NULL,
-  configuration_id UUID NOT NULL,
-  configuration_version INT NOT NULL,
-  configuration_snapshot JSONB NOT NULL,
-  conformity VARCHAR(20) NOT NULL,
-  status VARCHAR(50) NOT NULL,
-  current_strategy VARCHAR(50) NOT NULL,
-  cycle_count INT NOT NULL,
-  useful_variation FLOAT NOT NULL,
-  created_at TIMESTAMPTZ NOT NULL,
-  updated_at TIMESTAMPTZ NOT NULL,
-  PRIMARY KEY (id),
-  UNIQUE (id)
+  configuration_versions_id UUID,
+  state VARCHAR(40) NOT NULL DEFAULT 'NOT_STARTED',
+  strategy VARCHAR(200),
+  approval_status VARCHAR(20) NOT NULL DEFAULT 'NOT_REQUIRED',
+  current_cycle INTEGER NOT NULL DEFAULT 0,
+  maximum_cycles INTEGER NOT NULL DEFAULT 0,
+  release_eligibility VARCHAR(30) NOT NULL DEFAULT 'NOT_ELIGIBLE',
+  waiting_minutes INTEGER,
+  failure_reason TEXT,
+  emergency_reason TEXT,
+  started_at TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  completed_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE treatment_cycles
+CREATE INDEX idx_tp_org ON trt.treatment_processes (organization_id);
+CREATE INDEX idx_tp_device ON trt.treatment_processes (device_id);
+CREATE INDEX idx_tp_state ON trt.treatment_processes (state);
+
+CREATE TABLE trt.treatment_measurements
 (
-  id UUID NOT NULL,
-  process_id UUID NOT NULL,
-  cycle_number INT NOT NULL,
-  strategy_type VARCHAR(50) NOT NULL,
-  command_id VARCHAR(64) NOT NULL,
-  status VARCHAR(20) NOT NULL,
-  started_at TIMESTAMPTZ NOT NULL,
-  completed_at TIMESTAMPTZ NULL,
-  PRIMARY KEY (id),
-  FOREIGN KEY (process_id) REFERENCES water_treatment_processes(id),
-  UNIQUE (process_id, cycle_number),
-  UNIQUE (command_id)
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  process_id UUID NOT NULL REFERENCES trt.treatment_processes (id) ON DELETE CASCADE,
+  type VARCHAR(10) NOT NULL,
+  ph NUMERIC(6,2) NOT NULL,
+  temperature NUMERIC(6,2) NOT NULL,
+  measured_at TIMESTAMPTZ NOT NULL,
+  conforming BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (process_id, type)
 );
 
-CREATE TABLE treatment_evaluations
+CREATE TABLE trt.treatment_cycles
 (
-  id UUID NOT NULL,
-  process_id UUID NOT NULL,
-  cycle_id UUID NULL,
-  measurement_id VARCHAR(128) NOT NULL,
-  ph FLOAT NOT NULL,
-  temperature FLOAT NOT NULL,
-  conformity VARCHAR(20) NOT NULL,
-  useful_variation FLOAT NULL,
-  evaluated_at TIMESTAMPTZ NOT NULL,
-  PRIMARY KEY (id),
-  FOREIGN KEY (process_id) REFERENCES water_treatment_processes(id),
-  FOREIGN KEY (cycle_id) REFERENCES treatment_cycles(id),
-  UNIQUE (process_id, measurement_id)
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  process_id UUID NOT NULL REFERENCES trt.treatment_processes (id) ON DELETE CASCADE,
+  number INTEGER NOT NULL,
+  action TEXT,
+  status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+  started_at TIMESTAMPTZ,
+  confirmed_at TIMESTAMPTZ,
+  result TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (process_id, number)
 );
 
+CREATE TABLE trt.treatment_events
+(
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  process_id UUID NOT NULL REFERENCES trt.treatment_processes (id) ON DELETE CASCADE,
+  title VARCHAR(200) NOT NULL,
+  description TEXT,
+  outcome VARCHAR(20) NOT NULL,
+  occurred_at TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_te_process ON trt.treatment_events (process_id);
 ```
 
 ---
 
-* **`water_treatment_processes`**: Conserva la organización, estado y resumen vigente del proceso, junto con la referencia lógica y copia inmutable de las reglas de la versión utilizada. `configuration_id` no es una FK a la base de Configuration. Los procesos en curso no cambian de reglas al publicarse otra versión.
-* **`treatment_cycles`**: Registra cada actuación correctiva, su número, estrategia, comando idempotente, resultado y tiempos de ejecución.
-* **`treatment_evaluations`**: Conserva la medición evaluada antes o después de un ciclo, el resultado de conformidad y la variación útil calculada. Junto con `treatment_cycles`, permite reconstruir el historial prometido sin depender únicamente del resumen del proceso.
+* **`trt.treatment_processes`**: Cabecera del proceso de tratamiento. Conserva `organization_id` como *snapshot* del tenant, `device_id` y `configuration_versions_id` como referencias lógicas a `cfg`, y el estado vigente del proceso (`state`, `strategy`, `approval_status`, `current_cycle`, `maximum_cycles`, `release_eligibility`), junto con `waiting_minutes` y los motivos de fallo o emergencia. Los rangos de pH/temperatura y el modo de liberación no se duplican: se enriquecen por JOIN con `cfg.configuration_versions`.
+* **`trt.treatment_measurements`**: Almacena la medición `INITIAL` y la `LATEST` de cada proceso, con la unicidad `(process_id, type)`. `ph` y `temperature` usan `NUMERIC(6,2)` y `conforming` se calcula contra los rangos de la versión de configuración; `measured_at` registra la captura y `created_at` la persistencia.
+* **`trt.treatment_cycles`**: Registra los ciclos de corrección con numeración única por proceso (`UNIQUE (process_id, number)`), su acción, estado, tiempos de inicio y confirmación, y el resultado.
+* **`trt.treatment_events`**: Conserva la cronología del proceso (`title`, `description`, `outcome`, `occurred_at`) para reconstruir sus decisiones y transiciones; `outcome` distingue `INFO`, `SUCCESS`, `WARNING` y `FAILURE`.
+* **Integridad e indexación**: Las tres tablas hijas referencian `treatment_processes` con `ON DELETE CASCADE`, y las consultas se optimizan con índices por organización, dispositivo y estado del proceso, más el índice por proceso en los eventos.
 
 ### 4.2.5. Bounded Context: Monitoring
 
@@ -3035,50 +3116,68 @@ CREATE TABLE treatment_evaluations
 
 ##### A. Aggregates (Agregados)
 
-* **`OperationalAlert` (Agregado Principal)**
-  * **Descripción:** Encapsula la creación, gestión y trazabilidad de alertas operativas en el sistema (hereda de `AuditableAbstractAggregateRoot`).
+* **`OperationalAlert` (Agregado)**
+  * **Descripción:** Alerta operativa generada cuando una medición, un proceso o una pérdida de monitoreo requiere atención. Conserva `organization_id` como *snapshot* del tenant, `device_id` como referencia lógica a `cfg` y los *snapshots* `device_serial_number` y `reservoir_name` para resolver la alerta sin depender de Configuration.
   * **Comportamiento y Reglas de Negocio:**
-    * Crear e inicializar alertas operativas asignando un nivel de severidad y origen.
-    * Permitir la atención y cambio de estado de la alerta por parte del sistema o personal autorizados.
+    * Registrar la alerta en estado `ACTIVE` con su `severity`, `description` y `source`.
+    * Permitir la atención únicamente desde `ACTIVE` (`ACTIVE` → `ACKNOWLEDGED`), sellando `attended_at` y `updated_at`; una alerta ya atendida no puede volver a marcarse.
+    * Mantener el estado `RESOLVED` para el cierre definitivo de la alerta cuando la condición que la originó desaparece.
+    * Reflejar el conteo de alertas `ACTIVE` del dispositivo en la vista consolidada de monitoreo.
+
 * **`QualityIncident` (Agregado)**
-  * **Descripción:** Representa el registro de incidentes de calidad o la pérdida de monitoreo observada en los dispositivos/ciclos.
+  * **Descripción:** Registro de un incidente de calidad o de una pérdida de monitoreo observada en un dispositivo. Se vincula a la línea temporal mediante `correlation_id` y conserva los *snapshots* de serial y reservorio.
   * **Comportamiento y Reglas de Negocio:**
-    * Registrar incidentes detallando el tipo (calidad o pérdida de monitoreo).
-    * Validar y asociar el incidente con las métricas y eventos recopilados.
-* **`EventCorrelation` (Agregado)**
-  * **Descripción:** Asocia y correlaciona eventos del sistema con los ciclos de tratamiento y telemetría para mantener la trazabilidad completa.
+    * Registrarse en estado `OPEN` con `incident_type` (`QUALITY_INCIDENT` | `MONITORING_LOSS`), `description` y un `correlation_id` que agrupa los eventos asociados.
+    * Cerrarse únicamente desde `OPEN` (`OPEN` → `CLOSED`), sellando `closed_at` y `updated_at`.
+    * Generar los eventos de trazabilidad `INCIDENT_REGISTERED` (`WARNING`) al abrirse e `INCIDENT_CLOSED` (`SUCCESS`) al cerrarse, ambos bajo el mismo `correlation_id`.
+
+* **`TraceabilityEvent` (Agregado)**
+  * **Descripción:** Registro de solo adición (*append-only*) de la línea temporal de un dispositivo. Pertenece a una organización, se agrupa por `correlation_id` y opcionalmente por `cycle_id` de tratamiento.
   * **Comportamiento y Reglas de Negocio:**
-    * Agrupar y correlacionar eventos temporales y de ciclo.
-    * Generar proyecciones y consolidados de estado actualizados.
+    * Registrarse con `event_type`, `title`, `description`, `actor`, `outcome` y `occurred_at`; `ph` y `temperature` son opcionales y reproducen la lectura asociada al evento.
+    * Ser inmutable: no se actualiza ni se elimina; `occurred_at` ordena la cronología y `created_at` registra la persistencia.
+    * Aceptar `event_type` como texto libre (`MEASUREMENT_RECORDED`, `INCIDENT_REGISTERED`, `INCIDENT_CLOSED`, `ALERT_CREATED`, `RELEASE_AUTHORIZED`, entre otros).
+    * Servir de fuente para la consulta de trazabilidad por dispositivo y para el *snapshot* de eventos de los reportes.
+
+* **`TraceabilityReport` (Agregado)**
+  * **Descripción:** Reporte materializado de un dispositivo para un período (`from_date`–`to_date`), con conteos por tipo de evento y un *snapshot* de los eventos en `events` (`JSONB`).
+  * **Comportamiento y Reglas de Negocio:**
+    * Generarse solo si el período es válido (`from_date` ≤ `to_date`) y existe al menos un evento del dispositivo dentro del rango.
+    * Calcular `measurements` (eventos `MEASUREMENT_RECORDED`), `correction_cycles` (ciclos distintos por `cycle_id`), `alerts` (`ALERT_CREATED`), `incidents` (`INCIDENT_REGISTERED`) y `releases` (`RELEASE_AUTHORIZED`).
+    * Congelar en `generated_at` el *snapshot* de eventos y los datos de contexto del dispositivo (`device_serial_number`, `reservoir_name`).
 
 ---
 
 ##### B. Value Objects (Objetos de Valor)
 
-* **`IncidentType`**: Tipo de incidente (`QUALITY_INCIDENT`, `MONITORING_LOSS`).
-* **`AlertSeverity`**: Nivel de severidad de la alerta operativa (`LOW`, `MEDIUM`, `HIGH`, `CRITICAL`).
-* **`StatusView`**: Estado proyectado o vista de monitoreo (`UPDATED`, `OUTDATED`).
-* **`CorrelationData`**: Contenedor inmutable de claves de correlación y métricas asociadas.
+* **`AlertSeverity`**: Nivel de severidad de la alerta (`LOW` | `MEDIUM` | `HIGH` | `CRITICAL`).
+* **`AlertStatus`**: Estado de la alerta (`ACTIVE` | `ACKNOWLEDGED` | `RESOLVED`).
+* **`IncidentType`**: Tipo de incidente (`QUALITY_INCIDENT` | `MONITORING_LOSS`).
+* **`IncidentStatus`**: Estado del incidente (`OPEN` | `CLOSED`).
+* **`EventOutcome`**: Resultado del evento de trazabilidad (`INFO` | `SUCCESS` | `WARNING` | `FAILURE`).
+* **`StatusView`**: Estado proyectado de la vista de monitoreo (`UPDATED` | `OUTDATED`), derivado de la disponibilidad del dispositivo y de la frescura de su última medición; no se persiste.
 
 ---
 
 ##### C. Commands (Comandos - CQRS)
 
-* **`CreateOperationalAlertCommand(String deviceId, String severity, String description)`**: Solicita la creación de una alerta operativa.
-* **`RegisterIncidentCommand(String deviceId, IncidentType incidentType, String description)`**: Registra un incidente de calidad o pérdida de monitoreo.
-* **`CorrelateEventsCommand(String deviceId, UUID cycleId, List<String> eventIds)`**: Correlaciona eventos con ciclos operativos específicos; los identificadores externos se mantienen como referencias lógicas.
-* **`UpdateStatusViewCommand(String deviceId, StatusView statusView)`**: Actualiza la vista de estado del sistema.
-* **`GenerateUpdatedReportCommand(String deviceId, String reportType)`**: Genera el estado consolidado o reporte actualizado.
+Los cuatro comandos de escritura cubren los endpoints de mutación del contexto. La creación de alertas y la escritura de eventos de trazabilidad no se exponen como comandos HTTP: las produce el propio contexto a partir de sus reglas y de los hechos de otros bounded contexts.
+
+* **`AcknowledgeOperationalAlertCommand(String alertId)`**: Marca una alerta como atendida. Solo admite la transición `ACTIVE` → `ACKNOWLEDGED`, sella `attended_at` y `updated_at`, y rechaza con `409` cualquier alerta que ya no esté activa.
+* **`RegisterIncidentCommand(String deviceId, String incidentType, String description)`**: Abre un incidente de calidad o de pérdida de monitoreo (`QUALITY_INCIDENT` | `MONITORING_LOSS`). Genera el `correlation_id` que agrupará sus eventos, registra el incidente en estado `OPEN` y emite el evento `INCIDENT_REGISTERED` con `outcome` `WARNING`.
+* **`CloseIncidentCommand(String incidentId)`**: Cierra un incidente. Solo admite la transición `OPEN` → `CLOSED`, sella `closed_at` y `updated_at` y emite el evento `INCIDENT_CLOSED` con `outcome` `SUCCESS` bajo el mismo `correlation_id`.
+* **`GenerateTraceabilityReportCommand(String deviceId, Instant from, Instant to)`**: Genera el reporte de trazabilidad de un dispositivo para un período. Valida que `from` ≤ `to` y que exista al menos un evento en el rango; luego calcula los conteos y congela el *snapshot* de eventos junto con los datos de contexto del dispositivo.
 
 ---
 
 ##### D. Queries (Consultas - CQRS)
 
-* **`GetActiveAlertsByDeviceIdQuery(String deviceId)`**
-* **`GetIncidentsByDeviceIdQuery(String deviceId)`**
-* **`GetCorrelatedEventsByCycleQuery(UUID cycleId)`**
-* **`GetStatusViewByDeviceIdQuery(String deviceId)`**
-* **`GetTraceabilityReportQuery(String deviceId)`**
+Abstracciones para la lectura de información del dominio sin alterar su estado. Las dos consultas paginadas comparten el objeto de filtros `MonitoringListQuery`, pero cada recurso aplica solo los criterios que le corresponden.
+
+* **`GetMonitoringOverviewQuery()`**: Retorna el resumen operacional de la organización: totales de dispositivos, dispositivos en línea y que requieren atención, alertas activas, incidentes abiertos, la vista consolidada por dispositivo y las últimas alertas activas.
+* **`ListOperationalAlertsQuery(String searchTerm, String status, String severity, String deviceId, int page, int pageSize, String sortBy, String sortDirection)`**
+* **`ListQualityIncidentsQuery(String searchTerm, String status, String incidentType, String deviceId, int page, int pageSize, String sortBy, String sortDirection)`**
+* **`GetDeviceTraceabilityQuery(String deviceId, Instant from, Instant to)`**
 
 ---
 
@@ -3086,182 +3185,320 @@ CREATE TABLE treatment_evaluations
 
 * **`MonitoringCommandService` (Interfaz)**
   * **Métodos principales:**
-    * `Optional<OperationalAlert> handle(CreateOperationalAlertCommand command)`
-    * `Optional<QualityIncident> handle(RegisterIncidentCommand command)`
-    * `Optional<EventCorrelation> handle(CorrelateEventsCommand command)`
-    * `void handle(UpdateStatusViewCommand command)`
-    * `Optional<Report> handle(GenerateUpdatedReportCommand command)`
-
-* **`NotificationPort` (Puerto de salida)**
-  * `NotificationResult sendToOperator(String operatorId, NotificationPayload payload)`: Solicita el envío móvil sin transferir a FCM la propiedad de la alerta.
+    * `Optional<OperationalAlert> handle(AcknowledgeOperationalAlertCommand command)`: Valida el estado actual de la alerta y persiste la atención con su marca de tiempo.
+    * `QualityIncident handle(RegisterIncidentCommand command)`: Verifica que el dispositivo pertenezca a la organización, abre el incidente y registra su evento de apertura.
+    * `Optional<QualityIncident> handle(CloseIncidentCommand command)`: Verifica que el incidente esté abierto, lo cierra y registra su evento de cierre.
+    * `TraceabilityReport handle(GenerateTraceabilityReportCommand command)`: Valida el período, consolida los eventos del dispositivo y persiste el reporte con sus conteos.
 
 * **`MonitoringQueryService` (Interfaz)**
   * **Métodos principales:**
-    * `List<OperationalAlert> handle(GetActiveAlertsByDeviceIdQuery query)`
-    * `List<QualityIncident> handle(GetIncidentsByDeviceIdQuery query)`
-    * `Optional<EventCorrelation> handle(GetCorrelatedEventsByCycleQuery query)`
-    * `Optional<StatusViewResource> handle(GetStatusViewByDeviceIdQuery query)`
-    * `Optional<ReportResource> handle(GetTraceabilityReportQuery query)`
+    * `MonitoringOverview handle(GetMonitoringOverviewQuery query)`: Compone la vista consolidada de dispositivos (`DeviceStatusView`) a partir de la disponibilidad, la última medición, el estado del proceso y las alertas activas, y devuelve los totales y las alertas recientes.
+    * `Page<OperationalAlertView> handle(ListOperationalAlertsQuery query)`: Retorna la página de alertas enriquecidas con el serial del dispositivo y el reservorio.
+    * `Page<QualityIncidentView> handle(ListQualityIncidentsQuery query)`: Retorna la página de incidentes enriquecidos con el serial del dispositivo y el reservorio.
+    * `Optional<DeviceTraceabilityDetail> handle(GetDeviceTraceabilityQuery query)`: Retorna la vista del dispositivo y sus eventos de trazabilidad ordenados cronológicamente dentro del rango solicitado.
 
 #### 4.2.5.2. Interface Layer
 
 ##### A. Controllers (Controladores REST)
 
-* **`MonitoringController`**
+Son los puntos de entrada HTTP (Inbound Adapters) que exponen los endpoints de la API REST del Bounded Context. El `organizationId` se obtiene del principal autenticado y nunca del cuerpo ni de los parámetros de la petición.
+
+* **`MonitoringOverviewController`**
+  * **Descripción:** Expone la vista consolidada del monitoreo operacional de la organización.
   * **Endpoints:**
-    * `POST /api/v1/monitoring/alerts`: Crea una nueva alerta operativa (`CreateOperationalAlertResource`).
-    * `POST /api/v1/monitoring/incidents`: Registra un incidente de calidad o pérdida de monitoreo (`RegisterIncidentResource`).
-    * `POST /api/v1/monitoring/correlations`: Ejecuta la correlación de eventos/ciclos (`CorrelateEventsResource`).
-    * `PUT /api/v1/monitoring/status-views`: Actualiza las vistas de estado (`UpdateStatusViewResource`).
-    * `POST /api/v1/monitoring/reports/generate`: Solicita la generación de un reporte de estado actualizado (`GenerateReportResource`).
-    * `GET /api/v1/monitoring/devices/{deviceId}/status-view`: Consulta la vista de estado actual.
+    * `GET /api/v1/monitoring/overview`: Retorna los totales de dispositivos (total, en línea y con atención requerida), alertas activas, incidentes abiertos, la vista por dispositivo (`DeviceStatusViewResource`) y las últimas alertas activas.
+
+* **`OperationalAlertsController`**
+  * **Descripción:** Expone la consulta y la atención de alertas operativas.
+  * **Endpoints:**
+    * `GET /api/v1/monitoring/alerts`: Lista paginada de alertas con filtros (`searchTerm`, `status`, `severity`, `deviceId`, `page`, `pageSize`, `sortBy`, `sortDirection`) y `200 OK` con `OperationalAlertPageResource`.
+    * `PATCH /api/v1/monitoring/alerts/{alertId}/status`: Atiende una alerta (`{ "status": "ACKNOWLEDGED" }`) y retorna `200 OK` con la alerta actualizada; responde `404` si no existe y `409` si ya no está en estado `ACTIVE`.
+
+* **`QualityIncidentsController`**
+  * **Descripción:** Expone el registro, la consulta y el cierre de incidentes de calidad o de pérdida de monitoreo.
+  * **Endpoints:**
+    * `GET /api/v1/monitoring/incidents`: Lista paginada de incidentes con filtros (`searchTerm`, `status`, `type`, `deviceId`, `page`, `pageSize`, `sortBy`, `sortDirection`) y `200 OK` con `QualityIncidentPageResource`.
+    * `POST /api/v1/monitoring/incidents`: Registra un incidente en estado `OPEN` y retorna `201 Created` con `QualityIncidentResource`; responde `404` si el dispositivo no pertenece a la organización y `422` si el tipo o la descripción no son válidos.
+    * `PATCH /api/v1/monitoring/incidents/{incidentId}/status`: Cierra un incidente (`{ "status": "CLOSED" }`) y retorna `200 OK` con el incidente actualizado y su `closedAt`; responde `404` si no existe y `409` si no está en estado `OPEN`.
+
+* **`TraceabilityController`**
+  * **Descripción:** Expone la línea temporal de un dispositivo y la generación de su reporte de trazabilidad.
+  * **Endpoints:**
+    * `GET /api/v1/monitoring/devices/{deviceId}/traceability`: Retorna la vista del dispositivo y sus eventos de trazabilidad ordenados del más reciente al más antiguo, con filtros opcionales `from` y `to`.
+    * `POST /api/v1/monitoring/reports/generate`: Genera un reporte de trazabilidad para un período y retorna `201 Created` con `TraceabilityReportResource`; responde `422` si el período no es válido o no existen eventos en el rango.
 
 ---
 
 ##### B. Resources / DTOs (Objetos de Transferencia de Datos)
 
-* **`CreateOperationalAlertResource(String deviceId, String severity, String description)`**
-* **`RegisterIncidentResource(String deviceId, String incidentType, String description)`**
-* **`CorrelateEventsResource(String deviceId, String cycleId, List<String> eventIds)`**: `cycleId` representa el UUID externo del ciclo.
-* **`UpdateStatusViewResource(String deviceId, String status)`**
-* **`GenerateReportResource(String deviceId, String reportType)`**
-* **`OperationalAlertResource(String id, String deviceId, String severity, String description, String createdAt)`**: Identificadores UUID como cadenas y fecha ISO 8601 UTC.
+Definen las estructuras de datos aceptadas en las peticiones (Requests) y enviadas en las respuestas (Responses) de la API REST:
+
+* **`DeviceStatusViewResource(String deviceId, String serialNumber, String alias, String reservoirName, String operatorName, String availability, String processState, String statusView, Double ph, Double temperature, String measuredAt, int activeAlertCount)`**: DTO de salida de la vista consolidada de un dispositivo.
+* **`MonitoringOverviewResource(int totalDevices, int onlineDevices, int devicesRequiringAttention, int activeAlerts, int openIncidents, List<DeviceStatusViewResource> devices, List<OperationalAlertResource> recentAlerts)`**: DTO de salida del resumen operacional.
+* **`OperationalAlertResource(String id, String deviceId, String deviceSerialNumber, String reservoirName, String severity, String description, String source, String status, String createdAt, String attendedAt)`**: DTO de salida de una alerta operativa.
+* **`OperationalAlertPageResource(List<OperationalAlertResource> items, int total, int page, int pageSize)`**: DTO de salida paginado para la lista de alertas.
+* **`QualityIncidentResource(String id, String deviceId, String deviceSerialNumber, String reservoirName, String incidentType, String description, String status, String correlationId, String createdAt, String closedAt)`**: DTO de salida de un incidente de calidad o de pérdida de monitoreo.
+* **`QualityIncidentPageResource(List<QualityIncidentResource> items, int total, int page, int pageSize)`**: DTO de salida paginado para la lista de incidentes.
+* **`RegisterIncidentResource(String deviceId, String incidentType, String description)`**: DTO de entrada para registrar un incidente.
+* **`UpdateStatusResource(String status)`**: DTO de entrada de los dos endpoints de cambio de estado; cada uno admite un único valor (`ACKNOWLEDGED` para alertas, `CLOSED` para incidentes).
+* **`TraceabilityEventResource(String id, String deviceId, String correlationId, String cycleId, String eventType, String title, String description, String actor, String outcome, Double ph, Double temperature, String occurredAt)`**: DTO de salida de un evento de trazabilidad; `cycleId`, `ph` y `temperature` son opcionales.
+* **`DeviceTraceabilityResource(DeviceStatusViewResource device, List<TraceabilityEventResource> events)`**: DTO de salida de la trazabilidad de un dispositivo.
+* **`GenerateReportResource(String deviceId, String from, String to)`**: DTO de entrada para generar un reporte de trazabilidad.
+* **`TraceabilityReportResource(String id, String deviceId, String deviceSerialNumber, String reservoirName, String from, String to, String generatedAt, int measurements, int correctionCycles, int alerts, int incidents, int releases, List<TraceabilityEventResource> events)`**: DTO de salida del reporte generado, con sus conteos y el *snapshot* de eventos.
 
 ---
 
 ##### C. Transformers / Mappers
 
-* **`CreateOperationalAlertCommandFromResourceAssembler`**: Mapea `CreateOperationalAlertResource` a `CreateOperationalAlertCommand`.
-* **`RegisterIncidentCommandFromResourceAssembler`**: Transforma el recurso de incidente en `RegisterIncidentCommand`.
-* **`OperationalAlertResourceFromEntityAssembler`**: Transforma la entidad `OperationalAlert` en `OperationalAlertResource`.
+Clases de transformación encargadas de mapear entre los DTOs/Resources de la capa de interfaz y los objetos de la capa de aplicación/dominio (Commands, Queries, Read Models y Agregados).
+
+* **`AcknowledgeOperationalAlertCommandFromResourceAssembler`**: Combina el path param `alertId` y `UpdateStatusResource` para construir `AcknowledgeOperationalAlertCommand`, validando que el estado solicitado sea `ACKNOWLEDGED`.
+* **`RegisterIncidentCommandFromResourceAssembler`**: Transforma `RegisterIncidentResource` y el principal autenticado en `RegisterIncidentCommand`.
+* **`CloseQualityIncidentCommandFromResourceAssembler`**: Combina el path param `incidentId` y `UpdateStatusResource` para construir `CloseIncidentCommand`, validando que el estado solicitado sea `CLOSED`.
+* **`GenerateTraceabilityReportCommandFromResourceAssembler`**: Transforma `GenerateReportResource` en `GenerateTraceabilityReportCommand`.
+* **`MonitoringOverviewResourceFromReadModelAssembler`**: Mapea el read model `MonitoringOverview` hacia `MonitoringOverviewResource`.
+* **`DeviceStatusViewResourceFromReadModelAssembler`**: Mapea el read model `DeviceStatusView` hacia `DeviceStatusViewResource`.
+* **`OperationalAlertResourceFromReadModelAssembler`**: Mapea el read model `OperationalAlertView` hacia `OperationalAlertResource`.
+* **`OperationalAlertPageResourceFromReadModelAssembler`**: Mapea una página de `OperationalAlertView` hacia `OperationalAlertPageResource`.
+* **`QualityIncidentResourceFromReadModelAssembler`**: Mapea el read model `QualityIncidentView` hacia `QualityIncidentResource`.
+* **`QualityIncidentPageResourceFromReadModelAssembler`**: Mapea una página de `QualityIncidentView` hacia `QualityIncidentPageResource`.
+* **`TraceabilityEventResourceFromEntityAssembler`**: Mapea el agregado `TraceabilityEvent` hacia `TraceabilityEventResource`.
+* **`DeviceTraceabilityResourceFromReadModelAssembler`**: Mapea el read model `DeviceTraceabilityDetail` hacia `DeviceTraceabilityResource`, incluyendo la vista del dispositivo y su lista de eventos.
+* **`TraceabilityReportResourceFromReadModelAssembler`**: Mapea el read model `TraceabilityReport` hacia `TraceabilityReportResource`, incluyendo sus conteos y el *snapshot* de eventos.
 
 #### 4.2.5.3. Application Layer
 
 ##### A. Command Services & Handlers (Servicios de Comandos)
 
+Procesan las intenciones de cambio de estado recibiendo *Commands*, orquestando la lógica de negocio junto con los agregados del dominio y persistiendo los cambios mediante los repositorios.
+
 * **`MonitoringCommandServiceImpl`**
-  * **Descripción:** Coordina los flujos de trabajo de trazabilidad, registro de incidentes y correlación de eventos.
+  * **Descripción:** Implementación de la interfaz `MonitoringCommandService`. Concentra la atención de alertas, el ciclo de vida de los incidentes y la generación de reportes. Los eventos de trazabilidad que producen estos flujos se escriben dentro del mismo contexto, por lo que no requieren un puerto adicional.
   * **Flujos de trabajo / Handlers:**
-    * **`handle(CreateOperationalAlertCommand command)`**: Instancia la alerta operativa y la persiste.
-    * Después de persistir una alerta notificable, solicita el envío mediante `NotificationPort`. Un fallo externo se registra para reintento y no elimina ni resuelve la alerta.
-    * **`handle(RegisterIncidentCommand command)`**: Registra la incidencia de calidad o pérdida de monitoreo.
-    * **`handle(CorrelateEventsCommand command)`**: Correlaciona eventos del sistema con ciclos operativos.
-    * **`handle(UpdateStatusViewCommand command)`**: Actualiza la proyección de las vistas de estado para consulta rápida.
-    * **`handle(GenerateUpdatedReportCommand command)`**: Procesa el consolidado histórico y genera el reporte actualizado (`ReportGeneratedEvent`).
+    * **`handle(AcknowledgeOperationalAlertCommand command)`**: Recupera la alerta por `alertId` y la organización del principal; retorna `Optional.empty()` si no existe (404) y lanza la excepción de conflicto si su estado no es `ACTIVE` (409). Invoca `alert.acknowledge()`, persiste y retorna la alerta actualizada con `attended_at`.
+    * **`handle(RegisterIncidentCommand command)`**: Valida el dispositivo mediante `DeviceOperationalContextService` —debe existir y pertenecer a la organización— y toma de allí `deviceSerialNumber` y `reservoirName`. Crea el agregado `QualityIncident` en estado `OPEN` con un `correlation_id` nuevo, lo persiste y registra el evento `INCIDENT_REGISTERED` (`WARNING`) con el actor del principal autenticado.
+    * **`handle(CloseIncidentCommand command)`**: Recupera el incidente por `incidentId` y organización; retorna `Optional.empty()` si no existe (404) y rechaza con conflicto (409) si no está en `OPEN`. Invoca `incident.close()`, persiste y registra el evento `INCIDENT_CLOSED` (`SUCCESS`) reutilizando el `correlation_id` del incidente.
+    * **`handle(GenerateTraceabilityReportCommand command)`**: Valida que `from` ≤ `to` y obtiene el serial y el reservorio del dispositivo desde `DeviceOperationalContextService`. Recupera los eventos del rango, rechaza con `422` si no existe ninguno, calcula los conteos (`MEASUREMENT_RECORDED`, `cycle_id` distintos, `ALERT_CREATED`, `INCIDENT_REGISTERED` y `RELEASE_AUTHORIZED`) y persiste el `TraceabilityReport` con el *snapshot* de eventos en `generated_at`.
 
 ---
 
 ##### B. Query Services & Handlers (Servicios de Consulta)
 
+Atienden las lecturas de información recibiendo objetos *Query*, optimizando el acceso a los datos sin alterar el estado del dominio.
+
 * **`MonitoringQueryServiceImpl`**
+  * **Descripción:** Implementación de la interfaz `MonitoringQueryService`. Combina la información persistida en `mon` con los datos operativos de Configuration, de la última medición de Telemetry y del estado del proceso de Treatment para construir los *read models* de supervisión.
   * **Flujos de trabajo / Handlers:**
-    * **`handle(GetActiveAlertsByDeviceIdQuery query)`**: Obtiene las alertas activas del dispositivo.
-    * **`handle(GetIncidentsByDeviceIdQuery query)`**: Devuelve la lista de incidentes registrados.
-    * **`handle(GetCorrelatedEventsByCycleQuery query)`**: Recupera la información correlacionada por ciclo.
-    * **`handle(GetTraceabilityReportQuery query)`**: Devuelve el reporte de trazabilidad consolidado.
+    * **`handle(GetMonitoringOverviewQuery query)`**: Obtiene de `DeviceOperationalContextService` los dispositivos no inactivos de la organización y resuelve, en lote, la última medición de cada uno con `TelemetrySnapshotService` y su estado de proceso con `TreatmentStateService`. Cuenta las alertas `ACTIVE` por dispositivo desde `OperationalAlertRepository` y deriva `statusView` como `OUTDATED` cuando no hay medición o la disponibilidad es `DELAYED`, `OFFLINE` o `UNKNOWN`. Calcula `totalDevices`, `onlineDevices` y `devicesRequiringAttention` (`OUTDATED`, proceso en `FAILURE` o alertas activas), y retorna el `MonitoringOverview` con la vista por dispositivo y las cinco alertas activas más recientes.
+    * **`handle(ListOperationalAlertsQuery query)`**: Lista paginada de alertas de la organización filtrando por `searchTerm` (serial, reservorio, descripción y origen), `status`, `severity` y `deviceId`, con ordenamiento por `sortBy` y `sortDirection`. Retorna `Page<OperationalAlertView>` con los *snapshots* de serial y reservorio ya persistidos.
+    * **`handle(ListQualityIncidentsQuery query)`**: Lista paginada de incidentes filtrando por `searchTerm`, `status`, `incidentType` y `deviceId`, con ordenamiento configurable y `createdAt` descendente por defecto. Retorna `Page<QualityIncidentView>`.
+    * **`handle(GetDeviceTraceabilityQuery query)`**: Valida el dispositivo con `DeviceOperationalContextService`, compone su `DeviceStatusView` con la última medición y el estado del proceso, y recupera los eventos del rango `from`–`to` ordenados del más reciente al más antiguo. Retorna `DeviceTraceabilityDetail`; si el dispositivo no pertenece a la organización, retorna `Optional.empty()` (404).
+
+---
+
+##### C. Outbound Services / Ports (Servicios de Salida)
+
+Interfaces y abstracciones requeridas por la capa de aplicación para comunicarse con otros bounded contexts. `mon` no declara claves foráneas físicas hacia `cfg`, `tel` ni `trt`, de modo que en microservicios estos puertos se resuelven por API o por eventos.
+
+* **`DeviceOperationalContextService`**: Puerto hacia Configuration para obtener el dispositivo (existencia, estado de ciclo de vida, serial, alias, reservorio vinculado, operario responsable y disponibilidad). Expone `Optional<DeviceOperationalSnapshot> findDevice(UUID organizationId, UUID deviceId)` y `List<DeviceOperationalSnapshot> findActiveDevices(UUID organizationId)`.
+* **`TelemetrySnapshotService`**: Puerto hacia Telemetry para obtener la última medición de pH y temperatura. Expone `Optional<MeasurementSnapshot> findLatestMeasurement(UUID organizationId, UUID deviceId)` y `Map<UUID, MeasurementSnapshot> findLatestMeasurements(UUID organizationId, Collection<UUID> deviceIds)`, esta última para evitar consultas por dispositivo en el resumen operacional.
+* **`TreatmentStateService`**: Puerto hacia Treatment para obtener el estado vigente del proceso de tratamiento del dispositivo. Expone `Optional<String> findCurrentProcessState(UUID organizationId, UUID deviceId)` y `Map<UUID, String> findCurrentProcessStates(UUID organizationId, Collection<UUID> deviceIds)`.
 
 #### 4.2.5.4. Infrastructure Layer
 
 ##### A. Persistence & Repositories (Persistencia y Repositorios)
 
+Proporciona las implementaciones concretas para el almacenamiento y recuperación de los cuatro agregados mediante Spring Data JPA y la base de datos relacional (schema `mon`). Cada raíz de agregado tiene su propio repositorio; no existen repositorios para entidades hijas porque el contexto no las define.
+
 * **`OperationalAlertRepository` (JPA Repository)**
-  * `List<OperationalAlert> findByDeviceIdOrderByCreatedAtDesc(String deviceId)`
+  * **Descripción:** Interfaz que extiende de `JpaRepository` para la gestión de alertas operativas.
+  * **Métodos principales:**
+    * `Page<OperationalAlert> findByOrganizationIdAndFilters(UUID organizationId, String status, String severity, UUID deviceId, String searchTerm, Pageable pageable)`: Lista paginada de alertas con filtros por estado, severidad y dispositivo; `searchTerm` busca sobre `device_serial_number`, `reservoir_name`, `description` y `source`.
+    * `Optional<OperationalAlert> findByIdAndOrganizationId(UUID alertId, UUID organizationId)`: Recupera una alerta por su ID dentro de su organización.
+    * `List<OperationalAlert> findByOrganizationIdAndStatusOrderByCreatedAtDesc(UUID organizationId, AlertStatus status, Pageable pageable)`: Retorna las alertas activas más recientes para el resumen operacional.
+    * `long countByOrganizationIdAndStatus(UUID organizationId, AlertStatus status)`: Cuenta las alertas activas de la organización.
+    * `List<DeviceAlertCount> countActiveByDevice(UUID organizationId, Collection<UUID> deviceIds)`: Proyección con el conteo de alertas `ACTIVE` por dispositivo, en una sola consulta, para la vista consolidada.
+
 * **`QualityIncidentRepository` (JPA Repository)**
-  * `List<QualityIncident> findByDeviceId(String deviceId)`
-* **`EventCorrelationRepository` (JPA Repository)**
-  * `Optional<EventCorrelation> findByCycleId(UUID cycleId)`
+  * **Descripción:** Interfaz para la gestión de incidentes de calidad y de pérdida de monitoreo.
+  * **Métodos principales:**
+    * `Page<QualityIncident> findByOrganizationIdAndFilters(UUID organizationId, String status, String incidentType, UUID deviceId, String searchTerm, Pageable pageable)`: Lista paginada de incidentes con filtros por estado, tipo y dispositivo; `searchTerm` busca sobre `device_serial_number`, `reservoir_name` y `description`.
+    * `Optional<QualityIncident> findByIdAndOrganizationId(UUID incidentId, UUID organizationId)`: Recupera un incidente por su ID dentro de su organización.
+    * `long countByOrganizationIdAndStatus(UUID organizationId, IncidentStatus status)`: Cuenta los incidentes abiertos de la organización.
 
-##### B. Notification Adapter (Adaptador de notificaciones)
+* **`TraceabilityEventRepository` (JPA Repository)**
+  * **Descripción:** Interfaz para la gestión de la línea temporal de eventos de trazabilidad.
+  * **Métodos principales:**
+    * `List<TraceabilityEvent> findByOrganizationIdAndDeviceIdAndOccurredAtBetweenOrderByOccurredAtDesc(UUID organizationId, UUID deviceId, Instant from, Instant to)`: Recupera los eventos de un dispositivo en el rango, del más reciente al más antiguo, para la consulta de trazabilidad.
+    * `List<TraceabilityEvent> findByOrganizationIdAndDeviceIdAndOccurredAtBetweenOrderByOccurredAtAsc(UUID organizationId, UUID deviceId, Instant from, Instant to)`: Recupera los mismos eventos en orden cronológico ascendente para congelarlos como *snapshot* del reporte.
 
-* **`FirebaseCloudMessagingAdapter`**
-  * **Descripción:** Implementa `NotificationPort` mediante Firebase Cloud Messaging. Utiliza el token móvil vigente del Operario, registra el resultado de entrega y desactiva tokens rechazados sin alterar el estado de la alerta.
+* **`TraceabilityReportRepository` (JPA Repository)**
+  * **Descripción:** Interfaz para la persistencia de los reportes de trazabilidad generados.
+  * **Métodos principales:**
+    * `save(TraceabilityReport report)`: Heredado de `JpaRepository`; es la única operación que utiliza el contexto, porque ningún endpoint recupera reportes por ID.
+
+> **Vista de desarrollo:** `mon.device_status_view_dev` consolida dispositivo, última medición, estado del proceso y alertas activas en la base unificada de desarrollo. No la consume el código de aplicación: en microservicios la vista se compone con los puertos `DeviceOperationalContextService`, `TelemetrySnapshotService` y `TreatmentStateService`, y el dominio no la trata como entidad.
+
+---
+
+##### B. Configuration Context Adapter (Adaptador hacia Configuration)
+
+Implementa el puerto de salida de la capa de aplicación mediante consultas de solo lectura sobre el schema `cfg`, sin incorporar entidades de Configuration al dominio de Monitoring. En un despliegue de microservicios este adaptador se sustituye por un cliente HTTPS contra la API de Configuration, conservando el mismo puerto.
+
+* **`DeviceOperationalContextServiceImpl`**
+  * **Descripción:** Implementación del puerto `DeviceOperationalContextService`. Construye el snapshot operativo del dispositivo a partir de `cfg.devices`, `cfg.reservoirs`, `cfg.device_assignments` y `cfg.operator_profiles`.
+  * **Métodos:**
+    * `Optional<DeviceOperationalSnapshot> findDevice(UUID organizationId, UUID deviceId)`: Retorna `deviceSerialNumber`, `alias`, `reservoirName`, `operatorName`, `availability` y `lifecycleStatus`; el operario se resuelve por la asignación `ACTIVE` del dispositivo. Retorna vacío si el dispositivo no existe en la organización.
+    * `List<DeviceOperationalSnapshot> findActiveDevices(UUID organizationId)`: Retorna los dispositivos con `lifecycle_status` distinto de `INACTIVE` para alimentar el resumen operacional.
+
+---
+
+##### C. Telemetry Context Adapter (Adaptador hacia Telemetry)
+
+Implementa el puerto `TelemetrySnapshotService` con consultas de solo lectura sobre `tel.water_measurements`. En microservicios se sustituye por un cliente contra la API de Telemetry sin cambiar el contrato del puerto.
+
+* **`TelemetrySnapshotServiceImpl`**
+  * **Descripción:** Implementación del puerto `TelemetrySnapshotService`. Obtiene la última medición registrada por dispositivo.
+  * **Métodos:**
+    * `Optional<MeasurementSnapshot> findLatestMeasurement(UUID organizationId, UUID deviceId)`: Retorna `ph`, `temperature` y `measuredAt` de la medición más reciente del dispositivo; vacío si no tiene mediciones.
+    * `Map<UUID, MeasurementSnapshot> findLatestMeasurements(UUID organizationId, Collection<UUID> deviceIds)`: Resuelve la última medición de varios dispositivos con una consulta `DISTINCT ON (device_id)` ordenada por `measured_at DESC`, evitando el acceso por dispositivo en el resumen operacional.
+
+---
+
+##### D. Treatment Context Adapter (Adaptador hacia Treatment)
+
+Implementa el puerto `TreatmentStateService` mediante consultas de solo lectura sobre `trt.treatment_processes`. En microservicios se sustituye por un cliente contra la API de Treatment.
+
+* **`TreatmentStateServiceImpl`**
+  * **Descripción:** Implementación del puerto `TreatmentStateService`. Obtiene el estado vigente del proceso de tratamiento del dispositivo.
+  * **Métodos:**
+    * `Optional<String> findCurrentProcessState(UUID organizationId, UUID deviceId)`: Retorna el `state` del proceso más reciente del dispositivo (ordenado por `updated_at` y `created_at` descendente); vacío si el dispositivo nunca tuvo un proceso, caso en el que el resumen operacional asume `READING`.
+    * `Map<UUID, String> findCurrentProcessStates(UUID organizationId, Collection<UUID> deviceIds)`: Resuelve el estado vigente de varios dispositivos en una sola consulta.
+
+---
+
+##### E. Configuration & OpenAPI (Configuración de Infraestructura)
+
+Clases que configuran componentes del framework y la documentación del microservicio.
+
+* **`SecurityConfiguration`**: Define la cadena de filtros de seguridad (`SecurityFilterChain`), reglas de acceso a los endpoints `/api/v1/monitoring/**`, CORS, CSRF y la gestión de sesiones *stateless*. El `organization_id` se deriva del token autenticado y nunca se acepta desde el cuerpo o los parámetros de la petición.
 
 #### 4.2.5.5. Bounded Context Software Architecture Component Level Diagrams
 
-[![Component.png](https://i.postimg.cc/259VV2RX/Component.png)](https://postimg.cc/kV8nHN5x)
+[![Monitoring-Component-Diagram-dark.png](https://i.postimg.cc/XN5wRTHW/Monitoring-Component-Diagram-dark.png)](https://postimg.cc/Hjpc5P1v)
+
+*Figura: Diagrama de componentes del bounded context Monitoring. El API Gateway enruta las peticiones a `MonitoringOverviewController`, `OperationalAlertsController`, `QualityIncidentsController` y `TraceabilityController`, que invocan `MonitoringQueryServiceImpl` para las lecturas y `MonitoringCommandServiceImpl` para los cambios de estado, la apertura de incidentes y la generación de reportes. El servicio de comandos opera sobre los agregados `OperationalAlert`, `QualityIncident`, `TraceabilityEvent` y `TraceabilityReport`, mientras que el de consultas compone la vista general, la bandeja de alertas, los incidentes y la línea temporal del dispositivo. Ambos servicios acceden a la persistencia mediante `OperationalAlertRepository`, `QualityIncidentRepository`, `TraceabilityEventRepository` y `TraceabilityReportRepository`, que escriben y leen en la base de datos PostgreSQL del schema `mon`. Los tres puertos de salida que conectan este contexto con Configuration, Telemetry y Treatment se detallan en las secciones 4.2.5.3 y 4.2.5.4.*
 
 #### 4.2.5.6. Bounded Context Software Architecture Code Level Diagrams
 
 ##### 4.2.5.6.1. Bounded Context Domain Layer Class Diagrams
 
-A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Monitoreo y Trazabilidad, estructurando los agregados `OperationalAlert`, `QualityIncident` y `EventCorrelation`, sus objetos de valor asociados (`AlertSeverity`, `IncidentType`, `StatusView`, `CorrelationData`), junto con las interfaces para los comandos, consultas y servicios del patrón CQRS:
+A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Monitoreo y Trazabilidad, donde se estructuran los cuatro agregados `OperationalAlert`, `QualityIncident`, `TraceabilityEvent` y `TraceabilityReport`, sus seis objetos de valor, los cuatro comandos y cuatro consultas del patrón CQRS, los cinco modelos de lectura y las dos interfaces de servicio:
 
 ---
 
-[![uml.png](https://i.postimg.cc/jSBvVQCW/uml.png)](https://postimg.cc/Wd60gZGj)
+[![image.png](https://i.postimg.cc/85kNDQDW/image.png)](https://postimg.cc/7CRpMR5Y)
 
 ---
 
-* **`OperationalAlert`**: Agregado encargado de gestionar las notificaciones de eventos operacionales críticos en base a incidentes o anomalías del sistema.
-* **`QualityIncident`**: Encapsula la detección de fallos de calidad de agua o interrupciones de lectura en los sensores.
-* **`EventCorrelation`**: Mantiene la agrupación relacional de identificadores de eventos por ciclos de tratamiento para garantizar trazabilidad técnica.
+* **`OperationalAlert` (Agregado)**: Alerta operativa que conserva `organization_id` como *snapshot* del tenant, `device_id` como referencia lógica a `cfg` y los *snapshots* `device_serial_number` y `reservoir_name` para resolver la alerta sin depender de Configuration. Nace en estado `ACTIVE` y solo admite la atención `ACTIVE` → `ACKNOWLEDGED`, sellando `attended_at`; el estado `RESOLVED` representa el cierre definitivo de la condición que la originó.
+* **`QualityIncident` (Agregado)**: Incidente de calidad o de pérdida de monitoreo (`QUALITY_INCIDENT` | `MONITORING_LOSS`) que se abre en estado `OPEN` con un `correlation_id` que agrupa sus eventos y solo puede cerrarse `OPEN` → `CLOSED`. Genera los eventos de trazabilidad `INCIDENT_REGISTERED` (`WARNING`) al abrirse e `INCIDENT_CLOSED` (`SUCCESS`) al cerrarse, ambos bajo el mismo `correlation_id`.
+* **`TraceabilityEvent` (Agregado)**: Evento inmutable y de solo adición (*append-only*) de la línea temporal del dispositivo; registra `event_type` como texto libre, `actor`, `outcome` y la lectura opcional de pH y temperatura asociada al evento. `occurred_at` ordena la cronología y no admite actualización ni borrado.
+* **`TraceabilityReport` (Agregado)**: Reporte materializado de un dispositivo para un período (`from_date`–`to_date`) que valida el rango y la existencia de eventos, calcula los conteos por tipo de evento y congela en `generated_at` el *snapshot* de eventos (`JSONB`) junto con el serial del dispositivo y el reservorio.
+* **Objetos de Valor (`AlertSeverity`, `AlertStatus`, `IncidentType`, `IncidentStatus`, `EventOutcome`, `StatusView`)**: Enumeraciones inmutables que tipan la severidad y el estado de las alertas, el tipo y el estado de los incidentes, el resultado de los eventos de trazabilidad y el estado proyectado de la vista de monitoreo. `StatusView` no se persiste: se deriva de la disponibilidad del dispositivo y de la frescura de su última medición.
+* **Commands (`AcknowledgeOperationalAlertCommand`, `RegisterIncidentCommand`, `CloseIncidentCommand`, `GenerateTraceabilityReportCommand`)**: Comandos que cubren los cuatro endpoints de escritura del contexto: atención de alertas, apertura y cierre de incidentes y generación de reportes. La creación de alertas y la escritura de eventos de trazabilidad no se exponen como comandos HTTP porque las produce el propio contexto.
+* **Queries (`GetMonitoringOverviewQuery`, `ListOperationalAlertsQuery`, `ListQualityIncidentsQuery`, `GetDeviceTraceabilityQuery`)**: Consultas de solo lectura para el resumen operacional, la bandeja paginada de alertas e incidentes con filtros y la línea temporal de un dispositivo dentro de un rango de fechas.
+* **Read Models (`DeviceStatusView`, `MonitoringOverview`, `OperationalAlertView`, `QualityIncidentView`, `DeviceTraceabilityDetail`)**: Proyecciones que combinan lo persistido en `mon` con la disponibilidad y el estado del proceso de `cfg`/`trt` y con la última medición de `tel`. `MonitoringOverview` consolida los totales, la vista por dispositivo y las alertas recientes; `DeviceTraceabilityDetail` compone la vista del dispositivo con sus eventos.
+* **`MonitoringCommandService` / `MonitoringQueryService`**: Interfaces de servicio que separan la escritura de la lectura siguiendo el patrón CQRS; la primera atiende los cuatro comandos y la segunda compone los modelos de lectura.
 
 ##### 4.2.5.6.2. Bounded Context Database Design Diagram
 
-[![db.png](https://i.postimg.cc/Wbb501Qv/db.png)](https://postimg.cc/1420QsmC)
+Para la persistencia del contexto de monitoreo se establece el siguiente esquema relacional DDL, diseñado para almacenar las alertas operativas, los incidentes de calidad, la línea temporal de eventos y los reportes materializados en el esquema `mon`:
+
+[![MON-DB.png](https://i.postimg.cc/rFghYDFh/MON-DB.png)](https://postimg.cc/dLkmhtCd)
 
 ---
 
 ```sql
-CREATE TABLE event_correlations
-(
-  id UUID NOT NULL,
-  organization_id UUID NOT NULL,
-  device_id UUID NOT NULL,
-  cycle_id UUID NOT NULL,
-  created_at TIMESTAMPTZ NOT NULL,
-  updated_at TIMESTAMPTZ NOT NULL,
-  PRIMARY KEY (id),
-  UNIQUE (id)
+CREATE TABLE mon.operational_alerts (
+    id                   uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    organization_id      uuid NOT NULL,
+    device_id            uuid NOT NULL,
+    device_serial_number varchar(100),
+    reservoir_name       varchar(200),
+    severity             varchar(20) NOT NULL CHECK (severity IN ('LOW','MEDIUM','HIGH','CRITICAL')),
+    description          text NOT NULL,
+    source               varchar(100),
+    status               varchar(20) NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE','ACKNOWLEDGED','RESOLVED')),
+    created_at           timestamptz NOT NULL DEFAULT now(),
+    attended_at          timestamptz,
+    updated_at           timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE TABLE event_correlation_items
-(
-  id UUID NOT NULL,
-  correlation_id UUID NOT NULL,
-  event_id VARCHAR(64) NOT NULL,
-  event_type VARCHAR(80) NOT NULL,
-  occurred_at TIMESTAMPTZ NOT NULL,
-  PRIMARY KEY (id),
-  FOREIGN KEY (correlation_id) REFERENCES event_correlations(id),
-  UNIQUE (correlation_id, event_id)
+CREATE TABLE mon.quality_incidents (
+    id                   uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    organization_id      uuid NOT NULL,
+    device_id            uuid NOT NULL,
+    device_serial_number varchar(100),
+    reservoir_name       varchar(200),
+    incident_type        varchar(30) NOT NULL CHECK (incident_type IN ('QUALITY_INCIDENT','MONITORING_LOSS')),
+    description          text NOT NULL,
+    status               varchar(20) NOT NULL DEFAULT 'OPEN' CHECK (status IN ('OPEN','CLOSED')),
+    correlation_id       varchar(100),
+    created_at           timestamptz NOT NULL DEFAULT now(),
+    closed_at            timestamptz,
+    updated_at           timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE TABLE quality_incidents
-(
-  id UUID NOT NULL,
-  organization_id UUID NOT NULL,
-  device_id UUID NOT NULL,
-  incident_type VARCHAR(15) NOT NULL,
-  description VARCHAR(100) NOT NULL,
-  created_at TIMESTAMPTZ NOT NULL,
-  updated_at TIMESTAMPTZ NOT NULL,
-  correlation_id UUID NOT NULL,
-  PRIMARY KEY (id),
-  FOREIGN KEY (correlation_id) REFERENCES event_correlations(id),
-  UNIQUE (id)
+CREATE TABLE mon.traceability_events (
+    id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    organization_id uuid NOT NULL,
+    device_id       uuid NOT NULL,
+    correlation_id  varchar(100) NOT NULL,
+    cycle_id        varchar(100),
+    event_type      varchar(60) NOT NULL,
+    title           varchar(200) NOT NULL,
+    description     text,
+    actor           varchar(100),
+    outcome         varchar(20) NOT NULL CHECK (outcome IN ('INFO','SUCCESS','WARNING','FAILURE')),
+    ph              numeric(6,2),
+    temperature     numeric(6,2),
+    occurred_at     timestamptz NOT NULL,
+    created_at      timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE TABLE operational_alerts
-(
-  id UUID NOT NULL,
-  organization_id UUID NOT NULL,
-  device_id UUID NOT NULL,
-  severity VARCHAR(15) NOT NULL,
-  description VARCHAR(100) NOT NULL,
-  created_at TIMESTAMPTZ NOT NULL,
-  updated_at TIMESTAMPTZ NOT NULL,
-  incident_id UUID NOT NULL,
-  PRIMARY KEY (id),
-  FOREIGN KEY (incident_id) REFERENCES quality_incidents(id),
-  UNIQUE (id)
+CREATE TABLE mon.traceability_reports (
+    id                   uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    organization_id      uuid NOT NULL,
+    device_id            uuid NOT NULL,
+    device_serial_number varchar(100),
+    reservoir_name       varchar(200),
+    from_date            timestamptz NOT NULL,
+    to_date              timestamptz NOT NULL DEFAULT now(),
+    generated_at         timestamptz NOT NULL DEFAULT now(),
+    measurements         integer NOT NULL DEFAULT 0,
+    correction_cycles    integer NOT NULL DEFAULT 0,
+    alerts               integer NOT NULL DEFAULT 0,
+    incidents            integer NOT NULL DEFAULT 0,
+    releases             integer NOT NULL DEFAULT 0,
+    events               jsonb NOT NULL DEFAULT '[]'::jsonb,
+    created_at           timestamptz NOT NULL DEFAULT now()
 );
+
 ```
 
-* **`event_correlations`**: Registra la cabecera de cada agrupación por ciclo operativo y dispositivo IoT.
-* **`event_correlation_items`**: Persiste los identificadores, tipos y fechas de los eventos incluidos en cada correlación, de modo que `eventIds` tenga una representación durable y consultable.
-* **`quality_incidents`**: Almacena las incidencias técnicas y de calidad detectadas, enlazadas mediante clave foránea (`correlation_id`) a la trazabilidad de eventos origen.
-* **`operational_alerts`**: Mantiene las alertas dirigidas a los operadores, vinculadas a su incidente disparador (`incident_id`) para permitir un análisis inmediato de causa raíz.
+---
+
+* **`mon.operational_alerts`**: Registra las alertas dirigidas a los operadores cuando una medición, un proceso o una pérdida de monitoreo requiere atención. Conserva `organization_id` como *snapshot* del tenant, `device_id` como referencia lógica a `cfg` y los *snapshots* `device_serial_number` y `reservoir_name` para consultar la alerta sin acoplamiento físico con Configuration. Registra su ciclo de vida desde `ACTIVE` hasta `ACKNOWLEDGED` (atención) o `RESOLVED` (cierre definitivo de la condición que la originó).
+
+
+* **`mon.quality_incidents`**: Almacena las incidencias técnicas y de calidad detectadas (`QUALITY_INCIDENT` | `MONITORING_LOSS`). Se abren en estado `OPEN` asociadas a un `correlation_id` que agrupa los eventos de origen y se cierran de forma explícita a estado `CLOSED` registrando `closed_at`.
+
+
+* **`mon.traceability_events`**: Persiste la línea temporal inmutable y de solo adición (*append-only*) de las operaciones del dispositivo. Registra `event_type` como texto libre, `title`, `description`, `actor`, `outcome`, junto a los valores opcionales de `ph` y `temperature` asociados al instante de la captura. Se indexa por `occurred_at` para reconstruir la cronología completa.
+
+
+* **`mon.traceability_reports`**: Mantiene los reportes materializados para auditoría y consulta en un período (`from_date`–`to_date`). Congela los conteos de `measurements`, `correction_cycles`, `alerts`, `incidents` y `releases`, almacenando un *snapshot* inmutable de los eventos en formato `JSONB` en la columna `events`.
 
 ### 4.2.6. Bounded Context: Device Identity and Access
 
