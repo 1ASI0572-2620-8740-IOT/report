@@ -2992,7 +2992,9 @@ Clases que configuran componentes del framework y la documentación del microser
 
 #### 4.2.4.5. Bounded Context Software Architecture Component Level Diagrams
 
-[![component.png](https://i.postimg.cc/y6bkVfXg/component.png)](https://postimg.cc/rz58jNHM)
+[![Treatment-Component-Diagram-dark.png](https://i.postimg.cc/prqt69zy/Treatment-Component-Diagram-dark.png)](https://postimg.cc/sGQ8BgnR)
+
+*Figura: Diagrama de componentes del bounded context Treatment. El API Gateway enruta las peticiones a `TreatmentsController`, que invoca los servicios de aplicación `TreatmentCommandServiceImpl` y `TreatmentQueryServiceImpl`; el primero crea y valida el agregado `WaterTreatmentProcess`, mientras que el segundo lee los procesos, mediciones, ciclos y eventos a través de `TreatmentProcessRepository`, `TreatmentMeasurementRepository`, `TreatmentCycleRepository` y `TreatmentEventRepository`, que persisten en la base de datos PostgreSQL del schema `trt`.*
 
 #### 4.2.4.6. Bounded Context Software Architecture Code Level Diagrams
 
