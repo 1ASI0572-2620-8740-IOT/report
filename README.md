@@ -3018,70 +3018,88 @@ A continuación se presenta el diagrama de clases correspondiente a la capa de d
 
 ##### 4.2.4.6.2. Bounded Context Database Design Diagram
 
-A continuación se detalla la definición DDL de la base de datos relacional encargada del almacenamiento y persistencia del flujo de tratamiento de agua:
+Para la persistencia del ciclo de tratamiento se establece el siguiente esquema relacional DDL, diseñado para almacenar los procesos, sus mediciones, ciclos y eventos en el esquema `trt`:
 
 ---
 
-[![database.png](https://i.postimg.cc/G3XFXYNs/database.png)](https://postimg.cc/z3RHBLqJ)
+[![TRT-DB.png](https://i.postimg.cc/yY7VVKN4/TRT-DB.png)](https://postimg.cc/6T1s0DRY)
 
 ---
 
 ```sql
-CREATE TABLE water_treatment_processes
+CREATE TABLE trt.treatment_processes
 (
-  id INT NOT NULL,
-  device_id VARCHAR(64) NOT NULL,
-  conformity VARCHAR(20) NOT NULL,
-  status VARCHAR(20) NOT NULL,
-  current_strategy VARCHAR(20) NOT NULL,
-  cycle_count INT NOT NULL,
-  useful_variation FLOAT NOT NULL,
-  created_at TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP NOT NULL,
-  PRIMARY KEY (id),
-  UNIQUE (id)
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  organization_id UUID NOT NULL,
+  device_id UUID NOT NULL,
+  configuration_versions_id UUID,
+  state VARCHAR(40) NOT NULL DEFAULT 'NOT_STARTED',
+  strategy VARCHAR(200),
+  approval_status VARCHAR(20) NOT NULL DEFAULT 'NOT_REQUIRED',
+  current_cycle INTEGER NOT NULL DEFAULT 0,
+  maximum_cycles INTEGER NOT NULL DEFAULT 0,
+  release_eligibility VARCHAR(30) NOT NULL DEFAULT 'NOT_ELIGIBLE',
+  waiting_minutes INTEGER,
+  failure_reason TEXT,
+  emergency_reason TEXT,
+  started_at TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  completed_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE treatment_cycles
+CREATE INDEX idx_tp_org ON trt.treatment_processes (organization_id);
+CREATE INDEX idx_tp_device ON trt.treatment_processes (device_id);
+CREATE INDEX idx_tp_state ON trt.treatment_processes (state);
+
+CREATE TABLE trt.treatment_measurements
 (
-  id INT NOT NULL,
-  process_id INT NOT NULL,
-  cycle_number INT NOT NULL,
-  strategy_type VARCHAR(50) NOT NULL,
-  command_id VARCHAR(64) NOT NULL,
-  status VARCHAR(20) NOT NULL,
-  started_at TIMESTAMP NOT NULL,
-  completed_at TIMESTAMP NULL,
-  PRIMARY KEY (id),
-  FOREIGN KEY (process_id) REFERENCES water_treatment_processes(id),
-  UNIQUE (process_id, cycle_number),
-  UNIQUE (command_id)
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  process_id UUID NOT NULL REFERENCES trt.treatment_processes (id) ON DELETE CASCADE,
+  type VARCHAR(10) NOT NULL,
+  ph NUMERIC(6,2) NOT NULL,
+  temperature NUMERIC(6,2) NOT NULL,
+  measured_at TIMESTAMPTZ NOT NULL,
+  conforming BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (process_id, type)
 );
 
-CREATE TABLE treatment_evaluations
+CREATE TABLE trt.treatment_cycles
 (
-  id INT NOT NULL,
-  process_id INT NOT NULL,
-  cycle_id INT NULL,
-  measurement_id VARCHAR(64) NOT NULL,
-  ph FLOAT NOT NULL,
-  temperature FLOAT NOT NULL,
-  conformity VARCHAR(20) NOT NULL,
-  useful_variation FLOAT NULL,
-  evaluated_at TIMESTAMP NOT NULL,
-  PRIMARY KEY (id),
-  FOREIGN KEY (process_id) REFERENCES water_treatment_processes(id),
-  FOREIGN KEY (cycle_id) REFERENCES treatment_cycles(id),
-  UNIQUE (process_id, measurement_id)
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  process_id UUID NOT NULL REFERENCES trt.treatment_processes (id) ON DELETE CASCADE,
+  number INTEGER NOT NULL,
+  action TEXT,
+  status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+  started_at TIMESTAMPTZ,
+  confirmed_at TIMESTAMPTZ,
+  result TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (process_id, number)
 );
 
+CREATE TABLE trt.treatment_events
+(
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  process_id UUID NOT NULL REFERENCES trt.treatment_processes (id) ON DELETE CASCADE,
+  title VARCHAR(200) NOT NULL,
+  description TEXT,
+  outcome VARCHAR(20) NOT NULL,
+  occurred_at TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_te_process ON trt.treatment_events (process_id);
 ```
 
 ---
 
-* **`water_treatment_processes`**: Conserva el estado y resumen vigente de cada proceso asignado a un dispositivo.
-* **`treatment_cycles`**: Registra cada actuación correctiva, su número, estrategia, comando idempotente, resultado y tiempos de ejecución.
-* **`treatment_evaluations`**: Conserva la medición evaluada antes o después de un ciclo, el resultado de conformidad y la variación útil calculada. Junto con `treatment_cycles`, permite reconstruir el historial prometido sin depender únicamente del resumen del proceso.
+* **`trt.treatment_processes`**: Cabecera del proceso de tratamiento. Conserva `organization_id` como *snapshot* del tenant, `device_id` y `configuration_versions_id` como referencias lógicas a `cfg`, y el estado vigente del proceso (`state`, `strategy`, `approval_status`, `current_cycle`, `maximum_cycles`, `release_eligibility`), junto con `waiting_minutes` y los motivos de fallo o emergencia. Los rangos de pH/temperatura y el modo de liberación no se duplican: se enriquecen por JOIN con `cfg.configuration_versions`.
+* **`trt.treatment_measurements`**: Almacena la medición `INITIAL` y la `LATEST` de cada proceso, con la unicidad `(process_id, type)`. `ph` y `temperature` usan `NUMERIC(6,2)` y `conforming` se calcula contra los rangos de la versión de configuración; `measured_at` registra la captura y `created_at` la persistencia.
+* **`trt.treatment_cycles`**: Registra los ciclos de corrección con numeración única por proceso (`UNIQUE (process_id, number)`), su acción, estado, tiempos de inicio y confirmación, y el resultado.
+* **`trt.treatment_events`**: Conserva la cronología del proceso (`title`, `description`, `outcome`, `occurred_at`) para reconstruir sus decisiones y transiciones; `outcome` distingue `INFO`, `SUCCESS`, `WARNING` y `FAILURE`.
+* **Integridad e indexación**: Las tres tablas hijas referencian `treatment_processes` con `ON DELETE CASCADE`, y las consultas se optimizan con índices por organización, dispositivo y estado del proceso, más el índice por proceso en los eventos.
 
 ### 4.2.5. Bounded Context: Monitoring
 
