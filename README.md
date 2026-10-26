@@ -926,7 +926,7 @@ Las expresiones “válido”, “completo”, “reciente” y “variación ú
 
 | Regla | Condición verificable para el alcance académico |
 |:--|:--|
-| Alta de Operario | `displayName` entre 2 y 100 caracteres, `identifier` con formato de correo y único dentro de la organización, y contraseña entre 8 y 72 caracteres. |
+| Alta de Operario | `displayName` entre 2 y 100 caracteres, `identifier` no vacío (correo o nombre de usuario), normalizado mediante recorte de espacios y minúsculas y único globalmente, y contraseña permanente entre 8 y 72 caracteres. El Administrador utiliza su correo como identificador. |
 | Medición válida | Incluye `measurementId`, `measuredAt`, pH y temperatura; pH entre 0 y 14 y temperatura entre 0 °C y 100 °C. |
 | Medición reciente | Su antigüedad no supera `measurementFreshnessSeconds`; el perfil académico usa 60 segundos como valor inicial. |
 | Tiempo de espera | `correctionWaitSeconds` es mayor que cero y no supera 1800 segundos; el perfil inicial usa 900 segundos, coherente con las esperas de 15 a 30 minutos observadas. |
@@ -939,7 +939,7 @@ Estos valores son parámetros iniciales del prototipo, no límites universales d
 | Epic / Story ID | Título | Descripción | Criterios de Aceptación | Relacionado con (Epic ID) |
 | :--- | :--- | :--- | :--- | :--- |
 | **EP-01** | **Gestión de Cuentas y Dispositivos** | Administración de perfiles de operarios y administradores, autenticación y asignación de dispositivos IoT a los operarios responsables de su monitoreo. | N/A | - |
-| **US-01** | Registro de operario | Como administrador, quiero registrar operarios con sus datos básicos, para habilitar su participación en el monitoreo de un dispositivo asignado. | **Escenario 1:** Given el administrador proporciona `displayName` de 2 a 100 caracteres, `identifier` con formato de correo y una contraseña de 8 a 72 caracteres, When registra al operario, Then el sistema crea la cuenta en estado activo dentro de su organización. <br><br>**Escenario 2:** Given falta uno de esos campos o incumple su longitud o formato, When el administrador intenta registrar al operario, Then el sistema rechaza el registro e identifica el campo inválido. <br><br>**Escenario 3:** Given ya existe en la organización un operario con el mismo `identifier`, When el administrador intenta registrarlo nuevamente, Then el sistema rechaza la duplicación. | EP-01 |
+| **US-01** | Registro de operario | Como administrador, quiero registrar operarios con sus datos básicos, para habilitar su participación en el monitoreo de un dispositivo asignado. | **Escenario 1:** Given el administrador proporciona `displayName` de 2 a 100 caracteres, `identifier` no vacío (correo o nombre de usuario) y una contraseña permanente de 8 a 72 caracteres, When registra al operario, Then el sistema normaliza el identificador y crea la cuenta en estado activo dentro de su organización; el acceso móvil requiere completar posteriormente el primer acceso. <br><br>**Escenario 2:** Given falta uno de esos campos o incumple sus reglas, When el administrador intenta registrar al operario, Then el sistema rechaza el registro e identifica el campo inválido. <br><br>**Escenario 3:** Given ya existe una cuenta con el mismo `identifier` normalizado en cualquier organización, When el administrador intenta registrarlo nuevamente, Then el sistema rechaza la duplicación sin revelar datos de otra empresa. | EP-01 |
 | **US-02** | Autenticación de usuario | Como usuario, quiero autenticarme con mis credenciales, para acceder únicamente a las funciones correspondientes a mi rol (operario o administrador). | **Escenario 1:** Given el usuario posee credenciales válidas, When envía la solicitud de acceso, Then el sistema concede el acceso a las funciones autorizadas para su rol. <br><br>**Escenario 2:** Given las credenciales proporcionadas no son válidas, When el usuario intenta autenticarse, Then el sistema deniega el acceso y registra el intento fallido. <br><br>**Escenario 3:** Given un usuario autenticado intenta acceder a una función que no corresponde a su rol, When realiza la solicitud, Then el sistema rechaza la operación. | EP-01 |
 | **US-03** | Asignación de dispositivo a operario | Como administrador, quiero asignar un dispositivo IoT a un operario, para delegar la responsabilidad de su monitoreo, dado que el alcance actual contempla un operario por dispositivo. | **Escenario 1:** Given un dispositivo sin operario asignado, When el administrador lo vincula a un operario activo, Then el sistema actualiza la asignación y otorga al operario los permisos correspondientes sobre ese dispositivo. <br><br>**Escenario 2:** Given un dispositivo ya cuenta con un operario asignado, When el administrador intenta asignarlo a otro operario, Then el sistema reemplaza la asignación anterior y notifica el cambio. <br><br>**Escenario 3:** Given un operario no está activo, When el administrador intenta asignarle un dispositivo, Then el sistema rechaza la asignación. | EP-01 |
 | **US-04** | Supervisión de operarios y dispositivos | Como administrador, quiero consultar el estado de los operarios y los dispositivos del sistema, para mantener control sobre las asignaciones vigentes, dado que no cuento con un dispositivo propio. | **Escenario 1:** Given existen operarios y dispositivos registrados, When el administrador consulta la relación entre ellos, Then el sistema muestra las asignaciones vigentes. <br><br>**Escenario 2:** Given un dispositivo no tiene operario asignado, When el administrador consulta el listado, Then el sistema lo identifica como pendiente de asignación. | EP-01 |
@@ -1550,6 +1550,10 @@ Los scopes mínimos son `telemetry:write`, `commands:read` y `commands:ack`. Un 
 
 ## 4.2. Tactical-Level Domain-Driven Design
 
+Los seis bounded contexts de backend se implementarán como microservicios Spring Boot independientes dentro de un monorepo, detrás de un API Gateway. Cada servicio administra sus migraciones y almacenamiento; no comparte entidades JPA, tablas ni consultas SQL con otros servicios. Un mismo servidor PostgreSQL puede alojar sus bases o esquemas aislados. La laptop ejecuta el servicio Edge en un repositorio separado y se comunica con la nube por HTTPS/REST, sin MQTT.
+
+Convenciones comunes de implementación: los identificadores de recursos son UUID en Java/PostgreSQL y cadenas en JSON; los números de versión y ciclo son enteros. Los identificadores de origen `measurementId`, `commandId` y `eventId` son cadenas estables para reintentos. Las fechas de negocio se representan con `Instant`, se almacenan como `TIMESTAMPTZ` y se devuelven en ISO 8601 UTC. Si un contrato de ingesta utiliza `timestamp`, expresa milisegundos Unix y se convierte a `Instant` al recibirlo. Los comandos internos pueden incluir el actor y la organización, pero estos se obtienen de la autenticación y no se confían al cuerpo enviado por el cliente.
+
 ### 4.2.1. Bounded Context: Human Identity and Access Management
 
 #### 4.2.1.1. Domain Layer
@@ -1569,7 +1573,7 @@ Los scopes mínimos son `telemetry:write`, `commands:read` y `commands:ack`. Un 
     * Validar los datos durante la creación/registro.
     * Autenticar credenciales mediante la verificación del hash de contraseña.
     * Mantener exactamente un rol por cuenta (`ADMINISTRATOR` u `OPERATOR`). El flujo público solo permite crear Administradores junto con la organización.
-    * El `identifier` (correo/username de login) es único por organización.
+    * El `identifier` (correo/username de login) se normaliza mediante recorte de espacios y minúsculas y es único globalmente. El login conserva únicamente identificador y contraseña, sin selector de organización.
     * El `email` se almacena por separado para notificaciones y puede diferir del `identifier`.
 
 * **`FirstAccessCode` (Agregado de Código de Primer Acceso)**
@@ -1680,8 +1684,8 @@ Definen las estructuras de datos aceptadas en las peticiones (Requests) y enviad
 * **`SignInResource(String identifier, String password)`**: DTO de entrada con las credenciales enviadas en el login.
 * **`RegisterOrganizationAdministratorResource(OrganizationData organization, String displayName, String email, String password)`**: DTO del alta inicial; el rol resultante siempre es `ADMINISTRATOR`. Incluye datos de la organización (nombre, RUC, teléfono, segmento) y del administrador (nombre, correo, contraseña).
 * **`CreateOperatorAccountResource(String displayName, String identifier, String password)`**: DTO administrativo; la contraseña es permanente y no exige cambio en el primer acceso.
-* **`UserResource(Long id, String displayName, String identifier, String status)`**: DTO de salida que expone la información pública del usuario (sin `organizationId` ni `role` en la respuesta).
-* **`AuthenticatedUserResource(Long id, String organizationId, String identifier, String role, String token)`**: DTO de salida que retorna la sesión humana; la organización y el rol también forman parte de los claims firmados.
+* **`UserResource(String id, String displayName, String identifier, String status)`**: DTO de salida que expone la información pública del usuario (sin `organizationId` ni `role` en la respuesta). El identificador representa un UUID.
+* **`AuthenticatedUserResource(String id, String organizationId, String identifier, String role, String token, Instant expiresAt)`**: DTO de salida que retorna la sesión humana; `expiresAt` es obligatorio y se serializa en ISO 8601 UTC. La organización y el rol también forman parte de los claims firmados. El mismo contrato de sesión se utiliza al completar el primer acceso móvil.
 * **`OperatorAccountPageResource(List<UserResource> items, int total, int page, int pageSize)`**: DTO de salida paginado para la lista de operarios.
 * **`OperatorAccessSummaryResource(String operatorAccountId, String operatorProfileId, String profileStatus, String groupId, String groupName, List<OperatorAssignmentResource> assignments)`**: DTO de salida que expone el resumen de acceso del operario.
 * **`OperatorAssignmentResource(String assignmentId, String reservoirId, String reservoirName, String deviceId, String deviceSerialNumber, String status)`**: DTO de salida de una asignación operativa.
@@ -1763,8 +1767,8 @@ Proporciona las implementaciones concretas para el almacenamiento y recuperació
 * **`UserRepository` (JPA Repository)**
   * **Descripción:** Interfaz que extiende de `JpaRepository` para la gestión directa de las operaciones CRUD y consultas personalizadas sobre la entidad `User`.
   * **Métodos principales:**
-    * `Optional<User> findByIdentifier(String identifier)`: Recupera un usuario basándose en su identificador de login único (correo/username).
-    * `boolean existsByIdentifierAndOrganizationId(String identifier, UUID organizationId)`: Verifica la existencia de un usuario antes del registro para evitar duplicados por organización.
+    * `Optional<User> findByIdentifier(String identifier)`: Recupera un usuario por su identificador normalizado y globalmente único (correo/username).
+    * `boolean existsByIdentifier(String identifier)`: Verifica la existencia global del identificador normalizado antes del registro; la restricción SQL también evita duplicados concurrentes.
     * `Page<User> findByOrganizationIdAndStatusAndIdentifierContaining(UUID organizationId, String status, String searchTerm, Pageable pageable)`: Lista paginada de operarios con filtros opcionales (`searchTerm`, `status`) para una organización.
     * `Optional<User> findByIdAndOrganizationId(UUID userId, UUID organizationId)`: Recupera un usuario por su ID dentro de su organización.
 
@@ -1824,7 +1828,7 @@ A continuación se presenta el diagrama de clases correspondiente a la capa de d
 [![IAM-DOMAIN-CLASSES.png](https://i.postimg.cc/VvMCyp9r/IAM-DOMAIN-CLASSES.png)](https://postimg.cc/K3GzB9Hx)
 
 * **`Organization` (Agregado Principal del Tenant)**: Encapsula la identidad de la empresa (nombre, RUC, teléfono, segmento, estado). Rechaza RUC duplicado y garantiza un solo Administrador por organización.
-* **`User` (Agregado de Cuenta de Acceso)**: Encapsula la cuenta humana (Administrador u Operario) con identificador de login, nombre visible, correo, contraseña cifrada, rol y estado. El `identifier` es único por organización.
+* **`User` (Agregado de Cuenta de Acceso)**: Encapsula la cuenta humana (Administrador u Operario) con identificador de login, nombre visible, correo, hash de contraseña, rol y estado. El `identifier` normalizado es único globalmente.
 * **`FirstAccessCode` (Agregado de Código de Primer Acceso)**: Encapsula un código de un solo uso (ACTIVE/USED/REVOKED) vinculado a un perfil operativo y a una cuenta de operario.
 * **Value Objects**: `Role` (ADMINISTRATOR, OPERATOR), `AccountStatus` (ACTIVE, INACTIVE), `FirstAccessCodeStatus` (ACTIVE, USED, REVOKED).
 * **Commands (7)**: RegisterOrganizationAdministrator, CreateOperatorAccount, SignIn, SignOut, DeactivateOperatorAccount, GenerateFirstAccessCode, RevokeFirstAccessCode.
@@ -1833,7 +1837,7 @@ A continuación se presenta el diagrama de clases correspondiente a la capa de d
 
 ##### 4.2.1.6.2. Bounded Context Database Design Diagram
 
-﻿Para respaldar el modelo relacional de Human IAM, la base de datos utiliza tres tablas en el schema `iam`: `organizations` (raíz del tenant), `users` (cuentas de administrador y operario) y `first_access_codes` (códigos de primer acceso). Cada cuenta pertenece a una organización y posee un único rol. La base refuerza la regla de un solo Administrador activo por organización mediante un índice parcial. Los campos `external_id` y `username` fueron eliminados por normalización; el `organization_id` de `first_access_codes` se deriva de `users`.
+﻿Para respaldar el modelo relacional de Human IAM, la base de datos utiliza tres tablas en el schema `iam`: `organizations` (raíz del tenant), `users` (cuentas de administrador y operario) y `first_access_codes` (códigos de primer acceso). Cada cuenta pertenece a una organización y posee un único rol. La base refuerza la regla de una sola cuenta Administradora por organización, incluso si se desactiva (el reemplazo queda fuera del alcance actual) mediante un índice parcial. Los campos `external_id` y `username` fueron eliminados por normalización; el `organization_id` de `first_access_codes` se deriva de `users`.
 
 [![iam-db.png](https://i.postimg.cc/nzSkVyQN/iam-db.png)](https://postimg.cc/bDbb3FgR)
 
@@ -1848,8 +1852,8 @@ CREATE TABLE organizations
   phone VARCHAR(30),
   segment VARCHAR(20) NOT NULL,
   status VARCHAR(20) NOT NULL,
-  created_at TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL,
   PRIMARY KEY (id),
   UNIQUE (ruc)
 );
@@ -1864,10 +1868,11 @@ CREATE TABLE users
   email VARCHAR(200),
   role VARCHAR(30) NOT NULL,
   status VARCHAR(20) NOT NULL,
-  created_at TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL,
   PRIMARY KEY (id),
-  UNIQUE (organization_id, identifier),
+  UNIQUE (identifier),
+  CHECK (identifier = lower(btrim(identifier)) AND length(identifier) > 0),
   FOREIGN KEY (organization_id) REFERENCES organizations(id),
   CHECK (role IN ('ADMINISTRATOR', 'OPERATOR'))
 );
@@ -1883,11 +1888,11 @@ CREATE TABLE first_access_codes
   status VARCHAR(20) NOT NULL,
   operator_profile_id UUID,
   operator_account_id UUID NOT NULL,
-  generated_at TIMESTAMP,
-  used_at TIMESTAMP,
-  revoked_at TIMESTAMP,
-  created_at TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP NOT NULL,
+  generated_at TIMESTAMPTZ,
+  used_at TIMESTAMPTZ,
+  revoked_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (operator_account_id) REFERENCES users(id)
 );
@@ -1928,9 +1933,9 @@ ON first_access_codes (operator_account_id);
   * **Comportamiento y Reglas de Negocio:**
     * El número de serie es único por organización.
     * Un dispositivo puede estar sin reservorio (`reservoirId` null).
-    * La disponibilidad y última comunicación son snapshots del edge.
+    * La disponibilidad y última comunicación son snapshots proporcionados por Telemetry a partir de la comunicación con Edge.
     * `configurationStatus` y `currentConfigurationVersion` se derivan de `configuration_versions` (no se almacenan).
-    * Contiene a `DeviceIdentity` como entidad interna (se crea automáticamente al registrar el dispositivo).
+    * Solicita el aprovisionamiento a Device Identity and Access al registrarse; no contiene la identidad técnica ni persiste hashes o secretos. `identityStatus` es un dato de consulta obtenido del servicio propietario.
 
 * **`OperatorProfile` (Agregado)**
   * **Descripción:** Encapsula el perfil operativo: vincula una cuenta de operario con un grupo y sus asignaciones.
@@ -1941,23 +1946,18 @@ ON first_access_codes (operator_account_id);
     * Contiene a `DeviceAssignment` como entidad interna (se gestionan desde el perfil).
 
 * **`ConfigurationVersion` (Agregado)**
-  * **Descripción:** Encapsula una versión de configuración de un dispositivo: rangos de pH/temperatura, modo de liberación, compatibilidad, estado (borrador/publicada).
+  * **Descripción:** Encapsula una versión de configuración de un dispositivo: rangos de pH/temperatura, acción correctiva, parámetros de dosis o intensidad según la estrategia, espera, máximo de ciclos, frescura, umbrales de variación útil, modo de liberación, compatibilidad y estado.
   * **Comportamiento y Reglas de Negocio:**
     * El número de versión es único por dispositivo.
     * Una versión publicada es inmutable (no se modifica).
     * Se valida la compatibilidad con las capacidades del dispositivo.
+    * Conserva los campos móviles `correctionAction`, `waitingMinutes` y `maximumCycles`. La espera debe ser positiva y no superar 30 minutos; `correctionWaitSeconds = waitingMinutes * 60` es una conversión, no otro parámetro editable.
+    * Los valores iniciales del perfil académico son 15 minutos de espera, 60 segundos de frescura y umbrales de variación útil de 0.1 pH y 0.5 °C. Se exige un máximo de ciclos positivo y parámetros correctivos compatibles antes de publicar. Los parámetros aún no expuestos por Flutter se completan y validan en backend, sin inventar campos obligatorios nuevos para el cliente actual.
+    * `SUPERSEDED` identifica una versión sustituida por otra publicada: su contenido permanece inmutable. Treatment conserva la versión y una copia de las reglas aprobadas al iniciar el proceso; no consulta rangos cambiantes durante los ciclos.
 
 ---
 
 ##### B. Entities (Entidades dentro de Agregados)
-
-* **`DeviceIdentity` (Entity dentro de `Device`)**
-  * **Descripción:** Encapsula la identidad técnica del dispositivo: hash de credencial, estado (PENDING/ACTIVE/REVOKED), fechas de activación y revocación.
-  * **Comportamiento y Reglas de Negocio:**
-    * Se crea automáticamente al registrar un dispositivo.
-    * La credencial se entrega una sola vez (nunca se persiste en texto plano).
-    * Puede revocarse sin borrar el dispositivo.
-    * No tiene invariantes independientes del `Device`; se accede siempre a través de `Device`.
 
 * **`DeviceAssignment` (Entity dentro de `OperatorProfile`)**
   * **Descripción:** Encapsula una asignación exclusiva de un par reservorio-dispositivo a un perfil de operario.
@@ -1976,8 +1976,8 @@ ON first_access_codes (operator_account_id);
 * **`DeviceLifecycleStatus`**: Estado del ciclo de vida (`ACTIVE_UNLINKED`, `ACTIVE_UNASSIGNED`, `ACTIVE_ASSIGNED`, `MAINTENANCE`, `INACTIVE`).
 * **`DeviceAvailability`**: Disponibilidad (`ONLINE`, `DELAYED`, `OFFLINE`, `UNKNOWN`).
 * **`DeviceCapability`**: Capacidad del dispositivo (`PH_SENSOR`, `TEMPERATURE_SENSOR`, `DOSING`, `HEATING`, `COOLING`, `RELEASE_VALVE`).
-* **`DeviceIdentityStatus`**: Estado de la identidad técnica (`PENDING`, `ACTIVE`, `REVOKED`).
-* **`ConfigurationVersionStatus`**: Estado de la versión (`DRAFT`, `PUBLISHED`).
+* **`DeviceIdentityStatus` (dato de integración)**: Estado público de la identidad técnica (`PENDING`, `ACTIVE`, `REVOKED`), consultado a Device Identity and Access; no implica propiedad del agregado en Configuration.
+* **`ConfigurationVersionStatus`**: Estado de la versión (`DRAFT`, `PUBLISHED`, `SUPERSEDED`).
 * **`OperatorProfileStatus`**: Estado del perfil (`PENDING_FIRST_ACCESS`, `ACTIVE`, `INACTIVE`).
 * **`AssignmentStatus`**: Estado de la asignación (`ACTIVE`, `CLOSED`).
 * **`ReleaseMode`**: Modo de liberación (`MANUAL`, `AUTOMATIC`).
@@ -1991,8 +1991,7 @@ Representan las intenciones del usuario o sistema para modificar el estado del d
 * **`DeactivateWorkGroupCommand(String organizationId, String groupId)`**: Desactiva un grupo (solo si no tiene reservorios ni perfiles activos).
 * **`CreateReservoirCommand(String organizationId, String groupId, String name, String code, ReservoirType reservoirType, String location, BigDecimal capacityLiters)`**: Crea un reservorio dentro de un grupo.
 * **`DeactivateReservoirCommand(String organizationId, String reservoirId)`**: Desactiva un reservorio (solo si no tiene asignaciones ni dispositivo vinculado).
-* **`RegisterDeviceCommand(String organizationId, String serialNumber, String alias, String deviceModel, OperatingEnvironment environment, Set<DeviceCapability> capabilities)`**: Registra un dispositivo y genera su credencial técnica.
-* **`RevokeDeviceIdentityCommand(String organizationId, String deviceId)`**: Revoca la identidad técnica de un dispositivo.
+* **`RegisterDeviceCommand(String organizationId, String serialNumber, String alias, String deviceModel, OperatingEnvironment environment, Set<DeviceCapability> capabilities)`**: Registra el inventario y solicita su credencial a Device Identity and Access. Un fallo de aprovisionamiento se comunica como reintentable, sin duplicar el dispositivo ni presentarlo como listo para operar.
 * **`LinkDeviceCommand(String organizationId, String deviceId, String reservoirId)`**: Vincula un dispositivo libre con un reservorio libre.
 * **`UnlinkDeviceCommand(String organizationId, String deviceId)`**: Desvincula un dispositivo de su reservorio.
 * **`DeactivateDeviceCommand(String organizationId, String deviceId)`**: Desactiva un dispositivo.
@@ -2047,10 +2046,9 @@ Abstracciones para la lectura de información del dominio sin alterar su estado:
     * `Optional<ReservoirDetail> handle(GetReservoirByIdQuery query)`: Retorna el reservorio con dispositivo vinculado.
 
 * **`DeviceCommandService` (Interfaz de Servicio de Dominio / Aplicación)**
-  * **Descripción:** Coordina las operaciones que modifican el estado de los dispositivos y su identidad técnica.
+  * **Descripción:** Coordina las operaciones del inventario de dispositivos y solicita el aprovisionamiento al servicio de identidad técnica mediante un puerto de salida.
   * **Métodos principales:**
-    * `RegisteredDevice handle(RegisterDeviceCommand command)`: Registra un dispositivo y genera su credencial técnica.
-    * `void handle(RevokeDeviceIdentityCommand command)`: Revoca la identidad técnica de un dispositivo.
+    * `RegisteredDevice handle(RegisterDeviceCommand command)`: Registra el dispositivo y obtiene del propietario la credencial de entrega única.
     * `void handle(LinkDeviceCommand command)`: Vincula un dispositivo libre con un reservorio libre.
     * `void handle(UnlinkDeviceCommand command)`: Desvincula un dispositivo de su reservorio.
     * `void handle(DeactivateDeviceCommand command)`: Desactiva un dispositivo.
@@ -2107,12 +2105,11 @@ Son los puntos de entrada HTTP (Inbound Adapters) que exponen los endpoints de l
     * `PATCH /api/v1/reservoirs/{reservoirId}/status`: Desactiva un reservorio (`status → INACTIVE`).
 
 * **`DevicesController`**
-  * **Descripción:** Gestiona las operaciones sobre dispositivos e identidades técnicas.
+  * **Descripción:** Gestiona el inventario de dispositivos y coordina su aprovisionamiento, sin administrar el almacenamiento de identidades técnicas.
   * **Endpoints:**
     * `GET /api/v1/devices`: Lista paginada de dispositivos con filtros (`searchTerm`, `status`, `availability`, `operatingEnvironment`, `configurationStatus`, `page`, `pageSize`).
     * `GET /api/v1/devices/{deviceId}`: Retorna el dispositivo con su reservorio y responsable.
-    * `POST /api/v1/devices`: Registra un dispositivo y genera su credencial técnica (entregada una sola vez).
-    * `POST /api/v1/device-identities/{deviceId}/revoke`: Revoca la identidad técnica de un dispositivo.
+    * `POST /api/v1/devices`: Registra el dispositivo y solicita su credencial a Device Identity and Access (entregada una sola vez). Se conserva la respuesta `{ device, activationCredential }` de la web.
     * `POST /api/v1/devices/{deviceId}/link`: Vincula un dispositivo libre con un reservorio libre (`{ reservoirId }`).
     * `POST /api/v1/devices/{deviceId}/unlink`: Desvincula un dispositivo de su reservorio.
     * `PATCH /api/v1/devices/{deviceId}/status`: Desactiva un dispositivo (`status → INACTIVE`).
@@ -2151,7 +2148,7 @@ Definen las estructuras de datos aceptadas en las peticiones (Requests) y enviad
 * **`DeviceResponseResource(String id, String serialNumber, String alias, String deviceModel, String operatingEnvironment, Set<String> capabilities, String lifecycleStatus, String availability, String reservoirId, String lastCommunicationAt, String configurationStatus, Integer currentConfigurationVersion, String identityStatus)`**: DTO de salida de un dispositivo.
 * **`DeviceDetailResource(DeviceResponseResource device, String reservoirName, String responsibleProfileId)`**: DTO de salida del detalle de un dispositivo.
 * **`RegisteredDeviceResource(DeviceResponseResource device, String activationCredential)`**: DTO de salida del registro (credencial entregada una sola vez).
-* **`ConfigurationVersionResource(String id, String deviceId, Integer configurationVersion, String status, Boolean compatible, List<String> incompatibilityReasons, Instant createdAt, Instant publishedAt, Double phMin, Double phMax, Double temperatureMin, Double temperatureMax, String releaseMode)`**: DTO de salida de una versión de configuración.
+* **`ConfigurationVersionResource(String id, String deviceId, Integer configurationVersion, String status, Boolean compatible, List<String> incompatibilityReasons, Instant createdAt, Instant publishedAt, Double phMin, Double phMax, Double temperatureMin, Double temperatureMax, String correctionAction, Double waitingMinutes, Integer maximumCycles, String releaseMode)`**: DTO de salida de una versión de configuración. Conserva los nombres de los rangos usados por la consulta administrativa; el adaptador del Operario mantiene `tempMin`/`tempMax` y los campos `correctionAction`, `waitingMinutes` y `maximumCycles` de su contrato. Ambos representan la misma versión persistida.
 * **`ConfigurationVersionsResource(DeviceResponseResource device, List<ConfigurationVersionResource> versions)`**: DTO de salida de las versiones de un dispositivo.
 * **`OperatorProfileResource(String userId, String groupId, List<String> reservoirIds)`**: DTO de entrada para crear un perfil.
 * **`OperatorProfileResponseResource(String id, String userId, String groupId, String displayName, String groupName, String status)`**: DTO de salida de un perfil.
@@ -2175,7 +2172,6 @@ Clases de transformación encargadas de mapear entre los DTOs/Resources de la ca
 * **`CreateReservoirCommandFromResourceAssembler`**: Mapea `ReservoirResource` a `CreateReservoirCommand`.
 * **`DeactivateReservoirCommandFromResourceAssembler`**: Mapea `DeactivateResource` a `DeactivateReservoirCommand`.
 * **`RegisterDeviceCommandFromResourceAssembler`**: Mapea `RegisterDeviceResource` a `RegisterDeviceCommand`.
-* **`RevokeDeviceIdentityCommandFromResourceAssembler`**: Mapea el path param a `RevokeDeviceIdentityCommand`.
 * **`LinkDeviceCommandFromResourceAssembler`**: Mapea `{ reservoirId }` a `LinkDeviceCommand`.
 * **`UnlinkDeviceCommandFromResourceAssembler`**: Mapea el path param a `UnlinkDeviceCommand`.
 * **`DeactivateDeviceCommandFromResourceAssembler`**: Mapea `DeactivateResource` a `DeactivateDeviceCommand`.
@@ -2219,8 +2215,7 @@ Procesan las intenciones de cambio de estado recibiendo *Commands*, orquestando 
 * **`DeviceCommandServiceImpl`**
   * **Descripción:** Implementación de la interfaz `DeviceCommandService`. Coordina el registro, vinculación y desactivación de dispositivos.
   * **Flujos de trabajo / Handlers:**
-    * **`handle(RegisterDeviceCommand command)`**: Valida la unicidad del serial, crea el dispositivo y genera su credencial técnica.
-    * **`handle(RevokeDeviceIdentityCommand command)`**: Revoca la identidad técnica del dispositivo.
+    * **`handle(RegisterDeviceCommand command)`**: Valida la unicidad del serial, crea el dispositivo y solicita el aprovisionamiento a Device Identity and Access por HTTP. El reintento utiliza el mismo `deviceId`; Configuration no genera ni almacena el secreto.
     * **`handle(LinkDeviceCommand command)`**: Vincula un dispositivo libre con un reservorio libre.
     * **`handle(UnlinkDeviceCommand command)`**: Desvincula un dispositivo de su reservorio.
     * **`handle(DeactivateDeviceCommand command)`**: Desactiva un dispositivo.
@@ -2277,7 +2272,8 @@ Atienden las lecturas de información recibiendo objetos *Query*, optimizando el
 
 Interfaces y abstracciones requeridas por la capa de aplicación para comunicarse con el exterior sin acoplarse a tecnologías específicas.
 
-* **`DeviceIdentityProvisioningService`**: Puerto para el provisionamiento de la identidad técnica del dispositivo (generación de credencial).
+* **`DeviceIdentityProvisioningService`**: Puerto HTTP hacia Device Identity and Access para solicitar el aprovisionamiento y consultar el estado público. La generación, autenticación y revocación pertenecen exclusivamente al servicio remoto.
+* **`HumanIdentityCatalogPort`**: Puerto HTTP hacia Human IAM para consultar la organización y las cuentas autorizadas; Configuration no incorpora repositorios JPA de `Organization` o `User`.
 * **`OperationalCatalogService`**: Puerto para la consulta del catálogo operativo (organización, opciones, pares disponibles).
 
 #### 4.2.2.4. Infrastructure Layer
@@ -2313,12 +2309,6 @@ Proporciona las implementaciones concretas para el almacenamiento y recuperació
     * `Optional<Device> findByReservoirIdAndLifecycleStatusNot(UUID reservoirId, DeviceLifecycleStatus status)`: Busca dispositivo vinculado a un reservorio (excluyendo inactivos).
     * `List<Device> findByOrganizationIdAndReservoirId(UUID organizationId, UUID reservoirId)`: Lista dispositivos vinculados a un reservorio.
 
-* **`DeviceIdentityRepository` (JPA Repository)**
-  * **Descripción:** Interfaz para la gestión de identidades técnicas de dispositivos.
-  * **Métodos principales:**
-    * `Optional<DeviceIdentity> findByDeviceId(UUID deviceId)`: Recupera la identidad de un dispositivo.
-    * `Optional<DeviceIdentity> findByDeviceIdAndStatus(UUID deviceId, DeviceIdentityStatus status)`: Recupera la identidad activa de un dispositivo.
-
 * **`OperatorProfileRepository` (JPA Repository)**
   * **Descripción:** Interfaz para la gestión de perfiles operativos.
   * **Métodos principales:**
@@ -2343,23 +2333,19 @@ Proporciona las implementaciones concretas para el almacenamiento y recuperació
     * `Optional<ConfigurationVersion> findTopByDeviceIdAndStatusOrderByConfigurationVersionDesc(UUID deviceId, ConfigurationVersionStatus status)`: Recupera la última versión publicada.
     * `Optional<ConfigurationVersion> findByIdAndDeviceId(UUID versionId, UUID deviceId)`: Recupera una versión por su ID.
 
-* **`OrganizationRepository` (JPA Repository)**
-  * **Descripción:** Interfaz para la gestión de organizaciones.
-  * **Métodos principales:**
-    * `Optional<Organization> findById(UUID organizationId)`: Recupera una organización por su ID.
-    * `boolean existsByRuc(String ruc)`: Verifica la existencia de una organización por RUC.
-
 ---
 
-##### B. Device Identity & Cryptography Adapters (Adaptadores de Identidad de Dispositivo)
+##### B. Device Identity HTTP Adapter (Adaptador de integración con identidad de dispositivo)
 
-Implementa los puertos de la capa de aplicación destinados al provisionamiento y verificación de la identidad técnica de los dispositivos IoT.
+Implementa el puerto de salida hacia el propietario de la identidad técnica. La revocación administrativa se enruta desde el Gateway directamente al controlador de Device Identity and Access descrito en 4.2.6, no a `DevicesController`.
 
 * **`DeviceIdentityProvisioningServiceImpl`**
-  * **Descripción:** Implementación del puerto `DeviceIdentityProvisioningService`. Genera la credencial técnica del dispositivo al registrarlo y almacena únicamente su hash en `device_identities`.
+  * **Descripción:** Cliente HTTP del puerto `DeviceIdentityProvisioningService`; no tiene acceso a la base de identidad técnica ni registra secretos en logs o tablas locales.
   * **Métodos:**
-    * `String provision(UUID deviceId)`: Genera un secreto criptográficamente seguro, almacena su hash (BCrypt/SHA-256) en `device_identities` con estado `ACTIVE` y retorna el secreto en texto plano (entregado una sola vez).
-    * `boolean verify(UUID deviceId, String rawCredential)`: Valida la credencial técnica presentada por el dispositivo contra el hash almacenado.
+    * `DeviceCredentialIssuedResource provision(UUID organizationId, UUID deviceId)`: Solicita el alta al propietario y transmite la credencial únicamente en la respuesta inmediata del registro.
+    * `DeviceIdentityStatus getStatus(UUID organizationId, UUID deviceId)`: Consulta el estado público sin hashes ni secretos.
+
+* **`HumanIdentityCatalogHttpAdapter`**: Implementa `HumanIdentityCatalogPort` con llamadas autenticadas a Human IAM; consulta organización y cuentas sin SQL entre servicios.
 
 ---
 
@@ -2368,7 +2354,7 @@ Implementa los puertos de la capa de aplicación destinados al provisionamiento 
 Implementa el puerto `OperationalCatalogService` de la capa de aplicación para la consulta del catálogo operativo filtrado por organización.
 
 * **`OperationalCatalogServiceImpl`**
-  * **Descripción:** Implementación del puerto `OperationalCatalogService`. Usa los repositorios JPA para consultar grupos, reservorios, operarios y pares disponibles, filtrados por la organización del token.
+  * **Descripción:** Implementación del puerto `OperationalCatalogService`. Consulta grupos, reservorios, perfiles y pares mediante repositorios JPA locales, y organización y cuentas mediante `HumanIdentityCatalogPort`, siempre filtrando por la organización del token.
   * **Métodos:**
     * `OrganizationContext getOrganizationContext()`: Retorna la organización actual (id, name, segment) derivada del token.
     * `OperationalOptions getOperationalOptions()`: Retorna grupos activos, reservorios activos (con su grupo) y operarios activos.
@@ -2402,13 +2388,12 @@ A continuación se presenta el diagrama de clases correspondiente a la capa de d
 
 * **`WorkGroup` (Agregado)**: Encapsula un grupo operativo dentro de una organización. Rechaza nombres duplicados y no se desactiva si tiene reservorios o perfiles activos.
 * **`Reservoir` (Agregado)**: Encapsula un reservorio dentro de un grupo. El código es único por grupo y no se desactiva si tiene asignaciones o dispositivo vinculado.
-* **`Device` (Agregado)**: Encapsula el dispositivo IoT (serial, alias, modelo, entorno, capacidades, estado, disponibilidad). Contiene a `DeviceIdentity` como entidad interna.
+* **`Device` (Agregado)**: Encapsula el inventario IoT (serial, alias, modelo, entorno, capacidades, estado y disponibilidad). Su identidad técnica se aprovisiona en otro bounded context.
 * **`OperatorProfile` (Agregado)**: Vincula una cuenta de operario con un grupo y sus asignaciones. Contiene a `DeviceAssignment` como entidad interna.
-* **`ConfigurationVersion` (Agregado)**: Encapsula una versión de configuración (rangos, modo, compatibilidad, estado). Inmutable una vez publicada.
-* **`DeviceIdentity` (Entity)**: Identidad técnica del dispositivo (credencial, estado, fechas de activación/revocación). Se crea automáticamente con el dispositivo.
+* **`ConfigurationVersion` (Agregado)**: Encapsula rangos, acción y parámetros correctivos, espera, ciclos, frescura, variación útil, modo de liberación, compatibilidad y estado. Su contenido es inmutable una vez publicado.
 * **`DeviceAssignment` (Entity)**: Asignación exclusiva de un par reservorio-dispositivo a un perfil. Se gestiona desde el perfil.
-* **Value Objects (12)**: `ResourceStatus`, `ReservoirType`, `OperatingEnvironment`, `DeviceLifecycleStatus`, `DeviceAvailability`, `DeviceCapability`, `DeviceIdentityStatus`, `ConfigurationVersionStatus`, `OperatorProfileStatus`, `AssignmentStatus`, `ReleaseMode`, `ConfigurationStatus` (derivado).
-* **Commands (13)**: CreateWorkGroup, DeactivateWorkGroup, CreateReservoir, DeactivateReservoir, RegisterDevice, RevokeDeviceIdentity, LinkDevice, UnlinkDevice, DeactivateDevice, CreateOperatorProfile, AddAssignments, CloseAssignment, DeactivateOperatorProfile.
+* **Value Objects y datos de integración**: `ResourceStatus`, `ReservoirType`, `OperatingEnvironment`, `DeviceLifecycleStatus`, `DeviceAvailability`, `DeviceCapability`, `DeviceIdentityStatus` (dato remoto, sin agregado local), `ConfigurationVersionStatus`, `OperatorProfileStatus`, `AssignmentStatus`, `ReleaseMode`, `ConfigurationStatus` (derivado).
+* **Commands de administración (12)**: CreateWorkGroup, DeactivateWorkGroup, CreateReservoir, DeactivateReservoir, RegisterDevice, LinkDevice, UnlinkDevice, DeactivateDevice, CreateOperatorProfile, AddAssignments, CloseAssignment, DeactivateOperatorProfile. La revocación de identidad pertenece a Device Identity and Access.
 * **Queries (12)**: ListWorkGroups, GetWorkGroupById, ListReservoirs, GetReservoirById, ListDevices, GetDeviceById, GetDeviceConfigurations, ListOperatorProfiles, GetOperatorProfileById, GetOrganizationContext, GetOperationalOptions, GetAvailablePairs.
 * **Services (9)**: WorkGroupCommand/Query, ReservoirCommand/Query, DeviceCommand/Query, OperatorProfileCommand/Query, OperationalCatalogQuery.
 
@@ -2431,10 +2416,10 @@ CREATE TABLE work_groups
   purpose TEXT,
   classification VARCHAR(100),
   status VARCHAR(20) NOT NULL,
-  created_at TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (organization_id) REFERENCES organizations(id)
+  CHECK (status IN ('ACTIVE', 'INACTIVE'))
 );
 
 CREATE TABLE reservoirs
@@ -2447,8 +2432,8 @@ CREATE TABLE reservoirs
   location VARCHAR(200),
   capacity_liters DECIMAL(12,2),
   status VARCHAR(20) NOT NULL,
-  created_at TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL,
   PRIMARY KEY (id),
   UNIQUE (group_id, code),
   FOREIGN KEY (group_id) REFERENCES work_groups(id)
@@ -2466,27 +2451,12 @@ CREATE TABLE devices
   lifecycle_status VARCHAR(30) NOT NULL,
   availability VARCHAR(20) NOT NULL,
   reservoir_id UUID,
-  last_communication_at TIMESTAMP,
-  created_at TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP NOT NULL,
+  last_communication_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL,
   PRIMARY KEY (id),
   UNIQUE (organization_id, serial_number),
   FOREIGN KEY (reservoir_id) REFERENCES reservoirs(id)
-);
-
-CREATE TABLE device_identities
-(
-  id UUID NOT NULL,
-  device_id UUID NOT NULL,
-  credential_hash VARCHAR(255) NOT NULL,
-  status VARCHAR(20) NOT NULL,
-  activated_at TIMESTAMP,
-  revoked_at TIMESTAMP,
-  created_at TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP NOT NULL,
-  PRIMARY KEY (id),
-  UNIQUE (device_id),
-  FOREIGN KEY (device_id) REFERENCES devices(id)
 );
 
 CREATE TABLE operator_profiles
@@ -2496,8 +2466,8 @@ CREATE TABLE operator_profiles
   group_id UUID NOT NULL,
   display_name VARCHAR(200) NOT NULL,
   status VARCHAR(30) NOT NULL,
-  created_at TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL,
   PRIMARY KEY (id),
   UNIQUE (user_id),
   FOREIGN KEY (group_id) REFERENCES work_groups(id)
@@ -2510,10 +2480,10 @@ CREATE TABLE device_assignments
   reservoir_id UUID NOT NULL,
   device_id UUID NOT NULL,
   status VARCHAR(20) NOT NULL,
-  assigned_at TIMESTAMP NOT NULL,
-  closed_at TIMESTAMP,
-  created_at TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP NOT NULL,
+  assigned_at TIMESTAMPTZ NOT NULL,
+  closed_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (operator_profile_id) REFERENCES operator_profiles(id),
   FOREIGN KEY (reservoir_id) REFERENCES reservoirs(id),
@@ -2532,18 +2502,37 @@ CREATE TABLE configuration_versions
   ph_max DECIMAL(6,2),
   temperature_min DECIMAL(6,2),
   temperature_max DECIMAL(6,2),
+  correction_action VARCHAR(50) NOT NULL,
+  correction_parameters JSONB NOT NULL DEFAULT '{}'::jsonb,
+  waiting_minutes NUMERIC(8,2) NOT NULL DEFAULT 15,
+  maximum_cycles INT NOT NULL,
+  measurement_freshness_seconds INT NOT NULL DEFAULT 60,
+  useful_ph_variation NUMERIC(6,2) NOT NULL DEFAULT 0.1,
+  useful_temperature_variation NUMERIC(6,2) NOT NULL DEFAULT 0.5,
   release_mode VARCHAR(20) NOT NULL,
-  created_at TIMESTAMP NOT NULL,
-  published_at TIMESTAMP,
-  updated_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL,
+  published_at TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ NOT NULL,
   PRIMARY KEY (id),
   UNIQUE (device_id, configuration_version),
+  CHECK (status IN ('DRAFT', 'PUBLISHED', 'SUPERSEDED')),
+  CHECK (waiting_minutes > 0 AND waiting_minutes <= 30),
+  CHECK (maximum_cycles > 0 AND measurement_freshness_seconds > 0),
+  CHECK (useful_ph_variation > 0 AND useful_temperature_variation > 0),
   FOREIGN KEY (device_id) REFERENCES devices(id)
 );
 
-CREATE UNIQUE INDEX ux_one_admin_per_organization
-ON users (organization_id)
-WHERE role = 'ADMINISTRATOR';
+CREATE UNIQUE INDEX ux_device_per_reservoir
+ON devices (reservoir_id) WHERE reservoir_id IS NOT NULL;
+
+CREATE UNIQUE INDEX ux_active_assignment_device
+ON device_assignments (device_id) WHERE status = 'ACTIVE';
+
+CREATE UNIQUE INDEX ux_active_assignment_reservoir
+ON device_assignments (reservoir_id) WHERE status = 'ACTIVE';
+
+CREATE UNIQUE INDEX ux_current_configuration_per_device
+ON configuration_versions (device_id) WHERE status = 'PUBLISHED';
 ```
 
 ---
@@ -2551,10 +2540,12 @@ WHERE role = 'ADMINISTRATOR';
 * **`work_groups`**: Almacena grupos operativos por organización. El segmento se deriva de la organización (no se almacena).
 * **`reservoirs`**: Almacena reservorios vinculados a un grupo. El código es único por grupo.
 * **`devices`**: Almacena dispositivos IoT con su número de serie (único por organización), entorno operativo y capacidades. `configuration_status` y `current_configuration_version` se derivan de `configuration_versions`.
-* **`device_identities`**: Almacena la identidad técnica del dispositivo (hash de credencial). La credencial se entrega una sola vez.
+* **Referencias externas**: `organization_id` y `user_id` se validan mediante Human IAM, sin claves foráneas a sus tablas. Configuration no crea `device_identities` ni índices sobre `users`; estos pertenecen a Device Identity and Access y Human IAM, respectivamente.
 * **`operator_profiles`**: Vincula una cuenta de operario con un grupo y sus asignaciones.
 * **`device_assignments`**: Registra asignaciones exclusivas de pares reservorio-dispositivo a perfiles, conservando historial.
-* **`configuration_versions`**: Almacena versiones de configuración (rangos, modo de liberación, compatibilidad) por dispositivo. Una versión publicada es inmutable.
+* **`configuration_versions`**: Almacena todas las reglas de cada versión. `correction_parameters` conserva dosis/unidad o intensidad según la estrategia; los campos de frescura y variación útil completan las reglas verificables compartidas. Los borradores pueden tener rangos pendientes, pero la publicación exige límites completos y ordenados (pH entre 0 y 14 y temperatura entre 0 y 100 °C), compatibilidad y parámetros correctivos válidos. Publicar sustituye la versión vigente en una transacción local, conservando su contenido y su historial.
+
+Las consultas de reservorios y perfiles filtran la organización mediante sus grupos y relaciones **locales**, sin consultas a la base de Human IAM. La unicidad de los códigos de reservorio se aplica por grupo mediante `UNIQUE (group_id, code)`.
 
 ### 4.2.3. Bounded Context: IOT Telemetry
 
@@ -2568,6 +2559,7 @@ WHERE role = 'ADMINISTRATOR';
     * Capturar e interpretar las lecturas enviadas por los sensores del dispositivo.
     * Validar la integridad de los datos de la medición (rangos físicos válidos para pH y temperatura).
     * Registrar la fecha y hora precisa de la captura.
+    * Conservar el `measurementId` de origen además del UUID interno. La combinación de organización, dispositivo e identificador de origen es única: un reintento idéntico devuelve el registro original sin repetir efectos; reutilizar el identificador con otros datos se rechaza con conflicto.
     * El `source` distingue mediciones del dispositivo físico (`DEVICE`) de las del simulador (`SIMULATOR`).
 
 ---
@@ -2612,9 +2604,9 @@ Abstracciones para la lectura de información del dominio sin alterar su estado:
 
 ##### F. Read Models (Modelos de Lectura)
 
-Proyecciones de lectura que combinan datos de `tel` con datos de `cfg` (cross-BC). No son agregados; son vistas materializadas para la presentación.
+Modelos de lectura que componen mediciones locales con el inventario consultado por HTTP a Configuration. No son agregados ni vistas SQL entre esquemas. Para este alcance no se requiere una infraestructura adicional de proyecciones distribuidas.
 
-* **`DeviceTelemetrySummary`**: Combina `TelemetryDeviceSnapshot` (de `cfg.devices`) con `latestMeasurement` (de `tel.water_measurements`).
+* **`DeviceTelemetrySummary`**: Combina `TelemetryDeviceSnapshot` (DTO obtenido de Configuration por API) con `latestMeasurement` y disponibilidad de Telemetry. La aplicación consulta el inventario autorizado para incluir también dispositivos sin mediciones, cuya disponibilidad inicial es `UNKNOWN`.
 * **`TelemetryDeviceSnapshot`**: Snapshot del dispositivo (id, serialNumber, alias, deviceModel, operatingEnvironment, availability, reservoirName, lastCommunicationAt).
 
 #### 4.2.3.2. Interface Layer
@@ -2695,6 +2687,7 @@ Atienden las lecturas de información recibiendo objetos *Query*, optimizando el
 Interfaces y abstracciones requeridas por la capa de aplicación para comunicarse con el exterior sin acoplarse a tecnologías específicas.
 
 * **`TelemetryIngestionService`**: Puerto para la recepción de mediciones desde el Edge Agent (validación idempotente, persistencia).
+* **`ConfigurationDeviceCatalogPort`**: Puerto HTTP para consultar y filtrar el inventario autorizado por organización; los resúmenes se componen en aplicación, sin JOIN a `cfg.devices`.
 
 #### 4.2.3.4. Infrastructure Layer
 
@@ -2707,8 +2700,9 @@ Proporciona las implementaciones concretas para el almacenamiento y recuperació
   * **Métodos principales:**
     * `Page<WaterMeasurement> findByDeviceIdAndMeasuredAtBetweenAndSource(UUID deviceId, Instant from, Instant to, String source, Pageable pageable)`: Lista paginada de mediciones con filtros por rango de fechas y origen.
     * `Optional<WaterMeasurement> findTopByDeviceIdOrderByMeasuredAtDesc(UUID deviceId)`: Retorna la última medición de un dispositivo.
-    * `Page<WaterMeasurement> findByOrganizationIdAndFilters(UUID organizationId, String searchTerm, String status, String availability, String operatingEnvironment, Pageable pageable)`: Lista paginada de resúmenes de telemetría de dispositivos con filtros (requiere JOIN con cfg.devices).
-    * `Optional<WaterMeasurement> findByDeviceIdAndId(UUID deviceId, UUID measurementId)`: Recupera una medición por su ID.
+    * `List<WaterMeasurement> findByOrganizationIdAndDeviceIdIn(UUID organizationId, Collection<UUID> deviceIds)`: Consulta mediciones locales de los dispositivos autorizados obtenidos mediante el catálogo HTTP. `TelemetryQueryService` compone y pagina el resumen; no utiliza un repositorio con JOIN a Configuration.
+    * `Optional<WaterMeasurement> findByOrganizationIdAndDeviceIdAndId(UUID organizationId, UUID deviceId, UUID id)`: Recupera una medición por su UUID interno dentro de la organización autorizada.
+    * `Optional<WaterMeasurement> findByOrganizationIdAndDeviceIdAndMeasurementId(UUID organizationId, UUID deviceId, String measurementId)`: Recupera la lectura por su identificador de origen para controlar reintentos.
 
 ---
 
@@ -2720,7 +2714,7 @@ Implementa el puerto de entrada para la recepción de mediciones desde el Edge A
   * **Descripción:** Convierte el principal autenticado y la solicitud HTTPS en comandos del contexto, aplica control de idempotencia y no permite que el payload reemplace la identidad validada.
   * **Métodos:**
     * `RecordWaterMeasurementCommand toCommand(Principal principal, WaterMeasurementPayload payload)`: Construye el comando con `deviceId` y `organizationId` del principal autenticado.
-    * `boolean isIdempotent(String measurementId)`: Verifica si la medición ya fue registrada (evita duplicados).
+    * `boolean isIdempotent(UUID organizationId, UUID deviceId, String measurementId)`: Comprueba el identificador de origen en el ámbito autenticado; la restricción única de persistencia resuelve también solicitudes concurrentes.
 
 ---
 
@@ -2731,7 +2725,7 @@ Implementa el puerto `TelemetryIngestionService` para la persistencia de medicio
 * **`TelemetryIngestionServiceImpl`**
   * **Descripción:** Implementación del puerto `TelemetryIngestionService`. Persiste la medición y actualiza la disponibilidad del dispositivo.
   * **Métodos:**
-    * `Optional<WaterMeasurement> ingest(RecordWaterMeasurementCommand command)`: Persiste la medición si no existe (idempotente) y actualiza `last_communication_at` y `availability` del dispositivo.
+    * `Optional<WaterMeasurement> ingest(RecordWaterMeasurementCommand command)`: Persiste la medición si no existe (idempotente) y actualiza `last_communication_at` y `availability` en el almacenamiento local de Telemetry. Configuration recibe la actualización por su integración HTTP; Telemetry nunca escribe en `cfg.devices`. La llegada de una medición antigua no se confunde con una lectura reciente apta para liberar agua.
 
 ---
 
@@ -2782,14 +2776,27 @@ CREATE TABLE tel.water_measurements
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   organization_id UUID NOT NULL,
   device_id UUID NOT NULL,
+  measurement_id VARCHAR(128) NOT NULL,
   ph NUMERIC(6,2) NOT NULL,
   temperature NUMERIC(6,2) NOT NULL,
   measured_at TIMESTAMPTZ NOT NULL,
   source VARCHAR(20) NOT NULL,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (organization_id, device_id, measurement_id),
+  CHECK (ph BETWEEN 0 AND 14),
+  CHECK (temperature BETWEEN 0 AND 100)
 );
 
 CREATE INDEX idx_wm_device_measured ON tel.water_measurements (device_id, measured_at);
+
+CREATE TABLE tel.device_status
+(
+  device_id UUID PRIMARY KEY,
+  organization_id UUID NOT NULL,
+  availability VARCHAR(20) NOT NULL DEFAULT 'UNKNOWN',
+  last_communication_at TIMESTAMPTZ,
+  CHECK (availability IN ('ONLINE', 'DELAYED', 'OFFLINE', 'UNKNOWN'))
+);
 ```
 
 ---
@@ -2874,6 +2881,8 @@ Son los puntos de entrada HTTP (Inbound Adapters) que exponen los endpoints de l
     * `POST /api/v1/treatments`: Inicia un proceso de tratamiento para un dispositivo y retorna `201 Created` con el detalle del proceso creado. Es un endpoint de escritura del contexto que no consume el frontend administrativo: lo invoca el motor de tratamiento cuando la telemetría reporta agua no conforme.
     * `GET /api/v1/treatments`: Lista paginada de procesos de tratamiento con filtros (`searchTerm`, `status`, `page`, `pageSize`, `sortBy`, `sortDirection`).
     * `GET /api/v1/treatments/{processId}`: Obtiene el detalle completo de un proceso (mediciones, ciclos, eventos y rangos de la versión de configuración) o `404` si no existe.
+
+Las consultas administrativas `GET /api/v1/treatments` y `GET /api/v1/treatments/{processId}` se conservan como adaptadores de lectura del mismo servicio. No son otro microservicio ni deben renombrarse por coexistir con `/quality/processes`. La guía de endpoints del Administrador describe ese cliente; los contratos del Operario y del Edge deben documentarse adicionalmente, sin interpretar su ausencia en esa guía como un error ni sustituir las rutas ya utilizadas por las aplicaciones.
 
 ---
 
@@ -3543,14 +3552,14 @@ Esquema lógico mínimo:
 ```sql
 CREATE TABLE device_identities
 (
-  device_id VARCHAR(64) NOT NULL,
-  organization_id VARCHAR(64) NOT NULL,
+  device_id UUID NOT NULL,
+  organization_id UUID NOT NULL,
   credential_hash VARCHAR(255) NOT NULL,
   status VARCHAR(16) NOT NULL,
-  activated_at TIMESTAMP NULL,
-  revoked_at TIMESTAMP NULL,
-  created_at TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP NOT NULL,
+  activated_at TIMESTAMPTZ NULL,
+  revoked_at TIMESTAMPTZ NULL,
+  created_at TIMESTAMPTZ NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL,
   PRIMARY KEY (device_id),
   UNIQUE (organization_id, device_id)
 );
