@@ -3404,67 +3404,92 @@ A continuación se presenta el diagrama de clases correspondiente a la capa de d
 
 ##### 4.2.5.6.2. Bounded Context Database Design Diagram
 
-[![db.png](https://i.postimg.cc/Wbb501Qv/db.png)](https://postimg.cc/1420QsmC)
+Para la persistencia del contexto de monitoreo se establece el siguiente esquema relacional DDL, diseñado para almacenar las alertas operativas, los incidentes de calidad, la línea temporal de eventos y los reportes materializados en el esquema `mon`:
+
+[![MON-DB.png](https://i.postimg.cc/rFghYDFh/MON-DB.png)](https://postimg.cc/dLkmhtCd)
 
 ---
 
 ```sql
-CREATE TABLE event_correlations
-(
-  id INT NOT NULL,
-  device_id VARCHAR(64) NOT NULL,
-  cycle_id INT NOT NULL,
-  created_at DATE NOT NULL,
-  updated_at DATE NOT NULL,
-  PRIMARY KEY (id),
-  UNIQUE (id)
+CREATE TABLE mon.operational_alerts (
+    id                   uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    organization_id      uuid NOT NULL,
+    device_id            uuid NOT NULL,
+    device_serial_number varchar(100),
+    reservoir_name       varchar(200),
+    severity             varchar(20) NOT NULL CHECK (severity IN ('LOW','MEDIUM','HIGH','CRITICAL')),
+    description          text NOT NULL,
+    source               varchar(100),
+    status               varchar(20) NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE','ACKNOWLEDGED','RESOLVED')),
+    created_at           timestamptz NOT NULL DEFAULT now(),
+    attended_at          timestamptz,
+    updated_at           timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE TABLE event_correlation_items
-(
-  id INT NOT NULL,
-  correlation_id INT NOT NULL,
-  event_id VARCHAR(64) NOT NULL,
-  event_type VARCHAR(80) NOT NULL,
-  occurred_at TIMESTAMP NOT NULL,
-  PRIMARY KEY (id),
-  FOREIGN KEY (correlation_id) REFERENCES event_correlations(id),
-  UNIQUE (correlation_id, event_id)
+CREATE TABLE mon.quality_incidents (
+    id                   uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    organization_id      uuid NOT NULL,
+    device_id            uuid NOT NULL,
+    device_serial_number varchar(100),
+    reservoir_name       varchar(200),
+    incident_type        varchar(30) NOT NULL CHECK (incident_type IN ('QUALITY_INCIDENT','MONITORING_LOSS')),
+    description          text NOT NULL,
+    status               varchar(20) NOT NULL DEFAULT 'OPEN' CHECK (status IN ('OPEN','CLOSED')),
+    correlation_id       varchar(100),
+    created_at           timestamptz NOT NULL DEFAULT now(),
+    closed_at            timestamptz,
+    updated_at           timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE TABLE quality_incidents
-(
-  id INT NOT NULL,
-  device_id VARCHAR(64) NOT NULL,
-  incident_type VARCHAR(15) NOT NULL,
-  description VARCHAR(100) NOT NULL,
-  created_at DATE NOT NULL,
-  updated_at DATE NOT NULL,
-  correlation_id INT NOT NULL,
-  PRIMARY KEY (id),
-  FOREIGN KEY (correlation_id) REFERENCES event_correlations(id),
-  UNIQUE (id)
+CREATE TABLE mon.traceability_events (
+    id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    organization_id uuid NOT NULL,
+    device_id       uuid NOT NULL,
+    correlation_id  varchar(100) NOT NULL,
+    cycle_id        varchar(100),
+    event_type      varchar(60) NOT NULL,
+    title           varchar(200) NOT NULL,
+    description     text,
+    actor           varchar(100),
+    outcome         varchar(20) NOT NULL CHECK (outcome IN ('INFO','SUCCESS','WARNING','FAILURE')),
+    ph              numeric(6,2),
+    temperature     numeric(6,2),
+    occurred_at     timestamptz NOT NULL,
+    created_at      timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE TABLE operational_alerts
-(
-  id INT NOT NULL,
-  device_id VARCHAR(64) NOT NULL,
-  severity VARCHAR(15) NOT NULL,
-  description VARCHAR(100) NOT NULL,
-  created_at DATE NOT NULL,
-  updated_at DATE NOT NULL,
-  incident_id INT NOT NULL,
-  PRIMARY KEY (id),
-  FOREIGN KEY (incident_id) REFERENCES quality_incidents(id),
-  UNIQUE (id)
+CREATE TABLE mon.traceability_reports (
+    id                   uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    organization_id      uuid NOT NULL,
+    device_id            uuid NOT NULL,
+    device_serial_number varchar(100),
+    reservoir_name       varchar(200),
+    from_date            timestamptz NOT NULL,
+    to_date              timestamptz NOT NULL DEFAULT now(),
+    generated_at         timestamptz NOT NULL DEFAULT now(),
+    measurements         integer NOT NULL DEFAULT 0,
+    correction_cycles    integer NOT NULL DEFAULT 0,
+    alerts               integer NOT NULL DEFAULT 0,
+    incidents            integer NOT NULL DEFAULT 0,
+    releases             integer NOT NULL DEFAULT 0,
+    events               jsonb NOT NULL DEFAULT '[]'::jsonb,
+    created_at           timestamptz NOT NULL DEFAULT now()
 );
+
 ```
 
-* **`event_correlations`**: Registra la cabecera de cada agrupación por ciclo operativo y dispositivo IoT.
-* **`event_correlation_items`**: Persiste los identificadores, tipos y fechas de los eventos incluidos en cada correlación, de modo que `eventIds` tenga una representación durable y consultable.
-* **`quality_incidents`**: Almacena las incidencias técnicas y de calidad detectadas, enlazadas mediante clave foránea (`correlation_id`) a la trazabilidad de eventos origen.
-* **`operational_alerts`**: Mantiene las alertas dirigidas a los operadores, vinculadas a su incidente disparador (`incident_id`) para permitir un análisis inmediato de causa raíz.
+---
+
+* **`mon.operational_alerts`**: Registra las alertas dirigidas a los operadores cuando una medición, un proceso o una pérdida de monitoreo requiere atención. Conserva `organization_id` como *snapshot* del tenant, `device_id` como referencia lógica a `cfg` y los *snapshots* `device_serial_number` y `reservoir_name` para consultar la alerta sin acoplamiento físico con Configuration. Registra su ciclo de vida desde `ACTIVE` hasta `ACKNOWLEDGED` (atención) o `RESOLVED` (cierre definitivo de la condición que la originó).
+
+
+* **`mon.quality_incidents`**: Almacena las incidencias técnicas y de calidad detectadas (`QUALITY_INCIDENT` | `MONITORING_LOSS`). Se abren en estado `OPEN` asociadas a un `correlation_id` que agrupa los eventos de origen y se cierran de forma explícita a estado `CLOSED` registrando `closed_at`.
+
+
+* **`mon.traceability_events`**: Persiste la línea temporal inmutable y de solo adición (*append-only*) de las operaciones del dispositivo. Registra `event_type` como texto libre, `title`, `description`, `actor`, `outcome`, junto a los valores opcionales de `ph` y `temperature` asociados al instante de la captura. Se indexa por `occurred_at` para reconstruir la cronología completa.
+
+
+* **`mon.traceability_reports`**: Mantiene los reportes materializados para auditoría y consulta en un período (`from_date`–`to_date`). Congela los conteos de `measurements`, `correction_cycles`, `alerts`, `incidents` y `releases`, almacenando un *snapshot* inmutable de los eventos en formato `JSONB` en la columna `events`.
 
 ### 4.2.6. Bounded Context: Device Identity and Access
 
