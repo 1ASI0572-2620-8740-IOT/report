@@ -3107,50 +3107,68 @@ CREATE INDEX idx_te_process ON trt.treatment_events (process_id);
 
 ##### A. Aggregates (Agregados)
 
-* **`OperationalAlert` (Agregado Principal)**
-  * **Descripción:** Encapsula la creación, gestión y trazabilidad de alertas operativas en el sistema (hereda de `AuditableAbstractAggregateRoot`).
+* **`OperationalAlert` (Agregado)**
+  * **Descripción:** Alerta operativa generada cuando una medición, un proceso o una pérdida de monitoreo requiere atención. Conserva `organization_id` como *snapshot* del tenant, `device_id` como referencia lógica a `cfg` y los *snapshots* `device_serial_number` y `reservoir_name` para resolver la alerta sin depender de Configuration.
   * **Comportamiento y Reglas de Negocio:**
-    * Crear e inicializar alertas operativas asignando un nivel de severidad y origen.
-    * Permitir la atención y cambio de estado de la alerta por parte del sistema o personal autorizados.
+    * Registrar la alerta en estado `ACTIVE` con su `severity`, `description` y `source`.
+    * Permitir la atención únicamente desde `ACTIVE` (`ACTIVE` → `ACKNOWLEDGED`), sellando `attended_at` y `updated_at`; una alerta ya atendida no puede volver a marcarse.
+    * Mantener el estado `RESOLVED` para el cierre definitivo de la alerta cuando la condición que la originó desaparece.
+    * Reflejar el conteo de alertas `ACTIVE` del dispositivo en la vista consolidada de monitoreo.
+
 * **`QualityIncident` (Agregado)**
-  * **Descripción:** Representa el registro de incidentes de calidad o la pérdida de monitoreo observada en los dispositivos/ciclos.
+  * **Descripción:** Registro de un incidente de calidad o de una pérdida de monitoreo observada en un dispositivo. Se vincula a la línea temporal mediante `correlation_id` y conserva los *snapshots* de serial y reservorio.
   * **Comportamiento y Reglas de Negocio:**
-    * Registrar incidentes detallando el tipo (calidad o pérdida de monitoreo).
-    * Validar y asociar el incidente con las métricas y eventos recopilados.
-* **`EventCorrelation` (Agregado)**
-  * **Descripción:** Asocia y correlaciona eventos del sistema con los ciclos de tratamiento y telemetría para mantener la trazabilidad completa.
+    * Registrarse en estado `OPEN` con `incident_type` (`QUALITY_INCIDENT` | `MONITORING_LOSS`), `description` y un `correlation_id` que agrupa los eventos asociados.
+    * Cerrarse únicamente desde `OPEN` (`OPEN` → `CLOSED`), sellando `closed_at` y `updated_at`.
+    * Generar los eventos de trazabilidad `INCIDENT_REGISTERED` (`WARNING`) al abrirse e `INCIDENT_CLOSED` (`SUCCESS`) al cerrarse, ambos bajo el mismo `correlation_id`.
+
+* **`TraceabilityEvent` (Agregado)**
+  * **Descripción:** Registro de solo adición (*append-only*) de la línea temporal de un dispositivo. Pertenece a una organización, se agrupa por `correlation_id` y opcionalmente por `cycle_id` de tratamiento.
   * **Comportamiento y Reglas de Negocio:**
-    * Agrupar y correlacionar eventos temporales y de ciclo.
-    * Generar proyecciones y consolidados de estado actualizados.
+    * Registrarse con `event_type`, `title`, `description`, `actor`, `outcome` y `occurred_at`; `ph` y `temperature` son opcionales y reproducen la lectura asociada al evento.
+    * Ser inmutable: no se actualiza ni se elimina; `occurred_at` ordena la cronología y `created_at` registra la persistencia.
+    * Aceptar `event_type` como texto libre (`MEASUREMENT_RECORDED`, `INCIDENT_REGISTERED`, `INCIDENT_CLOSED`, `ALERT_CREATED`, `RELEASE_AUTHORIZED`, entre otros).
+    * Servir de fuente para la consulta de trazabilidad por dispositivo y para el *snapshot* de eventos de los reportes.
+
+* **`TraceabilityReport` (Agregado)**
+  * **Descripción:** Reporte materializado de un dispositivo para un período (`from_date`–`to_date`), con conteos por tipo de evento y un *snapshot* de los eventos en `events` (`JSONB`).
+  * **Comportamiento y Reglas de Negocio:**
+    * Generarse solo si el período es válido (`from_date` ≤ `to_date`) y existe al menos un evento del dispositivo dentro del rango.
+    * Calcular `measurements` (eventos `MEASUREMENT_RECORDED`), `correction_cycles` (ciclos distintos por `cycle_id`), `alerts` (`ALERT_CREATED`), `incidents` (`INCIDENT_REGISTERED`) y `releases` (`RELEASE_AUTHORIZED`).
+    * Congelar en `generated_at` el *snapshot* de eventos y los datos de contexto del dispositivo (`device_serial_number`, `reservoir_name`).
 
 ---
 
 ##### B. Value Objects (Objetos de Valor)
 
-* **`IncidentType`**: Tipo de incidente (`QUALITY_INCIDENT`, `MONITORING_LOSS`).
-* **`AlertSeverity`**: Nivel de severidad de la alerta operativa (`LOW`, `MEDIUM`, `HIGH`, `CRITICAL`).
-* **`StatusView`**: Estado proyectado o vista de monitoreo (`UPDATED`, `OUTDATED`).
-* **`CorrelationData`**: Contenedor inmutable de claves de correlación y métricas asociadas.
+* **`AlertSeverity`**: Nivel de severidad de la alerta (`LOW` | `MEDIUM` | `HIGH` | `CRITICAL`).
+* **`AlertStatus`**: Estado de la alerta (`ACTIVE` | `ACKNOWLEDGED` | `RESOLVED`).
+* **`IncidentType`**: Tipo de incidente (`QUALITY_INCIDENT` | `MONITORING_LOSS`).
+* **`IncidentStatus`**: Estado del incidente (`OPEN` | `CLOSED`).
+* **`EventOutcome`**: Resultado del evento de trazabilidad (`INFO` | `SUCCESS` | `WARNING` | `FAILURE`).
+* **`StatusView`**: Estado proyectado de la vista de monitoreo (`UPDATED` | `OUTDATED`), derivado de la disponibilidad del dispositivo y de la frescura de su última medición; no se persiste.
 
 ---
 
 ##### C. Commands (Comandos - CQRS)
 
-* **`CreateOperationalAlertCommand(String deviceId, String severity, String description)`**: Solicita la creación de una alerta operativa.
-* **`RegisterIncidentCommand(String deviceId, IncidentType incidentType, String description)`**: Registra un incidente de calidad o pérdida de monitoreo.
-* **`CorrelateEventsCommand(String deviceId, Long cycleId, List<String> eventIds)`**: Correlaciona eventos con ciclos operativos específicos.
-* **`UpdateStatusViewCommand(String deviceId, StatusView statusView)`**: Actualiza la vista de estado del sistema.
-* **`GenerateUpdatedReportCommand(String deviceId, String reportType)`**: Genera el estado consolidado o reporte actualizado.
+Los cuatro comandos de escritura cubren los endpoints de mutación del contexto. La creación de alertas y la escritura de eventos de trazabilidad no se exponen como comandos HTTP: las produce el propio contexto a partir de sus reglas y de los hechos de otros bounded contexts.
+
+* **`AcknowledgeOperationalAlertCommand(String alertId)`**: Marca una alerta como atendida. Solo admite la transición `ACTIVE` → `ACKNOWLEDGED`, sella `attended_at` y `updated_at`, y rechaza con `409` cualquier alerta que ya no esté activa.
+* **`RegisterIncidentCommand(String deviceId, String incidentType, String description)`**: Abre un incidente de calidad o de pérdida de monitoreo (`QUALITY_INCIDENT` | `MONITORING_LOSS`). Genera el `correlation_id` que agrupará sus eventos, registra el incidente en estado `OPEN` y emite el evento `INCIDENT_REGISTERED` con `outcome` `WARNING`.
+* **`CloseIncidentCommand(String incidentId)`**: Cierra un incidente. Solo admite la transición `OPEN` → `CLOSED`, sella `closed_at` y `updated_at` y emite el evento `INCIDENT_CLOSED` con `outcome` `SUCCESS` bajo el mismo `correlation_id`.
+* **`GenerateTraceabilityReportCommand(String deviceId, Instant from, Instant to)`**: Genera el reporte de trazabilidad de un dispositivo para un período. Valida que `from` ≤ `to` y que exista al menos un evento en el rango; luego calcula los conteos y congela el *snapshot* de eventos junto con los datos de contexto del dispositivo.
 
 ---
 
 ##### D. Queries (Consultas - CQRS)
 
-* **`GetActiveAlertsByDeviceIdQuery(String deviceId)`**
-* **`GetIncidentsByDeviceIdQuery(String deviceId)`**
-* **`GetCorrelatedEventsByCycleQuery(Long cycleId)`**
-* **`GetStatusViewByDeviceIdQuery(String deviceId)`**
-* **`GetTraceabilityReportQuery(String deviceId)`**
+Abstracciones para la lectura de información del dominio sin alterar su estado. Las dos consultas paginadas comparten el objeto de filtros `MonitoringListQuery`, pero cada recurso aplica solo los criterios que le corresponden.
+
+* **`GetMonitoringOverviewQuery()`**: Retorna el resumen operacional de la organización: totales de dispositivos, dispositivos en línea y que requieren atención, alertas activas, incidentes abiertos, la vista consolidada por dispositivo y las últimas alertas activas.
+* **`ListOperationalAlertsQuery(String searchTerm, String status, String severity, String deviceId, int page, int pageSize, String sortBy, String sortDirection)`**
+* **`ListQualityIncidentsQuery(String searchTerm, String status, String incidentType, String deviceId, int page, int pageSize, String sortBy, String sortDirection)`**
+* **`GetDeviceTraceabilityQuery(String deviceId, Instant from, Instant to)`**
 
 ---
 
@@ -3158,22 +3176,17 @@ CREATE INDEX idx_te_process ON trt.treatment_events (process_id);
 
 * **`MonitoringCommandService` (Interfaz)**
   * **Métodos principales:**
-    * `Optional<OperationalAlert> handle(CreateOperationalAlertCommand command)`
-    * `Optional<QualityIncident> handle(RegisterIncidentCommand command)`
-    * `Optional<EventCorrelation> handle(CorrelateEventsCommand command)`
-    * `void handle(UpdateStatusViewCommand command)`
-    * `Optional<Report> handle(GenerateUpdatedReportCommand command)`
-
-* **`NotificationPort` (Puerto de salida)**
-  * `NotificationResult sendToOperator(String operatorId, NotificationPayload payload)`: Solicita el envío móvil sin transferir a FCM la propiedad de la alerta.
+    * `OperationalAlert handle(AcknowledgeOperationalAlertCommand command)`: Valida el estado actual de la alerta y persiste la atención con su marca de tiempo.
+    * `QualityIncident handle(RegisterIncidentCommand command)`: Verifica que el dispositivo pertenezca a la organización, abre el incidente y registra su evento de apertura.
+    * `QualityIncident handle(CloseIncidentCommand command)`: Verifica que el incidente esté abierto, lo cierra y registra su evento de cierre.
+    * `TraceabilityReport handle(GenerateTraceabilityReportCommand command)`: Valida el período, consolida los eventos del dispositivo y persiste el reporte con sus conteos.
 
 * **`MonitoringQueryService` (Interfaz)**
   * **Métodos principales:**
-    * `List<OperationalAlert> handle(GetActiveAlertsByDeviceIdQuery query)`
-    * `List<QualityIncident> handle(GetIncidentsByDeviceIdQuery query)`
-    * `Optional<EventCorrelation> handle(GetCorrelatedEventsByCycleQuery query)`
-    * `Optional<StatusViewResource> handle(GetStatusViewByDeviceIdQuery query)`
-    * `Optional<ReportResource> handle(GetTraceabilityReportQuery query)`
+    * `MonitoringOverview handle(GetMonitoringOverviewQuery query)`: Compone la vista consolidada de dispositivos (`DeviceStatusView`) a partir de la disponibilidad, la última medición, el estado del proceso y las alertas activas, y devuelve los totales y las alertas recientes.
+    * `Page<OperationalAlertView> handle(ListOperationalAlertsQuery query)`: Retorna la página de alertas enriquecidas con el serial del dispositivo y el reservorio.
+    * `Page<QualityIncidentView> handle(ListQualityIncidentsQuery query)`: Retorna la página de incidentes enriquecidos con el serial del dispositivo y el reservorio.
+    * `DeviceTraceabilityDetail handle(GetDeviceTraceabilityQuery query)`: Retorna la vista del dispositivo y sus eventos de trazabilidad ordenados cronológicamente dentro del rango solicitado.
 
 #### 4.2.5.2. Interface Layer
 
