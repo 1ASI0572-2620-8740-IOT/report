@@ -2866,58 +2866,74 @@ Abstracciones para la lectura de información del dominio sin alterar su estado:
 
 ##### A. Controllers (Controladores REST)
 
-* **`QualityController`**
+Son los puntos de entrada HTTP (Inbound Adapters) que exponen los endpoints de la API REST del Bounded Context.
+
+* **`TreatmentsController`**
+  * **Descripción:** Expone la creación y la consulta de procesos de tratamiento. El `organizationId` se obtiene del principal autenticado, nunca del cuerpo de la petición.
   * **Endpoints:**
-    * `POST /api/v1/quality/processes`: Inicia un proceso de tratamiento para un dispositivo (`StartTreatmentProcessResource`).
-    * `POST /api/v1/quality/processes/{processId}/evaluations`: Recibe datos de sensado para evaluar la conformidad (`EvaluateMeasurementResource`).
-    * `POST /api/v1/quality/processes/{processId}/correction-approval`: Registra de manera idempotente la aprobación única del Operario (`ApproveCorrectionResource`).
-    * `POST /api/v1/quality/processes/{processId}/release`: Permite la liberación manual de agua por un operario (`AuthorizeReleaseResource`).
-    * `POST /api/v1/quality/processes/{processId}/emergency-stop`: Ejecuta la parada de emergencia del tratamiento.
-    * `POST /api/v1/quality/processes/{processId}/reset`: Restablece el proceso detenido (`ResetProcessResource`).
-    * `GET /api/v1/quality/devices/{deviceId}/active-process`: Obtiene el estado del proceso en curso.
+    * `POST /api/v1/treatments`: Inicia un proceso de tratamiento para un dispositivo y retorna `201 Created` con el detalle del proceso creado. Es un endpoint de escritura del contexto que no consume el frontend administrativo: lo invoca el motor de tratamiento cuando la telemetría reporta agua no conforme.
+    * `GET /api/v1/treatments`: Lista paginada de procesos de tratamiento con filtros (`searchTerm`, `status`, `page`, `pageSize`, `sortBy`, `sortDirection`).
+    * `GET /api/v1/treatments/{processId}`: Obtiene el detalle completo de un proceso (mediciones, ciclos, eventos y rangos de la versión de configuración) o `404` si no existe.
 
 ---
 
 ##### B. Resources / DTOs (Objetos de Transferencia de Datos)
 
-* **`StartTreatmentProcessResource(String deviceId)`**
-* **`EvaluateMeasurementResource(Double ph, Double temperature)`**
-* **`ApproveCorrectionResource(Long configurationVersion)`**: El Operario se obtiene de la sesión autenticada, no del cuerpo de la solicitud.
-* **`AuthorizeReleaseResource(String releaseType)`**
-* **`ResetProcessResource(Long operatorId, String reason)`**
-* **`WaterTreatmentProcessResource(Long id, String deviceId, String conformity, String status, Integer cycleCount)`**
+Definen las estructuras de datos aceptadas en las peticiones (Requests) y enviadas en las respuestas (Responses) de la API REST:
+
+* **`StartTreatmentProcessResource(String deviceId, Integer maximumCycles, Integer waitingMinutes)`**: DTO de entrada para crear un proceso. `maximumCycles` y `waitingMinutes` son opcionales; si se omiten, el backend aplica los valores por defecto de la política operativa.
+* **`TreatmentProcessSummaryResource(String id, String deviceId, String deviceSerialNumber, String reservoirName, String operatorName, String state, String strategy, String approvalStatus, int currentCycle, int maximumCycles, String releaseMode, String releaseEligibility, TreatmentMeasurementResource latestMeasurement, String startedAt, String updatedAt)`**: DTO de salida para cada proceso de la lista.
+* **`TreatmentProcessPageResource(List<TreatmentProcessSummaryResource> items, int total, int page, int pageSize)`**: DTO de salida paginado para la lista de procesos.
+* **`TreatmentProcessDetailResource(...)`**: DTO de salida del detalle; extiende el resumen con `configurationVersion`, `phMin`, `phMax`, `temperatureMin`, `temperatureMax`, `waitingMinutes`, `initialMeasurement`, `cycles`, `events`, `failureReason`, `emergencyReason` y `completedAt`.
+* **`TreatmentMeasurementResource(Double ph, Double temperature, String measuredAt, boolean conforming)`**: DTO de salida de una medición del proceso (inicial o última).
+* **`TreatmentCycleResource(int number, String action, String status, String startedAt, String confirmedAt, String result)`**: DTO de salida de un ciclo de corrección.
+* **`TreatmentEventResource(String id, String title, String description, String outcome, String occurredAt)`**: DTO de salida de un evento de trazabilidad del proceso.
 
 ---
 
 ##### C. Transformers / Mappers
 
-* **`StartTreatmentProcessCommandFromResourceAssembler`**: Mapea la petición de inicio a `StartTreatmentProcessCommand`.
-* **`EvaluateMeasurementCommandFromResourceAssembler`**: Transforma el recurso de evaluación a `EvaluateMeasurementCommand`.
-* **`WaterTreatmentProcessResourceFromEntityAssembler`**: Mapea la entidad `WaterTreatmentProcess` hacia `WaterTreatmentProcessResource`.
+Clases de transformación encargadas de mapear entre los DTOs/Resources de la capa de interfaz y los objetos de la capa de aplicación/dominio (Commands, Queries, Read Models y Agregados).
+
+* **`StartTreatmentProcessCommandFromResourceAssembler`**: Transforma el payload REST y el principal autenticado en `StartTreatmentProcessCommand`.
+* **`TreatmentProcessSummaryResourceFromReadModelAssembler`**: Mapea un `TreatmentProcessSummary` (read model enriquecido con datos de `cfg`) hacia `TreatmentProcessSummaryResource`.
+* **`TreatmentProcessPageResourceFromReadModelAssembler`**: Mapea una página de resúmenes hacia `TreatmentProcessPageResource`.
+* **`TreatmentProcessDetailResourceFromReadModelAssembler`**: Mapea un `TreatmentProcessDetail` hacia `TreatmentProcessDetailResource`, incluyendo sus ciclos y eventos.
+* **`TreatmentMeasurementResourceFromEntityAssembler`**: Mapea la entidad `TreatmentMeasurement` hacia `TreatmentMeasurementResource`.
+* **`TreatmentCycleResourceFromEntityAssembler`**: Mapea la entidad `TreatmentCycle` hacia `TreatmentCycleResource`.
+* **`TreatmentEventResourceFromEntityAssembler`**: Mapea la entidad `TreatmentEvent` hacia `TreatmentEventResource`.
 
 #### 4.2.4.3. Application Layer
 
 ##### A. Command Services & Handlers (Servicios de Comandos)
 
-* **`QualityCommandServiceImpl`**
-  * **Descripción:** Orquesta el flujo completo de evaluación, toma de decisiones y emergencias sobre el agua sensada.
+Procesan las intenciones de cambio de estado recibiendo *Commands*, orquestando la lógica de negocio junto con los agregados del dominio y persistiendo los cambios mediante los repositorios.
+
+* **`TreatmentCommandServiceImpl`**
+  * **Descripción:** Implementación de la interfaz `TreatmentCommandService`. Es el único servicio de escritura del contexto y concentra la creación del proceso; las transiciones posteriores las ejecuta el motor de tratamiento sobre el agregado ya persistido.
   * **Flujos de trabajo / Handlers:**
-    * **`handle(StartTreatmentProcessCommand command)`**: Instancia y persiste un nuevo `WaterTreatmentProcess` para el dispositivo.
-    * **`handle(EvaluateMeasurementCommand command)`**: Verifica la calidad del agua. Ante la primera no conformidad selecciona la estrategia y pasa a `PENDIENTE_APROBACION_CORRECCION`; después de una aprobación, una reevaluación no conforme inicia automáticamente el siguiente ciclo si aún es seguro continuar.
-    * **`handle(ApproveCorrectionCommand command)`**: Verifica que el Operario sea responsable del dispositivo y que coincida la versión de configuración, registra la aprobación una sola vez y emite la primera orden. Repetir la misma solicitud no duplica la actuación.
-    * **`handle(AuthorizeReleaseCommand command)`**: Autoriza la apertura únicamente si el proceso está `LISTO`. En modo manual requiere la confirmación del Operario; en modo automático se ejecuta sin esa confirmación. Ningún Operario puede sustituir la conformidad del sistema.
-    * **`handle(ExecuteEmergencyStopCommand command)`**: Cambia el estado a `PARADA_EMERGENCIA` y genera una alerta del sistema.
-    * **`handle(ResetProcessCommand command)`**: Permite el reingreso a operaciones tras la revisión directa del operario.
+    * **`handle(StartTreatmentProcessCommand command)`**: Obtiene el `organizationId` del principal autenticado; consulta al puerto `DeviceOperationalContextService` el dispositivo (existencia, estado activo y reservorio vinculado) y al puerto `ConfigurationSnapshotService` la versión de configuración publicada vigente; verifica que no exista otro proceso activo para el mismo dispositivo; instancia el agregado `WaterTreatmentProcess` en estado `NOT_STARTED` con `maximumCycles` y `waitingMinutes` provistos (o los valores por defecto de la política: 3 ciclos y 15 minutos), persiste y retorna el proceso creado.
 
 ---
 
 ##### B. Query Services & Handlers (Servicios de Consulta)
 
-* **`QualityQueryServiceImpl`**
+Atienden las lecturas de información recibiendo objetos *Query*, optimizando el acceso a los datos sin alterar el estado del dominio.
+
+* **`TreatmentQueryServiceImpl`**
+  * **Descripción:** Implementación de la interfaz `TreatmentQueryService`. Combina la información persistida en `trt` con el snapshot operativo obtenido de Configuration para construir los *read models* de supervisión.
   * **Flujos de trabajo / Handlers:**
-    * **`handle(GetTreatmentProcessByIdQuery query)`**: Retorna el detalle del tratamiento solicitado.
-    * **`handle(GetActiveTreatmentProcessByDeviceIdQuery query)`**: Consulta el tratamiento actual que no ha finalizado su ciclo.
-    * **`handle(GetTreatmentHistoryByDeviceIdQuery query)`**: Retorna el histórico de ejecuciones y evaluaciones de calidad.
+    * **`handle(ListTreatmentsQuery query)`**: Lista paginada de procesos de la organización filtrando por `searchTerm` (serial del dispositivo, reservorio u operario) y `status` (estado del proceso), con ordenamiento por `sortBy` y `sortDirection`. Enriquece cada `TreatmentProcessSummary` con `deviceSerialNumber`, `reservoirName` y `operatorName` desde `DeviceOperationalContextService`, con `releaseMode` desde `ConfigurationSnapshotService` y con la última medición del proceso.
+    * **`handle(GetTreatmentProcessByIdQuery query)`**: Recupera el proceso con sus mediciones inicial/última, ciclos y eventos; enriquece el `TreatmentProcessDetail` con `configurationVersion`, rangos de pH y temperatura y `releaseMode` de la versión de configuración asociada. Retorna `Optional.empty()` cuando el proceso no existe o no pertenece a la organización, lo que la capa de interfaz traduce en `404 Not Found`.
+
+---
+
+##### C. Outbound Services / Ports (Servicios de Salida)
+
+Interfaces y abstracciones requeridas por la capa de aplicación para comunicarse con el exterior sin acoplarse a tecnologías específicas.
+
+* **`DeviceOperationalContextService`**: Puerto hacia Configuration para obtener el snapshot operativo del dispositivo (existencia, estado activo, reservorio vinculado, serial, nombre del reservorio y operario responsable).
+* **`ConfigurationSnapshotService`**: Puerto hacia Configuration para obtener la versión de configuración publicada vigente del dispositivo (rangos de pH y temperatura, modo de liberación y parámetros operativos) y para resolver el `configuration_versions_id` que se almacena en el proceso.
 
 #### 4.2.4.4. Infrastructure Layer
 
