@@ -2802,67 +2802,68 @@ CREATE INDEX idx_wm_device_measured ON tel.water_measurements (device_id, measur
 
 #### 4.2.4.1. Domain Layer
 
+##### A. Aggregates (Agregados)
+
 * **`WaterTreatmentProcess` (Agregado Principal)**
-  * **Descripción:** Encapsula el ciclo de vida completo de evaluación, tratamiento, reevaluación y liberación o retención de agua para un dispositivo/cultivo específico (hereda de `AuditableAbstractAggregateRoot`).
+  * **Descripción:** Cabecera del proceso de tratamiento. Orquesta el ciclo de vida de evaluación, corrección, espera, reevaluación y liberación (o retención) del agua para un dispositivo, manteniendo `organization_id` como *snapshot* del tenant y `configuration_versions_id` como referencia lógica a la versión de configuración de `cfg`, desde la cual se enriquecen los rangos de pH/temperatura y el modo de liberación.
   * **Comportamiento y Reglas de Negocio:**
-    * Iniciar y contabilizar ciclos de tratamiento.
-    * Evaluar mediciones entrantes (pH, Temperatura) y determinar la conformidad del agua.
-    * Seleccionar la estrategia de corrección (pH+, pH-, Térmica) y esperar la aprobación única del Operario responsable antes de la primera actuación.
-    * Continuar automáticamente los ciclos posteriores del mismo proceso después de la aprobación, hasta conformidad o fallo.
-    * Comprobar variación útil y límites absolutos de ciclos para detectar fallos del sistema.
-    * Activar el estado de fallo con retención (cierre de válvula) al exceder límites permisibles.
-    * Autorizar la liberación automática o manual del agua tratada.
-    * Ejecutar parada de emergencia e interactuar con el restablecimiento explícito del proceso por parte del operario.
+    * Iniciar el proceso en estado `NOT_STARTED` para un dispositivo de la organización, fijando `maximum_cycles` como límite absoluto de ciclos.
+    * Registrar la medición inicial y la última medición (entidades `TreatmentMeasurement`) y determinar su conformidad contra los rangos (`ph_min`, `ph_max`, `temperature_min`, `temperature_max`) de la versión de configuración asociada.
+    * Evaluar la conformidad del agua y decidir si requiere corrección (`EVALUATING` → `READY`).
+    * Registrar en `strategy` la estrategia correctiva determinada por el motor y exigir la aprobación única del operario responsable antes de la primera actuación (`approval_status`).
+    * Ejecutar y numerar los ciclos de corrección (`treatment_cycles`), incrementando `current_cycle` hasta alcanzar la conformidad o agotar `maximum_cycles`.
+    * Respetar el intervalo de espera (`waiting_minutes`) antes de reevaluar el agua (`WAITING` → `REEVALUATING`).
+    * Gestionar la elegibilidad de liberación (`release_eligibility`: `NOT_ELIGIBLE` | `PENDING_CONFIRMATION` | `AUTHORIZED`); el modo de liberación (`MANUAL` | `AUTOMATIC`) no se persiste en el proceso, se enriquece desde `cfg.configuration_versions`.
+    * Pasar a estado `FAILED` (con `failure_reason`) o `EMERGENCY` (con `emergency_reason`) ante fallo, exceso de ciclos o parada de emergencia, manteniendo la válvula cerrada.
+    * Permitir el restablecimiento explícito del proceso tras revisión del operario.
+    * Registrar toda la cronología en `treatment_events` (`INFO` | `SUCCESS` | `WARNING` | `FAILURE`) y sellar `completed_at` al finalizar el proceso.
 
----
+##### B. Entities (Entidades)
 
-##### B. Value Objects (Objetos de Valor)
+* **`TreatmentMeasurement`**: Medición del proceso (`INITIAL` | `LATEST`). Almacena `ph`, `temperature`, `measured_at` y `conforming` (calculado con los rangos de la versión de configuración). Solo puede existir una medición por tipo y proceso.
+* **`TreatmentCycle`**: Ciclo de corrección ejecutado dentro del proceso (`PENDING` | `EXECUTING` | `CONFIRMED` | `FAILED`). Contiene `number` (secuencial y único por proceso), `action`, `started_at`, `confirmed_at` y `result`.
+* **`TreatmentEvent`**: Evento de trazabilidad del proceso. Captura `title`, `description`, `outcome` (`INFO` | `SUCCESS` | `WARNING` | `FAILURE`) y `occurred_at`, ordenado cronológicamente para reconstruir la historia del proceso.
 
-* **`WaterConformity`**: Estado de evaluación del agua (`CONFORME`, `NO_CONFORME`).
-* **`TreatmentStatus`**: Estado del proceso (`SIN_INICIAR`, `MIDIENDO`, `EVALUANDO`, `PENDIENTE_APROBACION_CORRECCION`, `CORRIGIENDO`, `ESPERANDO`, `REEVALUANDO`, `LISTO`, `LIBERANDO`, `FALLO`, `EMERGENCIA`, `FINALIZADO`).
-* **`CorrectionApproval`**: Aprobación inmutable ligada a `processId`, Operario, estrategia, versión de configuración y fecha. Solo puede registrarse una vez por proceso.
-* **`TreatmentCycle`**: Contador inmutable de ciclos aplicados e intervalo de variación útil.
-* **`CorrectionStrategyType`**: Enum que representa el tipo de corrección (`PH_PLUS`, `PH_MINUS`, `THERMAL`).
+##### C. Value Objects (Objetos de Valor)
 
----
+* **`TreatmentState`**: Estado del proceso (`NOT_STARTED` | `MEASURING` | `EVALUATING` | `PENDING_CORRECTION_APPROVAL` | `CORRECTING` | `WAITING` | `REEVALUATING` | `READY` | `RELEASING` | `FAILED` | `EMERGENCY` | `COMPLETED`).
+* **`ApprovalStatus`**: Estado de aprobación de la corrección (`NOT_REQUIRED` | `PENDING` | `APPROVED`).
+* **`ReleaseEligibility`**: Elegibilidad para liberación (`NOT_ELIGIBLE` | `PENDING_CONFIRMATION` | `AUTHORIZED`).
+* **`MeasurementType`**: Tipo de medición del proceso (`INITIAL` | `LATEST`).
+* **`CycleStatus`**: Estado del ciclo de corrección (`PENDING` | `EXECUTING` | `CONFIRMED` | `FAILED`).
+* **`EventOutcome`**: Resultado del evento de trazabilidad (`INFO` | `SUCCESS` | `WARNING` | `FAILURE`).
 
-##### C. Commands (Comandos - CQRS)
+##### D. Commands (Comandos - CQRS)
 
-* **`StartTreatmentProcessCommand(String deviceId)`**: Inicia un nuevo ciclo de proceso de tratamiento.
-* **`EvaluateMeasurementCommand(Long processId, Double ph, Double temperature)`**: Evalúa las condiciones físicas actuales del agua contra los rangos configurados.
-* **`ApplyCorrectionStrategyCommand(Long processId, CorrectionStrategyType strategyType)`**: Registra la selección y aplicación de una estrategia de corrección.
-* **`ApproveCorrectionCommand(Long processId, Long operatorId, Long configurationVersion)`**: Aprueba una sola vez la estrategia propuesta para el proceso.
-* **`AuthorizeReleaseCommand(Long processId, String releaseType)`**: Autoriza la liberación (automática o manual) del agua.
-* **`ExecuteEmergencyStopCommand(Long processId)`**: Dispara la parada de emergencia y el cierre de válvulas.
-* **`ResetProcessCommand(Long processId, Long operatorId)`**: Restablece el proceso tras una falla o parada de emergencia.
+* **`StartTreatmentProcessCommand(String deviceId)`**: Inicia un proceso de tratamiento para el dispositivo indicado.
+* **`EvaluateMeasurementCommand(UUID processId, Double ph, Double temperature)`**: Evalúa las lecturas actuales contra los rangos de la versión de configuración asociada.
+* **`ApproveCorrectionCommand(UUID processId)`**: Registra la aprobación única de la estrategia propuesta por el operario autenticado.
+* **`AuthorizeReleaseCommand(UUID processId, String releaseType)`**: Autoriza la liberación del agua tratada (manual o automática) cuando el proceso se encuentra en estado `READY`.
+* **`ExecuteEmergencyStopCommand(UUID processId)`**: Ejecuta la parada de emergencia, activa el estado `EMERGENCY` y cierra la válvula.
+* **`ResetProcessCommand(UUID processId)`**: Restablece el proceso tras una falla o parada de emergencia, previa revisión por parte del operario.
 
----
+##### E. Queries (Consultas - CQRS)
 
-##### D. Queries (Consultas - CQRS)
+* **`GetTreatmentProcessByIdQuery(UUID processId)`**: Obtiene el detalle completo del proceso de tratamiento.
+* **`GetActiveTreatmentProcessByDeviceIdQuery(UUID deviceId)`**: Obtiene el proceso activo (no finalizado) asociado a un dispositivo.
+* **`ListTreatmentsQuery(String searchTerm, String status, int page, int pageSize, String sortBy, String sortDirection)`**: Lista paginada de procesos de tratamiento con filtros.
 
-* **`GetTreatmentProcessByIdQuery(Long processId)`**
-* **`GetActiveTreatmentProcessByDeviceIdQuery(String deviceId)`**
-* **`GetTreatmentHistoryByDeviceIdQuery(String deviceId)`**
+##### F. Services (Servicios de Comando y Consulta)
 
----
-
-##### E. Services (Servicios de Comando y Consulta)
-
-* **`QualityCommandService` (Interfaz)**
+* **`TreatmentCommandService` (Interfaz)**
   * **Métodos principales:**
-    * `Optional<WaterTreatmentProcess> handle(StartTreatmentProcessCommand command)`
-    * `Optional<WaterTreatmentProcess> handle(EvaluateMeasurementCommand command)`
-    * `Optional<WaterTreatmentProcess> handle(ApplyCorrectionStrategyCommand command)`
-    * `Optional<WaterTreatmentProcess> handle(ApproveCorrectionCommand command)`
-    * `Optional<WaterTreatmentProcess> handle(AuthorizeReleaseCommand command)`
-    * `Optional<WaterTreatmentProcess> handle(ExecuteEmergencyStopCommand command)`
-    * `Optional<WaterTreatmentProcess> handle(ResetProcessCommand command)`
+    * `WaterTreatmentProcess handle(StartTreatmentProcessCommand command)`
+    * `WaterTreatmentProcess handle(EvaluateMeasurementCommand command)`
+    * `WaterTreatmentProcess handle(ApproveCorrectionCommand command)`
+    * `WaterTreatmentProcess handle(AuthorizeReleaseCommand command)`
+    * `void handle(ExecuteEmergencyStopCommand command)`
+    * `WaterTreatmentProcess handle(ResetProcessCommand command)`
 
-* **`QualityQueryService` (Interfaz)**
+* **`TreatmentQueryService` (Interfaz)**
   * **Métodos principales:**
-    * `Optional<WaterTreatmentProcess> handle(GetTreatmentProcessByIdQuery query)`
+    * `TreatmentProcessDetail handle(GetTreatmentProcessByIdQuery query)`
     * `Optional<WaterTreatmentProcess> handle(GetActiveTreatmentProcessByDeviceIdQuery query)`
-    * `List<WaterTreatmentProcess> handle(GetTreatmentHistoryByDeviceIdQuery query)`
+    * `Page<TreatmentProcessSummary> handle(ListTreatmentsQuery query)`
 
 #### 4.2.4.2. Interface Layer
 
