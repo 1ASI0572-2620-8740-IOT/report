@@ -2808,6 +2808,7 @@ CREATE INDEX idx_wm_device_measured ON tel.water_measurements (device_id, measur
   * **Descripción:** Cabecera del proceso de tratamiento. Orquesta el ciclo de vida de evaluación, corrección, espera, reevaluación y liberación (o retención) del agua para un dispositivo, manteniendo `organization_id` como *snapshot* del tenant y `configuration_versions_id` como referencia lógica a la versión de configuración de `cfg`, desde la cual se enriquecen los rangos de pH/temperatura y el modo de liberación.
   * **Comportamiento y Reglas de Negocio:**
     * Iniciar el proceso en estado `NOT_STARTED` para un dispositivo de la organización, fijando `maximum_cycles` como límite absoluto de ciclos.
+    * Validar las precondiciones de creación: dispositivo existente, activo y vinculado a un reservorio; versión de configuración publicada vigente en `cfg`; y ausencia de otro proceso activo para el mismo dispositivo (garantiza idempotencia de la creación).
     * Registrar la medición inicial y la última medición (entidades `TreatmentMeasurement`) y determinar su conformidad contra los rangos (`ph_min`, `ph_max`, `temperature_min`, `temperature_max`) de la versión de configuración asociada.
     * Evaluar la conformidad del agua y decidir si requiere corrección (`EVALUATING` → `READY`).
     * Registrar en `strategy` la estrategia correctiva determinada por el motor y exigir la aprobación única del operario responsable antes de la primera actuación (`approval_status`).
@@ -2835,7 +2836,9 @@ CREATE INDEX idx_wm_device_measured ON tel.water_measurements (device_id, measur
 
 ##### D. Commands (Comandos - CQRS)
 
-No se exponen comandos en la API REST administrativa: las transiciones del proceso (`NOT_STARTED`, `MEASURING`, `EVALUATING`, `PENDING_CORRECTION_APPROVAL`, `CORRECTING`, `WAITING`, `REEVALUATING`, `READY`, `RELEASING`, `FAILED`, `EMERGENCY`, `COMPLETED`) son ejecutadas internamente por el motor de tratamiento y el dispositivo. El frontend administrativo solo realiza consultas de supervisión.
+El único comando de escritura del contexto es el de creación del proceso; el resto de transiciones de estado (`MEASURING`, `EVALUATING`, `PENDING_CORRECTION_APPROVAL`, `CORRECTING`, `WAITING`, `REEVALUATING`, `READY`, `RELEASING`, `FAILED`, `EMERGENCY`, `COMPLETED`) las ejecuta internamente el motor de tratamiento a partir de las mediciones y confirmaciones del dispositivo, por lo que no se exponen como endpoints del frontend administrativo.
+
+* **`StartTreatmentProcessCommand(String deviceId, Integer maximumCycles, Integer waitingMinutes)`**: Abre un nuevo proceso de tratamiento para el dispositivo indicado. La organización se toma del principal autenticado y la versión de configuración vigente (`configuration_versions_id`) se resuelve internamente contra `cfg`; `maximumCycles` y `waitingMinutes` son parámetros operativos opcionales que, si no se envían, toman el valor por defecto de la política (3 ciclos y 15 minutos).
 
 ---
 
@@ -2848,7 +2851,11 @@ Abstracciones para la lectura de información del dominio sin alterar su estado:
 
 ---
 
-##### F. Services (Servicios de Consulta)
+##### F. Services (Servicios de Comando y Consulta)
+
+* **`TreatmentCommandService` (Interfaz)**
+  * **Métodos principales:**
+    * `WaterTreatmentProcess handle(StartTreatmentProcessCommand command)`: Valida las precondiciones de creación, resuelve la versión de configuración publicada del dispositivo y registra el proceso en estado `NOT_STARTED`.
 
 * **`TreatmentQueryService` (Interfaz)**
   * **Métodos principales:**
