@@ -3000,17 +3000,21 @@ Clases que configuran componentes del framework y la documentación del microser
 
 ##### 4.2.4.6.1. Bounded Context Domain Layer Class Diagrams
 
-A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Tratamiento y Calidad del Agua, detallando el agregado principal `WaterTreatmentProcess`, sus objetos de valor (`WaterConformity`, `TreatmentStatus`, `CorrectionStrategyType`, `TreatmentCycle`), comandos, consultas y servicios del patrón CQRS:
+A continuación se presenta el diagrama de clases correspondiente a la capa de dominio del Bounded Context de Tratamiento y Calidad del Agua, donde se estructuran el agregado, sus entidades, los objetos de valor, el comando, las consultas, los modelos de lectura y los servicios bajo el patrón CQRS:
 
 ---
 
-[![uml.png](https://i.postimg.cc/g2S1dnnY/uml.png)](https://postimg.cc/CR8csMGt)
+[![TRT-DOMAIN-CLASSES.png](https://i.postimg.cc/Xq3syQZf/TRT-DOMAIN-CLASSES.png)](https://postimg.cc/TL7VzjJ1)
 
 ---
 
-* **`WaterTreatmentProcess`**: Encapsula las reglas del ciclo de evaluación, control de estados del agua, toma de decisiones correctivas e intervenciones manuales o de emergencia.
-* **Objetos de Valor**: Definen de manera explícita e inmutable los estados (`WaterConformity`, `TreatmentStatus`), tipos de corrección (`CorrectionStrategyType`) y métricas de iteración del ciclo (`TreatmentCycle`).
-* **Patrón CQRS**: Separa limpiamente la ejecución de comandos de cambio de estado sobre el tratamiento de la consulta de procesos activos e históricos.
+* **`WaterTreatmentProcess` (Agregado)**: Entidad raíz que orquesta el ciclo de vida del tratamiento —evaluación, corrección, espera, reevaluación y liberación o retención del agua—. Mantiene `organization_id` como *snapshot* del tenant y `configuration_versions_id` como referencia lógica a Configuration, y aplica las precondiciones de creación: dispositivo existente, activo y vinculado a un reservorio, configuración publicada vigente y ausencia de otro proceso activo para el mismo dispositivo.
+* **`TreatmentMeasurement` / `TreatmentCycle` / `TreatmentEvent` (Entidades)**: Registran la medición inicial y la última medición con su resultado de conformidad, los ciclos de corrección numerados con su acción, estado y resultado, y la cronología de eventos del proceso con su resultado (`INFO` | `SUCCESS` | `WARNING` | `FAILURE`).
+* **Objetos de Valor (`TreatmentState`, `ApprovalStatus`, `ReleaseEligibility`, `MeasurementType`, `CycleStatus`, `EventOutcome`)**: Enumeraciones inmutables que tipan los doce estados del proceso, la aprobación única del operario, la elegibilidad de liberación y los estados de mediciones, ciclos y eventos. La estrategia correctiva (`strategy`) se modela como texto libre porque la determina el motor de tratamiento.
+* **`StartTreatmentProcessCommand`**: Comando que abre un proceso para un dispositivo con `maximumCycles` y `waitingMinutes` opcionales, atendido por `TreatmentCommandService`. El resto de transiciones de estado las ejecuta internamente el motor de tratamiento, por lo que no se exponen como comandos HTTP.
+* **Queries (`ListTreatmentsQuery`, `GetTreatmentProcessByIdQuery`)**: Abstracciones para la consulta paginada de procesos con filtros por estado y término de búsqueda, y para la obtención del detalle de un proceso.
+* **Read Models (`TreatmentProcessSummary`, `TreatmentProcessDetail`)**: Proyecciones que combinan el proceso persistido en `trt` con el serial del dispositivo, el reservorio y el operario obtenidos de `cfg`, y con los rangos y el modo de liberación de `configuration_versions`. El detalle extiende el resumen con las mediciones, los ciclos y los eventos del proceso.
+* **`TreatmentCommandService` / `TreatmentQueryService`**: Interfaces de servicio que desacoplan la creación del proceso de las operaciones de consulta, siguiendo el patrón CQRS.
 
 ##### 4.2.4.6.2. Bounded Context Database Design Diagram
 
