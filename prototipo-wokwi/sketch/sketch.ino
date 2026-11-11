@@ -2,8 +2,8 @@
 // Serial 115200: configuracion JSON en RAM; nunca se imprimen/guardan credenciales.
 // Wokwi: {"edgeUrl":"http://host.wokwi.internal:5000","deviceId":"UUID","credential":"SECRETO","mode":"SIMULATION","phInput":"WOKWI_POTENTIOMETER"}
 // WiFi opcional: ssid/password; CA publica incluida; rootCa opcional para otra CA.
-// PH4502C: conversion vigente pH = 8 + (2183.0 - mV_D34) / 30.0359477.
-// Ajuste fijo con pH asumidos; no reajustar el punto inicial en cada muestra.
+// PH4502C: ajuste de dos buffers pH 4.003 / 6.864, medidos cerca de 25 C.
+// Referencias fijas del montaje medido; verificar nuevamente con todos los LED.
 // El registro del dispositivo debe estar en SIMULATION. No usar para calidad real.
 // "bench" habilita pruebas aisladas c/v. "e" y boton rojo cierran localmente; "r" retira bloqueo local.
 
@@ -69,10 +69,18 @@ IQDspFWa3fj7nLgouSdkcPy1SdOR2AGm9OQWs7veyXsBwA==
 -----END CERTIFICATE-----
 )PEM";
 
-constexpr int PH_PIN=34, TEMPERATURE_PIN=4, SERVO_PIN=18;
+constexpr int PH_PIN=35, TEMPERATURE_PIN=4, SERVO_PIN=18;
 constexpr int ACTIVITY_LED_PIN=25, CORRECTION_LED_PIN=26, ALARM_LED_PIN=27;
 constexpr int CONFIRM_PIN=32, EMERGENCY_PIN=33;
 constexpr uint32_t CONTROL_GRACE_MS=8000, SAMPLE_MS=5000, HEARTBEAT_MS=30000;
+constexpr uint32_t ACTIVITY_PULSE_MS=100;
+constexpr bool activityPulseExpired(uint32_t now,uint32_t started){
+  return (int32_t)(now-started)>=(int32_t)ACTIVITY_PULSE_MS;
+}
+static_assert(!activityPulseExpired(1099,1000),"Keep pulse before 100 ms");
+static_assert(activityPulseExpired(1100,1000),"End pulse at 100 ms");
+static_assert(!activityPulseExpired(999,1000),"Ignore earlier watchdog snapshot");
+static_assert(activityPulseExpired(49,UINT32_MAX-50),"Pulse survives millis wraparound");
 constexpr int SLOTS=8;
 OneWire oneWire(TEMPERATURE_PIN);
 DallasTemperature sensors(&oneWire);
@@ -80,41 +88,42 @@ Servo valve;
 Preferences journal;
 String edgeUrl,deviceId,credential,organizationId,rootCa=EDGE_ROOT_CA,mode="SIMULATION";
 String phInput="PH4502C";
-// D34 voltage AFTER the two-equal-resistor divider, in millivolts.
-// Assumed pH values: tap water 8; 250 mL water + 30 mL cider vinegar 2.9.
-// Voltage means were observed at ~25.4 C; pH values were NOT measured.
-// This empirical model does not establish probe accuracy or actual module gain.
-constexpr double PH_BASE_VALUE=8.0;
-// Current tap-water series: 2204.6, 2159.0, 2211.2, 2157.2 mV; mean 2183.0.
-constexpr double PH_BASE_D34_MV=2183.0;
-constexpr double PH_ACID_VALUE=2.9;
-constexpr double PH_ACID_D34_MV=(2345.9+2328.5+2346.0+2325.9+2344.8+2326.0)/6.0;
-constexpr double PH_D34_MV_PER_UNIT=(PH_ACID_D34_MV-PH_BASE_D34_MV)/(PH_BASE_VALUE-PH_ACID_VALUE);
+// ADC voltage AFTER the two-equal-resistor divider, in millivolts.
+// Calibration constants retain D34 names because the buffers were measured on GPIO34.
+// GPIO35 is now under comparison; the original coefficients remain unchanged.
+// Buffer readings supplied on 2026-11-09: 24.94 C / 24.88 C, respectively.
+// Use the actual divider, supply and LED configuration used for these readings.
+// No automatic baseline reset or temperature compensation is applied here.
+// Accuracy outside the two reference points still requires verification.
+constexpr double PH_ACID_VALUE=4.003;
+constexpr double PH_ACID_D34_MV=(2265.4+2264.4+2264.4+2266.8+2266.0+2264.0+2264.0+2263.5+2265.5)/9.0;
+constexpr double PH_NEUTRAL_VALUE=6.864;
+constexpr double PH_NEUTRAL_D34_MV=(2014.7+2015.4+2015.1+2015.5+2016.4+2017.9+2015.7)/7.0;
+constexpr double PH_D34_MV_PER_UNIT=(PH_ACID_D34_MV-PH_NEUTRAL_D34_MV)/(PH_NEUTRAL_VALUE-PH_ACID_VALUE);
 constexpr double phFromMillivolts(double mv){
   if(!(mv>=150 && mv<=3100))return NAN;
-  double value=PH_BASE_VALUE+(PH_BASE_D34_MV-mv)/PH_D34_MV_PER_UNIT;
+  double value=PH_ACID_VALUE+(PH_ACID_D34_MV-mv)/PH_D34_MV_PER_UNIT;
   return value>=0 && value<=14?value:NAN;
 }
 constexpr double phFromPotentiometer(double raw){
   return raw>=0 && raw<=4095?raw*14.0/4095.0:NAN;
 }
 // Arithmetic checks run at compile time, without controlling hardware.
-static_assert(phFromMillivolts(PH_BASE_D34_MV)==8.0,"Fixed baseline");
-static_assert(fabs(phFromMillivolts(PH_BASE_D34_MV-PH_D34_MV_PER_UNIT)-9.0)<0.000001,"One unit increase");
-static_assert(fabs(phFromMillivolts(PH_BASE_D34_MV+PH_D34_MV_PER_UNIT)-7.0)<0.000001,"One unit decrease");
-static_assert(fabs(phFromMillivolts(PH_ACID_D34_MV)-2.9)<0.000001,"Assumed acid anchor");
-static_assert(fabs(phFromMillivolts((PH_BASE_D34_MV+PH_ACID_D34_MV)/2)-5.45)<0.000001,"Interpolation");
+static_assert(PH_D34_MV_PER_UNIT>87.05 && PH_D34_MV_PER_UNIT<87.07,"Measured buffer slope");
+static_assert(fabs(phFromMillivolts(PH_ACID_D34_MV)-4.003)<0.000001,"Acid buffer anchor");
+static_assert(fabs(phFromMillivolts(PH_NEUTRAL_D34_MV)-6.864)<0.000001,"Neutral buffer anchor");
+static_assert(fabs(phFromMillivolts(PH_ACID_D34_MV-PH_D34_MV_PER_UNIT)-5.003)<0.000001,"One unit increase");
+static_assert(fabs(phFromMillivolts(PH_ACID_D34_MV+PH_D34_MV_PER_UNIT)-3.003)<0.000001,"One unit decrease");
+static_assert(fabs(phFromMillivolts((PH_ACID_D34_MV+PH_NEUTRAL_D34_MV)/2)-5.4335)<0.000001,"Interpolation");
 static_assert(phFromMillivolts(2200)>phFromMillivolts(2300),"Voltage direction");
-static_assert(phFromMillivolts(2204.6)>7.28 && phFromMillivolts(2204.6)<7.29,"Tap sample 1");
-static_assert(phFromMillivolts(2159.0)>8.79 && phFromMillivolts(2159.0)<8.80,"Tap sample 2");
-static_assert(phFromMillivolts(2211.2)>7.06 && phFromMillivolts(2211.2)<7.07,"Tap sample 3");
-static_assert(phFromMillivolts(2157.2)>8.85 && phFromMillivolts(2157.2)<8.86,"Tap sample 4");
-static_assert(phFromMillivolts(2345.9)>2.57 && phFromMillivolts(2345.9)<2.58,"Acid sample 1");
-static_assert(phFromMillivolts(2325.9)>3.24 && phFromMillivolts(2325.9)<3.25,"Acid sample 4");
+static_assert(phFromMillivolts(2266.8)>3.98 && phFromMillivolts(2266.8)<3.99,"Acid buffer high voltage");
+static_assert(phFromMillivolts(2263.5)>4.01 && phFromMillivolts(2263.5)<4.02,"Acid buffer low voltage");
+static_assert(phFromMillivolts(2017.9)>6.84 && phFromMillivolts(2017.9)<6.85,"Neutral buffer high voltage");
+static_assert(phFromMillivolts(2014.7)>6.87 && phFromMillivolts(2014.7)<6.88,"Neutral buffer low voltage");
 static_assert(!(phFromMillivolts(0)>=0),"Electrical zero rejected");
 static_assert(!(phFromMillivolts(3200)>=0),"ADC range rejected");
 static_assert(!(phFromMillivolts(150)>=0),"Invalid result not clamped");
-static_assert(!(phFromMillivolts(2600)>=0),"Negative result not clamped");
+static_assert(!(phFromMillivolts(2800)>=0),"Negative result not clamped");
 static_assert(!(phFromMillivolts(NAN)>=0),"NaN rejected");
 static_assert(!(phFromMillivolts(INFINITY)>=0),"Infinity rejected");
 static_assert(phFromPotentiometer(0)==0,"Virtual low endpoint");
@@ -149,6 +158,8 @@ int previousGreen=HIGH,stableGreen=HIGH;
 std::atomic<int> requestedAngle{0};
 std::atomic<bool> requestedCorrection{false},watchdogTrip{false},benchGuard{false};
 std::atomic<uint32_t> openDeadline{0},correctionDeadline{0},controlSeen{0};
+std::atomic<uint32_t> activityPulseStarted{0};
+std::atomic<bool> activityPulseActive{false};
 
 bool clockReady(){return time(nullptr)>1700000000;}
 String utcNow(){
@@ -168,6 +179,10 @@ void hardwareWatchdog(void*){
   int lastAngle=-1;
   for(;;){
     uint32_t now=millis();
+    // End the activity pulse even while the main loop is blocked in HTTP/TLS.
+    if(activityPulseActive.load() && activityPulseExpired(now,activityPulseStarted.load())){
+      digitalWrite(ACTIVITY_LED_PIN,LOW);activityPulseActive.store(false);
+    }
     if(digitalRead(EMERGENCY_PIN)==LOW || ((!benchGuard.load()) && (requestedAngle.load()!=0 || requestedCorrection.load()) && now-controlSeen.load()>CONTROL_GRACE_MS)){
       requestedAngle.store(0);requestedCorrection.store(false);watchdogTrip.store(true);
     }
@@ -261,7 +276,10 @@ void authenticate(){
   else Serial.println("Dispositivo conectado. Edge gestiona la autenticacion; credenciales no se imprimen.");
 }
 void sample(){
-  if(millis()-lastSample<SAMPLE_MS)return;lastSample=millis();sensors.requestTemperatures();temperatureValue=sensors.getTempCByIndex(0);
+  if(millis()-lastSample<SAMPLE_MS)return;lastSample=millis();
+  // The activity LED stays off throughout temperature and pH acquisition.
+  activityPulseActive.store(false);digitalWrite(ACTIVITY_LED_PIN,LOW);
+  sensors.requestTemperatures();temperatureValue=sensors.getTempCByIndex(0);
   // Short burst: trim 5 samples at either end to reject isolated ADC spikes.
   // No multi-minute moving average: a real change must not be hidden by filtering.
   uint32_t rawSamples[31],mvSamples[31];
@@ -289,9 +307,9 @@ void sample(){
   if(!simulatedInput && (phRaw<=1 || phRaw>=4094))phValue=NAN;
   sensorFault=temperatureValue==DEVICE_DISCONNECTED_C || !isfinite(temperatureValue) || temperatureValue< -55 || temperatureValue>125 || !isfinite(phValue) || phValue<0 || phValue>14;
   // Diagnostics remain visible even when pH cannot be published. No secrets.
-  Serial.printf("ADC=%.1f D34=%.1f mV Po_estimado=%.1f mV dispersion=%.1f mV T=%.2f C modo=%s entrada=%s\n",
+  Serial.printf("ADC=%.1f D35=%.1f mV Po_estimado=%.1f mV dispersion=%.1f mV T=%.2f C modo=%s entrada=%s\n",
     phRaw,phMillivolts,phMillivolts*2,phSpanMv,temperatureValue,mode.c_str(),phInput.c_str());
-  Serial.printf("DIAG fase=%c muestra=%lu inicio_ms=%lu ventana_ms=%lu D34_min=%lu mediana=%lu max=%lu recortado_min=%lu recortado_max=%lu mV\n",
+  Serial.printf("DIAG fase=%c muestra=%lu inicio_ms=%lu ventana_ms=%lu D35_min=%lu mediana=%lu max=%lu recortado_min=%lu recortado_max=%lu mV\n",
     diagnosticPhase,(unsigned long)++diagnosticSample,(unsigned long)acquisitionStart,(unsigned long)acquisitionMs,
     (unsigned long)mvSamples[0],(unsigned long)mvSamples[15],(unsigned long)mvSamples[30],
     (unsigned long)mvSamples[5],(unsigned long)mvSamples[25]);
@@ -309,7 +327,12 @@ void sample(){
       JsonDocument doc;doc["measurementId"]=bootId+"-"+String(++sequence);doc["ph"]=phValue;doc["temperature"]=temperatureValue;doc["measuredAt"]=utcNow();serializeJson(doc,pendingMeasurement);
     }
   }
-  digitalWrite(ACTIVITY_LED_PIN,!digitalRead(ACTIVITY_LED_PIN));alarms();
+  // Indicate acquisition, not successful authentication or cloud delivery.
+  // pwmReady also confirms that the periodic watchdog task was started.
+  if(pwmReady){
+    activityPulseStarted.store(millis());digitalWrite(ACTIVITY_LED_PIN,HIGH);activityPulseActive.store(true);
+  }
+  alarms();
 }
 void flushResults(){
   if(!identityReady || !clockReady())return;
@@ -461,6 +484,7 @@ void setup(){
   Serial.setRxBufferSize(16384);
   Serial.begin(115200);setenv("TZ","UTC0",1);tzset();
   pinMode(ACTIVITY_LED_PIN,OUTPUT);pinMode(CORRECTION_LED_PIN,OUTPUT);pinMode(ALARM_LED_PIN,OUTPUT);pinMode(CONFIRM_PIN,INPUT_PULLUP);pinMode(EMERGENCY_PIN,INPUT_PULLUP);
+  digitalWrite(ACTIVITY_LED_PIN,LOW);
   analogReadResolution(12);analogSetPinAttenuation(PH_PIN,ADC_11db);
   valve.setPeriodHertz(50);valve.attach(SERVO_PIN,500,2400);pwmReady=valve.attached();safeOutputs();
   valve.write(0);
@@ -470,7 +494,7 @@ void setup(){
   WiFi.mode(WIFI_STA);WiFi.begin(wifiSsid.c_str(),wifiPassword.c_str());alarms();
   Serial.println("HydroGuard: salidas cerradas. Pegue configuracion JSON por Serial; credenciales solo en RAM.");
   Serial.println("Transporte TLS: WE1 + P-256 + keep-alive (revision 2).");
-  Serial.printf("Conversion PH4502C vigente: pH = %.1f + (%.1f - mV_D34) / %.7f.\n",PH_BASE_VALUE,PH_BASE_D34_MV,PH_D34_MV_PER_UNIT);
+  Serial.printf("Conversion PH4502C vigente: pH = %.3f + (%.4f - mV_D35) / %.7f.\n",PH_ACID_VALUE,PH_ACID_D34_MV,PH_D34_MV_PER_UNIT);
 }
 void loop(){
   if(watchdogTrip.exchange(false))localStop();
