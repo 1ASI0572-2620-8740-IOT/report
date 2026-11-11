@@ -4,7 +4,8 @@
 // WiFi opcional: ssid/password; CA publica incluida; rootCa opcional para otra CA.
 // PH4502C: ajuste de dos buffers pH 4.003 / 6.864, medidos cerca de 25 C.
 // Referencias fijas del montaje medido; verificar nuevamente con todos los LED.
-// El registro del dispositivo debe estar en SIMULATION. No usar para calidad real.
+// mode debe coincidir con el registro: SIMULATION (Wokwi) o ACADEMIC_PROTOTYPE (fisico).
+// Ambos representan la correccion mediante LED; no acreditan dosificacion ni calidad real.
 // "bench" habilita pruebas aisladas c/v. "e" y boton rojo cierran localmente; "r" retira bloqueo local.
 
 #include <Arduino.h>
@@ -383,7 +384,7 @@ void execute(JsonDocument& c){
     finishActive("COMPLETED","Apertura ordenada/representada a 180 grados; cierre local maximo 5 s, sin medicion de flujo.");
   }else {
     correcting=true;correctionStarted=millis();correctionDuration=duration;
-    correctionDeadline.store(correctionStarted+(mode=="SIMULATION"?duration:30000));requestedCorrection.store(true);
+    correctionDeadline.store(correctionStarted+duration);requestedCorrection.store(true);
     Serial.println("CORRECCION: LED activo. Cambiar sensor representa el efecto; no demuestra dosificacion fisica.");
   }
   alarms();
@@ -435,7 +436,10 @@ void configure(const String& line){
   String url=config["edgeUrl"] | edgeUrl;
   while(url.endsWith("/"))url.remove(url.length()-1);
   if(!url.isEmpty() && (url.indexOf('@')>=0 || url.indexOf('?')>=0 || url.indexOf('#')>=0 || (!url.startsWith("https://") && !localHttp(url)))){Serial.println("URL rechazada: HTTP solo en LAN/gateway local; HTTPS requiere CA.");return;}
-  String nextMode=config["mode"] | mode;if(nextMode!="SIMULATION"){Serial.println("El alcance academico actual solo permite SIMULATION; no acredita calidad real.");return;}
+  String nextMode=config["mode"] | mode;
+  if(nextMode!="SIMULATION" && nextMode!="ACADEMIC_PROTOTYPE"){
+    Serial.println("mode debe ser SIMULATION o ACADEMIC_PROTOTYPE y coincidir con el registro del dispositivo.");return;
+  }
   String nextInput=config["phInput"] | phInput;
   if(nextInput!="PH4502C" && nextInput!="WOKWI_POTENTIOMETER"){
     Serial.println("phInput debe ser PH4502C o WOKWI_POTENTIOMETER.");return;
@@ -457,6 +461,7 @@ void configure(const String& line){
   if(wifiChanged){WiFi.disconnect();WiFi.begin(wifiSsid.c_str(),wifiPassword.c_str());}
   else if(WiFi.status()!=WL_CONNECTED)WiFi.begin(wifiSsid.c_str(),wifiPassword.c_str());
   Serial.println("Transporte configurado en RAM. No publicar credenciales ni capturar esta entrada.");
+  Serial.printf("Entorno de confirmaciones: %s. Debe coincidir con el registrado en la web.\n",mode.c_str());
 }
 void input(){
   while(Serial.available()){
@@ -502,7 +507,7 @@ void loop(){
   input();sample();
   int green=digitalRead(CONFIRM_PIN);if(green!=previousGreen){previousGreen=green;lastGreenChange=millis();}
   if(green!=stableGreen && millis()-lastGreenChange>=40){stableGreen=green;if(stableGreen==LOW && correcting){if(activeSlot>=0)confirmCorrection();else {correcting=false;requestedCorrection.store(false);}}}
-  if(correcting && mode=="SIMULATION" && millis()-correctionStarted>=correctionDuration){correcting=false;requestedCorrection.store(false);if(activeSlot>=0)finishActive("COMPLETED","Pulso LED correctivo finalizado en simulacion; no acredita conformidad.");}
+  if(correcting && millis()-correctionStarted>=correctionDuration){correcting=false;requestedCorrection.store(false);if(activeSlot>=0)finishActive("COMPLETED","Pulso LED correctivo finalizado; intervencion representada, no acredita conformidad.");}
   if(valveOpen && millis()-valveOpened>=5000)closeValve();
   if(activeSlot>=0 && clockReady() && (uint32_t)time(nullptr)>=activeExpires){safeOutputs();finishActive("FAILED","Orden vencida: salidas cerradas.");}
   if(!benchMode && (correcting || valveOpen) && (WiFi.status()!=WL_CONNECTED || millis()-lastControl>CONTROL_GRACE_MS)){safeOutputs();if(activeSlot>=0 && clockReady())finishActive("FAILED","Perdida de comunicacion de control: cierre local seguro.");}

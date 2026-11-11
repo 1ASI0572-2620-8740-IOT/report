@@ -3571,9 +3571,9 @@ No se requiere rotación automática para el alcance académico. La regeneració
 
 ## 5.1. Style Guidelines
 
-Las guías de estilo de HydroGuard constituyen la fuente común para diseñar las interfaces de administración web, la aplicación móvil del operario y la interacción con el dispositivo IoT. Su propósito es que una medición, alerta o estado conserve el mismo significado sin importar el canal en el que se presente. Para evitar divergencias, los recursos visuales y las decisiones reutilizables se mantienen como tokens de diseño en el repositorio del producto: familia tipográfica, colores, radios, sombras, espaciado y estados semánticos.
+Las guías de estilo de HydroGuard distinguen la Landing Page comercial de las aplicaciones operativas de administración web, móvil e IoT. Comparten el nombre del producto, los segmentos atendidos, el lenguaje del dominio y el significado de los estados, pero no una paleta o tipografía idéntica. La landing utiliza una variante editorial propia, implementada con HTML, CSS y JavaScript, sin adoptar Material Design; sus valores se detallan en 5.1.2. Los tokens de cada experiencia se centralizan en su respectivo repositorio.
 
-La implementación web existente es la referencia visual inicial. Esta utiliza una interfaz clara para las áreas de trabajo, navegación lateral oscura, azul como color de acción y tarjetas blancas sobre un fondo neutro. El diseño del bounded context **Operational Monitoring and Traceability** reutiliza los mismos patrones de **Device and Operational Configuration**: encabezado de página, filtros, indicadores resumen, tablas responsivas, tarjetas, chips de estado y estados de carga, vacío y error. De esta manera, el usuario no necesita aprender una gramática visual distinta al cambiar de función.
+La aplicación web administrativa es la referencia visual de las áreas operativas: navegación lateral oscura, azul como color de acción y tarjetas blancas sobre fondo neutro. El diseño del bounded context **Operational Monitoring and Traceability** reutiliza los patrones de **Device and Operational Configuration**: encabezados, filtros, indicadores, tablas, tarjetas, chips y estados de carga, vacío y error. Esta referencia no debe confundirse con la variante comercial verde y crema de la landing.
 
 ### 5.1.1. General Style Guidelines
 
@@ -3585,24 +3585,26 @@ La identidad de HydroGuard comunica **control, confianza, trazabilidad y cuidado
 2. **La seguridad prevalece sobre la estética.** Las alertas, liberaciones y fallas se comunican con texto, icono y color; nunca únicamente mediante color.
 3. **Una acción debe producir retroalimentación.** Toda consulta, actualización o exportación muestra carga, resultado satisfactorio o explicación del error.
 4. **La trazabilidad no debe ocultarse.** Las fechas, responsables, dispositivos y relaciones entre mediciones, correcciones y liberaciones permanecen visibles y utilizan términos del lenguaje ubicuo.
-5. **Consistencia antes que novedad.** Un mismo concepto conserva etiqueta, color y comportamiento en todas las vistas.
+5. **Consistencia antes que novedad.** Un mismo concepto conserva significado y comportamiento; los colores de acción y las tipografías pueden variar entre la landing comercial y las aplicaciones, de acuerdo con las variantes documentadas.
 6. **Divulgación progresiva.** Los tableros presentan primero indicadores y excepciones; el detalle técnico se ofrece bajo demanda.
 
 #### Logotipo y marca
 
-El nombre visible del producto es **HydroGuard** y la organización responsable es **HydroLink**. El logotipo se emplea sobre fondos de contraste suficiente, sin deformarlo, rotarlo, recortarlo ni modificar sus colores. Debe conservar un área libre equivalente, como mínimo, a la altura de la letra mayúscula de la marca. En superficies reducidas se utiliza el isotipo acompañado de un nombre accesible; no se sustituye por texto decorativo ni se incorpora dentro de botones operativos.
+El nombre visible del producto es **HydroGuard** y la organización responsable es **HydroLink**. La landing utiliza la firma HydroGuard con tres barras ascendentes inclinadas en verde y tinta; las aplicaciones conservan su identificador visual operativo. Estas variantes se documentan explícitamente: no se presentan como un único isotipo idéntico. Cada firma se utiliza sin deformar, recortar ni rotar y conserva separación respecto a otros elementos. Los enlaces de marca disponen de un nombre accesible.
 
 #### Tipografía
 
 | Uso | Familia | Peso recomendado | Aplicación |
 |:--|:--|:--|:--|
-| Interfaz y contenido | Plus Jakarta Sans | 400, 500, 600, 700 y 800 | Títulos, etiquetas, botones, tablas y texto descriptivo. |
-| Datos técnicos | JetBrains Mono | 400 a 600 | Identificadores, códigos, marcas de tiempo y valores que requieran alineación monoespaciada. |
+| Aplicaciones: interfaz y contenido | Plus Jakarta Sans | 400, 500, 600, 700 y 800 | Títulos, etiquetas, botones, tablas y texto descriptivo. |
+| Aplicaciones: datos técnicos | JetBrains Mono | 400 a 600 | Identificadores, códigos, marcas de tiempo y valores técnicos. |
+| Landing Page: interfaz y contenido | Manrope | 400, 500, 600, 700 y 800 | Navegación, títulos, textos, campos y botones; los énfasis editoriales de títulos emplean la variante serif definida en CSS. |
+| Landing Page: datos y etiquetas técnicas | DM Mono | 400 y 500 | Panel ilustrativo, etiquetas y datos técnicos. |
 | Reserva del sistema | Segoe UI, Roboto, sans-serif | Según plataforma | Se utiliza cuando la fuente principal no se encuentra disponible. |
 
 Los títulos se escriben en estilo oración, evitando bloques completos en mayúsculas. El cuerpo debe conservar una altura de línea aproximada de 1.5 y un tamaño mínimo equivalente a 16 px en contenido principal. La tipografía monoespaciada se reserva para datos técnicos; no se emplea en párrafos extensos.
 
-#### Paleta cromática
+#### Paleta cromática de las aplicaciones operativas
 
 | Rol | Valor principal | Uso |
 |:--|:--:|:--|
@@ -3618,11 +3620,11 @@ Los títulos se escriben en estilo oración, evitando bloques completos en mayú
 | Advertencia | `#C2410C` sobre `#FFF7ED` | Desviación, espera o atención requerida. |
 | Crítico | `#BE123C` sobre `#FFF1F2` | Error, peligro, bloqueo o incidencia crítica. |
 
-Cada combinación debe alcanzar, como mínimo, los criterios de contraste de **WCAG 2.2 nivel AA**. Los colores semánticos no cambian de significado entre vistas: rojo indica una condición crítica y no una acción común; verde confirma un resultado válido y no se usa solo como decoración.
+Cada combinación debe alcanzar, como mínimo, los criterios de contraste de **WCAG 2.2 nivel AA**. En las aplicaciones, rojo indica una condición crítica y verde confirma un resultado válido. En la landing, el verde/aqua también forma parte de la identidad comercial; los estados del panel ilustrativo incluyen texto y no dependen únicamente del color. La implementación de ayudas accesibles no sustituye una evaluación completa de conformidad.
 
 #### Espaciado, formas e iconografía
 
-HydroGuard utiliza una retícula base de 4 px. Los espacios habituales son 8, 12, 16, 24 y 32 px. Los controles relacionados se agrupan con menor separación que los grupos independientes. Los radios definidos son 6 px para controles compactos, 10 px para campos y botones, y 16 px para tarjetas o paneles. Las sombras son sutiles y expresan elevación, no decoración.
+Las aplicaciones operativas utilizan una retícula base de 4 px, con espacios habituales de 8, 12, 16, 24 y 32 px y radios de 6, 10 y 16 px según el componente. La landing tiene su propia composición fluida y radios definidos en CSS, descritos en 5.1.2; no se le atribuyen automáticamente los radios de las aplicaciones. En todos los canales, la proximidad agrupa controles relacionados y las sombras ayudan a separar superficies.
 
 Los iconos pertenecen a una misma familia visual, se muestran junto a una etiqueta cuando representan acciones importantes y disponen de nombre accesible. Los iconos de estado se acompañan con términos como **Operativo**, **Advertencia**, **Crítico**, **Sin conexión** o **Liberado**.
 
@@ -3635,6 +3637,34 @@ La interfaz se dirige al usuario de forma directa, profesional y calmada. Se pre
 La navegación debe ser posible mediante teclado y mantener un foco visible. Los formularios asocian cada campo con su etiqueta y expresan los errores cerca del control. El orden visual coincide con el orden de lectura. Las tablas emplean encabezados semánticos y ofrecen una representación por tarjetas en pantallas angostas. Las animaciones son breves, no bloquean la interacción y respetan la preferencia de movimiento reducido. Toda vista contempla al menos los estados de carga, sin resultados, error, contenido disponible y permisos insuficientes.
 
 ### 5.1.2. Web, Mobile and IoT Style Guidelines
+
+#### Landing Page: variante comercial responsive
+
+La landing se implementa como sitio estático con `index.html`, `terms.html`, `styles.css`, `i18n.js` y `script.js`. No utiliza un framework visual ni Material Design. Su tono es directo, profesional, respetuoso y sereno, con énfasis cercano en el cuidado del agua. Se dirige explícitamente a pequeñas operaciones textiles e hidropónicas.
+
+| Token o elemento | Valor aplicado |
+|:--|:--|
+| Ink / texto y superficies oscuras | `#0E2729` |
+| Ink 2 | `#163B3D` |
+| Aqua / acento y superficies de acción | `#48E1C2` |
+| Aqua Deep / acento decorativo | `#00B996` |
+| Cream / fondo alternativo | `#F4F1E8` |
+| Paper / fondo principal | `#FBFAF5` |
+| Texto secundario | `#5C7372` |
+| Foco y enlaces de alto contraste | `#006B58` sobre superficies claras; Aqua sobre oscuras |
+| Bordes | `rgba(14, 39, 41, 0.15)` |
+| Contenido y datos | Manrope y DM Mono, respectivamente |
+| Composición | Ancho máximo de 1360 px, márgenes fluidos en `vw` y títulos con `clamp()` |
+| Adaptación responsive | Reorganización principal a 800 px y ajustes compactos a 490 px; ajuste adicional de cabecera entre 801 y 1100 px |
+| Formas | Botón principal y selector con radio de 4 px; panel ilustrativo con 6 px; llamadas de navegación redondeadas tipo píldora |
+
+El recorrido conserva `Inicio → Solución → Producto → Sectores → Capacidades → Equipo → Contacto`. Cada segmento tiene un CTA al mismo login administrativo porque ambos utilizan la plataforma compartida. La presentación detallada de las aplicaciones y el acceso móvil quedan pendientes de sus evidencias; los videos About-the-Product y About-the-Team conservan espacios identificados como próximos, sin presentarse como videos ya incrustados.
+
+La interfaz y los mensajes se ofrecen en **inglés de Estados Unidos (`en-US`)**, predeterminado sin preferencia guardada, y **español latinoamericano (`es-419`)**. El selector conserva la preferencia en almacenamiento local cuando el navegador lo permite y la comparte con la página de términos. Se traducen contenido, etiquetas, textos alternativos, mensajes y metadatos; `lang` cambia con el idioma. Las anclas internas mantienen identificadores estables entre idiomas.
+
+La accesibilidad incluye enlace para saltar al contenido, estructura semántica, etiquetas de formularios, nombres accesibles, foco visible, controles de al menos 44 px donde se han definido, menú con `aria-expanded` y `aria-controls`, cierre con Escape, diálogo con título y descripción asociados, restauración del foco y mensajes con `aria-live`. La preferencia de movimiento reducido desactiva animaciones, transiciones y desplazamiento suave; el contenido permanece visible sin JavaScript. El panel de telemetría es una ilustración, no una fuente de lecturas reales. Estas medidas están implementadas; la evaluación heurística y una auditoría completa de accesibilidad continúan siendo evidencias pendientes.
+
+El footer enlaza a términos y condiciones bilingües para el alcance académico. No son una política comercial definitiva ni una certificación de seguridad del agua. El formulario informa antes de completarlo que todavía no envía mensajes; el contacto disponible es el enlace de correo. No se añadió envío de consultas ni descarga móvil en esta actualización.
 
 #### Aplicación web administrativa
 
@@ -3735,18 +3765,22 @@ La Landing Page es la única experiencia destinada a indexación pública. Las r
 
 #### Landing Page
 
-La Landing Page actual es una sola página con navegación mediante anclas. Por ello, `Solución`, `Sectores`, `Equipo` y `Contacto` comparten los metadatos del documento principal y no se presentan como páginas independientes.
+La Landing Page principal utiliza navegación mediante anclas. `Solución`, `Sectores`, `Equipo` y `Contacto` comparten sus metadatos; los términos y condiciones sí tienen una página independiente. Los siguientes valores corresponden al idioma inicial inglés; al seleccionar español latinoamericano se actualizan los textos y `lang` sin modificar la autoría.
 
 | Elemento | Valor definido |
 |:--|:--|
-| Title | `HydroGuard — Agua bajo control` |
-| Description | `HydroGuard: monitoreo inteligente y seguro del agua para organizaciones textiles e hidropónicas.` |
-| Keywords | `monitoreo de agua, control de pH, temperatura del agua, IoT, industria textil, hidroponía, trazabilidad` |
+| Title | `HydroGuard — Water under control` |
+| Description | `HydroGuard: smart, safe water monitoring for textile and hydroponic organizations.` |
+| Keywords | `water monitoring, pH control, water temperature, IoT, textile industry, hydroponics, traceability` |
 | Author | `HydroLink` |
 | Robots | `index, follow` |
-| Language | `es-PE` |
-| Open Graph title | `HydroGuard — Agua bajo control` |
-| Open Graph description | `Monitoreo, corrección controlada y trazabilidad del agua para pequeñas operaciones textiles e hidropónicas.` |
+| Language | `en-US` por defecto; `es-419` al seleccionar español latinoamericano |
+| Open Graph title | `HydroGuard — Water under control` |
+| Open Graph description | `Water monitoring, controlled correction and traceability for small textile and hydroponic operations.` |
+
+En español, el título es `HydroGuard — Agua bajo control`, la descripción es `HydroGuard: monitoreo inteligente y seguro del agua para organizaciones textiles e hidropónicas.`, y las palabras clave son `monitoreo de agua, control de pH, temperatura del agua, IoT, industria textil, hidroponía, trazabilidad`. La descripción Open Graph es `Monitoreo, corrección controlada y trazabilidad del agua para pequeñas operaciones textiles e hidropónicas.`. Los rastreadores sin ejecución de JavaScript reciben el inglés del HTML estático.
+
+`terms.html` utiliza el título `Terms and conditions — HydroGuard` y la descripción `Terms of use for the HydroGuard landing page and academic prototype.`; en español: `Términos y condiciones — HydroGuard` y `Condiciones de uso de la landing y del prototipo académico HydroGuard.`. Conserva autoría `HydroLink`.
 
 La URL canónica y la imagen social se configurarán con las direcciones definitivas del despliegue; no se publicarán valores de `localhost` ni rutas provisionales.
 
@@ -3911,7 +3945,7 @@ Dispone el formulario interactivo para captar consultas operativas según el sec
 
 ### 5.3.2. Landing Page Mock-up
 
-Los mock-ups aplican el Design System de HydroGuard mediante fondos `Paper` y `Cream`, texto `Ink`, acentos `Aqua` y `Aqua Deep`, tipografía Manrope para la lectura principal y DM Mono para datos o etiquetas técnicas. La forma redondeada de botones, tarjetas y controles comunica una solución cercana sin perder el tono serio requerido por un sistema de supervisión de calidad del agua.
+Los mock-ups aplican la variante comercial de HydroGuard descrita en 5.1.2: fondos `Paper` y `Cream`, texto `Ink`, acentos `Aqua` y `Aqua Deep`, Manrope para contenido y DM Mono para datos. La implementación también utiliza Georgia en énfasis editoriales. Esta variante no sustituye la identidad azul de las aplicaciones ni exige Material Design en la landing. Los mock-ups mostrados representan la versión en español anterior a la incorporación del selector de idioma y del enlace a términos; no constituyen evidencia visual actualizada de esos nuevos elementos.
 
 La versión de escritorio utiliza espacios amplios y contrastes de sección para separar la narrativa comercial. La versión móvil conserva contenido, etiquetas y acciones, reduce elementos secundarios y evita desplazamiento horizontal. Los estados interactivos deben incluir foco visible, mensajes comprensibles y contraste suficiente conforme con WCAG 2.2 AA.
 
