@@ -151,6 +151,7 @@ El periodo mostrado en la captura es distinto al corte de TB1 utilizado en las t
       - [4.1.3.2. Software Architecture Context Level Diagrams](#4132-software-architecture-context-level-diagrams)
       - [4.1.3.3. Software Architecture Container Level Diagrams](#4133-software-architecture-container-level-diagrams)
       - [4.1.3.4. Software Architecture Deployment Diagrams](#4134-software-architecture-deployment-diagrams)
+      - [4.1.3.5. Responsabilidades e interacciones de los contenedores](#4135-responsabilidades-e-interacciones-de-los-contenedores)
   - [4.2. Tactical-Level Domain-Driven Design](#42-tactical-level-domain-driven-design)
     - [4.2.1. Bounded Context: Human Identity and Access Management](#421-bounded-context-human-identity-and-access-management)
       - [4.2.1.1. Domain Layer](#4211-domain-layer)
@@ -222,6 +223,10 @@ El periodo mostrado en la captura es distinto al corte de TB1 utilizado en las t
     - [5.4.4. Applications User Flow Diagrams](#544-applications-user-flow-diagrams)
   - [5.5. Applications Prototyping](#55-applications-prototyping)
   - [5.6. IoT Device Design](#56-iot-device-design)
+    - [5.6.1. Montaje y conexiones vigentes](#561-montaje-y-conexiones-vigentes)
+    - [5.6.2. Adquisición y conversión de lecturas](#562-adquisición-y-conversión-de-lecturas)
+    - [5.6.3. Indicadores y flujo integrado](#563-indicadores-y-flujo-integrado)
+    - [5.6.4. Configuración, memoria y límites pendientes](#564-configuración-memoria-y-límites-pendientes)
 - [Capítulo VI: Product Implementation, Validation & Deployment](#capítulo-vi-product-implementation-validation--deployment)
   - [6.1. Software Configuration Management](#61-software-configuration-management)
     - [6.1.1. Software Development Environment Configuration](#611-software-development-environment-configuration)
@@ -292,13 +297,13 @@ La solución contempla dos roles. El operario tendrá asignado un dispositivo y 
 
 ## 1.2. Solution Profile
 
-HydroGuard será un sistema IoT de monitoreo, dosificación correctiva y control del agua. Se integrará el dispositivo físico o simulado, un servicio de borde, una API REST, un backend desarrollado con Spring Boot, una aplicación web en Angular y una aplicación móvil para el control por parte de los operarios.
+HydroGuard es una solución IoT de monitoreo de pH y temperatura, tratamiento correctivo y control de liberación del agua para pequeñas operaciones textiles e hidropónicas. Conecta un dispositivo físico o simulado con un servicio de borde, servicios de backend y aplicaciones web y móvil, para reunir mediciones, decisiones y trazabilidad en un mismo flujo configurable.
 
-El flujo comienza con la lectura periódica de temperatura y pH. El sistema compara cada lectura con el perfil configurable del dispositivo y mantiene la válvula cerrada mientras el agua no esté lista. Si un valor está fuera del rango, selecciona la estrategia correctiva y ordena la dosificación o actuación correspondiente. La actuación no se mantiene activa de forma constante: se ejecuta durante el paso de corrección del ciclo, se detiene, espera el intervalo configurado y luego se obtiene una nueva medición. Con ese resultado, el sistema decide automáticamente si debe continuar con otro ciclo de dosificación o detener la corrección. La cantidad máxima absoluta de ciclos será configurada por el operario encargado. Si se alcanza ese máximo sin una variación útil de los valores, el proceso pasa a estado de fallo, genera una alerta y conserva la válvula cerrada.
+El Administrador organiza los grupos, reservorios, dispositivos y asignaciones de los Operarios. El Operario configura las condiciones de su unidad y supervisa el proceso desde la aplicación móvil. A partir de lecturas recientes y una configuración aplicada, el sistema evalúa la conformidad del agua. Si requiere corrección, propone una estrategia que el Operario aprueba antes de ejecutar los ciclos de actuación, espera y reevaluación. Los intentos están limitados y su resultado queda registrado.
 
-Cuando los parámetros están dentro de los rangos configurados, el sistema pasa al estado listo. La liberación podrá configurarse como manual o automática en ambos contextos: se prevé que sea comúnmente automática en el tratamiento textil y comúnmente manual en hidroponía. El uso del control manual no reemplaza las condiciones de seguridad ante caso de errores o fallos imprevistos, por lo que de suceder la válvula se mantiene cerrada. El cierro de emergencia estará disponible siempre.
+Cuando los parámetros cumplen los rangos configurados, el proceso queda listo para la liberación manual o automática, según el modo elegido. Una lectura conforme no elimina las protecciones ante fallos o emergencias: el sistema mantiene el control de la válvula y conserva el historial de las decisiones y actuaciones.
 
-En la simulación, el sistema activará el LED o actuador visual correspondiente durante la etapa de dosificación. Después, una persona modificará manualmente el sensor simulado para representar el efecto físico que habría producido la corrección sobre el agua. La siguiente lectura permitirá que el sistema decida si continúa con otro ciclo o si detiene la dosificación. De esta manera se podrán representar valores de pH de 0 a 14 y temperaturas de 0 °C a 100 °C sin alterar la lógica de control del producto integral.
+La solución contempla dos variantes del prototipo. El **prototipo físico** utiliza un ESP32, sensores PH4502C y DS18B20 para obtener lecturas del líquido, LED para indicar actividad y corrección, y un servomotor para representar el control de la válvula. El **prototipo virtual simulado en Wokwi** representa esos componentes y permite variar las entradas de pH y temperatura para comprobar el mismo flujo de comunicación y control con Edge, backend y aplicaciones. En el montaje físico, una persona realiza la adición y mezcla correctivas; en Wokwi, modifica las entradas del simulador para representar su efecto. Ninguna variante incorpora dosificación química automática ni enfriamiento físico. Estas pruebas permiten comprobar el flujo de supervisión y tratamiento, pero no certifican la calidad sanitaria del agua ni sustituyen la validación instrumental de las mediciones.
 
 ### 1.2.1. Antecedentes y problemática
 
@@ -1024,6 +1029,8 @@ A continuación se detalla la prioridad de producto. Los primeros cinco elemento
 
 La prioridad visual utilizada en la presentación debe mostrar esta misma secuencia técnica cuando explique implementación. La rentabilidad y la accesibilidad económica no se presentan como resultados demostrados: `BA-05` continúa siendo un supuesto que se validará comparando el costo del prototipo y del producto mínimo con alternativas del mercado y con la disposición de pago de los segmentos.
 
+El orden expresa prioridad de producto según valor de negocio, no una cronología de implementación ni una declaración de historias terminadas. Cada ID conserva el objetivo y los criterios definidos en 3.1; la asignación de tareas, el alcance entregado y las evidencias de aceptación se documentan en el Sprint Backlog correspondiente.
+
 | # Orden | User Story Id | Título | Descripción | Story Points (1/2/3/5/8) |
 |:--:|:--|:--|:--|:--:|
 | 1 | US-34 | Comprensión de la propuesta de valor | Como visitante, quiero comprender el problema que enfrenta el control de calidad del agua en los procesos productivos, para conocer la necesidad que aborda HydroGuard. | 2 |
@@ -1398,6 +1405,8 @@ Firebase Cloud Messaging es un sistema externo consumido por Monitoring mediante
 
 Esta línea base establece las decisiones que deben compartir los servicios de backend, el Edge API, el firmware, el simulador y las aplicaciones cliente. Su propósito es impedir que cada componente interprete de forma diferente los ciclos, las actuaciones o las condiciones de seguridad. Los cambios posteriores deberán registrarse como una decisión arquitectónica y reflejarse en las historias, contratos y pruebas afectadas.
 
+Los nombres en español de estados y mensajes siguientes expresan el modelo conceptual, no identificadores literales de la API. `TreatmentRun` utiliza `PREPARING`, `PENDING_CORRECTION_APPROVAL`, `CORRECTING`, `WAITING`, `REEVALUATING`, `READY`, `RELEASING`, `COMPLETED`, `FAILED`, `EMERGENCY` y `NOT_STARTED`; la medición y evaluación también ocurren como operaciones, sin exigir un estado persistido por cada paso conceptual. Las aplicaciones consultan `allowedActions` para ofrecer únicamente comandos autorizados por el backend.
+
 ##### Estados y transiciones del proceso
 
 | Estado | Entrada válida | Responsabilidad | Salida permitida |
@@ -1422,15 +1431,15 @@ Una medición inválida, duplicada o anterior al fin del tiempo de espera no per
 1. Treatment selecciona la estrategia y, si el proceso aún no está autorizado, pasa a `PENDIENTE_APROBACION_CORRECCION`.
 2. El Operario responsable aprueba una sola vez. Treatment registra `approvedAt`, `approvedByOperatorId` y la versión de configuración; repetir la misma aprobación es idempotente.
 3. Treatment crea una orden con `commandId`, `processId`, número de ciclo y versión de configuración. Ninguna orden se crea antes de la aprobación.
-4. El ciclo comienza y su contador aumenta una sola vez cuando IoT Telemetry acepta la orden correctiva.
-5. El dispositivo ejecuta una sola actuación por orden. La dosificación se detiene al completar la cantidad o duración indicada; no permanece activa durante la espera.
+4. Treatment incrementa el ciclo al crear la actuación correctiva y registra la orden para su entrega reintentable. La recepción repetida de una confirmación no vuelve a incrementar el contador.
+5. El dispositivo ejecuta una sola actuación por orden. La representación correctiva actual activa el LED durante cinco segundos; en el montaje físico la adición y mezcla las realiza una persona. No existe una bomba dosificadora automática en este incremento y el indicador no permanece activo durante la espera.
 6. Una confirmación prueba que la orden fue ejecutada o representada, pero no que el agua ya sea conforme.
 7. Después de la confirmación, el proceso pasa a `ESPERANDO`. Al vencer el intervalo solicita una nueva medición y pasa a `REEVALUANDO`.
-8. El ciclo termina cuando Treatment evalúa esa nueva medición válida. Si continúa fuera de rango y quedan intentos con variación útil, prepara automáticamente otro ciclo bajo la aprobación existente; si está conforme pasa a `LISTO`; y si alcanza el límite o incumple una regla de seguridad pasa a `FALLO`.
+8. El ciclo se reevalúa con esa nueva medición válida. Si está conforme pasa a `LISTO`; si continúa fuera de rango, conserva la estrategia aprobada y quedan intentos, inicia otro ciclo. La implementación registra la variación útil (0.1 pH o 0.5 °C), pero no falla exclusivamente por un ciclo sin esa variación. Falla al alcanzar el máximo sin conformidad, al requerir una estrategia distinta o ante una condición de seguridad.
 
 ##### Contrato común de mensajes
 
-Todo comando y evento entre contextos debe incluir el siguiente sobre común:
+El siguiente sobre es una convención de diseño para la trazabilidad. No todos los DTO REST implementados contienen literalmente todos estos campos: los contratos concretos se verifican en los controladores y OpenAPI de cada servicio. No se exige `processId` a operaciones de identidad o telemetría anteriores al inicio de un proceso.
 
 | Campo | Regla |
 |:--|:--|
@@ -1470,9 +1479,9 @@ El entorno no altera las decisiones de Treatment; solamente determina cómo IoT 
 |:--|:--|:--|
 | `PRODUCTO_INTEGRAL` | Telemetría, dosificación física, actuación térmica cuando corresponda y control de flujo. | Ejecuta físicamente la sustancia, dosis, intensidad o acción ordenada y confirma el resultado técnico. |
 | `SIMULACION` | Telemetría simulada, indicador visual y representación del control de flujo. | Activa el indicador; posteriormente una persona modifica el sensor simulado para representar el efecto que será evaluado en la siguiente medición. |
-| `PROTOTIPO_ACADEMICO` | Sensores de pH y temperatura, LED de actuación y servomotor de válvula. | Mantiene el LED activo mientras una persona del equipo realiza manualmente la corrección y la mezcla sustitutivas; luego confirma la representación. |
+| `PROTOTIPO_ACADEMICO` | Sensores de pH y temperatura, LED de actuación y servomotor de válvula. | Representa la corrección con LED; una persona realiza la adición y mezcla. El firmware admite confirmación local y finalización temporal según el modo; la confirmación no acredita una dosis física medida. |
 
-Cada dispositivo declara capacidades como `PH_MEASUREMENT`, `TEMPERATURE_MEASUREMENT`, `PHYSICAL_DOSING`, `THERMAL_ACTUATION`, `VISUAL_INDICATION` y `FLOW_CONTROL`. Configuration no puede publicar para un dispositivo una estrategia incompatible con su entorno y capacidades.
+Los códigos implementados de capacidades incluyen `PH_SENSOR`, `TEMPERATURE_SENSOR`, `DOSING`, `COOLING`, `HEATING` y `RELEASE_VALVE`; los entornos se expresan en los contratos como `SIMULATION`, `ACADEMIC_PROTOTYPE` y `INTEGRAL_PRODUCT`. Registrar `DOSING` en un entorno representado no acredita la presencia de una bomba, ni declarar `COOLING` añade un sistema físico de enfriamiento. Configuration exige sensores y válvula al publicar; Treatment valida la capacidad necesaria para la estrategia seleccionada. Estas declaraciones deben corresponder al alcance que se está probando.
 
 ##### Reglas de seguridad obligatorias
 
@@ -1496,7 +1505,7 @@ Cada dispositivo declara capacidades como `PH_MEASUREMENT`, `TEMPERATURE_MEASURE
 | Water Quality Treatment and Release | Proceso, estado, ciclos, decisiones, fallos y autorizaciones de liberación. | Comandos hacia IoT y eventos de negocio publicados para Monitoring. |
 | Operational Monitoring and Traceability | Alertas, incidentes, proyecciones de consulta, historial y reportes. | Consume eventos publicados; no modifica los agregados ni las bases de los otros contextos. |
 
-Cada contexto mantiene su propio esquema o base lógica. No se permiten tablas compartidas, uniones directas entre bases ni escritura en datos ajenos. En el alcance actual, los dispositivos se comunican con Edge exclusivamente mediante HTTPS/REST; no se incorpora un broker MQTT. Las integraciones internas pueden utilizar APIs REST y eventos versionados según la necesidad, manteniendo idempotencia y reintentos.
+Cada contexto mantiene su propia base lógica y migraciones. No se permiten tablas compartidas, uniones directas entre bases ni escritura en datos ajenos. Se utiliza HTTP/REST: HTTPS para los accesos desplegados y HTTP en la LAN local expresamente configurada para el prototipo físico. No se incorpora un broker MQTT ni un service bus. Los servicios emplean llamadas REST e integración mediante registros de entrega/outbox y reintentos; esto no equivale a un broker externo de mensajería.
 
 ##### Manejadores de integración entre contextos
 
@@ -1507,13 +1516,13 @@ Cada contexto mantiene su propio esquema o base lógica. No se permiten tablas c
 | `MedicionRegistrada` | `EvaluateMeasurementHandler` en Treatment | Inicia o continúa la evaluación utilizando la versión de configuración del proceso. |
 | `ActuacionCorrectivaConfirmada` o `ActuacionCorrectivaRechazada` | `HandleCorrectiveActionResultHandler` en Treatment | Inicia la espera o lleva el proceso a fallo sin duplicar el ciclo. |
 | Eventos de Treatment y Telemetry | `ProjectOperationalEventHandler` en Monitoring | Actualiza estado, historial, correlaciones, alertas e incidentes. |
-| `AlertaGenerada` | `RequestOperatorNotificationHandler` en Monitoring | Invoca `NotificationPort`; `FirebaseCloudMessagingAdapter` adapta la solicitud a FCM y registra el resultado. |
+| `AlertaGenerada` (extensión pendiente de TS-11) | Adaptador de notificaciones propuesto para Monitoring | La integración FCM está pendiente; las alertas se consultan desde las aplicaciones mediante REST. |
 
-Los manejadores consumen `messageId`, `correlationId`, `organizationId` y `deviceId` del sobre común. Registrar el mismo `messageId` más de una vez no puede repetir una actuación ni crear una segunda alerta o correlación.
+Los nombres de manejadores de esta tabla expresan responsabilidades de diseño, no garantizan clases homónimas en el código. Los adaptadores implementados conservan la identidad y referencias necesarias y aplican deduplicación según el contrato; los reintentos no deben repetir una actuación ni duplicar la medición histórica.
 
 ##### Contratos HTTPS/REST para dispositivos
 
-- `POST /api/v1/device-identities/provision`: provisiona la identidad al registrar el dispositivo y devuelve la credencial original una sola vez.
+- `POST /api/v1/device-identities/provision`: operación técnica de provisionamiento coordinada por Configuration; no es un alta libre desde el firmware. El alta administrativa del dispositivo entrega la credencial original una sola vez.
 - `POST /edge/v1/device-auth/token`: valida `deviceId` y credencial y emite un token de corta duración con `deviceId`, `organizationId`, audiencia `hydroguard-edge` y scopes mínimos.
 - `POST /api/v1/device-identities/{deviceId}/revoke`: revoca la identidad e invalida nuevas operaciones Edge.
 - `POST /api/v1/device-identities/{deviceId}/regenerate-credential`: regeneración manual administrativa; no se requiere rotación automática en el alcance académico.
@@ -1523,6 +1532,8 @@ Los manejadores consumen `messageId`, `correlationId`, `organizationId` y `devic
 - `POST /edge/v1/commands/{commandId}/acknowledgements`: confirma o rechaza la ejecución sin duplicarla.
 
 Los scopes mínimos son `telemetry:write`, `commands:read` y `commands:ack`. Un token ausente, vencido, con audiencia incorrecta o vinculado a una identidad revocada debe ser rechazado. El `deviceId` recibido en un payload nunca sustituye la identidad derivada del token.
+
+En el flujo simplificado implementado, el firmware presenta `deviceId` y credencial mediante autenticación Basic a Edge y consulta `GET /edge/v1/device-auth/session`. Edge obtiene y renueva el JWT técnico para sus llamadas al backend; el usuario no tiene que copiar tokens periódicamente. Edge también admite Bearer para el contrato técnico. La configuración se consulta mediante `GET /edge/v1/configuration` y su aplicación se confirma con `POST /edge/v1/configuration/acknowledgements`. Basic sobre HTTP queda limitado a la prueba LAN autorizada; el despliegue virtual usa HTTPS y no deben publicarse las credenciales en el sketch.
 
 
 
@@ -1547,6 +1558,24 @@ Los scopes mínimos son `telemetry:write`, `commands:read` y `commands:ack`. Un 
 <p align="center">
   <img src="assets/HydroGuard - Software Architecture Deployment Diagram.png" alt="Software Architecture Deployment Diagram" width="800">
 </p>
+
+#### 4.1.3.5. Responsabilidades e interacciones de los contenedores
+
+La arquitectura separa las interfaces de usuario, el ingreso a los servicios, los contextos de negocio y la integración con el dispositivo. Cada contenedor ejecuta responsabilidades delimitadas y se comunica mediante contratos explícitos.
+
+| Unidad ejecutable | Implementación y responsabilidad |
+|:--|:--|
+| Frontend administrativo | Angular y Angular Material; consume el Gateway con sesión humana y permisos de Administrador. Se publica en Vercel. |
+| Frontend del Operario | Flutter con DDD por contexto, BLoC/Cubit, `http` y caché Drift. Consume el Gateway, no las bases de datos ni Edge directamente. |
+| API Gateway | Aplicación Spring Boot independiente; enruta las APIs de producto y bloquea `/internal/**` en el acceso público. No reemplaza la autorización de cada servicio. |
+| Seis microservicios | Human IAM, Device Identity, Configuration, Telemetry, Treatment y Monitoring. Residen en `services/` del monorepo; cada uno tiene su Dockerfile, proceso, migraciones y base PostgreSQL independiente. Se despliegan como servicios separados en Render con bases en Supabase. |
+| Edge del prototipo físico | Aplicación Flask en la laptop, en repositorio separado; autentica el dispositivo, adapta contratos y conserva entregas pendientes en SQLite. Se comunica con el backend desplegado por HTTPS. |
+| Edge del prototipo virtual | Despliegue separado orientado a Wokwi y acceso HTTPS. No sustituye el papel de la laptop en la prueba física ni convierte el disco efímero del alojamiento en almacenamiento durable. |
+| Firmware ESP32 | Lee sensores, consulta configuración y comandos mediante Edge, confirma ejecución y aplica cierres locales de seguridad. No decide por sí solo la conformidad del proceso. |
+
+El flujo de datos es **ESP32 → Edge → Gateway/servicios → aplicaciones**. Los comandos siguen **Operario → Gateway → Treatment → Telemetry → Edge → ESP32**, y la confirmación vuelve por la ruta inversa. Configuration publica parámetros; Telemetry registra mediciones y entrega actuaciones; Treatment decide el proceso; Monitoring proyecta eventos y permite consultar su trazabilidad. Las bases no se consultan directamente entre contextos.
+
+Cada microservicio se despliega como un proceso independiente y se conecta únicamente a su base de datos mediante credenciales limitadas. Las variables de entorno y los archivos secretos separan la configuración del código fuente. Swagger UI y OpenAPI describen los contratos de cada servicio; las operaciones conservan sus requisitos de JWT o credencial interna. El Gateway concentra el ingreso de las aplicaciones y no expone las rutas internas entre servicios.
 
 ## 4.2. Tactical-Level Domain-Driven Design
 
@@ -3596,8 +3625,9 @@ El nombre visible del producto es **HydroGuard** y la organización responsable 
 
 | Uso | Familia | Peso recomendado | Aplicación |
 |:--|:--|:--|:--|
-| Aplicaciones: interfaz y contenido | Plus Jakarta Sans | 400, 500, 600, 700 y 800 | Títulos, etiquetas, botones, tablas y texto descriptivo. |
-| Aplicaciones: datos técnicos | JetBrains Mono | 400 a 600 | Identificadores, códigos, marcas de tiempo y valores técnicos. |
+| Web administrativa: interfaz y contenido | Plus Jakarta Sans | 400, 500, 600, 700 y 800 | Títulos, etiquetas, botones, tablas y texto descriptivo. |
+| Web administrativa: datos técnicos | JetBrains Mono | 400 a 600 | Identificadores, códigos, marcas de tiempo y valores técnicos. |
+| Aplicación Flutter | Tipografía predeterminada de Material según plataforma | 400, 600 y 700 | `AppTypography` centraliza tamaños y pesos; el proyecto no declara fuentes personalizadas en `pubspec.yaml`. |
 | Landing Page: interfaz y contenido | Manrope | 400, 500, 600, 700 y 800 | Navegación, títulos, textos, campos y botones; los énfasis editoriales de títulos emplean la variante serif definida en CSS. |
 | Landing Page: datos y etiquetas técnicas | DM Mono | 400 y 500 | Panel ilustrativo, etiquetas y datos técnicos. |
 | Reserva del sistema | Segoe UI, Roboto, sans-serif | Según plataforma | Se utiliza cuando la fuente principal no se encuentra disponible. |
@@ -3621,6 +3651,8 @@ Los títulos se escriben en estilo oración, evitando bloques completos en mayú
 | Crítico | `#BE123C` sobre `#FFF1F2` | Error, peligro, bloqueo o incidencia crítica. |
 
 Cada combinación debe alcanzar, como mínimo, los criterios de contraste de **WCAG 2.2 nivel AA**. En las aplicaciones, rojo indica una condición crítica y verde confirma un resultado válido. En la landing, el verde/aqua también forma parte de la identidad comercial; los estados del panel ilustrativo incluyen texto y no dependen únicamente del color. La implementación de ayudas accesibles no sustituye una evaluación completa de conformidad.
+
+La tabla anterior corresponde a la guía web, no a valores idénticos en todos los canales. Flutter utiliza `AppColors`: primario `#0284C7`, acento `#38BDF8`, éxito `#10B981`, advertencia `#F59E0B` y error `#EF4444`, con temas claro y oscuro Material 3. Compartir significado de estados no implica compartir todos los códigos hexadecimales ni demuestra una auditoría de contraste ya aprobada.
 
 #### Espaciado, formas e iconografía
 
@@ -3668,27 +3700,27 @@ El footer enlaza a términos y condiciones bilingües para el alcance académico
 
 #### Aplicación web administrativa
 
-La aplicación web está orientada a administradores que supervisan múltiples dispositivos. Mantiene una barra lateral de 268 px en escritorio y una navegación compacta por debajo de 900 px. El contenido tiene un ancho máximo aproximado de 1240 px para conservar legibilidad. Los tableros priorizan indicadores resumen, alertas activas y excepciones; las tablas se utilizan cuando el usuario debe comparar entidades y siempre incluyen filtros, encabezados claros y una alternativa responsiva.
+La aplicación web está orientada a administradores que supervisan múltiples dispositivos. Mantiene una barra lateral de 250 px en escritorio y una navegación compacta por debajo de 900 px. El contenido utiliza encabezados, tarjetas y separación visual para conservar legibilidad. Los tableros priorizan indicadores resumen, alertas activas y excepciones; las tablas permiten comparar entidades mediante encabezados, controles de búsqueda y filtros específicos de cada vista.
 
 Las acciones principales aparecen una sola vez por vista y las acciones por registro se mantienen cerca del elemento afectado. En **Operational Monitoring and Traceability**, el patrón se concreta en cuatro vistas: tablero de monitoreo, alertas operativas, incidencias de calidad y trazabilidad. Los chips conservan la semántica `success`, `warning`, `danger` e `info`; las fechas se presentan en la zona horaria del usuario y los identificadores técnicos pueden copiarse sin ocupar la jerarquía principal.
 
 #### Aplicación móvil del operario
 
-La futura aplicación móvil reutilizará los mismos tokens, nombres de estado y reglas de accesibilidad. La composición base es de una columna, tomando 390 px como ancho de referencia y creciendo de forma fluida. Los objetivos táctiles miden como mínimo 44 × 44 px y las acciones críticas no se ubican pegadas a los bordes. Las tablas se transforman en listas o tarjetas y la información indispensable —estado del dispositivo, última lectura, desviación y acción en curso— aparece antes del desplazamiento.
+La aplicación móvil está implementada en Flutter con Material 3 y temas claro y oscuro. `AppTheme`, `AppColors` y `AppTypography` centralizan su presentación. Utiliza una columna, tarjetas y listas para las asignaciones, mediciones, tratamientos y alertas; los botones principales tienen altura mínima de 48 unidades lógicas. No incorpora funciones de administración de empresas ni inventario.
 
-Debido a que el operario puede trabajar con conectividad limitada, la interfaz debe diferenciar **Sin conexión**, **Sincronizando** y **Actualizado**, conservar temporalmente las operaciones permitidas y ofrecer reintento explícito. Una notificación conduce al contexto exacto de la alerta, no solo a la pantalla inicial. Las confirmaciones de corrección o liberación requieren una descripción inequívoca del dispositivo y el lote afectado.
+La caché Drift conserva datos de perfil, grupo y asignaciones para consulta limitada; no autoriza tratamientos ni encola comandos críticos sin conexión. Las acciones dependen de la sesión, la asignación y `allowedActions` del backend. Las alertas se consultan en la aplicación; notificaciones push y navegación desde FCM siguen pendientes. Las confirmaciones deben identificar la unidad sobre la que se opera, sin atribuir un identificador de lote que el contrato no maneja.
 
 #### Dispositivo IoT e interfaz física
 
-La interfaz física privilegia reconocimiento inmediato, pocas decisiones y funcionamiento seguro. La señalización recomendada es: azul para información o comunicación, verde para listo/normal/liberado, ámbar para espera o corrección y rojo para falla o emergencia. Cada señal luminosa debe combinar color con una etiqueta, icono, patrón de parpadeo o mensaje; así continúa siendo interpretable ante deficiencias de visión cromática.
+La interfaz física usa tres indicadores: verde para pulso de adquisición de lecturas, amarillo para representación correctiva y rojo para fallo o bloqueo de seguridad. No hay LED azul en el montaje actual. El pulso verde no confirma autenticación, entrega al backend ni conformidad del agua. Los patrones se complementan con mensajes del monitor serie y los estados de las aplicaciones.
 
-La pantalla o panel del dispositivo presenta pH y temperatura con sus unidades, estado de conectividad, fase actual y condición de la válvula. Los controles de emergencia se distinguen por forma, posición y confirmación física, no solo por color. Toda pulsación genera retroalimentación inmediata y las acciones con impacto sobre la válvula o la liberación solicitan confirmación. Ante pérdida de comunicación, lectura inválida o reinicio, el dispositivo adopta el estado seguro definido por el dominio, conserva la evidencia local y comunica claramente que la operación automática está limitada.
+El prototipo actual no tiene LCD: el monitor serie presenta ADC, milivoltios, temperatura, conversión de pH y diagnósticos de conectividad, identidad y configuración. El firmware conserva entradas para confirmación y parada locales, además de los comandos remotos. Ante fallo se ordenan salidas seguras; esto es una protección de software y no una certificación mecánica de válvula cerrada. La persistencia local tiene el alcance limitado descrito en 5.6.
 
 La siguiente correspondencia mantiene coherencia entre canales:
 
 | Concepto | Web | Móvil | IoT físico |
 |:--|:--|:--|:--|
-| Operación normal | Chip verde y texto “Operativo” | Tarjeta verde tenue y estado textual | Indicador verde estable y mensaje “Listo”. |
+| Operación normal | Chip y texto de estado | Tarjeta y estado textual | Pulso verde de adquisición; no equivale a “Listo”. |
 | Desviación | Chip ámbar y valor fuera de rango | Alerta prioritaria con acción sugerida | Indicador ámbar y mensaje de corrección. |
 | Falla crítica | Banner/chip rojo con detalle | Notificación crítica y acceso al incidente | Indicador rojo, señal diferenciada y estado seguro. |
 | Sin conexión | Estado neutro y hora de última lectura | Modo sin conexión y control de reintento | Indicador de comunicación y almacenamiento temporal. |
@@ -3700,7 +3732,7 @@ La arquitectura de información de HydroGuard se define para tres experiencias c
 
 La Landing Page guía al visitante desde la comprensión del problema hasta el contacto o acceso a la plataforma. La aplicación web permite que el único Administrador de cada empresa prepare y supervise los recursos de su organización. La aplicación móvil permite que el Operario configure y atienda exclusivamente los reservorios-dispositivos que tiene asignados. En las aplicaciones autenticadas, la organización se obtiene de la sesión y actúa como límite de navegación, búsqueda y consulta; ningún usuario puede explorar información de otra empresa.
 
-La propuesta combina jerarquía visual, recorridos secuenciales y relaciones matriciales según la tarea. La Landing Page y el módulo IAM de la web administrativa ya cuentan con una implementación inicial. Las estructuras relativas a configuración operativa, telemetría, tratamiento, monitoreo y aplicación móvil representan el diseño objetivo que orientará las siguientes iteraciones.
+La organización combina jerarquía visual para ubicar recursos y estados, recorridos secuenciales para incorporar usuarios y preparar tratamientos, y relaciones matriciales o cronológicas para comparar datos y reconstruir eventos. La navegación se define por los objetivos de cada rol, no por la distribución técnica de los servicios.
 
 ### 5.2.1. Organization Systems
 
@@ -3730,7 +3762,7 @@ Las etiquetas utilizarán el Ubiquitous Language del proyecto, se redactarán en
 |:--|:--|:--|
 | Landing Page | Navegación y llamadas a la acción | `Solución`, `Sectores`, `Equipo`, `Contacto`, `Conoce HydroGuard`, `Ver el producto`, `Quiero saber más`, `Enviar mensaje`, `Acceder`. |
 | Web pública | Acceso e incorporación | `Iniciar sesión`, `Registrar empresa`, `Datos de la empresa`, `Datos del Administrador`, `RUC`, `Teléfono`, `Segmento`, `Correo`, `Contraseña`. |
-| Web administrativa | Navegación principal | `Resumen`, `Operarios`, `Estructura operativa`, `Telemetría`, `Procesos`, `Alertas`, `Incidentes`, `Historial`, `Reportes`, `Perfil`, `Cerrar sesión`. |
+| Web administrativa | Navegación principal implementada | `Operarios`, `Grupos`, `Reservorios`, `Dispositivos`, `Perfiles`, `Estado operacional`, `Alertas`, `Incidentes`, `Trazabilidad`, `Telemetría`, `Tratamientos`, `Cerrar sesión`. |
 | Estructura operativa | Recursos y relaciones | `Grupos`, `Reservorios`, `Dispositivos`, `Perfiles de Operario`, `Asignaciones`, `Configuraciones`, `Código de primer acceso`. |
 | Aplicación móvil | Navegación y contexto | `Inicio`, `Mis reservorios`, `Mi grupo`, `Proceso`, `Alertas`, `Historial`, `Configuración`, `Perfil`, `Cerrar sesión`. |
 | Operación móvil | Acciones críticas | `Iniciar proceso`, `Aprobar corrección`, `Confirmar liberación`, `Parada de emergencia`, `Restablecer proceso`, `Publicar configuración`. |
@@ -3810,7 +3842,7 @@ La ficha de la aplicación no afirmará que el teléfono mide o corrige directam
 
 ### 5.2.4. Searching Systems
 
-La búsqueda se incorporará solo donde el volumen o la variación de datos pueda dificultar la localización manual. Todas las consultas respetarán `organizationId`, rol y asignaciones obtenidos de la sesión. Los filtros del cliente no reemplazarán estas restricciones del backend.
+La búsqueda se utiliza según la tarea y el volumen de información. Las consultas están limitadas por organización, rol y asignación; los filtros del cliente no reemplazan la autorización del backend. La siguiente tabla organiza las opciones de localización por experiencia; las diferencias entre controles disponibles y mejoras propuestas se precisan al final de la sección.
 
 | Experiencia y conjunto | Búsqueda ofrecida | Filtros y orden | Presentación de resultados |
 |:--|:--|:--|:--|
@@ -3836,18 +3868,20 @@ La interacción de búsqueda seguirá reglas comunes:
 - No utilizar cero como sustituto de una medición inexistente.
 - Cancelar consultas reemplazadas y evitar resultados tardíos de una búsqueda anterior.
 
+**Alcance comprobado en móvil.** Historial permite seleccionar un reservorio asignado y consultar sus eventos; Alertas muestra una lista de alertas disponibles. No se han implementado allí un buscador de texto, filtros completos por severidad/periodo, ni un buscador de integrantes en Mi grupo. Las vistas administrativas ofrecen los controles de búsqueda y filtros de cada listado; no existe una vista guardada general de dispositivos ni una pantalla independiente de catálogo de reportes. Las reglas anteriores son objetivos de interacción y no una afirmación de cumplimiento integral.
+
 ### 5.2.5. Navigation Systems
 
 La navegación utilizará sistemas globales, locales, contextuales y suplementarios. Cada experiencia mantendrá rutas predecibles, indicará la ubicación actual y evitará ofrecer acciones que el rol no puede ejecutar.
 
 #### Landing Page
 
-La cabecera funciona como navegación global y permanece orientada a las secciones `Solución`, `Sectores`, `Equipo` y `Contacto`. El logotipo y `Volver arriba` conducen a `Inicio`. En pantallas pequeñas, las mismas opciones se presentan mediante un menú desplegable accesible, sin cambiar su orden.
+La cabecera funciona como navegación global hacia las anclas de la landing; el recorrido completo incluye `Solución`, `Producto`, `Sectores`, `Capacidades`, `Equipo` y `Contacto`. El logotipo y `Volver arriba` conducen a `Inicio`. La página de términos es un destino independiente y el selector de idioma mantiene el mismo contenido en inglés o español. En pantallas pequeñas se utiliza un menú desplegable accesible.
 
 El recorrido principal es secuencial:
 
 ```text
-Inicio → Solución → Producto → Sectores → Beneficios → Equipo → Contacto
+Inicio → Solución → Producto → Sectores → Capacidades → Equipo → Contacto
 ```
 
 Las llamadas `Conoce HydroGuard`, `Ver el producto`, `Quiero saber más` y `Explorar aplicación` actúan como navegación contextual. El acceso a la plataforma deberá conducir a `Iniciar sesión`, mientras que una empresa nueva podrá continuar a `Registrar empresa`.
@@ -3857,31 +3891,29 @@ Las llamadas `Conoce HydroGuard`, `Ver el producto`, `Quiero saber más` y `Expl
 Las páginas públicas `Iniciar sesión` y `Registrar empresa` quedan fuera del contenedor administrativo. Después de autenticarse, el Administrador utiliza una navegación global persistente, agrupada según sus objetivos:
 
 ```text
-Resumen
 Operarios
-Estructura operativa
-├── Grupos
-├── Reservorios
-├── Dispositivos
-└── Perfiles y asignaciones
-Supervisión
-├── Telemetría
-├── Procesos
-├── Alertas
-└── Incidentes
-Historial y reportes
-Perfil
+Grupos
+Reservorios
+Dispositivos
+Perfiles
+Estado operacional
+Alertas
+Incidentes
+Trazabilidad
+Telemetría
+Tratamientos
+Cerrar sesión
 ```
 
-Las vistas de detalle incorporarán breadcrumbs y navegación contextual. Por ejemplo, `Grupo → Reservorio → Dispositivo` conserva la relación operativa, mientras que desde un dispositivo se podrá continuar hacia `Telemetría`, `Proceso actual`, `Alertas` o `Historial`. El flujo de incorporación del Operario funcionará como asistente secuencial: `Cuenta → Perfil → Asignación → Código`.
+El acceso autenticado redirige inicialmente a Operarios (`/users`), no a una pantalla Resumen. Las vistas de detalle incluyen enlaces de retorno y vínculos contextuales a recursos relacionados. La incorporación se realiza mediante pantallas de cuenta, perfil, asignación y código; no se presenta como un único asistente implementado. Historial y generación de reportes se consultan desde sus vistas operativas, no desde todos los destinos independientes del diseño inicial.
 
-El menú solo mostrará recursos de la organización autenticada. Las rutas estarán protegidas; una URL inexistente mostrará una página de no encontrado y una ruta sin permisos mostrará acceso denegado, sin redirigir silenciosamente a información que pueda confundirse con la solicitada.
+El menú y los datos corresponden a la organización autenticada y las rutas administrativas utilizan guards de acceso. En el router actual la ruta comodín redirige al inicio; una pantalla específica de no encontrado es un comportamiento propuesto, no implementado.
 
 #### Aplicación móvil del Operario
 
-El primer acceso comienza con el código entregado externamente. Los accesos posteriores utilizan el identificador y la contraseña definitiva. Una vez autenticado, la navegación principal prioriza cuatro destinos de uso frecuente: `Inicio`, `Mis reservorios`, `Alertas` e `Historial`. `Mi grupo`, `Perfil` y `Cerrar sesión` se ubican en el menú de cuenta.
+El primer acceso requiere identificador, contraseña definitiva y código entregado externamente; los accesos posteriores usan identificador y contraseña. La barra inferior tiene cinco destinos: `Inicio`, `Reservorios`, `Tratamiento`, `Alertas` e `Historial`. El menú lateral añade `Mi grupo`, `Configuración`, `Perfil` y `Cerrar sesión`. El router solo permite entrar a las vistas protegidas a una sesión con rol `OPERATOR`.
 
-`Proceso` y `Configuración` son destinos contextuales del reservorio seleccionado, porque no deben operar sin una asignación activa. El recorrido operativo principal será:
+Tratamiento y Configuración son rutas accesibles desde la navegación, pero sus operaciones requieren seleccionar una asignación autorizada. El recorrido operativo es:
 
 ```text
 Inicio
@@ -3984,6 +4016,8 @@ Muestra el formulario de contacto con estados accesibles y botón de envío en A
 </p>
 
 ## 5.4. Applications UX/UI Design.
+
+Esta sección presenta las decisiones visuales y de interacción de la aplicación administrativa y la aplicación del Operario mediante wireframes, wireflows, mock-ups y user flows. Los recorridos relacionan las metas de cada usuario con la organización del contenido, las acciones disponibles y sus resultados, siguiendo las guías de estilo y arquitectura de información de 5.1 y 5.2.
 
 ### 5.4.1. Applications Wireframes.
 
@@ -4163,10 +4197,10 @@ Los Wireflows se organizan alrededor de los objetivos indispensables de cada act
 
 | Aplicación / User Persona | User Goal | Flujo representado |
 |:--|:--|:--|
-| Web / Administrador | Acceder o registrar una empresa | Inicio de sesión → validación → área administrativa; como alternativa, registro de empresa y su único Administrador → sesión iniciada. |
+| Web / Administrador | Acceder o registrar una empresa | Inicio de sesión → validación → Operarios; como alternativa, registro de empresa y su único Administrador → inicio de sesión. |
 | Web / Administrador | Preparar una unidad operativa y asignarla | Crear grupo → crear reservorio → registrar y vincular dispositivo → crear cuenta y perfil de Operario → asignar dispositivo y reservorio → generar código de acceso. |
 | Web / Administrador | Supervisar la operación | Consultar telemetría → seleccionar dispositivo → revisar mediciones y tratamiento → consultar o atender alerta/incidente → revisar trazabilidad o generar reporte. |
-| Móvil / Operario | Activar su acceso y completar la configuración | Ingresar código recibido → autenticar cuenta → seleccionar asignación → completar parámetros operativos → confirmar configuración. |
+| Móvil / Operario | Activar su acceso y completar la configuración | Ingresar identificador, contraseña y código recibido → activar acceso → seleccionar asignación → guardar parámetros → publicar → esperar confirmación de aplicación del dispositivo. |
 | Móvil / Operario | Supervisar y autorizar un tratamiento | Seleccionar reservorio → revisar medición y estrategia → aprobar una vez la corrección → seguir ciclos automáticos → confirmar liberación cuando corresponda o ejecutar parada de emergencia. |
 
 Cada Wireflow debe reflejar estados de carga, validación, vacío, error y confirmación cuando alteren la decisión del usuario. En el flujo operativo, el sistema no permite aprobar una corrección sin estrategia, liberar agua no apta ni operar un recurso fuera de las asignaciones vigentes.
@@ -4179,7 +4213,7 @@ Cada Wireflow debe reflejar estados de carga, validación, vacío, error y confi
 - User Goal: Iniciar sesión o registrar una empresa para acceder a la plataforma.
 - User Persona: Administrador de empresa.
 
-El administrador accede a la pantalla de inicio → si ya tiene una cuenta, ingresa sus credenciales y el sistema valida la información. Si son correctas → accede al panel de resumen; si son incorrectas → se muestra un mensaje de error con la opción de reintentar. Si no tiene una cuenta → inicia el registro de empresa, completa los datos de la organización y posteriormente los del administrador. Al revisar y confirmar la información → el sistema valida los campos. Si encuentra errores → permite corregir el formulario; si los datos son válidos → se crea la cuenta y se redirige al inicio de sesión.
+El administrador accede a la pantalla de inicio → si ya tiene una cuenta, ingresa sus credenciales y el sistema valida la información. Si son correctas → accede a Operarios; si son incorrectas → se muestra un mensaje de error con la opción de reintentar. Si no tiene una cuenta → inicia el registro de empresa y completa los datos de la organización y del Administrador. Al confirmar, el sistema valida los campos; si son válidos crea la cuenta y redirige al inicio de sesión. El panel Resumen del wireframe corresponde al diseño, no al destino inicial implementado.
 
 <a href="./assets/wireframes/WF-WEB-01.png">
   <img src="./assets/wireframes/WF-WEB-01.png" width="1200">
@@ -4371,7 +4405,7 @@ Los User Flows utilizan los mismos objetivos definidos para los Wireflows y reem
 | Activar acceso y configurar desde móvil | El Operario utiliza el código recibido, inicia sesión y completa la configuración de su asignación. | Código inexistente o revocado, credenciales inválidas, asignación cerrada o configuración incompleta. |
 | Autorizar y seguir un tratamiento | El Operario revisa la estrategia, aprueba una vez, observa los ciclos automáticos y confirma la liberación únicamente cuando el sistema marca el agua como apta. | Estrategia no disponible, proceso fallido, emergencia, límites de ciclos alcanzados o intento de liberar agua no apta. |
 
-Las decisiones de cada diagrama deben estar etiquetadas y las rutas alternativas deben regresar a un estado recuperable o explicar por qué el proceso queda bloqueado. La aplicación web actualmente implementada permite comprobar los flujos administrativos y de supervisión; los flujos móviles documentan el comportamiento planificado y no deben presentarse como funcionalidad ejecutable en TB1.
+Las decisiones de cada diagrama deben estar etiquetadas y las rutas alternativas deben regresar a un estado recuperable o explicar por qué el proceso queda bloqueado. El recorrido móvil distingue guardar, publicar y aplicar la configuración antes de iniciar el proceso; posteriormente presenta la aprobación de la estrategia, los ciclos de corrección y espera, la reevaluación y la autorización de liberación según el estado del proceso. La aplicación administrativa permite preparar las unidades y supervisar sus mediciones, alertas, incidentes y trazabilidad.
 
 Link: https://www.figma.com/board/aA4hZeydBIROAefYuThSnW/IOT?node-id=3-318&t=q4MvEYSWK2j0nY4e-1
 
@@ -4478,25 +4512,58 @@ Las interacciones deben simular validación de formularios, confirmaciones, esta
 
 ## 5.6. IoT Device Design
 
-Link: https://app.cirkitdesigner.com/project/cbdef7ec-8293-4e11-94d1-0bf2247bb2e8
+El diseño físico prioriza la separación entre sensado y actuación, la protección de la entrada analógica y una señalización sencilla que complemente las aplicaciones. La alimentación del servo se separa de la línea de sensores y comparte tierra con el ESP32 para conservar la referencia de la señal de control. Los indicadores mantienen los significados definidos en la guía IoT de 5.1.2, mientras las mediciones y los estados detallados se consultan en el monitor serie y en las aplicaciones. El montaje permite representar el flujo de corrección y liberación sin atribuir al prototipo dosificación automática o medición de caudal.
 
-### 1. Alimentación y Tierra
-* **ESP32 5V (VIN) → LCD VCC / Sensor pH VCC:** Proveen los 5V requeridos para la retroiluminación de la pantalla y la precisión del amplificador operacional del pH.
-* **ESP32 3V3 → LM35 (+Vs):** Alimenta el sensor analógico de temperatura.
-* **ESP32 GND:** Línea común de tierra conectada a todos los periféricos (LCD, pH, LM35 y Cátodos de los LEDs).
+### 5.6.1. Montaje y conexiones vigentes
 
-### 2. Entradas Analógicas (Sensores)
-* **Sensor de pH (A0) → GPIO34:** Transmite la tensión proporcional a la acidez/alcalinidad del fluido.
-* **LM35 (Vout) → GPIO36 (VP):** Envía la señal de temperatura a razón de 10 mV por cada °C.
+El prototipo utiliza ESP32 DevKit, módulo PH4502C con electrodo BNC, sonda DS18B20, tres LED y servomotor. No utiliza LM35 ni LCD. La referencia ejecutable se encuentra en `prototipo-wokwi/sketch/sketch.ino`; Wokwi conserva además `diagram.json` y `libraries.txt` para representar el montaje virtual. El pin analógico vigente es GPIO35, después de una prueba de sustitución de GPIO34.
 
-### 3. Pantalla LCD 1602 (I2C)
-* **SDA → GPIO21**
-* **SCL → GPIO22**
-* Muestra las lecturas procesadas de pH (Fila 1) y Temperatura en °C (Fila 2).
+| Elemento | Conexión del prototipo físico |
+|:--|:--|
+| Alimentación ESP32 | USB de 5 V con cable y contacto estables. `3V3` alimenta el riel de 3.3 V y `GND` el riel de tierra común. No se une el riel de 3.3 V con VIN/5 V. |
+| PH4502C | `V+` a la alimentación de 5 V disponible en VIN con la placa alimentada por USB; `G` a tierra común. `Po` pasa por el divisor resistivo antes de GPIO35. `Do` y `To` no se utilizan. |
+| Divisor de pH | Dos resistencias iguales de 10 kΩ: `Po → resistencia → nodo GPIO35 → resistencia → GND`. Reduce aproximadamente a la mitad la tensión aplicada al ADC; la entrada GPIO no debe recibir directamente los 5 V del módulo. |
+| DS18B20 | Rojo a 3.3 V, negro a GND, amarillo a GPIO4. La línea de datos requiere pull-up a 3.3 V; en las primeras pruebas se usaron dos resistencias de 10 kΩ en paralelo (5 kΩ nominales), en lugar de una de 4.7 kΩ. |
+| LED verde | GPIO25, resistencia serie de 1 kΩ y LED hacia GND. Indica adquisición, no conformidad. |
+| LED amarillo | GPIO26, resistencia serie limitadora y LED hacia GND. Representa corrección, no dosificación automática. |
+| LED rojo | GPIO27, resistencia serie limitadora y LED hacia GND. Indica fallo de sensor, bloqueo local/remoto o problema de inicialización del control de salidas; no certifica por sí solo el estado de la conexión. |
+| Servomotor | Señal a GPIO18; rojo a fuente externa regulada de 5 V adecuada a la corriente del servo, marrón a su negativo. El negativo se une a GND del ESP32. No se une el positivo externo con el riel de 3.3 V. |
+| Entradas locales del firmware | GPIO32 para confirmación y GPIO33 para parada, con `INPUT_PULLUP` y pulsador hacia GND si se monta. Son controles locales y de banco, no sustituyen la aprobación del Operario en la app. |
 
-### 4. Indicadores Visuales (LEDs)
-* **GPIO18 → Resistencia → Ánodo LED Rojo:** Se activa cuando cualquiera de las variables sale del rango seguro ($pH < 6.5$, $pH > 8.5$, $T < 15^{\circ}C$ o $T > 30^{\circ}C$).
-* **GPIO19 → Resistencia → Ánodo LED Verde:** Se activa únicamente cuando ambas variables se encuentran dentro de los rangos óptimos establecidos.
+El servomotor probado puede representar movimiento, pero la apertura de la válvula real requiere torque y fijación adecuados. La corriente admisible del cable no se deduce únicamente de la etiqueta del cargador. No se considera resuelta la mecánica ni garantizado el caudal por recibir una confirmación de posición ordenada.
+
+### 5.6.2. Adquisición y conversión de lecturas
+
+El firmware programa una adquisición cada cinco segundos, aunque una operación de red bloqueante puede retrasarla. Utiliza ADC de 12 bits en GPIO35 y `analogReadMilliVolts`. Obtiene 31 muestras, descarta las cinco inferiores y superiores y promedia las 21 restantes. Los valores ADC crudos y de milivoltios se adquieren por separado; `Po_estimado` es el doble del voltaje ADC según el divisor nominal, no una medición independiente de Po o de la alimentación.
+
+La conversión vigente se obtuvo de dos buffers medidos cerca de 25 °C: pH 4.003, con promedio de entrada de aproximadamente 2264.89 mV, y pH 6.864, con aproximadamente 2015.81 mV. La interpolación es:
+
+```text
+pendiente_mV_por_pH = (V_4.003 - V_6.864) / (6.864 - 4.003)
+pH = 4.003 + (V_4.003 - V_entrada) / pendiente_mV_por_pH
+```
+
+Estos coeficientes se obtuvieron cuando se utilizaba GPIO34 y se conservaron después de cambiar a GPIO35. Los nombres internos `PH_ACID_D34_MV` y `PH_NEUTRAL_D34_MV` preservan esa procedencia; no indican que el firmware siga leyendo GPIO34. La nueva entrada, el cableado y la alimentación requieren corroboración con buffers. No hay una compensación térmica de pH implementada por el solo hecho de registrar DS18B20. Wokwi utiliza un modelo independiente de potenciómetro para representar 0–14, sin aplicar la fórmula física al sensor virtual.
+
+Una lectura no finita o fuera de rango se rechaza, no se recorta a 0 o 14 para aparentar validez. El diagnóstico informa `ADC`, milivoltios, dispersión del conjunto recortado, temperatura, estado de LED, WiFi, identidad y versión aplicada. La dispersión en milivoltios y la variación entre lecturas no equivalen a exactitud instrumental certificada.
+
+### 5.6.3. Indicadores y flujo integrado
+
+El LED verde permanece apagado durante la adquisición y emite un pulso de aproximadamente 100 ms después. Esta separación redujo el acoplamiento observado, pero no prueba que el voltaje del módulo sea invariable con otras cargas. Amarillo representa la orden correctiva y rojo señala condiciones locales de fallo o bloqueo. Treatment, no el color del LED, decide la conformidad según la configuración aplicada y las mediciones recientes.
+
+La corrección del prototipo físico se representa mediante LED y adición/mezcla manuales. En el modo de simulación del firmware se confirma al finalizar la duración indicada; el modo académico también contempla confirmación local. La espera pertenece a Treatment y la reevaluación exige una lectura posterior a su vencimiento. La liberación solo se ordena con autorización válida; el firmware revisado cierra la representación de apertura a los cinco segundos y contempla cierre ante pérdida crítica de control, emergencia o lectura inválida.
+
+### 5.6.4. Configuración, memoria y límites pendientes
+
+La configuración de transporte se introduce como JSON por el monitor serie a 115200 baudios: URL de Edge, WiFi e identidad del dispositivo. Edge gestiona el token técnico y su renovación; el dispositivo no requiere que el usuario copie JWT. Tras reinicio se debe reintroducir la configuración de aplicación almacenada en RAM. El programa y los coeficientes permanecen en flash. No debe afirmarse que el ESP32 carece de persistencia: `Preferences` mantiene un diario NVS de ocho posiciones para comandos y sus resultados, evitando repetir una actuación ante reintentos. El firmware conserva una medición pendiente en RAM, no un archivo histórico completo de todas las muestras durante una desconexión.
+
+Las cadenas de configuración no se imprimen ni se incluyen como secretos en el sketch. La ausencia de escritura explícita de esas cadenas en `Preferences` no demuestra que el controlador WiFi no persista sus parámetros: el firmware no deshabilita explícitamente esa persistencia mediante `WiFi.persistent(false)`. No se presenta una garantía de borrado de credenciales de toda la memoria del dispositivo.
+
+Edge almacena temporalmente las entregas aceptadas en SQLite y reintenta hacia el backend con identificadores estables. El historial permanente corresponde a las bases del backend. En el despliegue virtual con disco efímero, reiniciar Edge puede perder su cola local; no se garantiza entrega infinita ni ausencia total de pérdidas en cualquier interrupción.
+
+Permanecen pendientes la revalidación de la calibración tras cambios eléctricos, la verificación de alimentación bajo carga y el ajuste mecánico/torque de la válvula. No se implementaron bomba dosificadora, enfriamiento físico ni sensor de caudal. Las pruebas integrales acreditan intercambio de datos y decisiones del proceso, no aptitud sanitaria del agua ni dosis químicas controladas.
+
+Referencia de diseño inicial en Cirkit Designer (montaje anterior; no describe el cableado vigente): https://app.cirkitdesigner.com/project/cbdef7ec-8293-4e11-94d1-0bf2247bb2e8
 
 [![image.png](https://i.postimg.cc/kMbPnVwb/image.png)](https://postimg.cc/w3gG2jCq)
 
