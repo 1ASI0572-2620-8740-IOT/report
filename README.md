@@ -151,6 +151,7 @@ El periodo mostrado en la captura es distinto al corte de TB1 utilizado en las t
       - [4.1.3.2. Software Architecture Context Level Diagrams](#4132-software-architecture-context-level-diagrams)
       - [4.1.3.3. Software Architecture Container Level Diagrams](#4133-software-architecture-container-level-diagrams)
       - [4.1.3.4. Software Architecture Deployment Diagrams](#4134-software-architecture-deployment-diagrams)
+      - [4.1.3.5. Responsabilidades e interacciones de los contenedores](#4135-responsabilidades-e-interacciones-de-los-contenedores)
   - [4.2. Tactical-Level Domain-Driven Design](#42-tactical-level-domain-driven-design)
     - [4.2.1. Bounded Context: Human Identity and Access Management](#421-bounded-context-human-identity-and-access-management)
       - [4.2.1.1. Domain Layer](#4211-domain-layer)
@@ -1400,6 +1401,8 @@ Firebase Cloud Messaging es un sistema externo consumido por Monitoring mediante
 
 Esta línea base establece las decisiones que deben compartir los servicios de backend, el Edge API, el firmware, el simulador y las aplicaciones cliente. Su propósito es impedir que cada componente interprete de forma diferente los ciclos, las actuaciones o las condiciones de seguridad. Los cambios posteriores deberán registrarse como una decisión arquitectónica y reflejarse en las historias, contratos y pruebas afectadas.
 
+Los nombres en español de estados y mensajes siguientes expresan el modelo conceptual, no identificadores literales de la API. `TreatmentRun` utiliza `PREPARING`, `PENDING_CORRECTION_APPROVAL`, `CORRECTING`, `WAITING`, `REEVALUATING`, `READY`, `RELEASING`, `COMPLETED`, `FAILED`, `EMERGENCY` y `NOT_STARTED`; la medición y evaluación también ocurren como operaciones, sin exigir un estado persistido por cada paso conceptual. Las aplicaciones consultan `allowedActions` para ofrecer únicamente comandos autorizados por el backend.
+
 ##### Estados y transiciones del proceso
 
 | Estado | Entrada válida | Responsabilidad | Salida permitida |
@@ -1424,15 +1427,15 @@ Una medición inválida, duplicada o anterior al fin del tiempo de espera no per
 1. Treatment selecciona la estrategia y, si el proceso aún no está autorizado, pasa a `PENDIENTE_APROBACION_CORRECCION`.
 2. El Operario responsable aprueba una sola vez. Treatment registra `approvedAt`, `approvedByOperatorId` y la versión de configuración; repetir la misma aprobación es idempotente.
 3. Treatment crea una orden con `commandId`, `processId`, número de ciclo y versión de configuración. Ninguna orden se crea antes de la aprobación.
-4. El ciclo comienza y su contador aumenta una sola vez cuando IoT Telemetry acepta la orden correctiva.
-5. El dispositivo ejecuta una sola actuación por orden. La dosificación se detiene al completar la cantidad o duración indicada; no permanece activa durante la espera.
+4. Treatment incrementa el ciclo al crear la actuación correctiva y registra la orden para su entrega reintentable. La recepción repetida de una confirmación no vuelve a incrementar el contador.
+5. El dispositivo ejecuta una sola actuación por orden. La representación correctiva actual activa el LED durante cinco segundos; en el montaje físico la adición y mezcla las realiza una persona. No existe una bomba dosificadora automática en este incremento y el indicador no permanece activo durante la espera.
 6. Una confirmación prueba que la orden fue ejecutada o representada, pero no que el agua ya sea conforme.
 7. Después de la confirmación, el proceso pasa a `ESPERANDO`. Al vencer el intervalo solicita una nueva medición y pasa a `REEVALUANDO`.
-8. El ciclo termina cuando Treatment evalúa esa nueva medición válida. Si continúa fuera de rango y quedan intentos con variación útil, prepara automáticamente otro ciclo bajo la aprobación existente; si está conforme pasa a `LISTO`; y si alcanza el límite o incumple una regla de seguridad pasa a `FALLO`.
+8. El ciclo se reevalúa con esa nueva medición válida. Si está conforme pasa a `LISTO`; si continúa fuera de rango, conserva la estrategia aprobada y quedan intentos, inicia otro ciclo. La implementación registra la variación útil (0.1 pH o 0.5 °C), pero no falla exclusivamente por un ciclo sin esa variación. Falla al alcanzar el máximo sin conformidad, al requerir una estrategia distinta o ante una condición de seguridad.
 
 ##### Contrato común de mensajes
 
-Todo comando y evento entre contextos debe incluir el siguiente sobre común:
+El siguiente sobre es una convención de diseño para la trazabilidad. No todos los DTO REST implementados contienen literalmente todos estos campos: los contratos concretos se verifican en los controladores y OpenAPI de cada servicio. No se exige `processId` a operaciones de identidad o telemetría anteriores al inicio de un proceso.
 
 | Campo | Regla |
 |:--|:--|
@@ -1472,9 +1475,9 @@ El entorno no altera las decisiones de Treatment; solamente determina cómo IoT 
 |:--|:--|:--|
 | `PRODUCTO_INTEGRAL` | Telemetría, dosificación física, actuación térmica cuando corresponda y control de flujo. | Ejecuta físicamente la sustancia, dosis, intensidad o acción ordenada y confirma el resultado técnico. |
 | `SIMULACION` | Telemetría simulada, indicador visual y representación del control de flujo. | Activa el indicador; posteriormente una persona modifica el sensor simulado para representar el efecto que será evaluado en la siguiente medición. |
-| `PROTOTIPO_ACADEMICO` | Sensores de pH y temperatura, LED de actuación y servomotor de válvula. | Mantiene el LED activo mientras una persona del equipo realiza manualmente la corrección y la mezcla sustitutivas; luego confirma la representación. |
+| `PROTOTIPO_ACADEMICO` | Sensores de pH y temperatura, LED de actuación y servomotor de válvula. | Representa la corrección con LED; una persona realiza la adición y mezcla. El firmware admite confirmación local y finalización temporal según el modo; la confirmación no acredita una dosis física medida. |
 
-Cada dispositivo declara capacidades como `PH_MEASUREMENT`, `TEMPERATURE_MEASUREMENT`, `PHYSICAL_DOSING`, `THERMAL_ACTUATION`, `VISUAL_INDICATION` y `FLOW_CONTROL`. Configuration no puede publicar para un dispositivo una estrategia incompatible con su entorno y capacidades.
+Los códigos implementados de capacidades incluyen `PH_SENSOR`, `TEMPERATURE_SENSOR`, `DOSING`, `COOLING`, `HEATING` y `RELEASE_VALVE`; los entornos se expresan en los contratos como `SIMULATION`, `ACADEMIC_PROTOTYPE` y `INTEGRAL_PRODUCT`. Registrar `DOSING` en un entorno representado no acredita la presencia de una bomba, ni declarar `COOLING` añade un sistema físico de enfriamiento. Configuration exige sensores y válvula al publicar; Treatment valida la capacidad necesaria para la estrategia seleccionada. Estas declaraciones deben corresponder al alcance que se está probando.
 
 ##### Reglas de seguridad obligatorias
 
@@ -1498,7 +1501,7 @@ Cada dispositivo declara capacidades como `PH_MEASUREMENT`, `TEMPERATURE_MEASURE
 | Water Quality Treatment and Release | Proceso, estado, ciclos, decisiones, fallos y autorizaciones de liberación. | Comandos hacia IoT y eventos de negocio publicados para Monitoring. |
 | Operational Monitoring and Traceability | Alertas, incidentes, proyecciones de consulta, historial y reportes. | Consume eventos publicados; no modifica los agregados ni las bases de los otros contextos. |
 
-Cada contexto mantiene su propio esquema o base lógica. No se permiten tablas compartidas, uniones directas entre bases ni escritura en datos ajenos. En el alcance actual, los dispositivos se comunican con Edge exclusivamente mediante HTTPS/REST; no se incorpora un broker MQTT. Las integraciones internas pueden utilizar APIs REST y eventos versionados según la necesidad, manteniendo idempotencia y reintentos.
+Cada contexto mantiene su propia base lógica y migraciones. No se permiten tablas compartidas, uniones directas entre bases ni escritura en datos ajenos. Se utiliza HTTP/REST: HTTPS para los accesos desplegados y HTTP en la LAN local expresamente configurada para el prototipo físico. No se incorpora un broker MQTT ni un service bus. Los servicios emplean llamadas REST e integración mediante registros de entrega/outbox y reintentos; esto no equivale a un broker externo de mensajería.
 
 ##### Manejadores de integración entre contextos
 
@@ -1509,13 +1512,13 @@ Cada contexto mantiene su propio esquema o base lógica. No se permiten tablas c
 | `MedicionRegistrada` | `EvaluateMeasurementHandler` en Treatment | Inicia o continúa la evaluación utilizando la versión de configuración del proceso. |
 | `ActuacionCorrectivaConfirmada` o `ActuacionCorrectivaRechazada` | `HandleCorrectiveActionResultHandler` en Treatment | Inicia la espera o lleva el proceso a fallo sin duplicar el ciclo. |
 | Eventos de Treatment y Telemetry | `ProjectOperationalEventHandler` en Monitoring | Actualiza estado, historial, correlaciones, alertas e incidentes. |
-| `AlertaGenerada` | `RequestOperatorNotificationHandler` en Monitoring | Invoca `NotificationPort`; `FirebaseCloudMessagingAdapter` adapta la solicitud a FCM y registra el resultado. |
+| `AlertaGenerada` (extensión pendiente de TS-11) | Adaptador de notificaciones propuesto para Monitoring | La integración FCM está pendiente; las alertas se consultan desde las aplicaciones mediante REST. |
 
-Los manejadores consumen `messageId`, `correlationId`, `organizationId` y `deviceId` del sobre común. Registrar el mismo `messageId` más de una vez no puede repetir una actuación ni crear una segunda alerta o correlación.
+Los nombres de manejadores de esta tabla expresan responsabilidades de diseño, no garantizan clases homónimas en el código. Los adaptadores implementados conservan la identidad y referencias necesarias y aplican deduplicación según el contrato; los reintentos no deben repetir una actuación ni duplicar la medición histórica.
 
 ##### Contratos HTTPS/REST para dispositivos
 
-- `POST /api/v1/device-identities/provision`: provisiona la identidad al registrar el dispositivo y devuelve la credencial original una sola vez.
+- `POST /api/v1/device-identities/provision`: operación técnica de provisionamiento coordinada por Configuration; no es un alta libre desde el firmware. El alta administrativa del dispositivo entrega la credencial original una sola vez.
 - `POST /edge/v1/device-auth/token`: valida `deviceId` y credencial y emite un token de corta duración con `deviceId`, `organizationId`, audiencia `hydroguard-edge` y scopes mínimos.
 - `POST /api/v1/device-identities/{deviceId}/revoke`: revoca la identidad e invalida nuevas operaciones Edge.
 - `POST /api/v1/device-identities/{deviceId}/regenerate-credential`: regeneración manual administrativa; no se requiere rotación automática en el alcance académico.
@@ -1525,6 +1528,8 @@ Los manejadores consumen `messageId`, `correlationId`, `organizationId` y `devic
 - `POST /edge/v1/commands/{commandId}/acknowledgements`: confirma o rechaza la ejecución sin duplicarla.
 
 Los scopes mínimos son `telemetry:write`, `commands:read` y `commands:ack`. Un token ausente, vencido, con audiencia incorrecta o vinculado a una identidad revocada debe ser rechazado. El `deviceId` recibido en un payload nunca sustituye la identidad derivada del token.
+
+En el flujo simplificado implementado, el firmware presenta `deviceId` y credencial mediante autenticación Basic a Edge y consulta `GET /edge/v1/device-auth/session`. Edge obtiene y renueva el JWT técnico para sus llamadas al backend; el usuario no tiene que copiar tokens periódicamente. Edge también admite Bearer para el contrato técnico. La configuración se consulta mediante `GET /edge/v1/configuration` y su aplicación se confirma con `POST /edge/v1/configuration/acknowledgements`. Basic sobre HTTP queda limitado a la prueba LAN autorizada; el despliegue virtual usa HTTPS y no deben publicarse las credenciales en el sketch.
 
 
 
@@ -1549,6 +1554,24 @@ Los scopes mínimos son `telemetry:write`, `commands:read` y `commands:ack`. Un 
 <p align="center">
   <img src="assets/HydroGuard - Software Architecture Deployment Diagram.png" alt="Software Architecture Deployment Diagram" width="800">
 </p>
+
+#### 4.1.3.5. Responsabilidades e interacciones de los contenedores
+
+La arquitectura separa las interfaces de usuario, el ingreso a los servicios, los contextos de negocio y la integración con el dispositivo. Cada contenedor ejecuta responsabilidades delimitadas y se comunica mediante contratos explícitos.
+
+| Unidad ejecutable | Implementación y responsabilidad |
+|:--|:--|
+| Frontend administrativo | Angular y Angular Material; consume el Gateway con sesión humana y permisos de Administrador. Se publica en Vercel. |
+| Frontend del Operario | Flutter con DDD por contexto, BLoC/Cubit, `http` y caché Drift. Consume el Gateway, no las bases de datos ni Edge directamente. |
+| API Gateway | Aplicación Spring Boot independiente; enruta las APIs de producto y bloquea `/internal/**` en el acceso público. No reemplaza la autorización de cada servicio. |
+| Seis microservicios | Human IAM, Device Identity, Configuration, Telemetry, Treatment y Monitoring. Residen en `services/` del monorepo; cada uno tiene su Dockerfile, proceso, migraciones y base PostgreSQL independiente. Se despliegan como servicios separados en Render con bases en Supabase. |
+| Edge del prototipo físico | Aplicación Flask en la laptop, en repositorio separado; autentica el dispositivo, adapta contratos y conserva entregas pendientes en SQLite. Se comunica con el backend desplegado por HTTPS. |
+| Edge del prototipo virtual | Despliegue separado orientado a Wokwi y acceso HTTPS. No sustituye el papel de la laptop en la prueba física ni convierte el disco efímero del alojamiento en almacenamiento durable. |
+| Firmware ESP32 | Lee sensores, consulta configuración y comandos mediante Edge, confirma ejecución y aplica cierres locales de seguridad. No decide por sí solo la conformidad del proceso. |
+
+El flujo de datos es **ESP32 → Edge → Gateway/servicios → aplicaciones**. Los comandos siguen **Operario → Gateway → Treatment → Telemetry → Edge → ESP32**, y la confirmación vuelve por la ruta inversa. Configuration publica parámetros; Telemetry registra mediciones y entrega actuaciones; Treatment decide el proceso; Monitoring proyecta eventos y permite consultar su trazabilidad. Las bases no se consultan directamente entre contextos.
+
+Cada microservicio se despliega como un proceso independiente y se conecta únicamente a su base de datos mediante credenciales limitadas. Las variables de entorno y los archivos secretos separan la configuración del código fuente. Swagger UI y OpenAPI describen los contratos de cada servicio; las operaciones conservan sus requisitos de JWT o credencial interna. El Gateway concentra el ingreso de las aplicaciones y no expone las rutas internas entre servicios.
 
 ## 4.2. Tactical-Level Domain-Driven Design
 
