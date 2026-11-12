@@ -3621,8 +3621,9 @@ El nombre visible del producto es **HydroGuard** y la organización responsable 
 
 | Uso | Familia | Peso recomendado | Aplicación |
 |:--|:--|:--|:--|
-| Aplicaciones: interfaz y contenido | Plus Jakarta Sans | 400, 500, 600, 700 y 800 | Títulos, etiquetas, botones, tablas y texto descriptivo. |
-| Aplicaciones: datos técnicos | JetBrains Mono | 400 a 600 | Identificadores, códigos, marcas de tiempo y valores técnicos. |
+| Web administrativa: interfaz y contenido | Plus Jakarta Sans | 400, 500, 600, 700 y 800 | Títulos, etiquetas, botones, tablas y texto descriptivo. |
+| Web administrativa: datos técnicos | JetBrains Mono | 400 a 600 | Identificadores, códigos, marcas de tiempo y valores técnicos. |
+| Aplicación Flutter | Tipografía predeterminada de Material según plataforma | 400, 600 y 700 | `AppTypography` centraliza tamaños y pesos; el proyecto no declara fuentes personalizadas en `pubspec.yaml`. |
 | Landing Page: interfaz y contenido | Manrope | 400, 500, 600, 700 y 800 | Navegación, títulos, textos, campos y botones; los énfasis editoriales de títulos emplean la variante serif definida en CSS. |
 | Landing Page: datos y etiquetas técnicas | DM Mono | 400 y 500 | Panel ilustrativo, etiquetas y datos técnicos. |
 | Reserva del sistema | Segoe UI, Roboto, sans-serif | Según plataforma | Se utiliza cuando la fuente principal no se encuentra disponible. |
@@ -3646,6 +3647,8 @@ Los títulos se escriben en estilo oración, evitando bloques completos en mayú
 | Crítico | `#BE123C` sobre `#FFF1F2` | Error, peligro, bloqueo o incidencia crítica. |
 
 Cada combinación debe alcanzar, como mínimo, los criterios de contraste de **WCAG 2.2 nivel AA**. En las aplicaciones, rojo indica una condición crítica y verde confirma un resultado válido. En la landing, el verde/aqua también forma parte de la identidad comercial; los estados del panel ilustrativo incluyen texto y no dependen únicamente del color. La implementación de ayudas accesibles no sustituye una evaluación completa de conformidad.
+
+La tabla anterior corresponde a la guía web, no a valores idénticos en todos los canales. Flutter utiliza `AppColors`: primario `#0284C7`, acento `#38BDF8`, éxito `#10B981`, advertencia `#F59E0B` y error `#EF4444`, con temas claro y oscuro Material 3. Compartir significado de estados no implica compartir todos los códigos hexadecimales ni demuestra una auditoría de contraste ya aprobada.
 
 #### Espaciado, formas e iconografía
 
@@ -3693,27 +3696,27 @@ El footer enlaza a términos y condiciones bilingües para el alcance académico
 
 #### Aplicación web administrativa
 
-La aplicación web está orientada a administradores que supervisan múltiples dispositivos. Mantiene una barra lateral de 268 px en escritorio y una navegación compacta por debajo de 900 px. El contenido tiene un ancho máximo aproximado de 1240 px para conservar legibilidad. Los tableros priorizan indicadores resumen, alertas activas y excepciones; las tablas se utilizan cuando el usuario debe comparar entidades y siempre incluyen filtros, encabezados claros y una alternativa responsiva.
+La aplicación web está orientada a administradores que supervisan múltiples dispositivos. Mantiene una barra lateral de 250 px en escritorio y una navegación compacta por debajo de 900 px. El contenido utiliza encabezados, tarjetas y separación visual para conservar legibilidad. Los tableros priorizan indicadores resumen, alertas activas y excepciones; las tablas permiten comparar entidades mediante encabezados, controles de búsqueda y filtros específicos de cada vista.
 
 Las acciones principales aparecen una sola vez por vista y las acciones por registro se mantienen cerca del elemento afectado. En **Operational Monitoring and Traceability**, el patrón se concreta en cuatro vistas: tablero de monitoreo, alertas operativas, incidencias de calidad y trazabilidad. Los chips conservan la semántica `success`, `warning`, `danger` e `info`; las fechas se presentan en la zona horaria del usuario y los identificadores técnicos pueden copiarse sin ocupar la jerarquía principal.
 
 #### Aplicación móvil del operario
 
-La futura aplicación móvil reutilizará los mismos tokens, nombres de estado y reglas de accesibilidad. La composición base es de una columna, tomando 390 px como ancho de referencia y creciendo de forma fluida. Los objetivos táctiles miden como mínimo 44 × 44 px y las acciones críticas no se ubican pegadas a los bordes. Las tablas se transforman en listas o tarjetas y la información indispensable —estado del dispositivo, última lectura, desviación y acción en curso— aparece antes del desplazamiento.
+La aplicación móvil está implementada en Flutter con Material 3 y temas claro y oscuro. `AppTheme`, `AppColors` y `AppTypography` centralizan su presentación. Utiliza una columna, tarjetas y listas para las asignaciones, mediciones, tratamientos y alertas; los botones principales tienen altura mínima de 48 unidades lógicas. No incorpora funciones de administración de empresas ni inventario.
 
-Debido a que el operario puede trabajar con conectividad limitada, la interfaz debe diferenciar **Sin conexión**, **Sincronizando** y **Actualizado**, conservar temporalmente las operaciones permitidas y ofrecer reintento explícito. Una notificación conduce al contexto exacto de la alerta, no solo a la pantalla inicial. Las confirmaciones de corrección o liberación requieren una descripción inequívoca del dispositivo y el lote afectado.
+La caché Drift conserva datos de perfil, grupo y asignaciones para consulta limitada; no autoriza tratamientos ni encola comandos críticos sin conexión. Las acciones dependen de la sesión, la asignación y `allowedActions` del backend. Las alertas se consultan en la aplicación; notificaciones push y navegación desde FCM siguen pendientes. Las confirmaciones deben identificar la unidad sobre la que se opera, sin atribuir un identificador de lote que el contrato no maneja.
 
 #### Dispositivo IoT e interfaz física
 
-La interfaz física privilegia reconocimiento inmediato, pocas decisiones y funcionamiento seguro. La señalización recomendada es: azul para información o comunicación, verde para listo/normal/liberado, ámbar para espera o corrección y rojo para falla o emergencia. Cada señal luminosa debe combinar color con una etiqueta, icono, patrón de parpadeo o mensaje; así continúa siendo interpretable ante deficiencias de visión cromática.
+La interfaz física usa tres indicadores: verde para pulso de adquisición de lecturas, amarillo para representación correctiva y rojo para fallo o bloqueo de seguridad. No hay LED azul en el montaje actual. El pulso verde no confirma autenticación, entrega al backend ni conformidad del agua. Los patrones se complementan con mensajes del monitor serie y los estados de las aplicaciones.
 
-La pantalla o panel del dispositivo presenta pH y temperatura con sus unidades, estado de conectividad, fase actual y condición de la válvula. Los controles de emergencia se distinguen por forma, posición y confirmación física, no solo por color. Toda pulsación genera retroalimentación inmediata y las acciones con impacto sobre la válvula o la liberación solicitan confirmación. Ante pérdida de comunicación, lectura inválida o reinicio, el dispositivo adopta el estado seguro definido por el dominio, conserva la evidencia local y comunica claramente que la operación automática está limitada.
+El prototipo actual no tiene LCD: el monitor serie presenta ADC, milivoltios, temperatura, conversión de pH y diagnósticos de conectividad, identidad y configuración. El firmware conserva entradas para confirmación y parada locales, además de los comandos remotos. Ante fallo se ordenan salidas seguras; esto es una protección de software y no una certificación mecánica de válvula cerrada. La persistencia local tiene el alcance limitado descrito en 5.6.
 
 La siguiente correspondencia mantiene coherencia entre canales:
 
 | Concepto | Web | Móvil | IoT físico |
 |:--|:--|:--|:--|
-| Operación normal | Chip verde y texto “Operativo” | Tarjeta verde tenue y estado textual | Indicador verde estable y mensaje “Listo”. |
+| Operación normal | Chip y texto de estado | Tarjeta y estado textual | Pulso verde de adquisición; no equivale a “Listo”. |
 | Desviación | Chip ámbar y valor fuera de rango | Alerta prioritaria con acción sugerida | Indicador ámbar y mensaje de corrección. |
 | Falla crítica | Banner/chip rojo con detalle | Notificación crítica y acceso al incidente | Indicador rojo, señal diferenciada y estado seguro. |
 | Sin conexión | Estado neutro y hora de última lectura | Modo sin conexión y control de reintento | Indicador de comunicación y almacenamiento temporal. |
@@ -3725,7 +3728,7 @@ La arquitectura de información de HydroGuard se define para tres experiencias c
 
 La Landing Page guía al visitante desde la comprensión del problema hasta el contacto o acceso a la plataforma. La aplicación web permite que el único Administrador de cada empresa prepare y supervise los recursos de su organización. La aplicación móvil permite que el Operario configure y atienda exclusivamente los reservorios-dispositivos que tiene asignados. En las aplicaciones autenticadas, la organización se obtiene de la sesión y actúa como límite de navegación, búsqueda y consulta; ningún usuario puede explorar información de otra empresa.
 
-La propuesta combina jerarquía visual, recorridos secuenciales y relaciones matriciales según la tarea. La Landing Page y el módulo IAM de la web administrativa ya cuentan con una implementación inicial. Las estructuras relativas a configuración operativa, telemetría, tratamiento, monitoreo y aplicación móvil representan el diseño objetivo que orientará las siguientes iteraciones.
+La organización combina jerarquía visual para ubicar recursos y estados, recorridos secuenciales para incorporar usuarios y preparar tratamientos, y relaciones matriciales o cronológicas para comparar datos y reconstruir eventos. La navegación se define por los objetivos de cada rol, no por la distribución técnica de los servicios.
 
 ### 5.2.1. Organization Systems
 
@@ -3755,7 +3758,7 @@ Las etiquetas utilizarán el Ubiquitous Language del proyecto, se redactarán en
 |:--|:--|:--|
 | Landing Page | Navegación y llamadas a la acción | `Solución`, `Sectores`, `Equipo`, `Contacto`, `Conoce HydroGuard`, `Ver el producto`, `Quiero saber más`, `Enviar mensaje`, `Acceder`. |
 | Web pública | Acceso e incorporación | `Iniciar sesión`, `Registrar empresa`, `Datos de la empresa`, `Datos del Administrador`, `RUC`, `Teléfono`, `Segmento`, `Correo`, `Contraseña`. |
-| Web administrativa | Navegación principal | `Resumen`, `Operarios`, `Estructura operativa`, `Telemetría`, `Procesos`, `Alertas`, `Incidentes`, `Historial`, `Reportes`, `Perfil`, `Cerrar sesión`. |
+| Web administrativa | Navegación principal implementada | `Operarios`, `Grupos`, `Reservorios`, `Dispositivos`, `Perfiles`, `Estado operacional`, `Alertas`, `Incidentes`, `Trazabilidad`, `Telemetría`, `Tratamientos`, `Cerrar sesión`. |
 | Estructura operativa | Recursos y relaciones | `Grupos`, `Reservorios`, `Dispositivos`, `Perfiles de Operario`, `Asignaciones`, `Configuraciones`, `Código de primer acceso`. |
 | Aplicación móvil | Navegación y contexto | `Inicio`, `Mis reservorios`, `Mi grupo`, `Proceso`, `Alertas`, `Historial`, `Configuración`, `Perfil`, `Cerrar sesión`. |
 | Operación móvil | Acciones críticas | `Iniciar proceso`, `Aprobar corrección`, `Confirmar liberación`, `Parada de emergencia`, `Restablecer proceso`, `Publicar configuración`. |
@@ -3835,7 +3838,7 @@ La ficha de la aplicación no afirmará que el teléfono mide o corrige directam
 
 ### 5.2.4. Searching Systems
 
-La búsqueda se incorporará solo donde el volumen o la variación de datos pueda dificultar la localización manual. Todas las consultas respetarán `organizationId`, rol y asignaciones obtenidos de la sesión. Los filtros del cliente no reemplazarán estas restricciones del backend.
+La búsqueda se utiliza según la tarea y el volumen de información. Las consultas están limitadas por organización, rol y asignación; los filtros del cliente no reemplazan la autorización del backend. La siguiente tabla organiza las opciones de localización por experiencia; las diferencias entre controles disponibles y mejoras propuestas se precisan al final de la sección.
 
 | Experiencia y conjunto | Búsqueda ofrecida | Filtros y orden | Presentación de resultados |
 |:--|:--|:--|:--|
@@ -3861,18 +3864,20 @@ La interacción de búsqueda seguirá reglas comunes:
 - No utilizar cero como sustituto de una medición inexistente.
 - Cancelar consultas reemplazadas y evitar resultados tardíos de una búsqueda anterior.
 
+**Alcance comprobado en móvil.** Historial permite seleccionar un reservorio asignado y consultar sus eventos; Alertas muestra una lista de alertas disponibles. No se han implementado allí un buscador de texto, filtros completos por severidad/periodo, ni un buscador de integrantes en Mi grupo. Las vistas administrativas ofrecen los controles de búsqueda y filtros de cada listado; no existe una vista guardada general de dispositivos ni una pantalla independiente de catálogo de reportes. Las reglas anteriores son objetivos de interacción y no una afirmación de cumplimiento integral.
+
 ### 5.2.5. Navigation Systems
 
 La navegación utilizará sistemas globales, locales, contextuales y suplementarios. Cada experiencia mantendrá rutas predecibles, indicará la ubicación actual y evitará ofrecer acciones que el rol no puede ejecutar.
 
 #### Landing Page
 
-La cabecera funciona como navegación global y permanece orientada a las secciones `Solución`, `Sectores`, `Equipo` y `Contacto`. El logotipo y `Volver arriba` conducen a `Inicio`. En pantallas pequeñas, las mismas opciones se presentan mediante un menú desplegable accesible, sin cambiar su orden.
+La cabecera funciona como navegación global hacia las anclas de la landing; el recorrido completo incluye `Solución`, `Producto`, `Sectores`, `Capacidades`, `Equipo` y `Contacto`. El logotipo y `Volver arriba` conducen a `Inicio`. La página de términos es un destino independiente y el selector de idioma mantiene el mismo contenido en inglés o español. En pantallas pequeñas se utiliza un menú desplegable accesible.
 
 El recorrido principal es secuencial:
 
 ```text
-Inicio → Solución → Producto → Sectores → Beneficios → Equipo → Contacto
+Inicio → Solución → Producto → Sectores → Capacidades → Equipo → Contacto
 ```
 
 Las llamadas `Conoce HydroGuard`, `Ver el producto`, `Quiero saber más` y `Explorar aplicación` actúan como navegación contextual. El acceso a la plataforma deberá conducir a `Iniciar sesión`, mientras que una empresa nueva podrá continuar a `Registrar empresa`.
@@ -3882,31 +3887,29 @@ Las llamadas `Conoce HydroGuard`, `Ver el producto`, `Quiero saber más` y `Expl
 Las páginas públicas `Iniciar sesión` y `Registrar empresa` quedan fuera del contenedor administrativo. Después de autenticarse, el Administrador utiliza una navegación global persistente, agrupada según sus objetivos:
 
 ```text
-Resumen
 Operarios
-Estructura operativa
-├── Grupos
-├── Reservorios
-├── Dispositivos
-└── Perfiles y asignaciones
-Supervisión
-├── Telemetría
-├── Procesos
-├── Alertas
-└── Incidentes
-Historial y reportes
-Perfil
+Grupos
+Reservorios
+Dispositivos
+Perfiles
+Estado operacional
+Alertas
+Incidentes
+Trazabilidad
+Telemetría
+Tratamientos
+Cerrar sesión
 ```
 
-Las vistas de detalle incorporarán breadcrumbs y navegación contextual. Por ejemplo, `Grupo → Reservorio → Dispositivo` conserva la relación operativa, mientras que desde un dispositivo se podrá continuar hacia `Telemetría`, `Proceso actual`, `Alertas` o `Historial`. El flujo de incorporación del Operario funcionará como asistente secuencial: `Cuenta → Perfil → Asignación → Código`.
+El acceso autenticado redirige inicialmente a Operarios (`/users`), no a una pantalla Resumen. Las vistas de detalle incluyen enlaces de retorno y vínculos contextuales a recursos relacionados. La incorporación se realiza mediante pantallas de cuenta, perfil, asignación y código; no se presenta como un único asistente implementado. Historial y generación de reportes se consultan desde sus vistas operativas, no desde todos los destinos independientes del diseño inicial.
 
-El menú solo mostrará recursos de la organización autenticada. Las rutas estarán protegidas; una URL inexistente mostrará una página de no encontrado y una ruta sin permisos mostrará acceso denegado, sin redirigir silenciosamente a información que pueda confundirse con la solicitada.
+El menú y los datos corresponden a la organización autenticada y las rutas administrativas utilizan guards de acceso. En el router actual la ruta comodín redirige al inicio; una pantalla específica de no encontrado es un comportamiento propuesto, no implementado.
 
 #### Aplicación móvil del Operario
 
-El primer acceso comienza con el código entregado externamente. Los accesos posteriores utilizan el identificador y la contraseña definitiva. Una vez autenticado, la navegación principal prioriza cuatro destinos de uso frecuente: `Inicio`, `Mis reservorios`, `Alertas` e `Historial`. `Mi grupo`, `Perfil` y `Cerrar sesión` se ubican en el menú de cuenta.
+El primer acceso requiere identificador, contraseña definitiva y código entregado externamente; los accesos posteriores usan identificador y contraseña. La barra inferior tiene cinco destinos: `Inicio`, `Reservorios`, `Tratamiento`, `Alertas` e `Historial`. El menú lateral añade `Mi grupo`, `Configuración`, `Perfil` y `Cerrar sesión`. El router solo permite entrar a las vistas protegidas a una sesión con rol `OPERATOR`.
 
-`Proceso` y `Configuración` son destinos contextuales del reservorio seleccionado, porque no deben operar sin una asignación activa. El recorrido operativo principal será:
+Tratamiento y Configuración son rutas accesibles desde la navegación, pero sus operaciones requieren seleccionar una asignación autorizada. El recorrido operativo es:
 
 ```text
 Inicio
@@ -4009,6 +4012,8 @@ Muestra el formulario de contacto con estados accesibles y botón de envío en A
 </p>
 
 ## 5.4. Applications UX/UI Design.
+
+Esta sección presenta las decisiones visuales y de interacción de la aplicación administrativa y la aplicación del Operario mediante wireframes, wireflows, mock-ups y user flows. Los recorridos relacionan las metas de cada usuario con la organización del contenido, las acciones disponibles y sus resultados, siguiendo las guías de estilo y arquitectura de información de 5.1 y 5.2.
 
 ### 5.4.1. Applications Wireframes.
 
@@ -4188,10 +4193,10 @@ Los Wireflows se organizan alrededor de los objetivos indispensables de cada act
 
 | Aplicación / User Persona | User Goal | Flujo representado |
 |:--|:--|:--|
-| Web / Administrador | Acceder o registrar una empresa | Inicio de sesión → validación → área administrativa; como alternativa, registro de empresa y su único Administrador → sesión iniciada. |
+| Web / Administrador | Acceder o registrar una empresa | Inicio de sesión → validación → Operarios; como alternativa, registro de empresa y su único Administrador → inicio de sesión. |
 | Web / Administrador | Preparar una unidad operativa y asignarla | Crear grupo → crear reservorio → registrar y vincular dispositivo → crear cuenta y perfil de Operario → asignar dispositivo y reservorio → generar código de acceso. |
 | Web / Administrador | Supervisar la operación | Consultar telemetría → seleccionar dispositivo → revisar mediciones y tratamiento → consultar o atender alerta/incidente → revisar trazabilidad o generar reporte. |
-| Móvil / Operario | Activar su acceso y completar la configuración | Ingresar código recibido → autenticar cuenta → seleccionar asignación → completar parámetros operativos → confirmar configuración. |
+| Móvil / Operario | Activar su acceso y completar la configuración | Ingresar identificador, contraseña y código recibido → activar acceso → seleccionar asignación → guardar parámetros → publicar → esperar confirmación de aplicación del dispositivo. |
 | Móvil / Operario | Supervisar y autorizar un tratamiento | Seleccionar reservorio → revisar medición y estrategia → aprobar una vez la corrección → seguir ciclos automáticos → confirmar liberación cuando corresponda o ejecutar parada de emergencia. |
 
 Cada Wireflow debe reflejar estados de carga, validación, vacío, error y confirmación cuando alteren la decisión del usuario. En el flujo operativo, el sistema no permite aprobar una corrección sin estrategia, liberar agua no apta ni operar un recurso fuera de las asignaciones vigentes.
@@ -4204,7 +4209,7 @@ Cada Wireflow debe reflejar estados de carga, validación, vacío, error y confi
 - User Goal: Iniciar sesión o registrar una empresa para acceder a la plataforma.
 - User Persona: Administrador de empresa.
 
-El administrador accede a la pantalla de inicio → si ya tiene una cuenta, ingresa sus credenciales y el sistema valida la información. Si son correctas → accede al panel de resumen; si son incorrectas → se muestra un mensaje de error con la opción de reintentar. Si no tiene una cuenta → inicia el registro de empresa, completa los datos de la organización y posteriormente los del administrador. Al revisar y confirmar la información → el sistema valida los campos. Si encuentra errores → permite corregir el formulario; si los datos son válidos → se crea la cuenta y se redirige al inicio de sesión.
+El administrador accede a la pantalla de inicio → si ya tiene una cuenta, ingresa sus credenciales y el sistema valida la información. Si son correctas → accede a Operarios; si son incorrectas → se muestra un mensaje de error con la opción de reintentar. Si no tiene una cuenta → inicia el registro de empresa y completa los datos de la organización y del Administrador. Al confirmar, el sistema valida los campos; si son válidos crea la cuenta y redirige al inicio de sesión. El panel Resumen del wireframe corresponde al diseño, no al destino inicial implementado.
 
 <a href="./assets/wireframes/WF-WEB-01.png">
   <img src="./assets/wireframes/WF-WEB-01.png" width="1200">
@@ -4396,7 +4401,7 @@ Los User Flows utilizan los mismos objetivos definidos para los Wireflows y reem
 | Activar acceso y configurar desde móvil | El Operario utiliza el código recibido, inicia sesión y completa la configuración de su asignación. | Código inexistente o revocado, credenciales inválidas, asignación cerrada o configuración incompleta. |
 | Autorizar y seguir un tratamiento | El Operario revisa la estrategia, aprueba una vez, observa los ciclos automáticos y confirma la liberación únicamente cuando el sistema marca el agua como apta. | Estrategia no disponible, proceso fallido, emergencia, límites de ciclos alcanzados o intento de liberar agua no apta. |
 
-Las decisiones de cada diagrama deben estar etiquetadas y las rutas alternativas deben regresar a un estado recuperable o explicar por qué el proceso queda bloqueado. La aplicación web actualmente implementada permite comprobar los flujos administrativos y de supervisión; los flujos móviles documentan el comportamiento planificado y no deben presentarse como funcionalidad ejecutable en TB1.
+Las decisiones de cada diagrama deben estar etiquetadas y las rutas alternativas deben regresar a un estado recuperable o explicar por qué el proceso queda bloqueado. El recorrido móvil distingue guardar, publicar y aplicar la configuración antes de iniciar el proceso; posteriormente presenta la aprobación de la estrategia, los ciclos de corrección y espera, la reevaluación y la autorización de liberación según el estado del proceso. La aplicación administrativa permite preparar las unidades y supervisar sus mediciones, alertas, incidentes y trazabilidad.
 
 Link: https://www.figma.com/board/aA4hZeydBIROAefYuThSnW/IOT?node-id=3-318&t=q4MvEYSWK2j0nY4e-1
 
