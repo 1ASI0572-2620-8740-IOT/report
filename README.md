@@ -61,6 +61,7 @@
 | TB1 | 07/10/2026 | Rios Pacheco, Hector Javier<br>Santur Tello, Andrea Elizabeth | **Rios Pacheco, Hector Javier:** refinó el EventStorming, los flujos de mensajes, los Bounded Context Canvases y el Context Mapping para incorporar identidad de dispositivo y el ciclo de tratamiento acordado.<br>**Santur Tello, Andrea Elizabeth:** desarrolló la configuración del entorno y del capítulo VI e incorporó los recursos visuales de las herramientas del proyecto. |
 | TB1 | 08/10/2026 | Santur Tello, Andrea Elizabeth<br>Gomez Hurtado, Miguel Angel | **Santur Tello, Andrea Elizabeth:** actualizó Source Code Management, GitFlow, el despliegue del Landing Page, Sprint Planning y Sprint Backlog 1.<br>**Gomez Hurtado, Miguel Angel:** incorporó y amplió los mock-ups, User Flow Diagrams y el diseño del dispositivo IoT, e integró la versión final de los mock-ups. |
 | TB1 | 09/10/2026 | Prieto Mantari, Leonardo Fabrizzio Junior<br>Gomez Hurtado, Miguel Angel<br>Rios Pacheco, Hector Javier | **Prieto Mantari, Leonardo Fabrizzio Junior:** completó la estructura de los capítulos V y VI, la evidencia de ejecución, el video de prototipado y la tabla de contenidos navegable; corrigió el Sprint Backlog y su evidencia de Trello, y actualizó su Student Outcome con los entregables del integrante 1 y el apoyo al integrante 4.<br>**Gomez Hurtado, Miguel Angel:** incorporó la explicación de las pruebas y las evidencias de despliegue en Vercel y Render.<br>**Rios Pacheco, Hector Javier:** integró los cambios documentales, incorporó los wireframes y mock-ups del Landing Page y conectó sus accesos con la aplicación web desplegada. |
+| AV2 | 12/11/2026 | Prieto Mantari, Leonardo Fabrizzio Junior | Documentó la evidencia de desarrollo y la colaboración del Sprint 2; incorporó los cambios y pruebas de P-02 (edición de alias y modelo) y P-03 (motivos de bloqueo de acciones del Operario), y actualizó su Student Outcome. |
 
 
 ## Project Report Collaboration Insights
@@ -94,6 +95,10 @@ La siguiente captura de GitHub Contributors, aportada por el equipo, complementa
 
 El periodo mostrado en la captura es distinto al corte de TB1 utilizado en las tablas del informe (21 de septiembre al 9 de octubre de 2026). Por ello, los conteos de la imagen no se comparan directamente con esas tablas ni reemplazan sus valores. La cantidad de commits constituye evidencia de actividad versionada, no una medida aislada de calidad o esfuerzo.
 
+
+### AV2 — Project Report Collaboration Insights
+
+Leonardo consolidó las evidencias de desarrollo y colaboración del Sprint 2 y documentó sus aportes a P-02 y P-03 en backend, web y móvil. El [análisis de colaboración del Sprint 2](#6229-team-collaboration-insights-during-sprint) distingue el trabajo en los productos de la elaboración del informe e indica las revisiones usadas para el conteo.
 
 ## Tabla de Contenidos
 
@@ -5605,6 +5610,22 @@ La tabla sigue la estructura del Sprint 1. La rama indicada es aquella en la que
 | Prototipo virtual | `master` | [4f5d94e](https://github.com/1ASI0572-2620-8740-IOT/IOT-Prototype/commit/4f5d94e5305270dcad90ffb2ae9060ce52d7dde5) | `feat: periodic telemetry to edge` | — | 2026-11-11 | Envío periódico de telemetría del prototipo virtual hacia Edge. |
 | Firmware en el informe | `develop` | [44e9fc1](https://github.com/1ASI0572-2620-8740-IOT/report/commit/44e9fc1b2b0bbf414ca1881b3f2b663c94117bdd) | `fix(prototype): confirm academic treatment commands with matching execution mode` | — | 2026-11-11 | Ajuste del sketch del prototipo académico para confirmar órdenes con su modo de ejecución. |
 
+**Mejoras administrativas y operativas incorporadas el 12 de noviembre**
+
+P-02 permite al Administrador corregir el alias y el modelo de un dispositivo sin modificar su identidad ni sus asignaciones. P-03 permite al Operario conocer por qué no puede iniciar un tratamiento, publicar una configuración o autorizar la liberación manual. La interfaz muestra el motivo; las reglas de autorización y seguridad siguen en el backend.
+
+| Tarea | Producto | Rama | Commit | Mensaje | Fecha | Evidencia del cambio |
+|:--|:--|:--|:--|:--|:--|:--|
+| P-02 | Backend | `develop` | [847d1e1](https://github.com/1ASI0572-2620-8740-IOT/hydroguard_backend/commit/847d1e1314d3d0eb9ec9a53249f1d81e1bf5fcb5) | `feat(configuration): allow editing device alias and model` | 2026-11-12 | Actualización de alias y modelo, limitada al Administrador de la organización. Conserva identidad técnica, capacidades y vínculos. |
+| P-02 | Backend | `develop` | [d115adc](https://github.com/1ASI0572-2620-8740-IOT/hydroguard_backend/commit/d115adc50779ccc8206618cf72e481221f185ba5) | `docs(configuration): document device description update contract` | 2026-11-12 | Contrato público y OpenAPI para la edición descriptiva. |
+| P-02 | Web administrativa | `develop` | [b60f560](https://github.com/1ASI0572-2620-8740-IOT/hydroguard-admin-web-frontend/commit/b60f56018f1cc2ec31f101ef9dd6621ca299fdfa) | `feat(configuration): add device alias and model editing` | 2026-11-12 | Formulario de edición en el detalle del dispositivo, con validación y recarga de los datos guardados. |
+| P-03 | Backend | `develop` | [661717f](https://github.com/1ASI0572-2620-8740-IOT/hydroguard_backend/commit/661717f8ee6f24967c9f3cd6d1f83a2bcbbc5216) | `feat(treatment): explain blocked operator actions` | 2026-11-12 | Motivos de bloqueo al iniciar, publicar y autorizar la liberación. El backend conserva las reglas de autorización. |
+| P-03 | Backend | `develop` | [280ba1f](https://github.com/1ASI0572-2620-8740-IOT/hydroguard_backend/commit/280ba1fabc970ba07ecb3311a575e5274a0fdf78) | `docs(treatment): document manual release block reasons` | 2026-11-12 | Contrato del motivo de bloqueo de liberación manual. |
+| P-03 | Móvil del Operario | `develop` | [dc0ec26](https://github.com/1ASI0572-2620-8740-IOT/hydroguard_operator_mobile_frontend/commit/dc0ec26cb196fec49cf7e7078d90c8f9c26ff264) | `feat(configuration): explain blocked publication in operator app` | 2026-11-12 | Mensajes junto a Publicar cuando falta un borrador o el servidor rechaza la operación. |
+| P-03 | Móvil del Operario | `develop` | [28e8068](https://github.com/1ASI0572-2620-8740-IOT/hydroguard_operator_mobile_frontend/commit/28e8068132978b89babc1b5d8ddaf2c626750cb7) | `feat(treatment): show start and manual release block reasons` | 2026-11-12 | Mensajes junto al inicio del tratamiento y en la vista del proceso cuando la liberación manual no está disponible. |
+
+Los cambios de código están integrados en `develop`. Sus verificaciones se registran en [Testing Suite Evidence](#6225-testing-suite-evidence-for-sprint-review). La integración en la rama no acredita por sí sola un despliegue actualizado ni una prueba de extremo a extremo con el backend y PostgreSQL.
+
 **Evidencia visual del código versionado**
 
 ![GitHub: commit 7ad7a0c y cambio de la ruta de API en vercel.json](assets/development-sprint-2/01-web-gateway-vercel.jpg)
@@ -5654,6 +5675,14 @@ La siguiente tabla registra commits de pruebas presentes en `develop`; la rama i
 
 Las pruebas mostradas son pruebas automatizadas JUnit y de integración; no se presentan como escenarios BDD con archivos `.feature` ni como pruebas de aceptación física.
 
+**Verificación de P-02 y P-03 (12 de noviembre de 2026)**
+
+- **Backend:** 58 pruebas de Gateway, Configuration y Treatment sin fallos ni omisiones. P-02 cubre la validación de la edición, el aislamiento por organización y el enrutamiento al servicio ([c7d990d](https://github.com/1ASI0572-2620-8740-IOT/hydroguard_backend/commit/c7d990dad67ba14e53bfe2d715084a306bbe269c)). P-03 cubre el rechazo de un nuevo inicio cuando ya existe un proceso activo y el bloqueo de liberación ante una lectura no reciente ([cc11c28](https://github.com/1ASI0572-2620-8740-IOT/hydroguard_backend/commit/cc11c288dfa6952115c2444be9446938e8daa8de)).
+- **Web:** compilación exitosa y 97 comprobaciones HTTP con Mock API. P-02 incluye guardado y consulta posterior del alias y modelo, conservación del vínculo y rechazo de entradas inválidas y accesos ajenos ([b010cb1](https://github.com/1ASI0572-2620-8740-IOT/hydroguard-admin-web-frontend/commit/b010cb1ecd9025cfd28cb5e2c14736cda54f55aa)).
+- **Móvil:** 84 pruebas Flutter aprobadas. P-03 incluye el rechazo al publicar, el mensaje asociado al dispositivo al intentar iniciar y la explicación de una liberación no disponible sin ofrecer la acción ([da11b57](https://github.com/1ASI0572-2620-8740-IOT/hydroguard_operator_mobile_frontend/commit/da11b57947b6aed631a03d649cb399326ba4aab9)).
+
+Estas verificaciones no sustituyen una ejecución de los clientes contra el backend desplegado ni una prueba de actuación con el prototipo físico.
+
 #### 6.2.2.8. Software Deployment Evidence for Sprint Review
 
 Durante el Sprint 2 se prepararon y publicaron los servicios del backend, la aplicación administrativa y una instancia Edge separada para el prototipo virtual. Las siguientes capturas muestran el estado observado en el navegador durante la revisión; no reemplazan una prueba integral ni acreditan que todos los componentes respondan en ese instante.
@@ -5688,7 +5717,7 @@ La documentación OpenAPI y Swagger UI se incorporó a los servicios; la siguien
 
 El trabajo del Sprint 2 se apoyó en la coordinación entre quienes versionaron cambios en los productos y quienes prepararon el diseño, la planificación y el informe. El historial permite identificar contribuciones y puntos de integración; la [matriz de liderazgo y colaboración](#6222-aspect-leaders-and-collaborators) registra responsabilidades asignadas y no se utiliza para atribuir commits.
 
-**Corte y método.** Se contabilizaron commits únicos sin fusiones por autor y repositorio, según la fecha de registro del commit en hora de Lima (UTC−5). Las columnas por repositorio cubren del **10 de octubre al 12 de noviembre de 2026**, es decir, el ciclo AV2 después del corte TB1. La última columna muestra por separado el subconjunto del **7 al 12 de noviembre**, a partir de la fecha del Sprint Planning. Se revisaron `main` de Landing Page, `develop` y `feature/render-backend-connection` del frontend web, `develop` del backend y del móvil, `develop` y `feature/render-wokwi-deployment` de Edge, `master` de IOT-Prototype y `develop` del informe hasta `b1a3f2d`. Los commits alcanzables desde dos ramas de un mismo repositorio se contaron una vez. No se incluyó la elaboración de esta sección en el corte.
+**Corte y método.** Se contabilizaron commits únicos sin fusiones por autor y repositorio, según la fecha de registro del commit en hora de Lima (UTC−5). Las columnas por repositorio cubren del **10 de octubre al 12 de noviembre de 2026**, es decir, el ciclo AV2 después del corte TB1. La última columna muestra por separado el subconjunto del **7 al 12 de noviembre**, a partir de la fecha del Sprint Planning. Se revisaron `main` de Landing Page, `develop` del frontend web hasta `b010cb1` y su rama `feature/render-backend-connection`, `develop` del backend hasta `280ba1f`, `develop` del móvil hasta `da11b57`, `develop` y `feature/render-wokwi-deployment` de Edge, `master` de IOT-Prototype y `develop` del informe hasta `2c693b5`. Los commits alcanzables desde dos ramas de un mismo repositorio se contaron una vez. Los commits registrados con el autor `Leonardo Prieto` se atribuyen a Leonardo Prieto Mantari. La presente actualización queda fuera del corte.
 
 | Integrante | Landing | Web | Backend | Móvil | Edge | IoT virtual | Informe | Total AV2 | Desde Planning |
 |:--|--:|--:|--:|--:|--:|--:|--:|--:|--:|
@@ -5696,8 +5725,8 @@ El trabajo del Sprint 2 se apoyó en la coordinación entre quienes versionaron 
 | Gomez Hurtado, Miguel Angel (`Miguel26112001`) | 0 | 0 | 0 | 0 | 0 | 4 | 34 | 38 | 4 |
 | Santur Tello, Andrea Elizabeth (`andreli-star`) | 0 | 0 | 0 | 0 | 0 | 0 | 4 | 4 | 4 |
 | Rodriguez Macedo, Sebastian (`Shiftinnnnn`) | 0 | 0 | 0 | 0 | 0 | 0 | 2 | 2 | 0 |
-| Prieto Mantari, Leonardo Fabrizzio Junior (`Wuux1`) | 0 | 0 | 0 | 0 | 0 | 0 | 2 | 0 | 0 |
-| **Total** | **1** | **7** | **29** | **40** | **9** | **4** | **51** | **141** | **30** |
+| Prieto Mantari, Leonardo Fabrizzio Junior (`Leonardo Prieto` en Git) | 0 | 2 | 6 | 3 | 0 | 0 | 3 | 14 | 14 |
+| **Total** | **1** | **9** | **35** | **43** | **9** | **4** | **54** | **155** | **44** |
 
 El conteo refleja la autoría registrada en las ramas consultadas. Un cero indica que no se encontró un commit de esa persona en el corte; no descarta aportes en revisión, coordinación, pruebas, reuniones o trabajo aún no integrado. Los conteos tampoco permiten comparar esfuerzo ni calidad.
 
@@ -5705,7 +5734,9 @@ El conteo refleja la autoría registrada en las ramas consultadas. Un cero indic
 
 ![GitHub: historial de report en develop filtrado del 7 al 12 de noviembre](assets/development-sprint-2/03-colaboracion-report-develop.jpg)
 
-*Figura: historial de la rama `develop` de `report`, filtrado del 7 al 12 de noviembre. Se muestran contribuciones de documentación e integraciones; la captura corresponde únicamente al informe e incluye fusiones, a diferencia del conteo de la tabla. GitHub puede agrupar las fechas en una zona horaria distinta al corte de Lima.*
+*Figura: historial de la rama `develop` de `report`, filtrado del 7 al 12 de noviembre. La captura se tomó antes de publicar las secciones de evidencia, colaboración y Student Outcome; muestra solo el informe e incluye fusiones, a diferencia del conteo de la tabla. GitHub puede agrupar las fechas en una zona horaria distinta al corte de Lima.*
+
+Leonardo complementó el trabajo de documentación con la implementación de P-02 en backend y web y de P-03 en backend y móvil. Los aportes incluyen código, contrato y pruebas, enlazados en las [evidencias de desarrollo](#6224-development-evidence-for-sprint-review) y [pruebas](#6225-testing-suite-evidence-for-sprint-review).
 
 **Aprendizaje del sprint.** El punto de coordinación más visible fue mantener los contratos compatibles entre web, Gateway, servicios y Edge. Por ejemplo, la ruta publicada del frontend se ajustó en [7ad7a0c](https://github.com/1ASI0572-2620-8740-IOT/hydroguard-admin-web-frontend/commit/7ad7a0ceec836c9ae8e81d2c22afa983c1d7163b) y la confirmación de órdenes académicas requirió cambios relacionados en Edge ([cde7f54](https://github.com/1ASI0572-2620-8740-IOT/hydroguard-edge-service/commit/cde7f5464bcfe781c1d3cd0743b9b859ecb74e11)) y en el sketch ([44e9fc1](https://github.com/1ASI0572-2620-8740-IOT/report/commit/44e9fc1b2b0bbf414ca1881b3f2b663c94117bdd)). Para el siguiente sprint se recomienda vincular las tareas de Trello con sus commits y evidencias de aceptación, documentar las revisiones entre repositorios y anotar si cada verificación se realizó en local, en nube o con hardware.
 
