@@ -5437,6 +5437,309 @@ El Sprint Backlog 2 contempla 28 historias seleccionadas de manera preliminar, c
 | N/A | Infraestructura y actividades transversales | T-90 | Documentación OpenAPI | Comprobar endpoints y documentación Swagger/OpenAPI de los servicios; asociar la evidencia con 6.2.2.7. | 5 | Prieto Mantari, Leonardo Fabrizzio Junior (propuesto) | To-do |
 | N/A | Infraestructura y actividades transversales | T-91 | Despliegue y diagnóstico | Verificar URLs, salud, variables de entorno y comunicación de servicios en el entorno elegido; asociar evidencia con 6.2.2.8. | 5 | Rios Pacheco, Hector Javier (propuesto) | To-do |
 
+### 6.3. Validation Interviews
+
+Las entrevistas de validación de HydroGuard tienen como objetivo evaluar la comprensión, utilidad y experiencia de uso de la solución propuesta con representantes de los dos segmentos objetivo: industria textil y producción hidropónica. A diferencia de las entrevistas de descubrimiento, estas sesiones se centran en la interacción de los participantes con la Landing Page, las aplicaciones y la demostración del prototipo IoT.
+
+El proceso de validación se organiza en tres etapas: diseño de entrevistas y flujos de interacción, registro de las sesiones con sus evidencias audiovisuales y evaluación de los hallazgos mediante heurísticas de usabilidad, arquitectura de información y diseño inclusivo.
+
+Se contempla un mínimo de tres entrevistas por segmento, para un total mínimo de seis participantes. Los resultados se incorporarán conforme se ejecuten las sesiones y se obtengan evidencias verificables. Durante las demostraciones se distinguirán las funcionalidades integradas de aquellas representadas mediante simulaciones o pruebas parciales del prototipo.
+
+#### 6.3.1. Diseño de Entrevistas
+
+El diseño de las entrevistas busca identificar si los representantes de cada segmento comprenden la propuesta de valor de HydroGuard, pueden interpretar las funcionalidades de las aplicaciones y consideran útil el comportamiento observado del prototipo IoT.
+
+Cada sesión comprende tres componentes: validación de la Landing Page, validación de la aplicación y validación del prototipo físico. Se utilizarán preguntas abiertas para recoger opiniones, dificultades, expectativas y oportunidades de mejora sin inducir respuestas positivas.
+
+**Objetivos de validación por componente**
+
+| Componente | Objetivo de validación |
+|:--|:--|
+| Landing Page | Verificar la comprensión del problema, la solución propuesta y su utilidad para el segmento. |
+| Aplicación web y/o móvil | Evaluar la facilidad de navegación, la comprensión de mediciones, configuraciones, alertas e historial, según los flujos disponibles para cada rol. |
+| Prototipo IoT | Recoger percepciones sobre la utilidad, confianza y funcionamiento observado de las mediciones y del control de la válvula. |
+| Experiencia de usuario | Identificar dificultades de usabilidad, organización de información, claridad visual y accesibilidad. |
+
+**Flujos de interacción propuestos para la validación**
+
+| Código | Segmento | Componente | Flujo o tarea a realizar |
+|:--|:--|:--|:--|
+| VF-01 | Industria textil e hidroponía | Landing Page | Ingresar a la página, identificar el problema abordado, revisar los beneficios y localizar el medio de contacto. |
+| VF-02 | Industria textil | Aplicación administrativa | Consultar el estado de un dispositivo, interpretar las mediciones disponibles y revisar las alertas. |
+| VF-03 | Industria textil | Aplicación administrativa | Consultar el historial de mediciones, tratamientos y liberaciones de una unidad autorizada. |
+| VF-04 | Producción hidropónica | Aplicación del Operario | Identificar un reservorio asignado y consultar sus mediciones de pH y temperatura. |
+| VF-05 | Producción hidropónica | Aplicación del Operario | Revisar o configurar rangos permitidos y comprender las indicaciones ante una condición fuera de rango. |
+| VF-06 | Industria textil e hidroponía | Prototipo IoT | Observar las mediciones disponibles, el estado del agua y el comportamiento de apertura o cierre del actuador. |
+
+Los flujos se realizarán únicamente con las funcionalidades disponibles durante la sesión. Si un recorrido depende de datos simulados, una integración no terminada o un montaje de demostración, esta condición se explicará al participante y se registrará en el informe.
+
+**Segmento Objetivo 1: Industria Textil**
+
+**A. Validación de Landing Page**
+
+1. Al observar la Landing Page de HydroGuard, ¿le quedó claro qué problema busca solucionar en el monitoreo y control del agua residual textil?
+
+**B. Validación de la aplicación**
+
+2. Al explorar la aplicación, ¿qué tan sencillo le resultó encontrar y comprender las mediciones de pH y temperatura del agua?
+
+3. ¿La información sobre alertas, estados del agua y acciones correctivas le permite identificar qué debe hacer cuando los parámetros están fuera del rango establecido?
+
+4. ¿Qué tan útil y comprensible le parece consultar el historial de mediciones, tratamientos y liberaciones para supervisar las operaciones de su empresa?
+
+**C. Validación del prototipo IoT**
+
+5. Después de observar el funcionamiento del prototipo, ¿qué tan confiable le parece el proceso de medición de pH y temperatura, evaluación del agua y control de apertura o cierre de la válvula? ¿Por qué?
+
+6. Al observar cómo el prototipo mantiene el agua retenida cuando está fuera de rango y permite su liberación cuando se cumplen las condiciones, ¿considera que este funcionamiento ayudaría en su proceso de trabajo? ¿Qué mejoraría?
+
+**Segmento Objetivo 2: Producción Hidropónica**
+
+**A. Validación de Landing Page**
+
+1. Al observar la Landing Page de HydroGuard, ¿le quedó claro cómo podría ayudarle a monitorear y controlar las condiciones del agua utilizada en sus cultivos hidropónicos?
+
+**B. Validación de la aplicación**
+
+2. Al explorar la aplicación, ¿qué tan fácil le resultó consultar los valores de pH y temperatura para conocer el estado del agua de su cultivo?
+
+3. ¿Qué tan comprensible le pareció la posibilidad de configurar rangos de pH y temperatura según las necesidades de sus cultivos?
+
+4. ¿Las alertas y las indicaciones de corrección le permiten comprender qué debe hacer cuando el agua se encuentra fuera de los parámetros configurados?
+
+**C. Validación del prototipo IoT**
+
+5. Después de observar el prototipo, ¿qué tan útil considera que sería medir automáticamente el pH y la temperatura del agua antes de utilizarla para el riego? ¿Por qué?
+
+6. Al observar cómo el prototipo controla la válvula y permite liberar el agua cuando cumple las condiciones configuradas, ¿considera que este mecanismo podría facilitar su proceso de riego? ¿Qué mejoraría?
+
+**Procedimiento de cada entrevista**
+
+1. Presentar brevemente HydroGuard y explicar el propósito de la validación.
+2. Solicitar autorización para registrar la sesión en video y utilizarla como evidencia académica.
+3. Permitir que el participante explore la Landing Page y formule sus primeras impresiones.
+4. Guiar la ejecución de los flujos de la aplicación correspondientes a su segmento.
+5. Demostrar el comportamiento disponible del prototipo IoT, explicando las limitaciones del montaje.
+6. Formular las seis preguntas del segmento y solicitar ejemplos o aclaraciones cuando sea necesario.
+7. Registrar dificultades observadas, comentarios y recomendaciones del participante.
+
+#### 6.3.2. Registro de Entrevistas
+
+El registro de entrevistas documentará las sesiones realizadas con representantes de ambos segmentos objetivo. Para cada participante se incluirán sus datos generales, una captura de la videollamada o grabación, el enlace al video de evidencia, el instante de inicio y la duración de su intervención.
+
+Las grabaciones se publicarán mediante Microsoft Stream o Clipchamp, según las indicaciones del curso. Si se utiliza un video compilado de varias entrevistas, se identificará el intervalo correspondiente a cada participante.
+
+**Resumen del registro de entrevistas**
+
+| Entrevista | Segmento objetivo | Entrevistado | Fecha | Inicio en video | Duración | Estado |
+|:--|:--|:--|:--|:--|:--|:--|
+| EV-T01 | Industria textil | Pendiente | Pendiente | Pendiente | Pendiente | Por realizar |
+| EV-T02 | Industria textil | Pendiente | Pendiente | Pendiente | Pendiente | Por realizar |
+| EV-T03 | Industria textil | Pendiente | Pendiente | Pendiente | Pendiente | Por realizar |
+| EV-H01 | Producción hidropónica | Pendiente | Pendiente | Pendiente | Pendiente | Por realizar |
+| EV-H02 | Producción hidropónica | Pendiente | Pendiente | Pendiente | Pendiente | Por realizar |
+| EV-H03 | Producción hidropónica | Pendiente | Pendiente | Pendiente | Pendiente | Por realizar |
+
+**Entrevistas del Segmento Objetivo 1: Industria Textil**
+
+**Entrevista EV-T01**
+
+| Campo | Información |
+|:--|:--|
+| Nombre y apellidos | Pendiente de registrar |
+| Edad | Pendiente |
+| Distrito | Pendiente |
+| Ocupación o relación con el sector textil | Pendiente |
+| Fecha de entrevista | Pendiente |
+| URL del video (Microsoft Stream/Clipchamp) | Pendiente |
+| Inicio de la entrevista en el video | Pendiente (hh:mm:ss) |
+| Duración | Pendiente (hh:mm:ss) |
+
+**Captura de la entrevista:** Pendiente de insertar.
+
+**Resumen descriptivo:** Pendiente de redactar después de la entrevista. Se registrarán las apreciaciones sobre la Landing Page, la interpretación de mediciones, las alertas, la trazabilidad y la demostración del prototipo, incluyendo dificultades y sugerencias expresadas por el participante.
+
+**Entrevista EV-T02**
+
+| Campo | Información |
+|:--|:--|
+| Nombre y apellidos | Pendiente de registrar |
+| Edad | Pendiente |
+| Distrito | Pendiente |
+| Ocupación o relación con el sector textil | Pendiente |
+| Fecha de entrevista | Pendiente |
+| URL del video (Microsoft Stream/Clipchamp) | Pendiente |
+| Inicio de la entrevista en el video | Pendiente (hh:mm:ss) |
+| Duración | Pendiente (hh:mm:ss) |
+
+**Captura de la entrevista:** Pendiente de insertar.
+
+**Resumen descriptivo:** Pendiente de redactar después de la entrevista, considerando la comprensión de la solución, la utilidad del monitoreo y las recomendaciones del participante.
+
+**Entrevista EV-T03**
+
+| Campo | Información |
+|:--|:--|
+| Nombre y apellidos | Pendiente de registrar |
+| Edad | Pendiente |
+| Distrito | Pendiente |
+| Ocupación o relación con el sector textil | Pendiente |
+| Fecha de entrevista | Pendiente |
+| URL del video (Microsoft Stream/Clipchamp) | Pendiente |
+| Inicio de la entrevista en el video | Pendiente (hh:mm:ss) |
+| Duración | Pendiente (hh:mm:ss) |
+
+**Captura de la entrevista:** Pendiente de insertar.
+
+**Resumen descriptivo:** Pendiente de redactar después de la entrevista, considerando la experiencia de uso, la utilidad operativa del prototipo y las oportunidades de mejora.
+
+**Entrevistas del Segmento Objetivo 2: Producción Hidropónica**
+
+**Entrevista EV-H01**
+
+| Campo | Información |
+|:--|:--|
+| Nombre y apellidos | Pendiente de registrar |
+| Edad | Pendiente |
+| Distrito | Pendiente |
+| Ocupación o relación con la hidroponía | Pendiente |
+| Fecha de entrevista | Pendiente |
+| URL del video (Microsoft Stream/Clipchamp) | Pendiente |
+| Inicio de la entrevista en el video | Pendiente (hh:mm:ss) |
+| Duración | Pendiente (hh:mm:ss) |
+
+**Captura de la entrevista:** Pendiente de insertar.
+
+**Resumen descriptivo:** Pendiente de redactar después de la entrevista. Se documentarán las opiniones sobre la Landing Page, los rangos de pH y temperatura, las indicaciones correctivas y la utilidad del prototipo para el riego.
+
+**Entrevista EV-H02**
+
+| Campo | Información |
+|:--|:--|
+| Nombre y apellidos | Pendiente de registrar |
+| Edad | Pendiente |
+| Distrito | Pendiente |
+| Ocupación o relación con la hidroponía | Pendiente |
+| Fecha de entrevista | Pendiente |
+| URL del video (Microsoft Stream/Clipchamp) | Pendiente |
+| Inicio de la entrevista en el video | Pendiente (hh:mm:ss) |
+| Duración | Pendiente (hh:mm:ss) |
+
+**Captura de la entrevista:** Pendiente de insertar.
+
+**Resumen descriptivo:** Pendiente de redactar después de la entrevista, incluyendo la comprensión de la configuración, la facilidad de navegación y las sugerencias recibidas.
+
+**Entrevista EV-H03**
+
+| Campo | Información |
+|:--|:--|
+| Nombre y apellidos | Pendiente de registrar |
+| Edad | Pendiente |
+| Distrito | Pendiente |
+| Ocupación o relación con la hidroponía | Pendiente |
+| Fecha de entrevista | Pendiente |
+| URL del video (Microsoft Stream/Clipchamp) | Pendiente |
+| Inicio de la entrevista en el video | Pendiente (hh:mm:ss) |
+| Duración | Pendiente (hh:mm:ss) |
+
+**Captura de la entrevista:** Pendiente de insertar.
+
+**Resumen descriptivo:** Pendiente de redactar después de la entrevista, considerando la percepción de confianza, la utilidad de la medición previa al riego y las mejoras propuestas.
+
+**Síntesis de entrevistas por segmento**
+
+Una vez concluidas las sesiones, se compararán las respuestas y observaciones para identificar patrones comunes y diferencias entre los segmentos.
+
+| Aspecto | Industria textil | Producción hidropónica |
+|:--|:--|:--|
+| Comprensión de la propuesta de valor | Pendiente de evaluar | Pendiente de evaluar |
+| Facilidad de consulta de mediciones | Pendiente de evaluar | Pendiente de evaluar |
+| Comprensión de alertas y correcciones | Pendiente de evaluar | Pendiente de evaluar |
+| Utilidad de configuración o historial | Pendiente de evaluar | Pendiente de evaluar |
+| Confianza en el prototipo | Pendiente de evaluar | Pendiente de evaluar |
+| Mejoras solicitadas | Pendiente de evaluar | Pendiente de evaluar |
+
+Los resultados se utilizarán para contrastar las hipótesis del proyecto y priorizar acciones de mejora. No se considerarán validadas las hipótesis únicamente por la existencia de funcionalidades desarrolladas.
+
+#### 6.3.3. Evaluaciones según heurísticas
+
+La evaluación de experiencia de usuario de HydroGuard se realizará tomando como referencia el formato de evaluación heurística establecido en el Anexo D de la rúbrica del proyecto. Se considerarán heurísticas de usabilidad, principios de diseño inclusivo y criterios de arquitectura de información.
+
+El análisis se sustentará en las dificultades observadas durante los flujos de interacción y en los comentarios de los participantes. Cada problema identificado se documentará con su descripción, principio afectado, severidad, evidencia visual y recomendación.
+
+**UX Heuristics & Principles Evaluation**
+
+*Usability – Inclusive Design – Information Architecture*
+
+| Campo | Información |
+|:--|:--|
+| Carrera | Ingeniería de Software |
+| Curso | Desarrollo de Soluciones IoT |
+| Sección | 1ASI0572 |
+| Auditor | HydroLink |
+| Clientes | Participantes de las entrevistas de validación (pendientes de registrar) |
+| Sitios o aplicaciones a evaluar | Landing Page HydroGuard, aplicación administrativa Angular y aplicación móvil Flutter |
+| Segmentos | Industria textil y producción hidropónica |
+| Estado de evaluación | Pendiente de ejecución y consolidación |
+
+**Tareas incluidas en la evaluación**
+
+1. Identificar el problema y los beneficios presentados en la Landing Page.
+2. Localizar el medio de contacto o solicitud de información.
+3. Acceder a las funcionalidades disponibles para el rol correspondiente.
+4. Identificar una unidad o reservorio autorizado.
+5. Consultar e interpretar mediciones de pH y temperatura.
+6. Comprender estados, alertas y acciones correctivas.
+7. Consultar la configuración o el historial, según el rol y segmento.
+8. Observar e interpretar los estados mostrados durante la demostración del prototipo.
+
+**Fuera del alcance de esta evaluación:** calibración instrumental del sensor de pH, certificación del mecanismo físico de liberación, validación de procesos industriales reales y pruebas de carga o seguridad no ejecutadas durante las sesiones.
+
+**Escala de severidad**
+
+| Nivel | Descripción |
+|:--:|:--|
+| 1 | Problema superficial: ocurre con poca frecuencia o es fácil de superar. |
+| 2 | Problema menor: genera dificultades moderadas y puede resolverse con prioridad baja. |
+| 3 | Problema mayor: aparece frecuentemente o dificulta significativamente la tarea; requiere prioridad alta. |
+| 4 | Problema muy grave: impide continuar con una tarea relevante; debe corregirse antes del lanzamiento. |
+
+**Criterios de evaluación**
+
+| Categoría | Principios a observar | Aplicación en HydroGuard |
+|:--|:--|:--|
+| Usabilidad | Visibilidad del estado del sistema; consistencia; prevención de errores; reconocimiento antes que recuerdo; libertad y control del usuario. | Claridad de mediciones, estados de conformidad, alertas, navegación y mensajes de error. |
+| Arquitectura de información | Organización, claridad de etiquetas, facilidad de búsqueda y localización de contenidos. | Localización de dispositivos, reservorios, configuración, historial y opciones de contacto. |
+| Diseño inclusivo | Legibilidad, contraste, lenguaje comprensible, navegación accesible y experiencias comparables. | Comprensión de valores, ayudas visuales y estados operativos sin depender únicamente del color. |
+
+**Tabla resumen de problemas identificados**
+
+| # | Problema observado | Heurística o principio vulnerado | Severidad (1-4) | Evidencia |
+|:--:|:--|:--|:--:|:--|
+| 1 | Pendiente de identificar durante la validación | Pendiente | — | Pendiente |
+| 2 | Pendiente de identificar durante la validación | Pendiente | — | Pendiente |
+| 3 | Pendiente de identificar durante la validación | Pendiente | — | Pendiente |
+
+Las filas anteriores son espacios de registro y no representan problemas confirmados. Se agregarán o eliminarán filas según los hallazgos reales de las sesiones.
+
+**Descripción detallada de problemas**
+
+Para cada problema confirmado se completará la siguiente estructura:
+
+**Problema # [NÚMERO]: [TÍTULO DEL PROBLEMA]**
+
+- **Severidad:** [1, 2, 3 o 4]
+- **Heurística o principio vulnerado:** [Usabilidad / Arquitectura de información / Diseño inclusivo y principio específico]
+- **Componente evaluado:** [Landing Page / Angular / Flutter]
+- **Segmento y tarea asociada:** [Segmento y código VF correspondiente]
+- **Descripción del problema:** [Qué ocurrió, en qué paso, cómo afectó al participante y qué evidencia lo demuestra]
+- **Captura de pantalla:** [Incorporar imagen real del problema]
+- **Recomendación:** [Cambio específico propuesto para mejorar la experiencia]
+
+**Conclusión de la evaluación heurística**
+
+La evaluación permitirá priorizar mejoras de navegación, comprensión de información y accesibilidad a partir de los problemas efectivamente observados. Los resultados y niveles de severidad se completarán después de realizar las entrevistas y revisar sus grabaciones. Las recomendaciones resultantes servirán como entrada para la mejora continua y la planificación de futuros incrementos de HydroGuard.
+
 # Conclusiones
 
 ## Conclusiones y recomendaciones
