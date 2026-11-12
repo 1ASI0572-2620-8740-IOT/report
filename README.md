@@ -1024,6 +1024,8 @@ A continuación se detalla la prioridad de producto. Los primeros cinco elemento
 
 La prioridad visual utilizada en la presentación debe mostrar esta misma secuencia técnica cuando explique implementación. La rentabilidad y la accesibilidad económica no se presentan como resultados demostrados: `BA-05` continúa siendo un supuesto que se validará comparando el costo del prototipo y del producto mínimo con alternativas del mercado y con la disposición de pago de los segmentos.
 
+El orden expresa prioridad de producto según valor de negocio, no una cronología de implementación ni una declaración de historias terminadas. Cada ID conserva el objetivo y los criterios definidos en 3.1; la asignación de tareas, el alcance entregado y las evidencias de aceptación se documentan en el Sprint Backlog correspondiente.
+
 | # Orden | User Story Id | Título | Descripción | Story Points (1/2/3/5/8) |
 |:--:|:--|:--|:--|:--:|
 | 1 | US-34 | Comprensión de la propuesta de valor | Como visitante, quiero comprender el problema que enfrenta el control de calidad del agua en los procesos productivos, para conocer la necesidad que aborda HydroGuard. | 2 |
