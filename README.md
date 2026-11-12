@@ -251,6 +251,7 @@ El periodo mostrado en la captura es distinto al corte de TB1 utilizado en las t
       - [6.2.2.1. Sprint Planning 2](#6221-sprint-planning-2)
       - [6.2.2.2. Aspect Leaders and Collaborators](#6222-aspect-leaders-and-collaborators)
       - [6.2.2.3. Sprint Backlog 2](#6223-sprint-backlog-2)
+      - [6.2.2.4. Development Evidence for Sprint Review](#6224-development-evidence-for-sprint-review)
       - [6.2.2.5. Testing Suite Evidence for Sprint Review](#6225-testing-suite-evidence-for-sprint-review)
       - [6.2.2.8. Software Deployment Evidence for Sprint Review](#6228-software-deployment-evidence-for-sprint-review)
 - [Conclusiones](#conclusiones)
@@ -5574,6 +5575,46 @@ El Sprint Backlog 2 contempla 28 historias seleccionadas de manera preliminar, c
 | N/A | Infraestructura y actividades transversales | T-89 | Verificación automatizada | Ejecutar pruebas de contratos e integración backend–Gateway y documentar sus límites frente a ensayos con hardware. | 6 | Prieto Mantari, Leonardo Fabrizzio Junior (propuesto) | To-do |
 | N/A | Infraestructura y actividades transversales | T-90 | Documentación OpenAPI | Comprobar endpoints y documentación Swagger/OpenAPI de los servicios; asociar la evidencia con 6.2.2.7. | 5 | Prieto Mantari, Leonardo Fabrizzio Junior (propuesto) | To-do |
 | N/A | Infraestructura y actividades transversales | T-91 | Despliegue y diagnóstico | Verificar URLs, salud, variables de entorno y comunicación de servicios en el entorno elegido; asociar evidencia con 6.2.2.8. | 5 | Rios Pacheco, Hector Javier (propuesto) | To-do |
+
+#### 6.2.2.4. Development Evidence for Sprint Review
+
+El incremento documentado para Sprint 2 pasó de las pantallas web respaldadas por Mock API a código de integración con servicios persistentes, una aplicación móvil para el Operario y componentes de telemetría IoT. Esta sección recoge cambios del ciclo AV2 entre el 10 de octubre y el 12 de noviembre de 2026, incluida la preparación anterior al Sprint Planning del 7 de noviembre.
+
+La tabla sigue la estructura del Sprint 1. La rama indicada es aquella en la que se comprobó que el commit está disponible; no necesariamente es la rama en que se creó. Las fechas están en hora de Lima (UTC−5). El guion en la columna **Commit Message Body** indica que el commit no tiene un cuerpo adicional; la última columna describe el cambio observado. Los enlaces a repositorios privados requieren acceso al equipo.
+
+| Repository | Branch | Commit Id | Commit Message | Commit Message Body | Committed on (Date) | Evidencia del cambio |
+|:--|:--|:--|:--|:--|:--|:--|
+| Landing Page | `main` | [085246a](https://github.com/1ASI0572-2620-8740-IOT/LandingPage/commit/085246a0dc21d18c67e58b688e6c7feafb915a6a) | `feat: add translation and terms and conditions` | — | 2026-11-11 | Traducción del sitio y términos y condiciones. |
+| Web administrativa | `develop` | [1a1e434](https://github.com/1ASI0572-2620-8740-IOT/hydroguard-admin-web-frontend/commit/1a1e4349f7a9a18a847228950863a427392c87c5) | `fix(network): route local admin requests to backend gateway` | — | 2026-11-05 | Proxy local de Angular hacia el API Gateway. |
+| Web administrativa | `feature/render-backend-connection` | [7ad7a0c](https://github.com/1ASI0572-2620-8740-IOT/hydroguard-admin-web-frontend/commit/7ad7a0ceec836c9ae8e81d2c22afa983c1d7163b) | `build(vercel): route production API requests to Render gateway` | — | 2026-11-07 | Enrutamiento de `/api` en Vercel hacia el Gateway de Render en la rama de despliegue. |
+| Backend | `develop` | [3d54fa9](https://github.com/1ASI0572-2620-8740-IOT/hydroguard_backend/commit/3d54fa99c7b7ff89b3675a6a6cf564c183769314) | `feat(human-iam): complete persistent local backend workflows` | — | 2026-11-05 | Flujos persistentes de acceso humano y primer acceso del operario. |
+| Backend | `develop` | [cb1d691](https://github.com/1ASI0572-2620-8740-IOT/hydroguard_backend/commit/cb1d69181c80a8d0c5f871d12247d18b07d39d91) | `feat(device-identity): complete persistent local backend workflows` | — | 2026-11-05 | Gestión persistente de identidad técnica de dispositivos. |
+| Backend | `develop` | [9e89abc](https://github.com/1ASI0572-2620-8740-IOT/hydroguard_backend/commit/9e89abcd83da3c98f214880068d624f0f1c6c4cb) | `feat(configuration): complete persistent local backend workflows` | — | 2026-11-05 | Servicios y persistencia del catálogo y la configuración operativa. |
+| Backend | `develop` | [9038d9e](https://github.com/1ASI0572-2620-8740-IOT/hydroguard_backend/commit/9038d9e2854f397151bfc8bebfea1d18228839c6) | `feat(telemetry): complete persistent local backend workflows` | — | 2026-11-05 | Recepción de lecturas y gestión de comandos técnicos. |
+| Backend | `develop` | [4f18c31](https://github.com/1ASI0572-2620-8740-IOT/hydroguard_backend/commit/4f18c3103f2dc8c73d361754934b83f090f215e5) | `feat(treatment): complete persistent local backend workflows` | — | 2026-11-05 | Lógica persistente de estados y acciones del tratamiento. |
+| Backend | `develop` | [62b66d0](https://github.com/1ASI0572-2620-8740-IOT/hydroguard_backend/commit/62b66d02890bced5d0e9ac981c615b88a61d358d) | `feat(monitoring): complete persistent local backend workflows` | — | 2026-11-05 | Flujos persistentes de monitoreo y trazabilidad. |
+| Backend | `develop` | [6b1d242](https://github.com/1ASI0572-2620-8740-IOT/hydroguard_backend/commit/6b1d24297b7d19ac7d28c37974e26beaee9023f3) | `build(render): prepare free Docker services and Supabase configuration` | — | 2026-11-07 | Preparación de servicios Docker y configuración de Render con PostgreSQL en Supabase. |
+| Backend | `develop` | [980c692](https://github.com/1ASI0572-2620-8740-IOT/hydroguard_backend/commit/980c6922534447895492222f9d9a812a523799ac) | `feat(api-docs): expose secured per-service Swagger and OpenAPI` | — | 2026-11-08 | Publicación de OpenAPI y Swagger UI por servicio, con controles de acceso. |
+| Móvil del Operario | `develop` | [16f1ab3](https://github.com/1ASI0572-2620-8740-IOT/hydroguard_operator_mobile_frontend/commit/16f1ab34acca6e48d57d7098a2c6feb8238950d2) | `feat(mobile): deliver integrated operator frontend` | — | 2026-10-25 | Incremento Flutter del Operario, integrado en la rama de desarrollo. |
+| Móvil del Operario | `develop` | [4de810a](https://github.com/1ASI0572-2620-8740-IOT/hydroguard_operator_mobile_frontend/commit/4de810a964a2870d9ced65ea5fb344d589a713db) | `feat(treatment): start assigned processes and support process reset` | — | 2026-11-05 | Inicio y restablecimiento de procesos desde las asignaciones del Operario. |
+| Edge | `develop` | [3faceb2](https://github.com/1ASI0572-2620-8740-IOT/hydroguard-edge-service/commit/3faceb291ce61d33cc227ac7b842f38cd412c0a6) | `feat(edge): implement telemetry commands and durable synchronization` | — | 2026-11-05 | Recepción de telemetría, manejo de comandos y sincronización persistente en el Edge local. |
+| Edge | `develop` | [cde7f54](https://github.com/1ASI0572-2620-8740-IOT/hydroguard-edge-service/commit/cde7f5464bcfe781c1d3cd0743b9b859ecb74e11) | `fix(edge): log command confirmation rejection status and verify academic acknowledgements` | — | 2026-11-11 | Diagnóstico de confirmaciones rechazadas y verificación de confirmaciones académicas. |
+| Edge | `feature/render-wokwi-deployment` | [91127ea](https://github.com/1ASI0572-2620-8740-IOT/hydroguard-edge-service/commit/91127ea5f0eb6113b20816617eeaaef064935d38) | `build(render): configure isolated free Wokwi edge deployment` | — | 2026-11-11 | Configuración de un despliegue Edge separado para Wokwi. |
+| Prototipo virtual | `master` | [4bef51c](https://github.com/1ASI0572-2620-8740-IOT/IOT-Prototype/commit/4bef51ccfaca9f425d17526be300265c5bfd099f) | `feat: add device-auth/session endpoint with Basic auth` | — | 2026-11-11 | Cliente del prototipo virtual que solicita una sesión técnica al Edge. |
+| Prototipo virtual | `master` | [4f5d94e](https://github.com/1ASI0572-2620-8740-IOT/IOT-Prototype/commit/4f5d94e5305270dcad90ffb2ae9060ce52d7dde5) | `feat: periodic telemetry to edge` | — | 2026-11-11 | Envío periódico de telemetría del prototipo virtual hacia Edge. |
+| Firmware en el informe | `develop` | [44e9fc1](https://github.com/1ASI0572-2620-8740-IOT/report/commit/44e9fc1b2b0bbf414ca1881b3f2b663c94117bdd) | `fix(prototype): confirm academic treatment commands with matching execution mode` | — | 2026-11-11 | Ajuste del sketch del prototipo académico para confirmar órdenes con su modo de ejecución. |
+
+**Evidencia visual del código versionado**
+
+![GitHub: commit 7ad7a0c y cambio de la ruta de API en vercel.json](assets/development-sprint-2/01-web-gateway-vercel.jpg)
+
+*Figura: el commit `7ad7a0c` reemplaza el destino del Mock API por el Gateway de Render en `vercel.json`. La captura acredita el cambio de configuración en la rama indicada, no la ejecución de todos los endpoints.*
+
+![GitHub: historial de commits de IOT-Prototype en master](assets/development-sprint-2/02-historial-iot-prototype.jpg)
+
+*Figura: historial de `IOT-Prototype` con los cambios del cliente HTTPS, la sesión técnica y el envío periódico de telemetría desde Wokwi. No corresponde a un ensayo con el prototipo físico.*
+
+Los commits permiten identificar qué código se entregó y dónde revisarlo. Para los resultados de pruebas y el estado de publicación, consultar [Testing Suite Evidence](#6225-testing-suite-evidence-for-sprint-review) y [Software Deployment Evidence](#6228-software-deployment-evidence-for-sprint-review). La evidencia de código no implica por sí sola la aceptación completa de historias, la instalación de la aplicación móvil en un dispositivo ni la calibración o dosificación física del prototipo.
 
 #### 6.2.2.5. Testing Suite Evidence for Sprint Review
 
