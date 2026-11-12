@@ -1029,11 +1029,11 @@ La prioridad visual utilizada en la presentación debe mostrar esta misma secuen
 | 1 | US-34 | Comprensión de la propuesta de valor | Como visitante, quiero comprender el problema que enfrenta el control de calidad del agua en los procesos productivos, para conocer la necesidad que aborda HydroGuard. | 2 |
 | 2 | US-35 | Explicación del funcionamiento de la solución | Como visitante, quiero conocer cómo funciona la solución, para comprender su propuesta tecnológica y operativa. | 2 |
 | 3 | US-36 | Segmentos y casos de uso | Como visitante, quiero conocer los segmentos y casos de aplicación de la solución, para determinar si responde a una necesidad de mi organización. | 2 |
-| 4 | US-37 | Solicitud de contacto o demostración | Como visitante, quiero solicitar información o una demostración de la solución, para conocer con mayor detalle sus capacidades antes de adoptarla. | 3 |
+| 4 | US-37 | Solicitud de contacto o demostración | Como visitante, quiero solicitar información o una demostración de HydroGuard, para conocer con mayor detalle las capacidades de la solución antes de adoptarla. | 3 |
 | 5 | US-38 | Acceso a la plataforma | Como visitante, quiero dirigirme desde el sitio web hacia el ingreso a mi cuenta operativa, para continuar hacia el proceso de autenticación. | 1 |
 | 6 | TS-03 | Adquisición y validación de mediciones | Como Developer, quiero que el dispositivo obtenga y valide las lecturas de pH y temperatura, para entregar únicamente mediciones utilizables por el proceso de calidad del agua. | 3 |
 | 7 | TS-04 | Ingesta de telemetría en el Edge API | Como Developer, quiero que el Edge API reciba las mediciones del dispositivo, para procesarlas y entregarlas a los servicios digitales. | 8 |
-| 8 | US-11 | Monitoreo de mediciones en tiempo real | Como operario, quiero observar las mediciones actuales de pH y temperatura de mi dispositivo, para conocer el estado del agua durante el proceso. | 3 |
+| 8 | US-11 | Monitoreo de pH y temperatura | Como Operario, quiero consultar las mediciones recientes de pH y temperatura de los dispositivos que tengo asignados, junto con su fecha y estado de disponibilidad, para conocer las condiciones del agua antes de tomar decisiones operativas. | 3 |
 | 9 | US-06 | Configuración de rangos de calidad del dispositivo | Como operario, quiero configurar los rangos permitidos de pH y temperatura de mi dispositivo dentro del perfil habilitado para mi segmento, para establecer las condiciones que determinan la conformidad del agua en mi proceso. | 3 |
 | 10 | US-13 | Evaluación de conformidad | Como operario, quiero que el sistema evalúe cada medición respecto a los rangos configurados, para conocer si el agua es conforme (estado listo) o no conforme (estado de corrección). | 5 |
 | 11 | US-15 | Aprobación y ejecución de la acción correctiva | Como operario, quiero revisar y aprobar una sola vez la estrategia seleccionada antes de que el sistema ejecute automáticamente los ciclos del tratamiento. | 5 |
@@ -1052,21 +1052,21 @@ La prioridad visual utilizada en la presentación debe mostrar esta misma secuen
 | 24 | US-09 | Configuración del modo de liberación | Como operario, quiero configurar el modo de liberación de mi dispositivo como manual o automático, para adaptar la operación a mi contexto sin quedar limitado a un único modo por segmento. | 2 |
 | 25 | US-22 | Alerta por parámetro fuera de rango | Como operario, quiero recibir una alerta cuando una medición se encuentre fuera del rango configurado, para actuar antes de una liberación no conforme. | 3 |
 | 26 | US-23 | Alerta por bloqueo del proceso | Como operario, quiero recibir una alerta crítica cuando el proceso pasa al estado de fallo por alcanzar el límite de ciclos sin efecto, para identificar una posible falla del sensor o del tratamiento. | 2 |
-| 27 | US-25 | Alerta por pérdida de monitoreo | Como administrador, quiero recibir una alerta cuando un dispositivo deje de enviar mediciones durante el intervalo esperado, para identificar oportunamente una interrupción del monitoreo. | 3 |
+| 27 | US-25 | Alerta por pérdida de monitoreo | Como Administrador, quiero consultar una alerta cuando un dispositivo de mi organización deje de enviar información durante el intervalo esperado, para identificar oportunamente una interrupción del monitoreo y conocer cuándo se restablece la comunicación. | 3 |
 | 28 | TS-10 | Estado de disponibilidad del dispositivo | Como Developer, quiero que el dispositivo comunique periódicamente su disponibilidad, para detectar interrupciones en el monitoreo. | 3 |
 | 29 | TS-11 | Integración con servicio externo de notificaciones | Como Developer, quiero integrar un servicio externo de notificaciones, para comunicar oportunamente las alertas generadas por el dominio de calidad del agua. | 5 |
-| 30 | US-24 | Registro de incidente de calidad | Como administrador, quiero registrar y consultar los incidentes relacionados con agua no conforme, para mantener trazabilidad de las situaciones que requirieron intervención. | 3 |
+| 30 | US-24 | Gestión y consulta de incidentes | Como Administrador, quiero consultar y gestionar los incidentes de mi organización, distinguiendo aquellos generados automáticamente por el sistema de los registrados manualmente, para mantener la trazabilidad de situaciones que requieren intervención. | 3 |
 | 31 | US-32 | Gestión de alertas operativas | Como operario, quiero consultar las alertas activas de mi dispositivo, para priorizar las situaciones que requieren atención. | 3 |
 | 32 | US-31 | Supervisión operativa | Como operario, quiero consultar el estado actual del proceso de mi dispositivo, para conocer si el agua requiere corrección, está en espera de reevaluación o puede continuar hacia la liberación. | 3 |
 | 33 | US-12 | Monitoreo desde aplicación móvil | Como operario, quiero consultar el estado de mi dispositivo desde una aplicación móvil, para supervisar el proceso cuando no me encuentro frente al panel principal. | 5 |
 | 34 | US-33 | Consulta de resultados desde la aplicación móvil | Como operario, quiero consultar evaluaciones y alertas de los dispositivos que tengo asignados desde la aplicación móvil, para supervisar mis procesos sin depender de inspecciones presenciales. | 5 |
-| 35 | US-01 | Registro de operario | Como administrador, quiero registrar operarios con sus datos básicos, para habilitar su participación en el monitoreo de un dispositivo asignado. | 2 |
-| 36 | US-02 | Autenticación de usuario | Como usuario, quiero autenticarme con mis credenciales, para acceder únicamente a las funciones correspondientes a mi rol (operario o administrador). | 3 |
-| 37 | US-03 | Asignación de dispositivo a operario | Como administrador, quiero asignar un dispositivo IoT a un operario, para delegar la responsabilidad de su monitoreo, dado que el alcance actual contempla un operario por dispositivo. | 2 |
+| 35 | US-01 | Registro de operario | Como Administrador, quiero registrar una cuenta de Operario con identificador, nombre y contraseña definitiva y habilitar su primer acceso después de completar su perfil y asignación, para incorporarlo a mi organización. | 2 |
+| 36 | US-02 | Autenticación de usuario | Como usuario registrado, quiero iniciar y cerrar sesión con mis credenciales desde la aplicación correspondiente a mi rol, para acceder únicamente a las funciones y datos que tengo autorizados. | 3 |
+| 37 | US-03 | Asignación de dispositivo a operario | Como Administrador, quiero asignar a un Operario los pares reservorio/dispositivo correspondientes a su grupo, para establecer un responsable exclusivo por cada unidad y controlar su acceso. | 2 |
 | 38 | US-39 | Asignación automática de rol según el flujo de alta | Como sistema, quiero asignar Administrador únicamente en el alta inicial de la organización y Operario en el alta administrativa de cuentas, para impedir cambios manuales de rol y conservar un solo Administrador por organización. | 2 |
-| 39 | US-04 | Supervisión de operarios y dispositivos | Como administrador, quiero consultar el estado de los operarios y los dispositivos del sistema, para mantener control sobre las asignaciones vigentes, dado que no cuento con un dispositivo propio. | 3 |
-| 40 | US-05 | Asignación de segmento y perfil base al dispositivo | Como administrador, quiero asignar un segmento (textil u hidropónico) y un perfil base de configuración a un dispositivo, para habilitar al operario a ajustar sus rangos dentro de un contexto válido. | 3 |
-| 41 | US-10 | Consulta de configuración de cualquier dispositivo | Como administrador, quiero consultar los rangos, el tiempo de espera, el límite de ciclos y el modo de liberación vigentes de cualquier dispositivo, para supervisar la configuración operativa establecida por cada operario. | 2 |
+| 39 | US-04 | Supervisión de operarios y dispositivos | Como Administrador, quiero consultar los operarios, dispositivos, asignaciones y disponibilidad de mi organización desde la aplicación web, para supervisar las unidades a cargo de mi equipo. | 3 |
+| 40 | US-05 | Vinculación de dispositivo y configuración base | Como Administrador, quiero vincular un dispositivo a un reservorio de un grupo de mi organización y establecer un contexto base compatible, para que el Operario pueda configurar las condiciones de funcionamiento de la unidad asignada. | 3 |
+| 41 | US-10 | Consulta de configuración de dispositivos | Como Administrador, quiero consultar los parámetros, las versiones y el estado de configuración de los dispositivos de mi organización, para supervisar las condiciones operativas establecidas por los Operarios. | 2 |
 | 42 | US-40 | Configuración de estrategia correctiva | Como operario, quiero configurar la estrategia de corrección (ej. reducir pH, enfriamiento activo), para definir qué acción aplicará el sistema ante una desviación. | 3 |
 | 43 | TS-01 | Provisionamiento y autenticación del dispositivo | Como Developer, quiero provisionar una identidad y credencial únicas vinculadas con el dispositivo y su organización, para autorizar su comunicación HTTPS con Edge. | 5 |
 | 44 | TS-02 | Identificación del entorno de origen del dispositivo | Como Developer, quiero que el sistema identifique si una medición proviene del dispositivo físico (ESP32) o del entorno simulado (Wokwi), para mantener trazabilidad diferenciada bajo un mismo contrato de telemetría. | 2 |
@@ -1075,8 +1075,8 @@ La prioridad visual utilizada en la presentación debe mostrar esta misma secuen
 | 47 | TS-12 | Exposición de configuración mediante API RESTful | Como Developer, quiero disponer de servicios RESTful para consultar y modificar las configuraciones del dispositivo, para integrar las aplicaciones digitales con el dominio de calidad del agua. | 3 |
 | 48 | TS-09 | Almacenamiento temporal ante pérdida de conexión | Como Developer, quiero conservar temporalmente las mediciones cuando no exista comunicación con el servicio, para evitar la pérdida de información del proceso. | 8 |
 | 49 | US-26 | Consulta del historial de mi dispositivo | Como operario, quiero consultar el historial de lecturas, ciclos y liberaciones de mi dispositivo, para evaluar el rendimiento del proceso o sustentar una auditoría interna. | 3 |
-| 50 | US-27 | Consulta del historial de cualquier dispositivo | Como administrador, quiero consultar el historial completo de cualquier dispositivo, para conocer la evolución del proceso y las acciones realizadas por los operarios. | 3 |
-| 51 | US-30 | Trazabilidad de tratamiento y liberación | Como administrador, quiero consultar la relación entre mediciones, ciclos de corrección y liberaciones autorizadas, para verificar cómo se tomó cada decisión sobre el agua. | 8 |
+| 50 | US-27 | Consulta del historial de dispositivos | Como Administrador, quiero consultar el historial persistente de los dispositivos de mi organización, para conocer la evolución de las mediciones y los eventos operativos registrados. | 3 |
+| 51 | US-30 | Trazabilidad de tratamiento y liberación | Como Administrador, quiero consultar la relación entre mediciones, configuraciones aplicadas, evaluaciones, ciclos correctivos y liberaciones de los dispositivos de mi organización, para comprender y supervisar las decisiones tomadas durante cada tratamiento. | 8 |
 | 52 | US-28 | Generación de reporte de calidad | Como administrador, quiero generar un reporte del estado y evolución de la calidad del agua de un dispositivo, para utilizarlo en la toma de decisiones o en la sustentación de una auditoría. | 5 |
 | 53 | US-29 | Exportación de reporte | Como administrador, quiero exportar un reporte generado, para conservarlo o compartirlo con otros responsables autorizados. | 3 |
 
@@ -5304,6 +5304,139 @@ Los principales retos de integración fueron mantener rutas y providers coherent
 
 En conjunto, el sprint permitió trabajar de manera paralela sin perder una experiencia unificada. La separación de responsabilidades facilitó el liderazgo distribuido, mientras que las convenciones de código, las ramas por funcionalidad y la documentación común ofrecieron puntos concretos de coordinación.
 
+### 6.2.2. Sprint 2
+
+El Sprint 2 de HydroGuard se orienta a la evolución del incremento web y del Landing Page desarrollado en el Sprint 1 hacia una solución IoT con servicios backend reales, aplicación móvil para el Operario y componentes de comunicación con el dispositivo físico. El objetivo es avanzar desde las interfaces administrativas conectadas a una Mock API hacia la integración funcional de los bounded contexts y la ejecución de los procesos de monitoreo, configuración, tratamiento y trazabilidad.
+
+El trabajo comprende el desarrollo de microservicios con Spring Boot y Java 21, la comunicación mediante una API Gateway, la persistencia de datos en bases PostgreSQL independientes por servicio, la aplicación móvil desarrollada con Flutter y el servicio Edge implementado en Python con Flask. Se considera además el prototipo basado en ESP32 para la adquisición de mediciones y la representación o ejecución de acciones físicas según las capacidades verificadas del hardware.
+
+La distribución funcional mantiene al Administrador en la aplicación web, responsable de la organización, los operarios, los grupos, los reservorios, los dispositivos y sus asignaciones. El Operario utiliza la aplicación móvil para consultar las unidades asignadas, visualizar mediciones y participar en los flujos de configuración, tratamiento y liberación conforme a las autorizaciones y reglas del sistema.
+
+A diferencia del Sprint 1, cuyo alcance demostrado correspondió principalmente a interfaces web y flujos apoyados en Mock API, el Sprint 2 incorpora implementaciones orientadas a servicios REST reales y persistencia. Sin embargo, la existencia de código o de endpoints no se considera por sí sola evidencia suficiente de integración completa, despliegue estable, calibración de sensores ni validación física de las actuaciones. Cada resultado deberá sustentarse con commits, pruebas, capturas y evidencias de ejecución verificables.
+
+Las siguientes subsecciones presentan la planificación del Sprint 2, la distribución de liderazgo y colaboración, y las historias y tareas de ingeniería comprometidas. Los estados de avance se documentarán de acuerdo con la evidencia disponible, diferenciando las funcionalidades implementadas de las integraciones o validaciones pendientes.
+
+#### 6.2.2.1. Sprint Planning 2
+
+Para el Sprint 2, el equipo HydroLink planteó continuar el desarrollo de HydroGuard mediante la implementación e integración de los servicios backend reales, la aplicación móvil para el Operario y los componentes IoT. Esta planificación da continuidad al incremento desarrollado durante el Sprint 1, en el cual se publicó el Landing Page y se implementaron las principales interfaces de administración web utilizando Mock API.
+
+El equipo identificó como prioridad reemplazar progresivamente las operaciones simuladas por servicios persistentes, implementar las funcionalidades correspondientes al Operario y establecer la comunicación entre el backend, el servicio Edge y el prototipo ESP32. Asimismo, se acordó distinguir las funcionalidades implementadas, las integraciones verificadas y las validaciones físicas pendientes, a fin de mantener una trazabilidad coherente entre ambos sprints.
+
+| **Sprint #** | Sprint 2 |
+|:--|:--|
+| **Sprint Planning Background** | |
+| Date | 2026-11-07 |
+| Time | 8:00 PM |
+| Location | Servidor del equipo en Discord |
+| Prepared By | Santur Tello, Andrea Elizabeth |
+| Attendees (to planning meeting) | Gomez Hurtado, Miguel Angel / Rodriguez Macedo, Sebastian / Santur Tello, Andrea Elizabeth / Prieto Mantari, Leonardo Fabrizzio Junior / Rios Pacheco, Hector Javier |
+| Sprint 1 Review Summary | Durante el Sprint 1 se seleccionaron 17 User Stories, correspondientes a 47 Story Points planificados, y se documentaron 29 Engineering Tasks con una estimación total de 118 horas. El incremento desarrollado comprendió principalmente el Landing Page y las interfaces de administración web, cuyos flujos se verificaron mediante Mock API. Aunque las tareas de este alcance fueron registradas como Done, ello no acredita la aceptación integral de las historias que requieren autenticación y persistencia reales, aplicación móvil o integración IoT. Por esta razón, las funcionalidades pendientes mantienen sus User Stories originales y continúan en Sprint 2 mediante nuevas tareas de ingeniería, sin duplicar el trabajo frontend ya realizado. |
+| Sprint 1 Retrospective Summary | A partir de la revisión del incremento anterior, se identificaron oportunidades de mejora en la descomposición de historias y tareas, la consistencia de las estimaciones, la trazabilidad entre los criterios de aceptación y las evidencias de desarrollo, y la diferenciación entre interfaces simuladas y funcionalidades integradas. También se reconoció la necesidad de documentar los resultados de pruebas de software independientemente de las pruebas físicas, registrar los estados reales de avance y evitar considerar como completadas las historias cuyo alcance integral continúa pendiente. |
+| **Sprint Goal & User Stories** | |
+| Sprint 2 Goal | **Nuestro enfoque** es implementar e integrar los servicios backend reales de HydroGuard, la aplicación móvil del Operario y los componentes IoT, dando continuidad al incremento web desarrollado en Sprint 1.<br><br>**Creemos que** esta integración permitirá gestionar organizaciones, usuarios, dispositivos y asignaciones con persistencia real, así como habilitar los flujos de monitoreo, configuración, tratamiento y trazabilidad mediante los servicios del sistema.<br><br>**Esto se confirmará cuando** los componentes comprometidos presenten evidencias verificables de comunicación, persistencia, autorización y funcionamiento, incluyendo pruebas de integración y ejecución de los flujos correspondientes, sin confundir dichas pruebas con la validación física completa del prototipo ni con la calibración de los sensores. |
+| Sprint 2 Velocity | 103 SP |
+| Sum of Story Points | 103 SP |
+
+El Sprint 2 contempla trabajo relacionado con los bounded contexts de Identity and Access Management, Device Identity, Device and Operational Configuration, IoT Telemetry, Water Treatment y Operational Monitoring and Traceability. La implementación técnica comprende microservicios desarrollados con Spring Boot y Java 21, una API Gateway, persistencia PostgreSQL independiente por servicio, la aplicación móvil Flutter, el servicio Edge en Python con Flask y el prototipo basado en ESP32.
+
+La integración entre los componentes se plantea mediante comunicaciones HTTP/REST. Las pruebas automatizadas de los servicios, las verificaciones de despliegue y las demostraciones del hardware se documentan como evidencias diferenciadas, considerando las limitaciones instrumentales y de integración que correspondan.
+
+#### 6.2.2.2. Aspect Leaders and Collaborators
+
+Durante el Sprint 2, el equipo HydroLink organizó la colaboración técnica considerando las necesidades de implementación e integración de HydroGuard. La distribución de responsabilidades se orientó al desarrollo del backend, las interfaces de usuario, la telemetría IoT, la configuración de dispositivos y los procesos de monitoreo y trazabilidad.
+
+| Integrante / GitHub | IAM y acceso administrativo | Configuración de dispositivos | Telemetría IoT | Monitoreo y trazabilidad | UX/UI y estándares | Arquitectura e informe |
+|:--|:--:|:--:|:--:|:--:|:--:|:--:|
+| Gomez Hurtado, Miguel Angel (`Miguel26112001`) | C | C | L | C | C | L |
+| Rodriguez Macedo, Sebastian (`Shiftinnnnn`) | C | L | C | C | C | L |
+| Santur Tello, Andrea Elizabeth (`andreli-star`) | C | C | C | C | L | C |
+| Prieto Mantari, Leonardo Fabrizzio Junior (`leitojunior36`) | C | C | C | L | C | C |
+| Rios Pacheco, Hector Javier (`Khafna09`) | L | C | C | C | L | C |
+
+Esta matriz documenta la distribución de liderazgo y colaboración del equipo. Las contribuciones individuales de implementación, pruebas e integración se detallarán mediante Engineering Tasks, commits y evidencias en el Sprint Backlog 2.
+
+#### 6.2.2.3. Sprint Backlog 2
+
+El Sprint 2 de HydroGuard tiene como objetivo integrar el frontend administrativo Angular, los microservicios Spring Boot, la aplicación móvil Flutter, el servicio Edge y el prototipo ESP32. Se da continuidad a las User Stories del Sprint 1 que requieren integración real, conservando sus identificadores y evitando duplicar las tareas desarrolladas con Mock API.
+
+El Sprint Backlog 2 contempla 28 historias seleccionadas de manera preliminar, con 103 Story Points y 62 Engineering Tasks estimadas en 319 horas. La siguiente tabla presenta las tareas, responsables propuestos, estimaciones y estados, sujetos a validación con el equipo y las evidencias de desarrollo.
+
+**Sprint #:** Sprint 2
+
+**URL del Board:** https://trello.com/b/6aafc8a787b6bbbecd455184
+
+**Screenshot del Board — Sprint 2:**
+
+<!-- Insertar aquí la captura real del tablero de Sprint 2 -->
+
+**Tabla de control de estado del Sprint 2:**
+
+| **Sprint #** | **Sprint 2** | | | | | | |
+|:--|:--|:--|:--|:--|:--|:--|:--|
+| **Story Id** | **Story Title** | **Task Id** | **Task Title** | **Task Description** | **Estimation (Hours)** | **Assigned To** | **Status (To-do / InProcess / ToReview / Done)** |
+| US-01 | Registro de operario | T-30 | Implementación e integración: US-01 | Integrar registro de Operario, validaciones y pertenencia organizacional | 5 | Rios Pacheco, Hector Javier (propuesto) | To-do |
+| US-01 | Registro de operario | T-31 | Validación y pruebas: US-01 | Verificar primer acceso y rechazo de datos inválidos desde cliente real | 5 | Rios Pacheco, Hector Javier (propuesto) | To-do |
+| US-02 | Autenticación de usuario | T-32 | Implementación e integración: US-02 | Integrar login JWT y autorización de roles en clientes | 5 | Rios Pacheco, Hector Javier (propuesto) | To-do |
+| US-02 | Autenticación de usuario | T-33 | Validación y pruebas: US-02 | Comprobar cierre, caducidad de sesión y rechazo de rol incorrecto | 4 | Rios Pacheco, Hector Javier (propuesto) | To-do |
+| US-03 | Asignación de dispositivo a operario | T-34 | Implementación e integración: US-03 | Persistir asignación exclusiva de par reservorio/dispositivo a Operario | 5 | Rodriguez Macedo, Sebastian (propuesto) | To-do |
+| US-03 | Asignación de dispositivo a operario | T-35 | Validación y pruebas: US-03 | Probar restricciones por organización/grupo y reasignación autorizada | 5 | Rodriguez Macedo, Sebastian (propuesto) | To-do |
+| US-39 | Asignación automática de rol según el flujo de alta | T-36 | Implementación e integración: US-39 | Aplicar alta automática de roles según flujo de organización/Operario | 4 | Rios Pacheco, Hector Javier (propuesto) | To-do |
+| US-39 | Asignación automática de rol según el flujo de alta | T-37 | Validación y pruebas: US-39 | Probar rechazo a segundo Administrador y cambio manual de rol | 4 | Rios Pacheco, Hector Javier (propuesto) | To-do |
+| US-04 | Supervisión de operarios y dispositivos | T-38 | Implementación e integración: US-04 | Conectar consulta administrativa con servicios reales de organización | 5 | Rios Pacheco, Hector Javier (propuesto) | To-do |
+| US-04 | Supervisión de operarios y dispositivos | T-39 | Validación y pruebas: US-04 | Validar listados, vacíos, permisos y disponibilidad no reciente | 4 | Rios Pacheco, Hector Javier (propuesto) | To-do |
+| US-05 | Vinculación de dispositivo y configuración base | T-40 | Implementación e integración: US-05 | Integrar vínculo reservorio-dispositivo y contexto base con API persistente | 5 | Rodriguez Macedo, Sebastian (propuesto) | To-do |
+| US-05 | Vinculación de dispositivo y configuración base | T-41 | Validación y pruebas: US-05 | Probar exclusividad, segmento y compatibilidad desde web real | 5 | Rodriguez Macedo, Sebastian (propuesto) | To-do |
+| US-10 | Consulta de configuración de dispositivos | T-42 | Implementación e integración: US-10 | Conectar consulta de configuración y versiones a backend real | 5 | Rodriguez Macedo, Sebastian (propuesto) | To-do |
+| US-10 | Consulta de configuración de dispositivos | T-43 | Validación y pruebas: US-10 | Comprobar estados guardada/publicada/aplicada, vacío y autorización | 4 | Rodriguez Macedo, Sebastian (propuesto) | To-do |
+| US-06 | Configuración de rangos de calidad del dispositivo | T-44 | Implementación e integración: US-06 | Implementar guardado validado de rangos por asignación | 5 | Rodriguez Macedo, Sebastian (propuesto) | To-do |
+| US-06 | Configuración de rangos de calidad del dispositivo | T-45 | Validación y pruebas: US-06 | Integrar formulario móvil y probar límites y autorización | 4 | Rodriguez Macedo, Sebastian (propuesto) | To-do |
+| US-09 | Configuración del modo de liberación | T-46 | Implementación e integración: US-09 | Persistir modo MANUAL/AUTOMATIC en configuración versionada | 4 | Rodriguez Macedo, Sebastian (propuesto) | To-do |
+| US-09 | Configuración del modo de liberación | T-47 | Validación y pruebas: US-09 | Probar comportamiento de autorización según modo publicado/aplicado | 5 | Rodriguez Macedo, Sebastian (propuesto) | To-do |
+| US-11 | Monitoreo de pH y temperatura | T-48 | Implementación e integración: US-11 | Consultar lecturas reales de asignaciones con fecha y origen | 5 | Gomez Hurtado, Miguel Angel (propuesto) | To-do |
+| US-11 | Monitoreo de pH y temperatura | T-49 | Validación y pruebas: US-11 | Validar pantalla del Operario, antigüedad y restricción de acceso | 5 | Gomez Hurtado, Miguel Angel (propuesto) | To-do |
+| US-12 | Monitoreo desde aplicación móvil | T-50 | Implementación e integración: US-12 | Conectar pantalla de monitoreo móvil mediante Gateway y sesión | 5 | Por asignar | To-do |
+| US-12 | Monitoreo desde aplicación móvil | T-51 | Validación y pruebas: US-12 | Verificar carga, vacío, error y dispositivos ajenos | 4 | Por asignar | To-do |
+| US-13 | Evaluación de conformidad | T-52 | Implementación e integración: US-13 | Evaluar pH y temperatura con lectura vigente y configuración aplicada | 6 | Por asignar | To-do |
+| US-13 | Evaluación de conformidad | T-53 | Validación y pruebas: US-13 | Probar conforme/no conforme y rechazo de lectura inválida/antigua | 5 | Por asignar | To-do |
+| US-15 | Aprobación y ejecución de la acción correctiva | T-54 | Implementación e integración: US-15 | Implementar aprobación única del plan correctivo y transiciones | 6 | Por asignar | To-do |
+| US-15 | Aprobación y ejecución de la acción correctiva | T-55 | Validación y pruebas: US-15 | Probar bloqueo previo a autorización y continuidad de ciclos aprobados | 5 | Por asignar | To-do |
+| US-18 | Reevaluación posterior al tratamiento | T-56 | Implementación e integración: US-18 | Registrar espera y solicitar reevaluación con nueva lectura | 5 | Por asignar | To-do |
+| US-18 | Reevaluación posterior al tratamiento | T-57 | Validación y pruebas: US-18 | Verificar que ACK no supla medición reciente ni reevaluación | 5 | Por asignar | To-do |
+| US-19 | Liberación automática | T-58 | Implementación e integración: US-19 | Emitir orden automática solo con estado listo y modo AUTOMATIC | 6 | Por asignar | To-do |
+| US-19 | Liberación automática | T-59 | Validación y pruebas: US-19 | Probar respuesta/idempotencia y registrar límite de validación física | 5 | Por asignar | To-do |
+| US-20 | Liberación manual | T-60 | Implementación e integración: US-20 | Autorizar liberación manual desde sesión de Operario responsable | 5 | Por asignar | To-do |
+| US-20 | Liberación manual | T-61 | Validación y pruebas: US-20 | Probar rechazo anticipado, modo incorrecto y par ajeno | 5 | Por asignar | To-do |
+| US-24 | Registro de incidente de calidad | T-62 | Implementación e integración: US-24 | Persistir incidente automático y relación causal disponible | 5 | Prieto Mantari, Leonardo Fabrizzio Junior (propuesto) | To-do |
+| US-24 | Registro de incidente de calidad | T-63 | Validación y pruebas: US-24 | Integrar consulta administrativa y comprobar origen/manual y cierre según contrato | 5 | Prieto Mantari, Leonardo Fabrizzio Junior (propuesto) | To-do |
+| US-25 | Alerta por pérdida de monitoreo | T-64 | Implementación e integración: US-25 | Detectar pérdida por heartbeat/lectura y generar alerta única | 5 | Prieto Mantari, Leonardo Fabrizzio Junior (propuesto) | To-do |
+| US-25 | Alerta por pérdida de monitoreo | T-65 | Validación y pruebas: US-25 | Probar recuperación, no duplicación y visualización autorizada | 5 | Prieto Mantari, Leonardo Fabrizzio Junior (propuesto) | To-do |
+| US-27 | Consulta del historial de cualquier dispositivo | T-66 | Implementación e integración: US-27 | Conectar historial administrativo a registros persistentes | 5 | Prieto Mantari, Leonardo Fabrizzio Junior (propuesto) | To-do |
+| US-27 | Consulta del historial de cualquier dispositivo | T-67 | Validación y pruebas: US-27 | Validar filtros, paginación, periodo vacío y aislamiento por organización | 5 | Prieto Mantari, Leonardo Fabrizzio Junior (propuesto) | To-do |
+| US-30 | Trazabilidad de tratamiento y liberación | T-68 | Implementación e integración: US-30 | Correlacionar lectura, configuración, evaluación y ciclos mediante IDs | 6 | Prieto Mantari, Leonardo Fabrizzio Junior (propuesto) | To-do |
+| US-30 | Trazabilidad de tratamiento y liberación | T-69 | Validación y pruebas: US-30 | Verificar traza de liberación y referencias temporales en consulta | 6 | Prieto Mantari, Leonardo Fabrizzio Junior (propuesto) | To-do |
+| TS-01 | Provisionamiento y autenticación del dispositivo | T-70 | Implementación e integración: TS-01 | Provisionar credenciales técnicas por dispositivo y organización | 6 | Por asignar | To-do |
+| TS-01 | Provisionamiento y autenticación del dispositivo | T-71 | Validación y pruebas: TS-01 | Probar validación, revocación y rechazo de identidad ajena | 5 | Por asignar | To-do |
+| TS-03 | Adquisición y validación de mediciones | T-72 | Implementación e integración: TS-03 | Integrar adquisición de pH/temperatura y controles de validez | 6 | Gomez Hurtado, Miguel Angel (propuesto) | To-do |
+| TS-03 | Adquisición y validación de mediciones | T-73 | Validación y pruebas: TS-03 | Documentar ensayo de sensor y límites de calibración física | 6 | Gomez Hurtado, Miguel Angel (propuesto) | To-do |
+| TS-04 | Ingesta de telemetría en el Edge API | T-74 | Implementación e integración: TS-04 | Implementar recepción y bandeja local durable en Edge Flask | 6 | Gomez Hurtado, Miguel Angel (propuesto) | To-do |
+| TS-04 | Ingesta de telemetría en el Edge API | T-75 | Validación y pruebas: TS-04 | Probar envío HTTP al Gateway, reintento y deduplicación | 6 | Gomez Hurtado, Miguel Angel (propuesto) | To-do |
+| TS-05 | Sincronización de parámetros vigentes | T-76 | Implementación e integración: TS-05 | Exponer versión publicada para sincronización del dispositivo | 5 | Rodriguez Macedo, Sebastian (propuesto) | To-do |
+| TS-05 | Sincronización de parámetros vigentes | T-77 | Validación y pruebas: TS-05 | Comprobar ACK de aplicación sin equiparar publicado y aplicado | 5 | Rodriguez Macedo, Sebastian (propuesto) | To-do |
+| TS-07 | Control del actuador de flujo | T-78 | Implementación e integración: TS-07 | Implementar orden de apertura/cierre compatible con actuador | 6 | Gomez Hurtado, Miguel Angel (propuesto) | To-do |
+| TS-07 | Control del actuador de flujo | T-79 | Validación y pruebas: TS-07 | Probar salida del firmware y separar ensayo físico de prueba simulada | 6 | Gomez Hurtado, Miguel Angel (propuesto) | To-do |
+| TS-10 | Estado de disponibilidad del dispositivo | T-80 | Implementación e integración: TS-10 | Registrar heartbeat y última comunicación del dispositivo | 5 | Gomez Hurtado, Miguel Angel (propuesto) | To-do |
+| TS-10 | Estado de disponibilidad del dispositivo | T-81 | Validación y pruebas: TS-10 | Probar ventana de disponibilidad y recuperación con fecha real | 5 | Gomez Hurtado, Miguel Angel (propuesto) | To-do |
+| TS-12 | Exposición de configuración mediante API RESTful | T-82 | Implementación e integración: TS-12 | Exponer API REST de consulta/edición de configuración autorizada | 5 | Rodriguez Macedo, Sebastian (propuesto) | To-do |
+| TS-12 | Exposición de configuración mediante API RESTful | T-83 | Validación y pruebas: TS-12 | Verificar validación, seguridad y contrato de cliente móvil | 5 | Rodriguez Macedo, Sebastian (propuesto) | To-do |
+| TS-13 | Ejecución y confirmación de la actuación correctiva | T-84 | Implementación e integración: TS-13 | Registrar comando correctivo y resultado con ID idempotente | 6 | Por asignar | To-do |
+| TS-13 | Ejecución y confirmación de la actuación correctiva | T-85 | Validación y pruebas: TS-13 | Probar reintentos y confirmación sin duplicación de actuación | 6 | Por asignar | To-do |
+| — | Tarea transversal (sin US específica) | T-86 | Infraestructura: API Gateway | Revisar rutas públicas y protegidas, autorización y bloqueo de rutas internas en el Gateway HTTP/REST. | 6 | Por asignar | To-do |
+| — | Tarea transversal (sin US específica) | T-87 | Infraestructura: persistencia | Revisar migraciones, variables de entorno y aislamiento de bases PostgreSQL por microservicio. | 6 | Por asignar | To-do |
+| — | Tarea transversal (sin US específica) | T-88 | Integración Angular–API | Verificar configuración de entornos, contratos REST, estados vacíos/errores y sustitución de Mock API en pantallas seleccionadas. | 5 | Por asignar | To-do |
+| — | Tarea transversal (sin US específica) | T-89 | Verificación automatizada | Ejecutar pruebas de contratos e integración backend–Gateway y documentar sus límites frente a ensayos con hardware. | 6 | Por asignar | To-do |
+| — | Tarea transversal (sin US específica) | T-90 | Documentación OpenAPI | Comprobar endpoints y documentación Swagger/OpenAPI de los servicios; asociar la evidencia con 6.2.2.7. | 5 | Por asignar | To-do |
+| — | Tarea transversal (sin US específica) | T-91 | Despliegue y diagnóstico | Verificar URLs, salud, variables de entorno y comunicación de servicios en el entorno elegido; asociar evidencia con 6.2.2.8. | 5 | Por asignar | To-do |
+
 # Conclusiones
 
 ## Conclusiones y recomendaciones
@@ -5316,6 +5449,7 @@ En conjunto, el sprint permitió trabajar de manera paralela sin perder una expe
 
 * **Recomendaciones para el Roadmap de productos digitales:** Para los siguientes ciclos se recomienda priorizar la integración de los microservicios en Spring Boot con las aplicaciones web (Angular) y móviles (Flutter), afianzar la comunicación con el dispositivo IoT (ESP32 y simulador Wokwi) incorporando almacenamiento local temporal ante caídas de red, y realizar pruebas piloto en entornos operativos reales. A mediano plazo, se sugiere evaluar la incorporación modular de nuevos parámetros (como conductividad eléctrica) y herramientas de analítica histórica.
 
+* **Evolución técnica y mejora continua del proyecto:**  Esta evolución permitió ampliar el alcance funcional de los procesos de autenticación, asignación de dispositivos, configuración, monitoreo, tratamiento y trazabilidad. Asimismo,  las tareas de ingeniería completadas de las historias aceptadas integralmente, manteniendo la coherencia entre los criterios de aceptación, los commits y las evidencias de prueba. Se recomienda continuar verificando la integración entre componentes y documentar por separado las pruebas de software, la calibración de sensores y las validaciones físicas del prototipo antes de considerar completado el sistema.
 
 # Bibliografía
 
