@@ -68,43 +68,38 @@
 
 Las actividades del proyecto se planificarán, asignarán y evidenciarán progresivamente en la organización del equipo en GitHub: <https://github.com/1ASI0572-2620-8740-IOT>.
 
-### TB1 — Project Report Collaboration Insights
-
-Durante TB1, el informe evolucionó mediante responsabilidades complementarias. Leonardo formalizó las guías de estilo, las convenciones de código, la matriz LACX y el primer análisis de colaboración. Sebastian incorporó los wireframes. Hector refinó el diseño estratégico, incorporó la identidad técnica de dispositivos y alineó la documentación con los flujos implementados. Andrea desarrolló Software Configuration Management, GitFlow, el despliegue del Landing Page y la planificación del Sprint. Miguel completó los mock-ups, User Flows y el diseño del dispositivo IoT. Estas contribuciones fueron integradas progresivamente en la rama de trabajo compartida y pueden relacionarse con las entradas del Registro de Versiones.
-
-Los siguientes valores corresponden a los commits incorporados en la rama actual del repositorio `report` entre el 21 de septiembre y el 9 de octubre de 2026. Las identidades `Andrea Santur` y `andreli-star` se consolidan como una misma participante.
-
-| Integrante | Commits de TB1 en `report` | Contribución principal |
-|:--|--:|:--|
-| Rios Pacheco, Hector Javier | 14 | Refinamiento de arquitectura, DDD estratégico, integración documental y alineación de especificaciones. |
-| Santur Tello, Andrea Elizabeth | 9 | Capítulo VI, GitFlow, despliegue del Landing Page y planificación del Sprint. |
-| Gomez Hurtado, Miguel Angel | 11 | Mock-ups, User Flows, diseño del dispositivo IoT y evidencias de pruebas y despliegue. |
-| Prieto Mantari, Leonardo Fabrizzio Junior | 12 | Guías de estilo, convenciones, matriz LACX, colaboración, prototipado y evidencia de ejecución. |
-| Rodriguez Macedo, Sebastian | 1 | Wireframes de las aplicaciones. |
-| Olivera Barzola, Eric Marlon | 0 | — |
-
-El análisis muestra una distribución de responsabilidades por artefacto y especialidad. Las cifras corresponden al corte temporal indicado y sirven como evidencia cuantitativa complementaria; la valoración del trabajo colaborativo considera también la calidad, integración y utilidad de cada aporte.
-
-La evidencia verificable se encuentra en el [historial de commits del repositorio `report`](https://github.com/1ASI0572-2620-8740-IOT/report/commits).
-
-La siguiente captura de GitHub Contributors, aportada por el equipo, complementa los insights con una vista de la actividad semanal y la participación por cuenta.
-
-![Evidencia de colaboración en GitHub: commits semanales y contribuciones por cuenta](assets/report-collaboration-insights-github.png)
-
-*Figura: actividad de GitHub Contributors en el periodo del 4 de julio al 3 de octubre de 2026.*
-
-El periodo mostrado en la captura es distinto al corte de TB1 utilizado en las tablas del informe (21 de septiembre al 9 de octubre de 2026). Por ello, los conteos de la imagen no se comparan directamente con esas tablas ni reemplazan sus valores. La cantidad de commits constituye evidencia de actividad versionada, no una medida aislada de calidad o esfuerzo.
-
-
 ### AV2 — Project Report Collaboration Insights
 
+En AV2, el equipo actualizó el informe para documentar la evolución de HydroGuard desde el incremento web con Mock API hacia servicios persistentes, una aplicación móvil para el Operario y componentes de integración IoT. El avance reúne la planificación y el backlog del Sprint 2, las correcciones de arquitectura y UX/UI, las evidencias de desarrollo, pruebas y despliegue, y la preparación de las entrevistas de validación y la evaluación heurística.
+
+La tabla resume los commits únicos sin fusiones registrados en `develop` de [`report`](https://github.com/1ASI0572-2620-8740-IOT/report/commits/develop/) del **10 de octubre al 12 de noviembre de 2026**, en hora de Lima, hasta `dfc21eb`. Este corte incluye las dos actualizaciones del informe sobre P-02 y P-03 posteriores a `2c693b5`, que es el límite usado para el repositorio `report` en el análisis del Sprint 2. No incluye la presente actualización.
+
+| Integrante | Commits de AV2 en `report` | Contribución principal al informe |
+|:--|--:|:--|
+| Rios Pacheco, Hector Javier | 11 | Alineó arquitectura, mapa de contextos y flujos con la implementación; documentó el prototipo ESP32 y Wokwi, las pruebas automatizadas y los despliegues. |
+| Santur Tello, Andrea Elizabeth | 4 | Actualizó historias, criterios de aceptación, planificación, asignaciones y backlog del Sprint 2; preparó las secciones de entrevistas de validación y evaluación heurística. |
+| Gomez Hurtado, Miguel Angel | 34 | Refinó el diseño de dominio, los componentes, los contratos y los modelos de datos de IAM, Configuration, Telemetry, Treatment y Monitoring. |
+| Prieto Mantari, Leonardo Fabrizzio Junior (`Wuux1`) | 5 | Consolidó la evidencia de desarrollo y los insights del Sprint 2; documentó P-02 y P-03 y actualizó su Student Outcome de AV2. |
+| Rodriguez Macedo, Sebastian | 2 | Incorporó y documentó los wireflows de las aplicaciones, con sus diagramas y recorridos. |
+| **Total** | **56** | |
+
+**Aporte de Leonardo (`Wuux1`).**
+
 Leonardo consolidó las evidencias de desarrollo y colaboración del Sprint 2 y documentó sus aportes a P-02 y P-03 en backend, web y móvil. El [análisis de colaboración del Sprint 2](#6229-team-collaboration-insights-during-sprint) distingue el trabajo en los productos de la elaboración del informe e indica las revisiones usadas para el conteo.
+
+**Alcance y evidencia.** El informe documenta la actualización de la Landing Page, la web administrativa, el backend y Gateway, la aplicación Flutter, el servicio Edge y los prototipos físico y virtual. Las [evidencias de desarrollo](#6224-development-evidence-for-sprint-review), [pruebas](#6225-testing-suite-evidence-for-sprint-review) y [despliegue](#6228-software-deployment-evidence-for-sprint-review) distinguen código integrado, resultados de pruebas y versiones publicadas. El [capítulo de validación](#63-validation-interviews) recoge el diseño y los formatos de registro; no acredita entrevistas o evaluaciones aún pendientes. La evidencia disponible tampoco acredita la publicación de los videos About-the-Product y About-the-Team, la distribución del móvil en tienda ni la validación física completa.
+
+![Historial de colaboración del informe en GitHub durante AV2](assets/development-sprint-2/03-colaboracion-report-develop.jpg)
+
+*Figura: historial de `report` en `develop`, filtrado del 7 al 12 de noviembre. La captura es un recorte del avance: incluye fusiones y fue tomada antes de las últimas actualizaciones, por lo que no sustituye el conteo de la tabla.*
+
+El conteo corresponde al trabajo versionado en el informe. La colaboración también comprende la revisión e integración de aportes y el trabajo en los repositorios de cada producto.
 
 ## Tabla de Contenidos
 
 - [Registro de Versiones del Informe](#registro-de-versiones-del-informe)
 - [Project Report Collaboration Insights](#project-report-collaboration-insights)
-  - [TB1 — Project Report Collaboration Insights](#tb1--project-report-collaboration-insights)
+  - [AV2 — Project Report Collaboration Insights](#av2--project-report-collaboration-insights)
 - [Student Outcome](#student-outcome)
 - [Capítulo I: Introducción](#capítulo-i-introducción)
   - [1.1. Startup Profile](#11-startup-profile)
@@ -5443,7 +5438,11 @@ Las tablas siguientes resumen los commits incorporados entre el 21 de septiembre
 
 La actividad puede consultarse en [los commits del frontend](https://github.com/1ASI0572-2620-8740-IOT/hydroguard-admin-web-frontend/commits), [los commits del Mock API](https://github.com/1ASI0572-2620-8740-IOT/mock-api/commits), [los commits del Landing Page](https://github.com/1ASI0572-2620-8740-IOT/LandingPage/commits) y [los commits del informe](https://github.com/1ASI0572-2620-8740-IOT/report/commits).
 
-Como evidencia visual complementaria, la captura de GitHub Contributors se incluye en [TB1 — Project Report Collaboration Insights](#tb1--project-report-collaboration-insights), junto con la aclaración de su periodo y alcance.
+Como evidencia histórica complementaria de TB1, la captura de GitHub Contributors muestra la actividad semanal y la participación por cuenta.
+
+![Evidencia histórica de colaboración en GitHub durante TB1](assets/report-collaboration-insights-github.png)
+
+*Figura: actividad de GitHub Contributors del 4 de julio al 3 de octubre de 2026. El periodo de la captura no coincide con el corte de TB1 de las tablas (21 de septiembre al 9 de octubre) ni con el de AV2, por lo que no sustituye sus conteos.*
 
 Los principales retos de integración fueron mantener rutas y providers coherentes al agregar módulos, compartir el layout sin acoplar los dominios, alinear DTOs con contratos mock y sostener una interfaz homogénea. El equipo los afrontó mediante una arquitectura por capas, puertos de repositorio, tokens visuales compartidos, contratos versionados y verificación de compilación antes de integrar. Como mejora para el siguiente sprint, se acordó reforzar la revisión cruzada mediante pull requests, adjuntar evidencia de pruebas a cada historia, asociar commits con identificadores del Product Backlog y registrar decisiones de arquitectura cuando afecten a más de un bounded context.
 
