@@ -223,6 +223,10 @@ El periodo mostrado en la captura es distinto al corte de TB1 utilizado en las t
     - [5.4.4. Applications User Flow Diagrams](#544-applications-user-flow-diagrams)
   - [5.5. Applications Prototyping](#55-applications-prototyping)
   - [5.6. IoT Device Design](#56-iot-device-design)
+    - [5.6.1. Montaje y conexiones vigentes](#561-montaje-y-conexiones-vigentes)
+    - [5.6.2. Adquisición y conversión de lecturas](#562-adquisición-y-conversión-de-lecturas)
+    - [5.6.3. Indicadores y flujo integrado](#563-indicadores-y-flujo-integrado)
+    - [5.6.4. Configuración, memoria y límites pendientes](#564-configuración-memoria-y-límites-pendientes)
 - [Capítulo VI: Product Implementation, Validation & Deployment](#capítulo-vi-product-implementation-validation--deployment)
   - [6.1. Software Configuration Management](#61-software-configuration-management)
     - [6.1.1. Software Development Environment Configuration](#611-software-development-environment-configuration)
@@ -4508,25 +4512,58 @@ Las interacciones deben simular validación de formularios, confirmaciones, esta
 
 ## 5.6. IoT Device Design
 
-Link: https://app.cirkitdesigner.com/project/cbdef7ec-8293-4e11-94d1-0bf2247bb2e8
+El diseño físico prioriza la separación entre sensado y actuación, la protección de la entrada analógica y una señalización sencilla que complemente las aplicaciones. La alimentación del servo se separa de la línea de sensores y comparte tierra con el ESP32 para conservar la referencia de la señal de control. Los indicadores mantienen los significados definidos en la guía IoT de 5.1.2, mientras las mediciones y los estados detallados se consultan en el monitor serie y en las aplicaciones. El montaje permite representar el flujo de corrección y liberación sin atribuir al prototipo dosificación automática o medición de caudal.
 
-### 1. Alimentación y Tierra
-* **ESP32 5V (VIN) → LCD VCC / Sensor pH VCC:** Proveen los 5V requeridos para la retroiluminación de la pantalla y la precisión del amplificador operacional del pH.
-* **ESP32 3V3 → LM35 (+Vs):** Alimenta el sensor analógico de temperatura.
-* **ESP32 GND:** Línea común de tierra conectada a todos los periféricos (LCD, pH, LM35 y Cátodos de los LEDs).
+### 5.6.1. Montaje y conexiones vigentes
 
-### 2. Entradas Analógicas (Sensores)
-* **Sensor de pH (A0) → GPIO34:** Transmite la tensión proporcional a la acidez/alcalinidad del fluido.
-* **LM35 (Vout) → GPIO36 (VP):** Envía la señal de temperatura a razón de 10 mV por cada °C.
+El prototipo utiliza ESP32 DevKit, módulo PH4502C con electrodo BNC, sonda DS18B20, tres LED y servomotor. No utiliza LM35 ni LCD. La referencia ejecutable se encuentra en `prototipo-wokwi/sketch/sketch.ino`; Wokwi conserva además `diagram.json` y `libraries.txt` para representar el montaje virtual. El pin analógico vigente es GPIO35, después de una prueba de sustitución de GPIO34.
 
-### 3. Pantalla LCD 1602 (I2C)
-* **SDA → GPIO21**
-* **SCL → GPIO22**
-* Muestra las lecturas procesadas de pH (Fila 1) y Temperatura en °C (Fila 2).
+| Elemento | Conexión del prototipo físico |
+|:--|:--|
+| Alimentación ESP32 | USB de 5 V con cable y contacto estables. `3V3` alimenta el riel de 3.3 V y `GND` el riel de tierra común. No se une el riel de 3.3 V con VIN/5 V. |
+| PH4502C | `V+` a la alimentación de 5 V disponible en VIN con la placa alimentada por USB; `G` a tierra común. `Po` pasa por el divisor resistivo antes de GPIO35. `Do` y `To` no se utilizan. |
+| Divisor de pH | Dos resistencias iguales de 10 kΩ: `Po → resistencia → nodo GPIO35 → resistencia → GND`. Reduce aproximadamente a la mitad la tensión aplicada al ADC; la entrada GPIO no debe recibir directamente los 5 V del módulo. |
+| DS18B20 | Rojo a 3.3 V, negro a GND, amarillo a GPIO4. La línea de datos requiere pull-up a 3.3 V; en las primeras pruebas se usaron dos resistencias de 10 kΩ en paralelo (5 kΩ nominales), en lugar de una de 4.7 kΩ. |
+| LED verde | GPIO25, resistencia serie de 1 kΩ y LED hacia GND. Indica adquisición, no conformidad. |
+| LED amarillo | GPIO26, resistencia serie limitadora y LED hacia GND. Representa corrección, no dosificación automática. |
+| LED rojo | GPIO27, resistencia serie limitadora y LED hacia GND. Indica fallo de sensor, bloqueo local/remoto o problema de inicialización del control de salidas; no certifica por sí solo el estado de la conexión. |
+| Servomotor | Señal a GPIO18; rojo a fuente externa regulada de 5 V adecuada a la corriente del servo, marrón a su negativo. El negativo se une a GND del ESP32. No se une el positivo externo con el riel de 3.3 V. |
+| Entradas locales del firmware | GPIO32 para confirmación y GPIO33 para parada, con `INPUT_PULLUP` y pulsador hacia GND si se monta. Son controles locales y de banco, no sustituyen la aprobación del Operario en la app. |
 
-### 4. Indicadores Visuales (LEDs)
-* **GPIO18 → Resistencia → Ánodo LED Rojo:** Se activa cuando cualquiera de las variables sale del rango seguro ($pH < 6.5$, $pH > 8.5$, $T < 15^{\circ}C$ o $T > 30^{\circ}C$).
-* **GPIO19 → Resistencia → Ánodo LED Verde:** Se activa únicamente cuando ambas variables se encuentran dentro de los rangos óptimos establecidos.
+El servomotor probado puede representar movimiento, pero la apertura de la válvula real requiere torque y fijación adecuados. La corriente admisible del cable no se deduce únicamente de la etiqueta del cargador. No se considera resuelta la mecánica ni garantizado el caudal por recibir una confirmación de posición ordenada.
+
+### 5.6.2. Adquisición y conversión de lecturas
+
+El firmware programa una adquisición cada cinco segundos, aunque una operación de red bloqueante puede retrasarla. Utiliza ADC de 12 bits en GPIO35 y `analogReadMilliVolts`. Obtiene 31 muestras, descarta las cinco inferiores y superiores y promedia las 21 restantes. Los valores ADC crudos y de milivoltios se adquieren por separado; `Po_estimado` es el doble del voltaje ADC según el divisor nominal, no una medición independiente de Po o de la alimentación.
+
+La conversión vigente se obtuvo de dos buffers medidos cerca de 25 °C: pH 4.003, con promedio de entrada de aproximadamente 2264.89 mV, y pH 6.864, con aproximadamente 2015.81 mV. La interpolación es:
+
+```text
+pendiente_mV_por_pH = (V_4.003 - V_6.864) / (6.864 - 4.003)
+pH = 4.003 + (V_4.003 - V_entrada) / pendiente_mV_por_pH
+```
+
+Estos coeficientes se obtuvieron cuando se utilizaba GPIO34 y se conservaron después de cambiar a GPIO35. Los nombres internos `PH_ACID_D34_MV` y `PH_NEUTRAL_D34_MV` preservan esa procedencia; no indican que el firmware siga leyendo GPIO34. La nueva entrada, el cableado y la alimentación requieren corroboración con buffers. No hay una compensación térmica de pH implementada por el solo hecho de registrar DS18B20. Wokwi utiliza un modelo independiente de potenciómetro para representar 0–14, sin aplicar la fórmula física al sensor virtual.
+
+Una lectura no finita o fuera de rango se rechaza, no se recorta a 0 o 14 para aparentar validez. El diagnóstico informa `ADC`, milivoltios, dispersión del conjunto recortado, temperatura, estado de LED, WiFi, identidad y versión aplicada. La dispersión en milivoltios y la variación entre lecturas no equivalen a exactitud instrumental certificada.
+
+### 5.6.3. Indicadores y flujo integrado
+
+El LED verde permanece apagado durante la adquisición y emite un pulso de aproximadamente 100 ms después. Esta separación redujo el acoplamiento observado, pero no prueba que el voltaje del módulo sea invariable con otras cargas. Amarillo representa la orden correctiva y rojo señala condiciones locales de fallo o bloqueo. Treatment, no el color del LED, decide la conformidad según la configuración aplicada y las mediciones recientes.
+
+La corrección del prototipo físico se representa mediante LED y adición/mezcla manuales. En el modo de simulación del firmware se confirma al finalizar la duración indicada; el modo académico también contempla confirmación local. La espera pertenece a Treatment y la reevaluación exige una lectura posterior a su vencimiento. La liberación solo se ordena con autorización válida; el firmware revisado cierra la representación de apertura a los cinco segundos y contempla cierre ante pérdida crítica de control, emergencia o lectura inválida.
+
+### 5.6.4. Configuración, memoria y límites pendientes
+
+La configuración de transporte se introduce como JSON por el monitor serie a 115200 baudios: URL de Edge, WiFi e identidad del dispositivo. Edge gestiona el token técnico y su renovación; el dispositivo no requiere que el usuario copie JWT. Tras reinicio se debe reintroducir la configuración de aplicación almacenada en RAM. El programa y los coeficientes permanecen en flash. No debe afirmarse que el ESP32 carece de persistencia: `Preferences` mantiene un diario NVS de ocho posiciones para comandos y sus resultados, evitando repetir una actuación ante reintentos. El firmware conserva una medición pendiente en RAM, no un archivo histórico completo de todas las muestras durante una desconexión.
+
+Las cadenas de configuración no se imprimen ni se incluyen como secretos en el sketch. La ausencia de escritura explícita de esas cadenas en `Preferences` no demuestra que el controlador WiFi no persista sus parámetros: el firmware no deshabilita explícitamente esa persistencia mediante `WiFi.persistent(false)`. No se presenta una garantía de borrado de credenciales de toda la memoria del dispositivo.
+
+Edge almacena temporalmente las entregas aceptadas en SQLite y reintenta hacia el backend con identificadores estables. El historial permanente corresponde a las bases del backend. En el despliegue virtual con disco efímero, reiniciar Edge puede perder su cola local; no se garantiza entrega infinita ni ausencia total de pérdidas en cualquier interrupción.
+
+Permanecen pendientes la revalidación de la calibración tras cambios eléctricos, la verificación de alimentación bajo carga y el ajuste mecánico/torque de la válvula. No se implementaron bomba dosificadora, enfriamiento físico ni sensor de caudal. Las pruebas integrales acreditan intercambio de datos y decisiones del proceso, no aptitud sanitaria del agua ni dosis químicas controladas.
+
+Referencia de diseño inicial en Cirkit Designer (montaje anterior; no describe el cableado vigente): https://app.cirkitdesigner.com/project/cbdef7ec-8293-4e11-94d1-0bf2247bb2e8
 
 [![image.png](https://i.postimg.cc/kMbPnVwb/image.png)](https://postimg.cc/w3gG2jCq)
 
