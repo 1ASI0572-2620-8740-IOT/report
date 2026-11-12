@@ -254,6 +254,7 @@ El periodo mostrado en la captura es distinto al corte de TB1 utilizado en las t
       - [6.2.2.4. Development Evidence for Sprint Review](#6224-development-evidence-for-sprint-review)
       - [6.2.2.5. Testing Suite Evidence for Sprint Review](#6225-testing-suite-evidence-for-sprint-review)
       - [6.2.2.8. Software Deployment Evidence for Sprint Review](#6228-software-deployment-evidence-for-sprint-review)
+      - [6.2.2.9. Team Collaboration Insights during Sprint](#6229-team-collaboration-insights-during-sprint)
 - [Conclusiones](#conclusiones)
   - [Conclusiones y recomendaciones](#conclusiones-y-recomendaciones)
 - [Bibliografía](#bibliografía)
@@ -5682,6 +5683,31 @@ La documentación OpenAPI y Swagger UI se incorporó a los servicios; la siguien
 ![Landing Page publicada](assets/deploy-sprint-2/landing.jpg)
 
 **Aplicación móvil y persistencia.** La instalación en un dispositivo físico y su conexión al backend requieren evidencia de ejecución propia; no se afirma una publicación en una tienda. La configuración de Supabase no se capturó en esta revisión y queda pendiente incorporar una vista que no revele contraseñas ni cadenas de conexión. Las capturas anteriores no muestran creación de cuentas ni todos los pasos históricos de configuración, por lo que esos aspectos no se presentan como verificados visualmente.
+
+#### 6.2.2.9. Team Collaboration Insights during Sprint
+
+El trabajo del Sprint 2 se apoyó en la coordinación entre quienes versionaron cambios en los productos y quienes prepararon el diseño, la planificación y el informe. El historial permite identificar contribuciones y puntos de integración; la [matriz de liderazgo y colaboración](#6222-aspect-leaders-and-collaborators) registra responsabilidades asignadas y no se utiliza para atribuir commits.
+
+**Corte y método.** Se contabilizaron commits únicos sin fusiones por autor y repositorio, según la fecha de registro del commit en hora de Lima (UTC−5). Las columnas por repositorio cubren del **10 de octubre al 12 de noviembre de 2026**, es decir, el ciclo AV2 después del corte TB1. La última columna muestra por separado el subconjunto del **7 al 12 de noviembre**, a partir de la fecha del Sprint Planning. Se revisaron `main` de Landing Page, `develop` y `feature/render-backend-connection` del frontend web, `develop` del backend y del móvil, `develop` y `feature/render-wokwi-deployment` de Edge, `master` de IOT-Prototype y `develop` del informe hasta `b1a3f2d`. Los commits alcanzables desde dos ramas de un mismo repositorio se contaron una vez. No se incluyó la elaboración de esta sección en el corte.
+
+| Integrante | Landing | Web | Backend | Móvil | Edge | IoT virtual | Informe | Total AV2 | Desde Planning |
+|:--|--:|--:|--:|--:|--:|--:|--:|--:|--:|
+| Rios Pacheco, Hector Javier (`Khafna09`) | 1 | 7 | 29 | 40 | 9 | 0 | 11 | 97 | 22 |
+| Gomez Hurtado, Miguel Angel (`Miguel26112001`) | 0 | 0 | 0 | 0 | 0 | 4 | 34 | 38 | 4 |
+| Santur Tello, Andrea Elizabeth (`andreli-star`) | 0 | 0 | 0 | 0 | 0 | 0 | 4 | 4 | 4 |
+| Rodriguez Macedo, Sebastian (`Shiftinnnnn`) | 0 | 0 | 0 | 0 | 0 | 0 | 2 | 2 | 0 |
+| Prieto Mantari, Leonardo Fabrizzio Junior (`Wuux1`) | 0 | 0 | 0 | 0 | 0 | 0 | 2 | 0 | 0 |
+| **Total** | **1** | **7** | **29** | **40** | **9** | **4** | **51** | **141** | **30** |
+
+El conteo refleja la autoría registrada en las ramas consultadas. Un cero indica que no se encontró un commit de esa persona en el corte; no descarta aportes en revisión, coordinación, pruebas, reuniones o trabajo aún no integrado. Los conteos tampoco permiten comparar esfuerzo ni calidad.
+
+**Evidencias de colaboración e integración.** El historial concentra en Hector el versionado de los servicios, la web, el móvil y Edge. Miguel aportó al prototipo virtual y al informe, Andrea actualizó el backlog y añadió el diseño de validación, y Sebastian incorporó los wireflows. Estos aportes se pueden contrastar en el [historial del prototipo](https://github.com/1ASI0572-2620-8740-IOT/IOT-Prototype/commits/master/), el [ab7cba7](https://github.com/1ASI0572-2620-8740-IOT/report/commit/ab7cba79c498a49b12b46bca113d9f8afce21396) de validación y el [2b4039e](https://github.com/1ASI0572-2620-8740-IOT/report/commit/2b4039ea208ace59e01d36008b08768f1b663ddd) de wireflows. La integración del informe también quedó registrada en el [PR #7](https://github.com/1ASI0572-2620-8740-IOT/report/pull/7), anterior al Sprint Planning. Dicho PR es evidencia de integración y no se contabilizó como un commit de contribución en la tabla.
+
+![GitHub: historial de report en develop filtrado del 7 al 12 de noviembre](assets/development-sprint-2/03-colaboracion-report-develop.jpg)
+
+*Figura: historial de la rama `develop` de `report`, filtrado del 7 al 12 de noviembre. Se muestran contribuciones de documentación e integraciones; la captura corresponde únicamente al informe e incluye fusiones, a diferencia del conteo de la tabla. GitHub puede agrupar las fechas en una zona horaria distinta al corte de Lima.*
+
+**Aprendizaje del sprint.** El punto de coordinación más visible fue mantener los contratos compatibles entre web, Gateway, servicios y Edge. Por ejemplo, la ruta publicada del frontend se ajustó en [7ad7a0c](https://github.com/1ASI0572-2620-8740-IOT/hydroguard-admin-web-frontend/commit/7ad7a0ceec836c9ae8e81d2c22afa983c1d7163b) y la confirmación de órdenes académicas requirió cambios relacionados en Edge ([cde7f54](https://github.com/1ASI0572-2620-8740-IOT/hydroguard-edge-service/commit/cde7f5464bcfe781c1d3cd0743b9b859ecb74e11)) y en el sketch ([44e9fc1](https://github.com/1ASI0572-2620-8740-IOT/report/commit/44e9fc1b2b0bbf414ca1881b3f2b663c94117bdd)). Para el siguiente sprint se recomienda vincular las tareas de Trello con sus commits y evidencias de aceptación, documentar las revisiones entre repositorios y anotar si cada verificación se realizó en local, en nube o con hardware.
 
 ### 6.3. Validation Interviews
 
