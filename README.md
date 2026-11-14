@@ -5691,6 +5691,340 @@ Estas verificaciones no sustituyen una ejecución de los clientes contra el back
 
 #### 6.2.2.7. Services Documentation Evidence for Sprint Review
 
+En este sprint se sustituyó el Mock API por seis microservicios Spring Boot con persistencia PostgreSQL y se incorporó la documentación OpenAPI de cada uno. La especificación se genera desde los controladores y se publica junto con Swagger UI en el mismo servicio, de modo que la documentación corresponde al código desplegado y no a un contrato redactado aparte. El API Gateway conserva la función de entrada de las aplicaciones, pero no publica Swagger ni concentra la documentación: cada servicio expone sus propias operaciones y valida por su cuenta el JWT, el rol, la organización y la asignación. La lectura de la documentación no requiere sesión, aunque ejecutar operaciones protegidas sí exige un token válido.
+
+El alcance documentado comprende **75 operaciones de producto** en los seis microservicios (13 de Human IAM, 5 de Device Identity, 30 de Configuration, 11 de Telemetry, 5 de Treatment y 11 de Monitoring), **21 rutas internas** entre servicios y **9 rutas locales del Edge**. Las rutas internas no forman parte de la especificación pública ni se enrutan por el Gateway; se documentan aquí de forma agregada para dejar constancia de la comunicación entre servicios. El Edge no publica Swagger: su referencia de endpoints se mantiene en el repositorio y se resume en la subsección 7.
+
+Cada subsección indica la URL de la documentación desplegada, la responsabilidad del servicio, la tabla de operaciones con verbo, sintaxis de llamada, parámetros y respuesta esperada, un ejemplo de respuesta y un espacio reservado para la captura de interacción con datos de muestra. Las capturas deben mostrar Swagger UI con el listado de operaciones, la autorización configurada cuando corresponda y una operación expandida con su ejemplo.
+
+##### Convenciones de las rutas documentadas
+
+| Elemento | Uso |
+|:--|:--|
+| `Authorization: Bearer <jwt>` | Token humano del Administrador u Operario en las rutas `/api/v1/**`; token técnico del dispositivo en `/edge/v1/**` de Telemetry. |
+| `X-Hydroguard-Caller` | Nombre del servicio llamante en las rutas `/internal/v1/**`. |
+| `X-Hydroguard-Service-Key` | Clave compartida que acompaña al llamante interno. No se publica en Swagger. |
+| `Content-Type: application/json` | Obligatorio cuando la operación recibe cuerpo. |
+| Paginación | `page` (desde 1), `pageSize` (1 a 100), `searchTerm`, `status`, `sortBy` y `sortDirection` según el recurso; la respuesta es `PageResponse` con `items`, `total`, `page` y `pageSize`. |
+| Errores | Cuerpo JSON `{ "message": "..." }`; `400` datos inválidos, `401` sesión inválida, `403` rol o asignación no autorizada, `404` recurso no disponible, `409` conflicto de estado, `422` contenido técnico inválido y `503` dependencia no disponible. |
+
+| Superficie | Prefijo | Consumidor | Credencial |
+|:--|:--|:--|:--|
+| Pública humana | `/api/v1/**` | Aplicación web y aplicación móvil a través del Gateway | JWT humano |
+| Técnica del Edge | `/edge/v1/**` | Edge y prototipo virtual a través del Gateway | Credencial del dispositivo canjeada por JWT técnico |
+| Interna | `/internal/v1/**` | Microservicios entre sí, en red privada | `X-Hydroguard-Caller` y `X-Hydroguard-Service-Key` |
+| Salud y documentación | `/actuator/health`, `/swagger-ui/**`, `/v3/api-docs` | Operación y desarrollo | Público |
+
+##### 1. Human IAM Service
+
+Documentación desplegada: [Swagger UI](https://hg-8740-human-iam-service.onrender.com/swagger-ui/index.html) · [OpenAPI JSON](https://hg-8740-human-iam-service.onrender.com/v3/api-docs). Responsable de empresas, autenticación humana, operarios y códigos de primer acceso. El registro, el inicio de sesión y el primer acceso son públicos; el resto exige JWT de Administrador.
+
+| # | Acción implementada | Verbo y sintaxis | Parámetros | Respuesta esperada |
+|:--|:--|:--|:--|:--|
+| 1 | Registro de empresa y su único Administrador | `POST /api/v1/organization-registrations` | Público. Body: `organization` (`name`, `ruc`, `phone`, `segment`) y `administrator` (`displayName`, `email`, `password`); `segment` admite `TEXTILE` o `HYDROPONIC`. | `201` sin cuerpo; `409` si el RUC o el correo ya existen. |
+| 2 | Inicio de sesión | `POST /api/v1/authentication/sign-in` | Público. Body: `identifier` (o su alias `username`) y `password`. | `200` con `SessionResponse` (`token`, `role`, `organizationId`, `expiresAt`); `401` con credenciales inválidas. |
+| 3 | Cierre de sesión | `POST /api/v1/authentication/sign-out` | Header `Authorization`. | `204` sin cuerpo; la sesión deja de aceptarse. |
+| 4 | Contexto de la organización | `GET /api/v1/organizations/current` | Header `Authorization`. | `200` con `id`, `name` y `segment`. |
+| 5 | Primer acceso del Operario | `POST /api/v1/authentication/operator-first-access` | Público. Body: `identifier`, `password` y `code`. | `200` con `SessionResponse`; error si el código no está activo o ya fue utilizado. |
+| 6 | Listado de operarios | `GET /api/v1/operators` | Query: `searchTerm`, `status`, `page`, `pageSize`. | `200` con `PageResponse<UserAccountResource>`. |
+| 7 | Alta de operario | `POST /api/v1/operators` | Body: `displayName`, `identifier`, `password`. | `201` con `UserAccountResource`; `409` si el identificador ya existe. |
+| 8 | Detalle de operario | `GET /api/v1/operators/{id}` | Path: `id` (UUID). | `200` con `UserAccountResource`; `404` si no pertenece a la organización. |
+| 9 | Resumen de acceso del operario | `GET /api/v1/operators/{user}/access-summary` | Path: `user` (UUID). | `200` con perfil, grupo y asignaciones activas. |
+| 10 | Consulta del código de primer acceso | `GET /api/v1/operators/{user}/first-access-code` | Path: `user`; query opcional `operatorProfileId`. | `200` con `FirstAccessCodeResource` o `404` si no hay código vigente. |
+| 11 | Generación del código de primer acceso | `POST /api/v1/operators/{user}/first-access-code` | Path: `user`; body: `operatorProfileId`. | `201` con `FirstAccessCodeResource`; el código es de un solo uso y sin caducidad. |
+| 12 | Revocación del código | `POST /api/v1/first-access-codes/{id}/revoke` | Path: `id`. | `204`; conflicto si el código ya no está activo. |
+| 13 | Cambio de estado del operario | `PATCH /api/v1/operators/{user}/status` | Path: `user`; body: `status` con valor `INACTIVE`. | `204`; solo se admite la baja lógica indicada. |
+
+Ejemplo de respuesta de `POST /api/v1/authentication/sign-in`:
+
+```json
+{
+  "id": "uuid-sesion",
+  "identifier": "ana@agroandes.pe",
+  "organizationId": "uuid-empresa",
+  "role": "ADMINISTRATOR",
+  "token": "<jwt>",
+  "expiresAt": "2026-11-13T10:45:00Z"
+}
+```
+
+La respuesta entrega el token y el contexto que el cliente usa en las rutas siguientes; no devuelve la contraseña ni el hash almacenado. El identificador de la organización se deriva de la sesión y no se acepta como parámetro de otras operaciones.
+
+**Espacio reservado para la captura.** Insertar Swagger UI de Human IAM con la operación `sign-in` expandida, el ejemplo de respuesta y `Authorize` visible. Archivo sugerido: `assets/services-evidence/sprint-2/01-human-iam.png`. La captura debe usar datos de muestra y no exponer tokens ni contraseñas reales.
+
+##### 2. Device Identity Service
+
+Documentación desplegada: [Swagger UI](https://hg-8740-device-identity-service.onrender.com/swagger-ui/index.html) · [OpenAPI JSON](https://hg-8740-device-identity-service.onrender.com/v3/api-docs). Responsable de la identidad técnica de los dispositivos y de las credenciales de activación. El provisionamiento lo invoca Configuration; la autenticación técnica es pública porque la credencial viaja en el cuerpo.
+
+| # | Acción implementada | Verbo y sintaxis | Parámetros | Respuesta esperada |
+|:--|:--|:--|:--|:--|
+| 1 | Provisionamiento de identidad | `POST /api/v1/device-identities/provision` | Llamada interna de Configuration. Body: `deviceId`, `organizationId` y `credential`. | `204` sin cuerpo. El prefijo está enrutado, pero el Gateway deniega la invocación desde clientes públicos. |
+| 2 | Autenticación técnica del dispositivo | `POST /edge/v1/device-auth/token` | Público. Body: `deviceId` y `credential`. | `200` con `token` y `expiresAt`; el token técnico habilita las rutas `/edge/v1/**`. |
+| 3 | Consulta del estado de identidad | `GET /api/v1/device-identities/{device}/status` | Path: `device` (UUID); JWT de Administrador. | `200` con `deviceId`, `organizationId`, `status`, `credentialVersion`, `createdAt` y `updatedAt`. |
+| 4 | Revocación de la identidad | `POST /api/v1/device-identities/{device}/revoke` | Path: `device`; sin cuerpo. | `204`; la credencial anterior deja de ser aceptada. |
+| 5 | Regeneración de credencial | `POST /api/v1/device-identities/{device}/regenerate-credential` | Path: `device`; sin cuerpo. | `200` con `deviceId` y `activationCredential`; la credencial se entrega una sola vez. |
+
+Ejemplo de respuesta de `POST /edge/v1/device-auth/token`:
+
+```json
+{
+  "token": "<jwt-dispositivo>",
+  "expiresAt": "2026-11-13T11:00:00Z"
+}
+```
+
+El token se emite para un dispositivo concreto y no reemplaza al JWT humano: un token técnico no permite ejecutar acciones de Administrador u Operario.
+
+**Espacio reservado para la captura.** Insertar Swagger UI de Device Identity con `device-auth/token` expandido y el esquema de seguridad visible. Archivo sugerido: `assets/services-evidence/sprint-2/02-device-identity.png`. La captura debe usar una credencial de muestra, nunca una credencial vigente.
+
+##### 3. Configuration Service
+
+Documentación desplegada: [Swagger UI](https://hg-8740-configuration-service.onrender.com/swagger-ui/index.html) · [OpenAPI JSON](https://hg-8740-configuration-service.onrender.com/v3/api-docs). Concentra el catálogo operativo, el inventario de dispositivos, los perfiles y asignaciones, y la configuración que el Operario guarda y publica. Las operaciones 1 a 26 exigen JWT de Administrador; las operaciones 27 a 30 exigen JWT de Operario.
+
+**3.1. Catálogo operativo y configuración descriptiva**
+
+| # | Acción implementada | Verbo y sintaxis | Parámetros | Respuesta esperada |
+|:--|:--|:--|:--|:--|
+| 1 | Opciones operativas disponibles | `GET /api/v1/operational-options` | Sin parámetros. | `200` con `groups`, `reservoirs` y `operators` para poblar los formularios. |
+| 2 | Alta de grupo de trabajo | `POST /api/v1/groups` | Body: `name`, `purpose`, `classification`. | `201` con `WorkGroupResource` (`id`, `name`, `purpose`, `classification`, `segment`, `status`). |
+| 3 | Listado de grupos | `GET /api/v1/groups` | Query: `page`, `pageSize`, `searchTerm`, `status`, `sortBy` (`name` o `purpose`), `sortDirection`. | `200` con `PageResponse<WorkGroupResource>`. |
+| 4 | Detalle de grupo | `GET /api/v1/groups/{id}` | Path: `id`. | `200` con el grupo, sus miembros y sus reservorios. |
+| 5 | Baja lógica de grupo | `PATCH /api/v1/groups/{id}/status` | Path: `id`; body: `status` con valor `INACTIVE`. | `204`; conflicto si el grupo aún no puede desactivarse. |
+| 6 | Edición descriptiva de grupo | `PATCH /api/v1/groups/{id}/description` | Path: `id`; body: `name`, `purpose` y `classification`. | `204`; conserva el identificador y el estado. |
+| 7 | Alta de reservorio | `POST /api/v1/reservoirs` | Body: `groupId`, `name`, `code`, `reservoirType` (`SUMP`, `TANK` o `RESERVOIR`), `location` y `capacityLiters` opcional. | `201` con `ReservoirResource`. |
+| 8 | Listado de reservorios | `GET /api/v1/reservoirs` | Query: `groupId` opcional, `page`, `pageSize`, `searchTerm`, `status`, `sortBy` (`name`, `code` o `location`), `sortDirection`. | `200` con `PageResponse<ReservoirResource>`. |
+| 9 | Detalle de reservorio | `GET /api/v1/reservoirs/{id}` | Path: `id`. | `200` con el reservorio, el nombre del grupo y el dispositivo vinculado o `null`. |
+| 10 | Baja lógica de reservorio | `PATCH /api/v1/reservoirs/{id}/status` | Path: `id`; body: `status` con valor `INACTIVE`. | `204`. |
+| 11 | Edición descriptiva de reservorio | `PATCH /api/v1/reservoirs/{id}/description` | Path: `id`; body: `name` y `location`. | `204`; no altera el vínculo con el dispositivo. |
+
+**3.2. Inventario de dispositivos**
+
+| # | Acción implementada | Verbo y sintaxis | Parámetros | Respuesta esperada |
+|:--|:--|:--|:--|:--|
+| 12 | Alta de dispositivo | `POST /api/v1/devices` | Body: `serialNumber`, `alias`, `deviceModel`, `operatingEnvironment` (`INTEGRAL_PRODUCT`, `SIMULATION` o `ACADEMIC_PROTOTYPE`) y `capabilities`. | `201` con `RegisteredDeviceResource`, que incluye la credencial de activación entregada una sola vez. |
+| 13 | Listado de dispositivos | `GET /api/v1/devices` | Query: `page`, `pageSize`, `searchTerm`, `status`, `availability`, `operatingEnvironment`, `configurationStatus`, `unlinked=true`, `sortBy` (`serialNumber`, `alias` o `deviceModel`), `sortDirection`. | `200` con `PageResponse<DeviceResource>`. |
+| 14 | Detalle de dispositivo | `GET /api/v1/devices/{id}` | Path: `id`. | `200` con el dispositivo, el nombre del reservorio y el perfil responsable. |
+| 15 | Historial de configuraciones | `GET /api/v1/devices/{id}/configurations` | Path: `id`. | `200` con `device` y `versions`; cada versión indica su estado y fecha de publicación. |
+| 16 | Edición descriptiva del dispositivo (P-02) | `PATCH /api/v1/devices/{id}/description` | Path: `id`; body: `alias` y `deviceModel`. | `204`; conserva identidad técnica, capacidades y vínculo. |
+| 17 | Vinculación a reservorio | `POST /api/v1/devices/{id}/link` | Path: `id`; body: `reservoirId`. | `204`; conflicto si el reservorio ya tiene otro dispositivo o el dispositivo ya está vinculado. |
+| 18 | Desvinculación | `POST /api/v1/devices/{id}/unlink` | Path: `id`; sin cuerpo. | `204`; el dispositivo queda disponible para una nueva vinculación. |
+| 19 | Baja lógica de dispositivo | `PATCH /api/v1/devices/{id}/status` | Path: `id`; body: `status` con valor `INACTIVE`. | `204`. |
+
+**3.3. Perfiles y asignaciones del Operario**
+
+| # | Acción implementada | Verbo y sintaxis | Parámetros | Respuesta esperada |
+|:--|:--|:--|:--|:--|
+| 20 | Alta de perfil de Operario | `POST /api/v1/operator-profiles` | Body: `userId`, `groupId` y `reservoirIds`. | `201` con `OperatorProfileResource`; el perfil inicia en `PENDING_FIRST_ACCESS` hasta el primer acceso. |
+| 21 | Listado de perfiles | `GET /api/v1/operator-profiles` | Query: `page`, `pageSize`, `searchTerm`, `status` (`ACTIVE`, `INACTIVE` o `PENDING_FIRST_ACCESS`), `sortBy` (`displayName` o `groupName`), `sortDirection`. | `200` con `PageResponse<OperatorProfileResource>`. |
+| 22 | Detalle de perfil | `GET /api/v1/operator-profiles/{id}` | Path: `id`. | `200` con el perfil y sus asignaciones vigentes e históricas. |
+| 23 | Asignación de pares reservorio-dispositivo | `POST /api/v1/operator-profiles/{id}/assignments` | Path: `id`; body: `reservoirIds`. | `204`; rechaza pares ya asignados o sin dispositivo. |
+| 24 | Cierre de asignación | `POST /api/v1/assignments/{id}/close` | Path: `id`; sin cuerpo. | `204`; conflicto si existe un proceso activo sobre la asignación. |
+| 25 | Baja lógica del perfil | `PATCH /api/v1/operator-profiles/{id}/status` | Path: `id`; body: `status` con valor `INACTIVE`. | `204`. |
+| 26 | Pares disponibles del grupo | `GET /api/v1/available-pairs` | Query obligatorio: `groupId`. | `200` con `reservoirId`, `reservoirName`, `deviceId` y `deviceSerialNumber` de cada par disponible. |
+
+**3.4. Contexto y configuración del Operario**
+
+| # | Acción implementada | Verbo y sintaxis | Parámetros | Respuesta esperada |
+|:--|:--|:--|:--|:--|
+| 27 | Contexto del Operario | `GET /api/v1/operator/context` | Sin parámetros; JWT de Operario. | `200` con perfil, grupo, miembros y asignaciones activas. |
+| 28 | Consulta de configuración de la asignación | `GET /api/v1/operator/assignments/{id}/configuration` | Path: `id`. | `200` con la asignación y la configuración vigente o `null` si aún no existe. |
+| 29 | Guardado de borrador de configuración | `PUT /api/v1/operator/assignments/{id}/configuration` | Path: `id`; body con rangos de pH y temperatura, `correctionAction`, `waitingMinutes`, `maximumCycles` y `releaseMode`. | `200` con la configuración guardada como borrador; pH `0..14`, temperatura `0..100`, `waitingMinutes` `1..30`. |
+| 30 | Publicación de configuración | `POST /api/v1/operator/assignments/{id}/configuration/publish` | Path: `id`; sin cuerpo. | `200` con la configuración publicada; el dispositivo la recibe como nueva versión. |
+
+Ejemplo de configuración aceptada por `PUT /api/v1/operator/assignments/{id}/configuration`:
+
+```json
+{
+  "phMin": 6.5,
+  "phMax": 7.5,
+  "temperatureMin": 15.0,
+  "temperatureMax": 30.0,
+  "correctionAction": "AUTO",
+  "waitingMinutes": 5,
+  "maximumCycles": 3,
+  "releaseMode": "MANUAL"
+}
+```
+
+La respuesta conserva el número de versión y su estado; publicar no implica que el dispositivo ya la haya aplicado, condición que se confirma con la ruta de acknowledgements de Telemetry.
+
+**Espacio reservado para la captura.** Insertar Swagger UI de Configuration con el detalle de dispositivo (operación 14) o la edición descriptiva P-02 (operación 16) expandida, con una respuesta de muestra. Archivo sugerido: `assets/services-evidence/sprint-2/03-configuration.png`.
+
+##### 4. Telemetry Service
+
+Documentación desplegada: [Swagger UI](https://hg-8740-telemetry-service.onrender.com/swagger-ui/index.html) · [OpenAPI JSON](https://hg-8740-telemetry-service.onrender.com/v3/api-docs). Recibe las mediciones y el heartbeat del Edge, expone las consultas de telemetría y mantiene la cola de comandos técnicos. Las operaciones 1 a 5 se consultan con JWT humano; las operaciones 6 a 11 usan JWT técnico del dispositivo.
+
+| # | Acción implementada | Verbo y sintaxis | Parámetros | Respuesta esperada |
+|:--|:--|:--|:--|:--|
+| 1 | Resumen de telemetría por dispositivo | `GET /api/v1/telemetry/devices` | Query: `page`, `pageSize`, `searchTerm`, `sortBy` (`serialNumber`, `alias`, `deviceModel` o `lastCommunicationAt`), `sortDirection`, filtros `availability`, `operatingEnvironment` y `deviceId`. | `200` con `PageResponse<DeviceTelemetrySummaryResource>`. |
+| 2 | Detalle de telemetría de un dispositivo | `GET /api/v1/telemetry/devices/{id}` | Path: `id`. | `200` con dispositivo y última medición; `latestMeasurement` puede ser `null`. |
+| 3 | Historial de mediciones | `GET /api/v1/devices/{id}/water-measurements` | Path: `id`; query: `page`, `pageSize`, `searchTerm`, `sortBy` (`measuredAt`, `ph`, `temperature` o `source`), `sortDirection`, `from`, `to` y `source`. | `200` con `PageResponse<WaterMeasurementResource>`; `measuredAt` es el instante de captura y no el de ingesta. |
+| 4 | Última medición | `GET /api/v1/devices/{id}/water-measurements/latest` | Path: `id`. | `200` con la última lectura o `404` si el dispositivo no tiene mediciones. |
+| 5 | Telemetría visible para el Operario | `GET /api/v1/operator/devices/{id}/telemetry` | Path: `id`; JWT de Operario con asignación vigente. | `200` con dispositivo, última lectura e historial; `latest` es `null` y `history` `[]` si aún no hay datos. |
+| 6 | Ingesta de medición del Edge | `POST /edge/v1/telemetry` | Body con exactamente `measurementId`, `ph`, `temperature` y `measuredAt`; `measuredAt` no puede superar 30 s en el futuro. | `200` con `measurementId`, `duplicate` y `persisted`; reenviar el mismo identificador con idéntico contenido devuelve `duplicate: true` y con contenido distinto `409`. |
+| 7 | Heartbeat del Edge | `POST /edge/v1/heartbeat` | Body: `messageId` y `occurredAt`. | `200` con `messageId`, `persisted` y `duplicate`; actualiza la disponibilidad del dispositivo. |
+| 8 | Configuración vigente para el Edge | `GET /edge/v1/configuration` | Sin cuerpo. | `200` con la configuración publicada o `204` si no existe. |
+| 9 | Confirmación de configuración aplicada | `POST /edge/v1/configuration/acknowledgements` | Body: `configurationVersion` y `occurredAt`. | `200` con `configurationVersion` y `applied`; acredita la versión que el Edge confirma. |
+| 10 | Siguiente comando técnico | `GET /edge/v1/commands/next` | Sin cuerpo. | `200` con `TechnicalCommand` o `204` si no hay comandos pendientes. |
+| 11 | Confirmación de comando | `POST /edge/v1/commands/{id}/acknowledgements` | Path: `id`; body: `executionNumber`, `status` (`ACCEPTED`, `RUNNING`, `COMPLETED`, `REJECTED` o `FAILED`), `occurredAt`, `executionMode` y `evidence`. | `200` con `commandId`, `persisted` y `duplicate`; `409` si la ejecución o el contenido no coinciden. |
+
+Ejemplo de respuesta de `GET /api/v1/telemetry/devices/{id}`:
+
+```json
+{
+  "device": {
+    "id": "uuid-dispositivo",
+    "serialNumber": "HG-DEV-001",
+    "alias": "Sensor Pozo 1",
+    "deviceModel": "HG-Pro-v1",
+    "operatingEnvironment": "INTEGRAL_PRODUCT",
+    "availability": "ONLINE",
+    "reservoirName": "Reservorio 1",
+    "lastCommunicationAt": "2026-11-13T10:15:30Z"
+  },
+  "latestMeasurement": {
+    "id": "uuid-medicion",
+    "deviceId": "uuid-dispositivo",
+    "ph": 6.8,
+    "temperature": 22.5,
+    "measuredAt": "2026-11-13T10:15:30Z",
+    "source": "DEVICE"
+  }
+}
+```
+
+`availability` distingue `ONLINE`, `OFFLINE` y `UNKNOWN`. Un dispositivo sin heartbeat reciente no se presenta con valores en cero: su última medición se conserva con la marca de tiempo que permite evaluar su vigencia.
+
+**Espacio reservado para la captura.** Insertar Swagger UI de Telemetry con la operación de historial o de última medición expandida y un ejemplo de respuesta. Archivo sugerido: `assets/services-evidence/sprint-2/04-telemetry.png`.
+
+##### 5. Treatment Service
+
+Documentación desplegada: [Swagger UI](https://hg-8740-treatment-service.onrender.com/swagger-ui/index.html) · [OpenAPI JSON](https://hg-8740-treatment-service.onrender.com/v3/api-docs). Gestiona los procesos de tratamiento, la aprobación de la estrategia, los ciclos automáticos y la liberación. Las operaciones humanas del Administrador son de solo lectura; las acciones del proceso corresponden al Operario y están condicionadas por el estado.
+
+| # | Acción implementada | Verbo y sintaxis | Parámetros | Respuesta esperada |
+|:--|:--|:--|:--|:--|
+| 1 | Listado de procesos | `GET /api/v1/treatments` | Query: `page`, `pageSize`, `searchTerm`, `status`, `sortBy` (`updatedAt`, `deviceSerialNumber`, `reservoirName`, `operatorName` o `strategy`), `sortDirection` y `deviceId`; JWT de Administrador. | `200` con `PageResponse<TreatmentProcessSummaryResource>`. |
+| 2 | Detalle de proceso | `GET /api/v1/treatments/{id}` | Path: `id`; JWT de Administrador. | `200` con estrategia, ciclos, eventos, versión de configuración y resultado. |
+| 3 | Procesos del Operario | `GET /api/v1/operator/treatments` | Sin parámetros; JWT de Operario. | `200` con los procesos de sus asignaciones y sus acciones permitidas. |
+| 4 | Inicio de proceso | `POST /api/v1/operator/treatments` | Body: `deviceId`. | `201` con el proceso iniciado; `409` si el dispositivo no está preparado o ya tiene un proceso activo. |
+| 5 | Acción sobre el proceso | `POST /api/v1/operator/treatments/{id}/commands` | Path: `id`; body: `command` con `APPROVE_STRATEGY`, `AUTHORIZE_RELEASE`, `ACTIVATE_EMERGENCY`, `RESET_EMERGENCY` o `RESET_PROCESS`. | `200` con el proceso actualizado; `409` si el comando no procede en el estado actual. |
+
+Ejemplo de proceso devuelto al Operario:
+
+```json
+{
+  "id": "uuid-proceso",
+  "deviceId": "uuid-dispositivo",
+  "reservoirName": "Reservorio 1",
+  "state": "READY",
+  "strategy": "PH_MINUS",
+  "currentCycle": 1,
+  "maximumCycles": 3,
+  "releaseMode": "MANUAL",
+  "allowedActions": ["AUTHORIZE_RELEASE", "ACTIVATE_EMERGENCY"],
+  "manualReleaseBlockReason": null
+}
+```
+
+`allowedActions` evita ofrecer acciones fuera de estado y `manualReleaseBlockReason` explica el bloqueo con `PROCESS_NOT_READY`, `AUTOMATIC_RELEASE`, `READING_NOT_RECENT` o `READING_OUT_OF_RANGE` cuando la liberación manual no está disponible.
+
+**Espacio reservado para la captura.** Insertar Swagger UI de Treatment con la operación de comandos del Operario expandida y un ejemplo de proceso. Archivo sugerido: `assets/services-evidence/sprint-2/05-treatment.png`.
+
+##### 6. Monitoring Service
+
+Documentación desplegada: [Swagger UI](https://hg-8740-monitoring-service.onrender.com/swagger-ui/index.html) · [OpenAPI JSON](https://hg-8740-monitoring-service.onrender.com/v3/api-docs). Expone el resumen operacional, las alertas, los incidentes, la trazabilidad y los reportes. Las operaciones 1 a 8 corresponden al Administrador; las operaciones 9 a 11 corresponden al Operario.
+
+| # | Acción implementada | Verbo y sintaxis | Parámetros | Respuesta esperada |
+|:--|:--|:--|:--|:--|
+| 1 | Resumen operacional | `GET /api/v1/monitoring/overview` | Sin parámetros. | `200` con totales de dispositivos, alertas activas, incidentes abiertos y la vista por dispositivo. |
+| 2 | Alertas operacionales | `GET /api/v1/monitoring/alerts` | Query: `page`, `pageSize`, `searchTerm`, `sortBy` (`createdAt`, `deviceSerialNumber`, `reservoirName`, `description` o `source`), `sortDirection`, filtros `status`, `severity`, `deviceId`, `from` y `to`. | `200` con `PageResponse<OperationalAlertResource>`. |
+| 3 | Atención de alerta | `PATCH /api/v1/monitoring/alerts/{id}/status` | Path: `id`; body: `status` con valor `ACKNOWLEDGED`. | `200` con la alerta actualizada; conflicto si ya no está activa. |
+| 4 | Incidentes de calidad | `GET /api/v1/monitoring/incidents` | Query: `page`, `pageSize`, `searchTerm`, `sortBy` (`createdAt`, `deviceSerialNumber`, `reservoirName`, `description` o `incidentType`), `sortDirection`, filtros `status`, `deviceId`, `type`, `from` y `to`. | `200` con `PageResponse<QualityIncidentResource>`. |
+| 5 | Registro de incidente | `POST /api/v1/monitoring/incidents` | Body: `deviceId`, `incidentType` (`QUALITY_INCIDENT` o `MONITORING_LOSS`) y `description` de 10 a 200 caracteres. | `201` con `QualityIncidentResource`. |
+| 6 | Cierre de incidente | `PATCH /api/v1/monitoring/incidents/{id}/status` | Path: `id`; body: `status` con valor `CLOSED`. | `200` con el incidente cerrado. |
+| 7 | Trazabilidad por dispositivo | `GET /api/v1/monitoring/devices/{id}/traceability` | Path: `id`; query opcional `from` y `to`. | `200` con el dispositivo y la línea de tiempo de eventos correlacionados. |
+| 8 | Generación de reporte | `POST /api/v1/monitoring/reports/generate` | Body con exactamente `deviceId`, `from` y `to`; se aceptan fechas o instantes ISO-8601 y no se permiten claves adicionales. | `200` con mediciones, ciclos, alertas, incidentes, liberaciones y eventos del periodo. |
+| 9 | Alertas del Operario | `GET /api/v1/operator/alerts` | Sin parámetros; JWT de Operario. | `200` con las alertas de sus asignaciones. |
+| 10 | Confirmación de alerta desde el móvil | `PATCH /api/v1/operator/alerts/{id}/acknowledge` | Path: `id`; sin cuerpo. | `204`; la alerta queda atendida. |
+| 11 | Historial del dispositivo para el Operario | `GET /api/v1/operator/devices/{id}/history` | Path: `id`. | `200` con los eventos y reportes disponibles del dispositivo asignado. |
+
+Ejemplo de respuesta de `GET /api/v1/monitoring/overview`:
+
+```json
+{
+  "totalDevices": 4,
+  "onlineDevices": 3,
+  "devicesRequiringAttention": 1,
+  "activeAlerts": 2,
+  "openIncidents": 1,
+  "devices": [],
+  "recentAlerts": []
+}
+```
+
+Los conteos se calculan con el estado registrado; un dispositivo sin heartbeat reciente incrementa `devicesRequiringAttention` y `statusView` pasa a `OUTDATED` sin borrar la última lectura conocida.
+
+**Espacio reservado para la captura.** Insertar Swagger UI de Monitoring con el resumen operacional o la generación de reporte expandida y una respuesta de muestra. Archivo sugerido: `assets/services-evidence/sprint-2/06-monitoring.png`.
+
+##### 7. HydroGuard Edge Service
+
+El Edge es una aplicación Flask que se ejecuta entre el prototipo y el backend; no publica Swagger ni una especificación OpenAPI. Su referencia de endpoints se mantiene en el repositorio, junto con la documentación de contratos e integración: [contratos](https://github.com/1ASI0572-2620-8740-IOT/hydroguard-edge-service/blob/develop/docs/contracts.md) e [integración](https://github.com/1ASI0572-2620-8740-IOT/hydroguard-edge-service/blob/develop/docs/integration.md). La instancia desplegada para la simulación es `https://hg-8740-edge-wokwi.onrender.com` y la ejecución local usa `http://localhost:5000`. Las rutas se autentican con `Basic` (identificador y credencial del dispositivo) o con `Bearer` (JWT técnico) y validan el scope del token.
+
+| # | Acción implementada | Verbo y sintaxis | Parámetros | Respuesta esperada |
+|:--|:--|:--|:--|:--|
+| 1 | Estado del Edge | `GET /health` | Sin autenticación ni parámetros. | `200` con `status`, `deviceAuthentication`, `backend` y `synchronizationRunning`. |
+| 2 | Sesión técnica del dispositivo | `GET /edge/v1/device-auth/session` | Header `Authorization`; scope `commands:read`. | `200` con `deviceId` y `organizationId`; no devuelve el token. |
+| 3 | Canje de credencial por token | `POST /edge/v1/device-auth/token` | Body: `deviceId` y `credential`; `Content-Type: application/json`. | `200` con `token` y `expiresAt`; `415` si el cuerpo no es JSON, `422` si no valida y `503` si falta la confianza del JWT. |
+| 4 | Recepción de telemetría | `POST /edge/v1/telemetry` | Header de autenticación; scope `telemetry:write`; body con `measurementId`, `ph` (`0..14`), `temperature` y `measuredAt`. | `202` con `measurementId`, `acceptedLocally`, `duplicate` y `deliveryStatus`; `409` si el identificador se reutiliza con otro contenido y `507` si la bandeja local está llena. |
+| 5 | Heartbeat | `POST /edge/v1/heartbeat` | Scope `telemetry:write`; body: `messageId` y `occurredAt` con antigüedad entre -30 s y 90 s. | Reenvía la respuesta del backend: `204` sin cuerpo o el JSON con su código; `503` si el backend no responde. |
+| 6 | Configuración vigente | `GET /edge/v1/configuration` | Scope `commands:read`; sin cuerpo. | `204` si no hay configuración publicada o el JSON que devuelve el backend. |
+| 7 | Confirmación de configuración | `POST /edge/v1/configuration/acknowledgements` | Scope `commands:ack`; body: `configurationVersion` y `occurredAt`. | Reenvía `204` o el JSON del backend con su código; `422` si no valida. |
+| 8 | Siguiente comando | `GET /edge/v1/commands/next` | Scope `commands:read`; sin cuerpo. | `204` si no hay comando o `200` con `commandId`, `deviceId`, `type`, `executionNumber`, `configurationVersion`, `expiresAt` y `payload`. |
+| 9 | Confirmación de comando | `POST /edge/v1/commands/{commandId}/acknowledgements` | Path: `commandId`; scope `commands:ack`; body: `executionNumber`, `status`, `occurredAt`, `executionMode` y `evidence`. | `202` con `commandId`, `acceptedLocally` y `deliveryStatus`; `404` si el comando no se entregó a ese dispositivo y `409` si la ejecución o la transición no corresponden. |
+
+Ejemplo de respuesta de `GET /health`:
+
+```json
+{
+  "status": "UP",
+  "deviceAuthentication": "CONFIGURED",
+  "backend": "UP",
+  "synchronizationRunning": true
+}
+```
+
+Los endpoints 5, 6 y 7 son de paso: el Edge transporta el cuerpo y el código del backend sin definir un contrato propio de salida. Los endpoints 4, 8 y 9 validan y persisten localmente en SQLite antes de responder, por lo que un `202` acredita la aceptación local y no la entrega al backend.
+
+**Espacio reservado para la captura.** Insertar evidencia de la interacción con el Edge: `GET /health`, una medición enviada y su confirmación con datos de muestra. Archivo sugerido: `assets/services-evidence/sprint-2/07-edge.png`. La captura debe indicar si corresponde a la instancia desplegada o a la ejecución local y no debe mostrar credenciales.
+
+##### Rutas internas entre microservicios
+
+Estas rutas no se publican en Swagger ni se enrutan por el Gateway. Se invocan en red privada con `X-Hydroguard-Caller` y `X-Hydroguard-Service-Key`; su documentación se mantiene con los contratos del repositorio y no reemplaza las pruebas de integración.
+
+| Servicio | Verbo y sintaxis | Llamante | Resultado |
+|:--|:--|:--|:--|
+| Human IAM | `GET /internal/v1/authentication/session` | configuration | Contexto de sesión con organización, rol y segmento. |
+| Device Identity | `POST /internal/v1/technical-session` | telemetry | Principal del dispositivo con versión de credencial y vigencia. |
+| Device Identity | `GET /internal/v1/device-identities/{device}` | configuration | Estado de identidad del dispositivo en la organización. |
+| Configuration | `GET /internal/v1/devices/{id}` | device-identity | Registro del dispositivo para validar su alta. |
+| Configuration | `GET /internal/v1/operators/{user}/access-summary` | human-iam | Perfil, grupo, elegibilidad y asignaciones del operario. |
+| Configuration | `POST /internal/v1/operators/{user}/activate` | human-iam | Activación del perfil tras el primer acceso (`204`). |
+| Configuration | `POST /internal/v1/operators/{user}/deactivate` | human-iam | Desactivación del perfil (`204`). |
+| Configuration | `GET /internal/v1/runtime/devices` | telemetry, treatment, monitoring | Dispositivos disponibles de la organización. |
+| Configuration | `GET /internal/v1/runtime/devices/{id}` | telemetry, treatment, monitoring | Detalle del dispositivo con configuración aplicada. |
+| Configuration | `POST /internal/v1/runtime/authorize` | telemetry, treatment, monitoring | Autorización del dispositivo para el usuario o `403`. |
+| Configuration | `GET /internal/v1/runtime/operator-devices` | telemetry, treatment, monitoring | Dispositivos asignados al operario. |
+| Configuration | `POST /internal/v1/runtime/devices/{id}/lease` | treatment | Bloqueo del dispositivo para un proceso (`204`). |
+| Configuration | `POST /internal/v1/runtime/devices/{id}/release` | treatment | Liberación del bloqueo al terminar el proceso (`204`). |
+| Configuration | `POST /internal/v1/runtime/devices/{id}/communication` | telemetry | Registro de la última comunicación (`204`). |
+| Configuration | `POST /internal/v1/runtime/devices/{id}/applied` | telemetry | Versión de configuración confirmada por el dispositivo (`204`). |
+| Telemetry | `POST /internal/v1/commands` | treatment | Encola un comando técnico para el dispositivo (`204`). |
+| Telemetry | `GET /internal/v1/devices/{id}/latest` | treatment, monitoring | Última medición del dispositivo en la organización. |
+| Treatment | `POST /internal/v1/events` | telemetry | Registro de un evento técnico (`204`). |
+| Treatment | `POST /internal/v1/commands/authorize` | telemetry | Autoriza la entrega de un comando al dispositivo. |
+| Treatment | `GET /internal/v1/processes` | monitoring | Procesos de la organización para la trazabilidad. |
+| Monitoring | `POST /internal/v1/events` | telemetry, treatment | Registro de eventos de telemetría y de proceso (`204`). |
+
 #### 6.2.2.8. Software Deployment Evidence for Sprint Review
 
 Durante el Sprint 2 se prepararon y publicaron los servicios del backend, la aplicación administrativa y una instancia Edge separada para el prototipo virtual. Las siguientes capturas muestran el estado observado en el navegador durante la revisión; no reemplazan una prueba integral ni acreditan que todos los componentes respondan en ese instante.
