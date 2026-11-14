@@ -43,64 +43,99 @@
 
 ## Registro de Versiones del Informe
 
-| **Versión** | **Fecha** | **Autor(es)** | **Descripción de modificación** |
+| **Versión** | **Fecha** | **Autor** | **Descripción de modificación** |
 |:--:|:--:|:--|:--|
-| AV1 | 01/09/2026 | Rios Pacheco, Hector Javier | Inicializó el informe, creó la portada y su estructura de capítulos; definió el perfil de la startup, el análisis 5W2H de la problemática, los segmentos objetivo y la bibliografía inicial. |
+| AV1 | 01/09/2026 | Rios Pacheco, Hector Javier | Inicializó el informe, creó la portada y su estructura de capítulos; definió el perfil de la startup, el análisis 5W2H, los segmentos objetivo y la bibliografía inicial. |
 | AV1 | 03/09/2026 | Santur Tello, Andrea Elizabeth | Documentó el Big Picture EventStorming y completó el Ubiquitous Language con el glosario del dominio. |
-| AV1 | 04/09/2026 | Rios Pacheco, Hector Javier | Actualizó la identidad de HydroLink/HydroGuard y desarrolló el análisis competitivo, las estrategias frente a competidores y el diseño de las entrevistas para los segmentos textil e hidropónico. |
-| AV1 | 06/09/2026 | Rios Pacheco, Hector Javier | Incorporó su perfil de integrante, el proceso Lean UX, sus supuestos, hipótesis y resultados esperados, además del Lean UX Canvas y los recursos gráficos correspondientes. |
-| AV1 | 08/09/2026 | Prieto Mantari, Leonardo Fabrizzio Junior | Elaboró los User Personas de ambos segmentos, la User Task Matrix y los User Journey Maps, incluyendo sus evidencias gráficas. |
-| AV1 | 09/09/2026 | Santur Tello, Andrea Elizabeth<br>Prieto Mantari, Leonardo Fabrizzio Junior | **Santur Tello, Andrea Elizabeth:** refinó la descripción del proceso de teñido, consolidó las épicas, User Stories y Technical Stories, e incorporó la evidencia visual del EventStorming.<br>**Prieto Mantari, Leonardo Fabrizzio Junior:** elaboró los Empathy Maps de ambos segmentos e integró sus cambios con la rama de desarrollo. |
-| AV1 | 10/09/2026 | Rios Pacheco, Hector Javier | Registró y analizó dos entrevistas del segmento textil, incorporando datos del entrevistado, hallazgos, puntos de dolor, necesidades, enlaces y evidencias visuales. |
+| AV1 | 04/09/2026 | Rios Pacheco, Hector Javier | Actualizó la identidad de HydroLink/HydroGuard y desarrolló el análisis competitivo, estrategias y diseño de entrevistas para ambos segmentos. |
+| AV1 | 06/09/2026 | Rios Pacheco, Hector Javier | Incorporó su perfil de integrante, el proceso Lean UX (supuestos, hipótesis, resultados y Lean UX Canvas) y sus recursos gráficos. |
+| AV1 | 08/09/2026 | Prieto Mantari, Leonardo Fabrizzio Junior | Elaboró los User Personas, la User Task Matrix y los User Journey Maps de ambos segmentos con sus evidencias gráficas. |
+| AV1 | 09/09/2026 | Santur Tello, Andrea Elizabeth | Refinó la descripción del proceso de teñido, consolidó épicas, User Stories y Technical Stories, e incorporó la evidencia visual del EventStorming. |
+| AV1 | 09/09/2026 | Prieto Mantari, Leonardo Fabrizzio Junior | Elaboró los Empathy Maps de ambos segmentos e integró sus cambios en la rama de desarrollo. |
+| AV1 | 10/09/2026 | Rios Pacheco, Hector Javier | Registró y analizó dos entrevistas del segmento textil con hallazgos, puntos de dolor, necesidades y evidencias visuales. |
 | AV1 | 13/09/2026 | Santur Tello, Andrea Elizabeth | Actualizó el recurso gráfico empleado como evidencia del Big Picture EventStorming. |
-| AV1 | 16/09/2026 | Santur Tello, Andrea Elizabeth | Actualizó el Big Picture EventStorming y la especificación de requisitos; documentó el Impact Mapping con su diagrama y añadió el Product Backlog inicial priorizado. |
-| AV1 | 20/09/2026 | Olivera Barzola, Eric Marlon<br>Rios Pacheco, Hector Javier | **Olivera Barzola, Eric Marlon:** desarrolló Design-Level EventStorming, Candidate Context Discovery, Domain Message Flows Modeling y los Bounded Context Canvases.<br>**Rios Pacheco, Hector Javier:** consolidó el Student Outcome 5, las conclusiones y recomendaciones, la tabla de contenidos y el análisis estadístico de las seis entrevistas de los segmentos textil e hidropónico. |
-| TB1 | 03/10/2026 | Prieto Mantari, Leonardo Fabrizzio Junior | Definió las guías generales de estilo y sus criterios para web, móvil e IoT; documentó las convenciones de código fuente, la matriz LACX de liderazgo y colaboración, y analizó la participación del equipo durante el Sprint 1 a partir de la evidencia de los repositorios. |
-| TB1 | 05/10/2026 | Rodriguez Macedo, Sebastian | Incorporó los wireframes de las aplicaciones de HydroGuard para representar las vistas principales de la experiencia administrativa y móvil. |
-| TB1 | 06/10/2026 | Rios Pacheco, Hector Javier | Incorporó Device Identity and Access como bounded context y alineó las especificaciones arquitectónicas y de UX/UI con el modelo operativo vigente. |
-| TB1 | 07/10/2026 | Rios Pacheco, Hector Javier<br>Santur Tello, Andrea Elizabeth | **Rios Pacheco, Hector Javier:** refinó el EventStorming, los flujos de mensajes, los Bounded Context Canvases y el Context Mapping para incorporar identidad de dispositivo y el ciclo de tratamiento acordado.<br>**Santur Tello, Andrea Elizabeth:** desarrolló la configuración del entorno y del capítulo VI e incorporó los recursos visuales de las herramientas del proyecto. |
-| TB1 | 08/10/2026 | Santur Tello, Andrea Elizabeth<br>Gomez Hurtado, Miguel Angel | **Santur Tello, Andrea Elizabeth:** actualizó Source Code Management, GitFlow, el despliegue del Landing Page, Sprint Planning y Sprint Backlog 1.<br>**Gomez Hurtado, Miguel Angel:** incorporó y amplió los mock-ups, User Flow Diagrams y el diseño del dispositivo IoT, e integró la versión final de los mock-ups. |
-| TB1 | 09/10/2026 | Prieto Mantari, Leonardo Fabrizzio Junior<br>Gomez Hurtado, Miguel Angel<br>Rios Pacheco, Hector Javier | **Prieto Mantari, Leonardo Fabrizzio Junior:** completó la estructura de los capítulos V y VI, la evidencia de ejecución, el video de prototipado y la tabla de contenidos navegable; corrigió el Sprint Backlog y su evidencia de Trello, y actualizó su Student Outcome con los entregables del integrante 1 y el apoyo al integrante 4.<br>**Gomez Hurtado, Miguel Angel:** incorporó la explicación de las pruebas y las evidencias de despliegue en Vercel y Render.<br>**Rios Pacheco, Hector Javier:** integró los cambios documentales, incorporó los wireframes y mock-ups del Landing Page y conectó sus accesos con la aplicación web desplegada. |
-| AV2 | 12/11/2026 | Prieto Mantari, Leonardo Fabrizzio Junior | Documentó la evidencia de desarrollo y la colaboración del Sprint 2; incorporó los cambios y pruebas de P-02 (edición de alias y modelo) y P-03 (motivos de bloqueo de acciones del Operario), y actualizó su Student Outcome. |
-| AV2 | 12/11/2026 | Santur Tello, Andrea Elizabeth | Actualizó sus aportes en Student Outcome, añadió el registro complementario de P-04 al Sprint Backlog 2 e incorporó sus dos commits de backend al análisis de colaboración, indicando que están publicados en `feature/edit-groups-reservoirs` y pendientes de fusión en `develop`. |
-| AV2 | 12/11/2026 | Gomez Hurtado, Miguel Angel | Realizó el prototipo en Wokwi, probó los cambios en la plataforma web y documentó los microservicios. |
+| AV1 | 16/09/2026 | Santur Tello, Andrea Elizabeth | Actualizó el Big Picture EventStorming y la especificación de requisitos; documentó el Impact Mapping y añadió el Product Backlog inicial priorizado. |
+| AV1 | 20/09/2026 | Olivera Barzola, Eric Marlon | Desarrolló Design-Level EventStorming, Candidate Context Discovery, Domain Message Flows Modeling y los Bounded Context Canvases. |
+| AV1 | 20/09/2026 | Rios Pacheco, Hector Javier | Consolidó el Student Outcome 5, conclusiones y recomendaciones, tabla de contenidos y el análisis estadístico de las seis entrevistas. |
+| TB1 | 03/10/2026 | Prieto Mantari, Leonardo Fabrizzio Junior | Definió las guías de estilo (web, móvil e IoT), convenciones de código, matriz LACX y análisis de participación del equipo en el Sprint 1. |
+| TB1 | 05/10/2026 | Rodriguez Macedo, Sebastian | Incorporó los wireframes de las aplicaciones administrativa y móvil de HydroGuard. |
+| TB1 | 06/10/2026 | Rios Pacheco, Hector Javier | Incorporó Device Identity and Access como bounded context y alineó las especificaciones arquitectónicas y de UX/UI. |
+| TB1 | 07/10/2026 | Rios Pacheco, Hector Javier | Refinó el EventStorming, flujos de mensajes, Bounded Context Canvases y Context Mapping con identidad de dispositivo y ciclo de tratamiento. |
+| TB1 | 07/10/2026 | Santur Tello, Andrea Elizabeth | Desarrolló la configuración del entorno y del capítulo VI, incorporando recursos visuales de las herramientas del proyecto. |
+| TB1 | 08/10/2026 | Santur Tello, Andrea Elizabeth | Actualizó Source Code Management, GitFlow, el despliegue del Landing Page, Sprint Planning y Sprint Backlog 1. |
+| TB1 | 08/10/2026 | Gomez Hurtado, Miguel Angel | Incorporó y amplió los mock-ups, User Flow Diagrams y el diseño del dispositivo IoT. |
+| TB1 | 09/10/2026 | Prieto Mantari, Leonardo Fabrizzio Junior | Completó la estructura de los capítulos V y VI, evidencias de ejecución y prototipado, tabla de contenidos, Sprint Backlog 1 y Student Outcome. |
+| TB1 | 09/10/2026 | Gomez Hurtado, Miguel Angel | Incorporó la explicación de pruebas y evidencias de despliegue en Vercel y Render. |
+| TB1 | 09/10/2026 | Rios Pacheco, Hector Javier | Integró los cambios documentales, añadió wireframes y mock-ups del Landing Page y enlazó sus accesos con la aplicación web desplegada. |
+| AV2 | 10/10/2026 | Rodriguez Macedo, Sebastian | Incorporó y documentó los wireflows de las aplicaciones web y móvil con sus diagramas y recorridos. |
+| AV2 | 25/10/2026 | Rios Pacheco, Hector Javier | Alineó los contratos del backend y la propiedad de datos entre los bounded contexts. |
+| AV2 | 26/10/2026 | Gomez Hurtado, Miguel Angel | Refinó el diseño de dominio, capas arquitectónicas, diagramas de componentes y esquemas de base de datos de IAM, Device Identity, Configuration, Telemetry, Treatment y Monitoring. |
+| AV2 | 11/11/2026 | Rios Pacheco, Hector Javier | Documentó los prototipos ESP32 físico y simulado en Wokwi (cableado, calibración y almacenamiento), alineó la arquitectura, UX/UI, Landing Page, backlog y evidencias del Sprint 2. |
+| AV2 | 11/11/2026 | Santur Tello, Andrea Elizabeth | Refinó historias de usuario y criterios de aceptación, actualizó el backlog y asignaciones del Sprint 2, y preparó las secciones de entrevistas de validación y evaluación heurística. |
+| AV2 | 12/11/2026 | Prieto Mantari, Leonardo Fabrizzio Junior | Documentó las evidencias de desarrollo y colaboración del Sprint 2, incorporó los cambios y pruebas de P-02 y P-03, y actualizó su Student Outcome. |
+| AV2 | 12/11/2026 | Santur Tello, Andrea Elizabeth | Actualizó sus aportes en Student Outcome, añadió el registro complementario de P-04 al Sprint Backlog 2 y actualizó sus contribuciones del Sprint 2. |
+| AV2 | 13/11/2026 | Prieto Mantari, Leonardo Fabrizzio Junior | Actualizó su Student Outcome y las conclusiones y recomendaciones de AV2. |
+| AV2 | 13/11/2026 | Gomez Hurtado, Miguel Angel | Documentó los servicios y endpoints del Sprint 2, enlazó el prototipo en Wokwi y completó sus aportes de AV2 en Student Outcome. |
+| AV2 | 14/11/2026 | Rios Pacheco, Hector Javier | Ajustó el ángulo del actuador en el firmware del prototipo y registró la entrevista de validación del segmento textil con su evidencia. |
+| AV2 | 14/11/2026 | Santur Tello, Andrea Elizabeth | Actualizó los estados del backlog del Sprint 2 e incorporó los hallazgos de la auditoría heurística del proyecto IceTrack. |
 
 
 ## Project Report Collaboration Insights
 
-Las actividades del proyecto se planificarán, asignarán y evidenciarán progresivamente en la organización del equipo en GitHub: <https://github.com/1ASI0572-2620-8740-IOT>.
+Las actividades del proyecto se planifican, asignan y evidencian progresivamente en el repositorio [`report`](https://github.com/1ASI0572-2620-8740-IOT/report) de la organización del equipo en GitHub: <https://github.com/1ASI0572-2620-8740-IOT>. Cada entrega amplía esta sección con el resumen de contribuciones y su evidencia visual en coherencia con el *Registro de Versiones del Informe*.
+
+### AV1 — Project Report Collaboration Insights
+
+En AV1 (del **1 al 20 de septiembre de 2026**), el equipo estructuró la base del informe mediante trabajo distribuido por capítulos: Hector inicializó el documento, desarrolló el análisis competitivo, Lean UX, entrevistas textiles y la consolidación final; Andrea documentó el Big Picture EventStorming, el Ubiquitous Language, Impact Mapping y Product Backlog; Leonardo elaboró los artefactos centrados en el usuario (Personas, Task Matrix, Journey Maps y Empathy Maps); Miguel redactó los modelos tácticos iniciales de los bounded contexts y la entrevista hidropónica; Sebastian aportó los diagramas C4; y Eric desarrolló el Design-Level EventStorming, Candidate Context Discovery, Domain Message Flows y Bounded Context Canvases.
+
+| Integrante | Commits de AV1 en `report` | Contribución principal al informe |
+|:--|--:|:--|
+| Gomez Hurtado, Miguel Angel | 25 | Diseño táctico inicial de los bounded contexts, entrevista hidropónica y Student Outcome. |
+| Santur Tello, Andrea Elizabeth | 18 | Big Picture EventStorming, Ubiquitous Language, Impact Mapping, Product Backlog y Student Outcome. |
+| Rios Pacheco, Hector Javier | 14 | Portada, estructura base, análisis 5W2H/competitivo, Lean UX, entrevistas textiles, tabla de contenidos y conclusiones. |
+| Prieto Mantari, Leonardo Fabrizzio Junior | 6 | User Personas, User Task Matrix, User Journey Maps, Empathy Maps y entrevista 4. |
+| Olivera Barzola, Eric Marlon | 5 | Capítulo IV estratégico (Design-Level EventStorming, Candidate Context Discovery, Domain Message Flows y Bounded Context Canvases) y Student Outcome. |
+| Rodriguez Macedo, Sebastian | 2 | Diagramas de arquitectura de software C4. |
+| **Total** | **70** | |
+
+### TB1 — Project Report Collaboration Insights
+
+Durante TB1 (del **3 al 9 de octubre de 2026**), el informe evolucionó mediante responsabilidades complementarias: Hector refinó el diseño estratégico, incorporó *Device Identity and Access*, enlazó el Landing Page y alineó especificaciones y evidencias de despliegue; Leonardo formalizó las guías de estilo, convenciones de código, matriz LACX, estructura de los capítulos V y VI, evidencias de ejecución/Trello y tabla de contenidos navegable; Miguel completó los mock-ups, User Flows, diseño del dispositivo IoT y evidencias de pruebas y despliegue; Andrea desarrolló SCM, GitFlow, despliegue del Landing Page y planificación del Sprint 1; y Sebastian incorporó los wireframes de las aplicaciones.
+
+| Integrante | Commits de TB1 en `report` | Contribución principal al informe |
+|:--|--:|:--|
+| Rios Pacheco, Hector Javier | 18 | Refinamiento de arquitectura y DDD estratégico, Device Identity, Landing Page y evidencias de despliegue. |
+| Prieto Mantari, Leonardo Fabrizzio Junior | 17 | Guías de estilo, convenciones, matriz LACX, capítulos V–VI, prototipado, Sprint Backlog 1 y tabla de contenidos. |
+| Gomez Hurtado, Miguel Angel | 9 | Mock-ups, User Flows, diseño del dispositivo IoT y evidencias de pruebas y despliegue en Vercel/Render. |
+| Santur Tello, Andrea Elizabeth | 9 | SCM, GitFlow, configuración del entorno, despliegue del Landing Page y Sprint Planning/Backlog 1. |
+| Rodriguez Macedo, Sebastian | 1 | Wireframes de las aplicaciones web y móvil. |
+| Olivera Barzola, Eric Marlon | 0 | — |
+| **Total** | **54** | |
 
 ### AV2 — Project Report Collaboration Insights
 
-En AV2, el equipo actualizó el informe para documentar la evolución de HydroGuard desde el incremento web con Mock API hacia servicios persistentes, una aplicación móvil para el Operario y componentes de integración IoT. El avance reúne la planificación y el backlog del Sprint 2, las correcciones de arquitectura y UX/UI, las evidencias de desarrollo, pruebas y despliegue, y la preparación de las entrevistas de validación y la evaluación heurística.
-
-La tabla resume los commits únicos sin fusiones registrados en `develop` de [`report`](https://github.com/1ASI0572-2620-8740-IOT/report/commits/develop/) del **10 de octubre al 12 de noviembre de 2026**, en hora de Lima, hasta `dfc21eb`. Este corte incluye las dos actualizaciones del informe sobre P-02 y P-03 posteriores a `2c693b5`, que es el límite usado para el repositorio `report` en el análisis del Sprint 2. No incluye la presente actualización.
+En AV2 (del **10 de octubre al 14 de noviembre de 2026**), el equipo actualizó el informe para documentar la evolución de HydroGuard desde el incremento web con Mock API hacia los microservicios persistentes con PostgreSQL, la aplicación móvil Flutter para el Operario, el servicio Edge en Python y los prototipos ESP32 físico y simulado en Wokwi, además de las entrevistas de validación y la auditoría heurística.
 
 | Integrante | Commits de AV2 en `report` | Contribución principal al informe |
 |:--|--:|:--|
-| Rios Pacheco, Hector Javier | 11 | Alineó arquitectura, mapa de contextos y flujos con la implementación; documentó el prototipo ESP32 y Wokwi, las pruebas automatizadas y los despliegues. |
-| Santur Tello, Andrea Elizabeth | 4 | Actualizó historias, criterios de aceptación, planificación, asignaciones y backlog del Sprint 2; preparó las secciones de entrevistas de validación y evaluación heurística. |
-| Gomez Hurtado, Miguel Angel | 34 | Refinó el diseño de dominio, los componentes, los contratos y los modelos de datos de IAM, Configuration, Telemetry, Treatment y Monitoring. |
-| Prieto Mantari, Leonardo Fabrizzio Junior (`Wuux1`) | 5 | Consolidó la evidencia de desarrollo y los insights del Sprint 2; documentó P-02 y P-03 y actualizó su Student Outcome de AV2. |
-| Rodriguez Macedo, Sebastian | 2 | Incorporó y documentó los wireflows de las aplicaciones, con sus diagramas y recorridos. |
-| **Total** | **56** | |
+| Gomez Hurtado, Miguel Angel | 40 | Refinamiento de dominio, componentes, contratos y esquemas de BD (IAM, Configuration, Telemetry, Treatment y Monitoring), enlace Wokwi y servicios del Sprint 2. |
+| Rios Pacheco, Hector Javier | 14 | Alineación de contratos backend, prototipos ESP32 físico y Wokwi, arquitectura, UX/UI, Landing Page, evidencias del Sprint 2 y entrevista de validación textil. |
+| Prieto Mantari, Leonardo Fabrizzio Junior  | 9 | Evidencias de desarrollo y colaboración del Sprint 2, mejoras P-02 y P-03, Student Outcome y conclusiones/recomendaciones de AV2. |
+| Santur Tello, Andrea Elizabeth | 7 | Historias de usuario, backlog y asignaciones del Sprint 2 (incluyendo P-04), secciones de validación, Student Outcome y auditoría heurística de IceTrack. |
+| Rodriguez Macedo, Sebastian | 2 | Wireflows y diagramas de recorrido de las aplicaciones web y móvil. |
+| Olivera Barzola, Eric Marlon | 0 | — |
+| **Total** | **72** | |
 
-**Aporte de Leonardo (`Wuux1`).**
+![Evidencia general de colaboración en GitHub del repositorio report](assets/report-collaboration-insights-github.jpg)
 
-Durante el AV2 consolidó las evidencias de desarrollo y colaboración del Sprint 2 y documentó sus aportes a P-02 y P-03 en backend, web y móvil. El [análisis de colaboración del Sprint 2](#6229-team-collaboration-insights-during-sprint) distingue el trabajo en los productos de la elaboración del informe e indica las revisiones usadas para el conteo.
-
-**Alcance y evidencia.** El informe documenta la actualización de la Landing Page, la web administrativa, el backend y Gateway, la aplicación Flutter, el servicio Edge y los prototipos físico y virtual. Las [evidencias de desarrollo](#6224-development-evidence-for-sprint-review), [pruebas](#6225-testing-suite-evidence-for-sprint-review) y [despliegue](#6228-software-deployment-evidence-for-sprint-review) distinguen código integrado, resultados de pruebas y versiones publicadas. El [capítulo de validación](#63-validation-interviews) recoge el diseño y los formatos de registro; no acredita entrevistas o evaluaciones aún pendientes. La evidencia disponible tampoco acredita la publicación de los videos About-the-Product y About-the-Team, la distribución del móvil en tienda ni la validación física completa.
-
-![Historial de colaboración del informe en GitHub durante AV2](assets/development-sprint-2/03-colaboracion-report-develop.jpg)
-
-*Figura: historial de `report` en `develop`, filtrado del 7 al 12 de noviembre. La captura es un recorte del avance: incluye fusiones y fue tomada antes de las últimas actualizaciones, por lo que no sustituye el conteo de la tabla.*
-
-El conteo corresponde al trabajo versionado en el informe. La colaboración también comprende la revisión e integración de aportes y el trabajo en los repositorios de cada producto.
+*Figura: analíticas generales de GitHub Contributors en el repositorio `report` (del 29 de agosto al 7 de noviembre de 2026).*
 
 ## Tabla de Contenidos
 
 - [Registro de Versiones del Informe](#registro-de-versiones-del-informe)
 - [Project Report Collaboration Insights](#project-report-collaboration-insights)
+  - [AV1 — Project Report Collaboration Insights](#av1--project-report-collaboration-insights)
+  - [TB1 — Project Report Collaboration Insights](#tb1--project-report-collaboration-insights)
   - [AV2 — Project Report Collaboration Insights](#av2--project-report-collaboration-insights)
 - [Student Outcome](#student-outcome)
 - [Capítulo I: Introducción](#capítulo-i-introducción)
@@ -4769,6 +4804,7 @@ En C/C++ para el dispositivo, los nombres técnicos permanecen en inglés, las c
 
 #### Gherkin, pruebas y commits
 
+
 Los archivos Gherkin usan nombres en `kebab-case` y las palabras clave `Feature`, `Scenario`, `Given`, `When` y `Then`. Cada escenario describe un comportamiento observable y evita detalles de implementación. Las pruebas unitarias siguen el patrón Arrange–Act–Assert; su nombre indica condición y resultado esperado.
 
 Los commits siguen **Conventional Commits**:
@@ -5507,7 +5543,9 @@ Esta matriz documenta la distribución de liderazgo y colaboración del equipo. 
 
 El Sprint 2 de HydroGuard tiene como objetivo integrar el frontend administrativo Angular, los microservicios Spring Boot, la aplicación móvil Flutter, el servicio Edge y el prototipo ESP32. Se da continuidad a las User Stories del Sprint 1 que requieren integración real, conservando sus identificadores y evitando duplicar las tareas desarrolladas con Mock API.
 
-El Sprint Backlog 2 contempla 28 historias seleccionadas de manera preliminar, con 103 Story Points y 62 Engineering Tasks estimadas en 319 horas. La siguiente tabla presenta las tareas, responsables propuestos, estimaciones y estados, sujetos a validación con el equipo y las evidencias de desarrollo.
+El Sprint Backlog 2 registra 28 historias, con 103 Story Points planificados y 62 Engineering Tasks estimadas en 319 horas. Cada historia se descompone en dos tareas de entre 4 y 8 horas; las seis tareas transversales no agregan Story Points. Las asignaciones y estados consignados son una propuesta de documentación que debe conciliarse con el equipo, el tablero y las evidencias: `Done` en una tarea no equivale a la aceptación integral de su historia ni acredita por sí solo una prueba física.
+
+El desglose retrospectivo del Sprint 1 (38 tareas, 158 horas) es la referencia corregida para comprobar la descomposición; las 29 tareas y 118 horas iniciales se conservan como registro histórico y no se suman al desglose ni a la planificación del Sprint 2. US-37 mantiene pendiente la recepción efectiva de solicitudes de contacto.
 
 **Sprint #:** Sprint 2
 
@@ -5536,7 +5574,7 @@ El Sprint Backlog 2 contempla 28 historias seleccionadas de manera preliminar, c
 | US-20 | Liberación manual | T-60 | Implementación e integración: US-20 | Autorizar liberación manual desde sesión de Operario responsable | 5 | Santur Tello, Andrea Elizabeth (propuesto) | Done |
 | TS-01 | Provisionamiento y autenticación del dispositivo | T-70 | Implementación e integración: TS-01 | Provisionar credenciales técnicas por dispositivo y organización | 6 | Rios Pacheco, Hector Javier (propuesto) | Done |
 | TS-01 | Provisionamiento y autenticación del dispositivo | T-71 | Validación y pruebas: TS-01 | Probar validación, revocación y rechazo de identidad ajena | 5 | Rios Pacheco, Hector Javier (propuesto) | Done |
-| TS-04 | Ingesta de telemetría en el Edge API | T-74 | Implementación e integración: TS-04 | Implementar recepción y bandeja local durable en Edge Flask | 6 | Gomez Hurtado, Miguel Angel (propuesto) | Done |
+| TS-04 | Ingesta HTTPS de telemetría en Edge API | T-74 | Implementación e integración: TS-04 | Implementar recepción y bandeja local durable en Edge Flask | 6 | Gomez Hurtado, Miguel Angel (propuesto) | Done |
 | TS-05 | Sincronización de parámetros vigentes | T-76 | Implementación e integración: TS-05 | Exponer versión publicada para sincronización del dispositivo | 5 | Rodriguez Macedo, Sebastian (propuesto) | Done |
 | TS-05 | Sincronización de parámetros vigentes | T-77 | Validación y pruebas: TS-05 | Comprobar ACK de aplicación sin equiparar publicado y aplicado | 5 | Rodriguez Macedo, Sebastian (propuesto) | Done |
 | TS-12 | Exposición de configuración mediante API RESTful | T-82 | Implementación e integración: TS-12 | Exponer API REST de consulta/edición de configuración autorizada | 5 | Rodriguez Macedo, Sebastian (propuesto) | Done |
@@ -5556,7 +5594,7 @@ El Sprint Backlog 2 contempla 28 historias seleccionadas de manera preliminar, c
 | US-25 | Alerta por pérdida de monitoreo | T-64 | Implementación e integración: US-25 | Detectar pérdida por heartbeat/lectura y generar alerta única | 5 | Prieto Mantari, Leonardo Fabrizzio Junior (propuesto) | ToReview |
 | US-27 | Consulta del historial de dispositivos | T-66 | Implementación e integración: US-27 | Conectar historial administrativo a registros persistentes | 5 | Prieto Mantari, Leonardo Fabrizzio Junior (propuesto) | ToReview |
 | TS-03 | Adquisición y validación de mediciones | T-72 | Implementación e integración: TS-03 | Integrar adquisición de pH/temperatura y controles de validez | 6 | Gomez Hurtado, Miguel Angel (propuesto) | ToReview |
-| TS-04 | Ingesta de telemetría en el Edge API | T-75 | Validación y pruebas: TS-04 | Probar envío HTTP al Gateway, reintento y deduplicación | 6 | Gomez Hurtado, Miguel Angel (propuesto) | ToReview |
+| TS-04 | Ingesta HTTPS de telemetría en Edge API | T-75 | Validación y pruebas: TS-04 | Probar envío HTTP al Gateway, reintento y deduplicación | 6 | Gomez Hurtado, Miguel Angel (propuesto) | ToReview |
 | TS-07 | Control del actuador de flujo | T-78 | Implementación e integración: TS-07 | Implementar orden de apertura/cierre compatible con actuador | 6 | Gomez Hurtado, Miguel Angel (propuesto) | ToReview |
 | TS-10 | Estado de disponibilidad del dispositivo | T-80 | Implementación e integración: TS-10 | Registrar heartbeat y última comunicación del dispositivo | 5 | Gomez Hurtado, Miguel Angel (propuesto) | ToReview |
 | TS-13 | Ejecución y confirmación de la actuación correctiva | T-84 | Implementación e integración: TS-13 | Registrar comando correctivo y resultado con ID idempotente | 6 | Gomez Hurtado, Miguel Angel (propuesto) | ToReview |
@@ -5584,6 +5622,10 @@ El Sprint Backlog 2 contempla 28 historias seleccionadas de manera preliminar, c
 | TS-12 | Exposición de configuración mediante API RESTful | T-83 | Validación y pruebas: TS-12 | Verificar validación, seguridad y contrato de cliente móvil | 5 | Rodriguez Macedo, Sebastian (propuesto) | InProcess |
 | TS-13 | Ejecución y confirmación de la actuación correctiva | T-85 | Validación y pruebas: TS-13 | Probar reintentos y confirmación sin duplicación de actuación | 6 | Gomez Hurtado, Miguel Angel (propuesto) | InProcess |
 | N/A | Infraestructura y actividades transversales | T-91 | Despliegue y diagnóstico | Verificar URLs, salud, variables de entorno y comunicación de servicios en el entorno elegido; asociar evidencia con 6.2.2.8. | 5 | Rios Pacheco, Hector Javier (propuesto) | InProcess |
+
+**Trazabilidad de mejoras y alcance:** las etiquetas P-02, P-03 y P-04 utilizadas para mejoras administrativas posteriores no son identificadores de User Stories ni deben confundirse con las brechas P02–P04 registradas al cierre del Sprint 1. P-02 (edición descriptiva de dispositivos) se relaciona funcionalmente con la supervisión administrativa de US-04 y la gestión de dispositivos de US-05; P-03 (explicación de bloqueos) con US-06, US-13, US-15 y US-20, según la acción consultada. P-04 (edición descriptiva de grupos y reservorios) se relaciona con US-04 y US-05. Estas relaciones son de contexto: las historias originales no especifican necesariamente la edición descriptiva ni todos los mensajes. Se requiere definir o ampliar criterios de aceptación y estimar las tareas adicionales antes de atribuirles cierre o Story Points; no se agregan retroactivamente a las 62 tareas ni a los 103 SP.
+
+Las condiciones de espera, límite de ciclos y parada segura también se relacionan con US-15 a US-18 y TS-07/TS-13. Que un comportamiento aparezca como dependencia en una tarea seleccionada no incorpora automáticamente las historias US-16 y US-17 al Sprint Backlog ni demuestra su aceptación integral. Su selección y evidencia deben conciliarse explícitamente si el equipo decide incluirlas.
 
 
 #### 6.2.2.4. Development Evidence for Sprint Review
@@ -5688,6 +5730,8 @@ Las pruebas mostradas son pruebas automatizadas JUnit y de integración; no se p
 Estas verificaciones no sustituyen una ejecución de los clientes contra el backend desplegado ni una prueba de actuación con el prototipo físico.
 
 #### 6.2.2.6. Execution Evidence for Sprint Review
+
+Esta sección debe reunir capturas y un enlace al video de ejecución de los flujos efectivamente demostrados: administración web, monitoreo y tratamiento del Operario, y comunicación con el Edge y el prototipo. Se debe identificar el entorno y separar la actuación física de la simulación. **Evidencia pendiente de incorporar:** no se declara una prueba integral final ni la precisión de la calibración únicamente por contar con pruebas automatizadas o despliegues.
 
 #### 6.2.2.7. Services Documentation Evidence for Sprint Review
 
