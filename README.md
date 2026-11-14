@@ -6158,27 +6158,19 @@ Los flujos se realizarán únicamente con las funcionalidades disponibles durant
 
 6. Al observar cómo el prototipo controla la válvula y permite liberar el agua cuando cumple las condiciones configuradas, ¿considera que este mecanismo podría facilitar su proceso de riego? ¿Qué mejoraría?
 
-**Procedimiento de cada entrevista**
-
-1. Presentar brevemente HydroGuard y explicar el propósito de la validación.
-2. Solicitar autorización para registrar la sesión en video y utilizarla como evidencia académica.
-3. Permitir que el participante explore la Landing Page y formule sus primeras impresiones.
-4. Guiar la ejecución de los flujos de la aplicación correspondientes a su segmento.
-5. Demostrar el comportamiento disponible del prototipo IoT, explicando las limitaciones del montaje.
-6. Formular las seis preguntas del segmento y solicitar ejemplos o aclaraciones cuando sea necesario.
-7. Registrar dificultades observadas, comentarios y recomendaciones del participante.
-
 #### 6.3.2. Registro de Entrevistas
 
 El registro de entrevistas documentará las sesiones realizadas con representantes de ambos segmentos objetivo. Para cada participante se incluirán sus datos generales, una captura de la videollamada o grabación, el enlace al video de evidencia, el instante de inicio y la duración de su intervención.
 
-Las grabaciones se publicarán mediante Microsoft Stream o Clipchamp, según las indicaciones del curso. Si se utiliza un video compilado de varias entrevistas, se identificará el intervalo correspondiente a cada participante.
+Las grabaciones se publicarán mediante Microsoft Stream o Clipchamp, según las indicaciones del curso. El entregable audiovisual debe consolidar las entrevistas en un video MP4, identificando en cada intervención al entrevistado, el segmento y la fecha. El enlace individual registrado a continuación es evidencia de la sesión; su inclusión y ubicación en el video compilado quedan pendientes.
 
 **Resumen del registro de entrevistas**
 
+Las fichas restantes mantienen los mismos datos y evidencias: registrar el enlace de cada sesión, la captura y un resumen de las observaciones; completar fecha, duración e intervalo en el video compilado cuando estén confirmados.
+
 | Entrevista | Segmento objetivo | Entrevistado | Fecha | Inicio en video | Duración | Estado |
 |:--|:--|:--|:--|:--|:--|:--|
-| EV-T01 | Industria textil | Pendiente | Pendiente | Pendiente | Pendiente | Por realizar |
+| EV-T01 | Industria textil | David Ramírez | Pendiente de confirmar | Pendiente en video compilado | Pendiente de confirmar | Realizada; compilación pendiente |
 | EV-T02 | Industria textil | Pendiente | Pendiente | Pendiente | Pendiente | Por realizar |
 | EV-T03 | Industria textil | Pendiente | Pendiente | Pendiente | Pendiente | Por realizar |
 | EV-H01 | Producción hidropónica | Pendiente | Pendiente | Pendiente | Pendiente | Por realizar |
@@ -6191,18 +6183,27 @@ Las grabaciones se publicarán mediante Microsoft Stream o Clipchamp, según las
 
 | Campo | Información |
 |:--|:--|
-| Nombre y apellidos | Pendiente de registrar |
-| Edad | Pendiente |
-| Distrito | Pendiente |
-| Ocupación o relación con el sector textil | Pendiente |
-| Fecha de entrevista | Pendiente |
-| URL del video (Microsoft Stream/Clipchamp) | Pendiente |
-| Inicio de la entrevista en el video | Pendiente (hh:mm:ss) |
-| Duración | Pendiente (hh:mm:ss) |
+| Nombre y apellidos | David Ramírez |
+| Edad | 20 |
+| Distrito | Lima |
+| Ocupación o relación con el sector textil | Operador de planta |
+| Fecha de entrevista | Pendiente de confirmar |
+| URL del video (Microsoft Stream/Clipchamp) | https://upcedupe-my.sharepoint.com/:v:/g/personal/u20231c540_upc_edu_pe/IQBo6CKeMrsLS4IKIH1v0KjoAWKmFJeep7KRqKLno4pEOss?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D&e=5iR5Hq |
+| Inicio de la entrevista en el video compilado | 0:02 |
+| Duración | 4:41 |
 
-**Captura de la entrevista:** Pendiente de insertar.
+**Captura de la entrevista:**
 
-**Resumen descriptivo:** Pendiente de redactar después de la entrevista. Se registrarán las apreciaciones sobre la Landing Page, la interpretación de mediciones, las alertas, la trazabilidad y la demostración del prototipo, incluyendo dificultades y sugerencias expresadas por el participante.
+![David Ramírez durante la validación de la Landing Page](assets/validation-interviews/ev-t01-david-ramirez.png)
+
+**Resumen descriptivo:** David Ramírez, operador de planta del sector textil, revisó la Landing Page y la aplicación web y observó un video del prototipo físico. La aplicación móvil se había mostrado previamente; esta grabación no acredita por sí sola su interacción con ella.
+
+- **Landing Page (00:02–01:13):** indicó que comprendió el problema de monitoreo y control del agua residual textil, el propósito y la propuesta de solución.
+- **Aplicación web (01:15–02:55):** consideró sencillo localizar y comprender las mediciones de pH y temperatura; valoró las alertas, estados e indicaciones correctivas para identificar acciones ante valores fuera de rango.
+- **Historial (02:58–03:26):** destacó la utilidad de consultar mediciones, pérdidas de red e incidentes para reconstruir lo ocurrido durante la operación.
+- **Prototipo físico (03:28–04:38):** expresó confianza en el proceso observado y valoró las medidas de seguridad y la posibilidad de consultar el estado y reducir registros manuales. Estas afirmaciones representan la percepción del participante, no una validación técnica independiente de la precisión del sensor ni de todas las medidas de seguridad.
+
+Los intervalos corresponden al resumen de la grabación individual proporcionado por el equipo; deben ajustarse si cambia el montaje del video compilado. No se documentaron recomendaciones concretas adicionales en el material recibido.
 
 **Entrevista EV-T02**
 
