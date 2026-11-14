@@ -156,7 +156,8 @@ uint32_t sequence=0,lastSample=0,lastPoll=0,lastHeartbeat=0,lastConfig=0,lastAut
 uint32_t valveOpened=0,correctionStarted=0,correctionDuration=5000,activeExpires=0;
 uint32_t lastWifiAttempt=0,lastGreenChange=0;
 int previousGreen=HIGH,stableGreen=HIGH;
-std::atomic<int> requestedAngle{0};
+constexpr int VALVE_CLOSED_ANGLE=180, VALVE_OPEN_ANGLE=135;
+std::atomic<int> requestedAngle{VALVE_CLOSED_ANGLE};
 std::atomic<bool> requestedCorrection{false},watchdogTrip{false},benchGuard{false};
 std::atomic<uint32_t> openDeadline{0},correctionDeadline{0},controlSeen{0};
 std::atomic<uint32_t> activityPulseStarted{0};
@@ -172,7 +173,7 @@ time_t isoTime(const String& value){
   return mktime(&t); // setup fixes TZ=UTC; fractional seconds are conservatively truncated.
 }
 void alarms(){digitalWrite(ALARM_LED_PIN,localLock || remoteStopped || sensorFault || !pwmReady);}
-void closeValve(){requestedAngle.store(0);valveOpen=false;}
+void closeValve(){requestedAngle.store(VALVE_CLOSED_ANGLE);valveOpen=false;}
 void safeOutputs(){closeValve();correcting=false;requestedCorrection.store(false);}
 // Independent GPIO/PWM watchdog: HTTP/TLS timeouts cannot postpone the local close.
 // This task is the only writer to Servo PWM after setup.
@@ -184,10 +185,10 @@ void hardwareWatchdog(void*){
     if(activityPulseActive.load() && activityPulseExpired(now,activityPulseStarted.load())){
       digitalWrite(ACTIVITY_LED_PIN,LOW);activityPulseActive.store(false);
     }
-    if(digitalRead(EMERGENCY_PIN)==LOW || ((!benchGuard.load()) && (requestedAngle.load()!=0 || requestedCorrection.load()) && now-controlSeen.load()>CONTROL_GRACE_MS)){
-      requestedAngle.store(0);requestedCorrection.store(false);watchdogTrip.store(true);
+    if(digitalRead(EMERGENCY_PIN)==LOW || ((!benchGuard.load()) && (requestedAngle.load()!=VALVE_CLOSED_ANGLE || requestedCorrection.load()) && now-controlSeen.load()>CONTROL_GRACE_MS)){
+      requestedAngle.store(VALVE_CLOSED_ANGLE);requestedCorrection.store(false);watchdogTrip.store(true);
     }
-    if(requestedAngle.load()!=0 && (int32_t)(now-openDeadline.load())>=0)requestedAngle.store(0);
+    if(requestedAngle.load()!=VALVE_CLOSED_ANGLE && (int32_t)(now-openDeadline.load())>=0)requestedAngle.store(VALVE_CLOSED_ANGLE);
     if(requestedCorrection.load() && correctionDeadline.load()!=0 && (int32_t)(now-correctionDeadline.load())>=0)requestedCorrection.store(false);
     int angle=requestedAngle.load();if(angle!=lastAngle){valve.write(angle);lastAngle=angle;}
     digitalWrite(CORRECTION_LED_PIN,requestedCorrection.load()?HIGH:LOW);
@@ -373,15 +374,15 @@ void execute(JsonDocument& c){
   record["executionNumber"]=c["executionNumber"].as<int>();record["phase"]="STARTED";record["sent"]=false;
   if(!writeSlot(freeSlot,record)){safeOutputs();return;}
   activeSlot=freeSlot;activeId=id;activeType=type;activeExpires=(uint32_t)expires;
-  if(safety){safeOutputs();remoteStopped=type=="EMERGENCY_STOP";finishActive("COMPLETED","Cierre ordenado/representado a 0 grados; no hay medicion de caudal.");alarms();return;}
+  if(safety){safeOutputs();remoteStopped=type=="EMERGENCY_STOP";finishActive("COMPLETED","Cierre ordenado/representado a 180 grados; no hay medicion de caudal.");alarms();return;}
   if(localLock || sensorFault || !pwmReady || digitalRead(EMERGENCY_PIN)==LOW || millis()-lastControl>CONTROL_GRACE_MS){
     safeOutputs();finishActive("REJECTED","Bloqueo local, sensor/PWM o comunicacion no validos.");return;
   }
   remoteStopped=false;uint32_t duration=c["payload"]["durationMs"] | 0;
   if(duration<1 || duration>5000){finishActive("REJECTED","Duracion fuera del perfil demostrativo.");return;}
   if(type=="OPEN_VALVE"){
-    valveOpened=millis();openDeadline.store(valveOpened+5000);requestedAngle.store(180);valveOpen=true;
-    finishActive("COMPLETED","Apertura ordenada/representada a 180 grados; cierre local maximo 5 s, sin medicion de flujo.");
+    valveOpened=millis();openDeadline.store(valveOpened+5000);requestedAngle.store(VALVE_OPEN_ANGLE);valveOpen=true;
+    finishActive("COMPLETED","Apertura ordenada/representada a 135 grados; cierre local maximo 5 s, sin medicion de flujo.");
   }else {
     correcting=true;correctionStarted=millis();correctionDuration=duration;
     correctionDeadline.store(correctionStarted+duration);requestedCorrection.store(true);
@@ -479,7 +480,7 @@ void input(){
     else if(command=="bench"){localStop();benchMode=true;benchGuard.store(true);identityReady=false;Serial.println("BANCO AISLADO. Soltar rojo y usar r; c=LED, v=servo. Sin autorizacion del producto.");}
     else if(benchMode && !sensorFault && !localLock && pwmReady){
       if(command=="c"){correcting=true;correctionStarted=millis();correctionDeadline.store(correctionStarted+5000);requestedCorrection.store(true);}
-      if(command=="v"){valveOpened=millis();openDeadline.store(valveOpened+5000);requestedAngle.store(180);valveOpen=true;}
+      if(command=="v"){valveOpened=millis();openDeadline.store(valveOpened+5000);requestedAngle.store(VALVE_OPEN_ANGLE);valveOpen=true;}
     }
   }
 }
@@ -492,7 +493,7 @@ void setup(){
   digitalWrite(ACTIVITY_LED_PIN,LOW);
   analogReadResolution(12);analogSetPinAttenuation(PH_PIN,ADC_11db);
   valve.setPeriodHertz(50);valve.attach(SERVO_PIN,500,2400);pwmReady=valve.attached();safeOutputs();
-  valve.write(0);
+  valve.write(VALVE_CLOSED_ANGLE);
   if(pwmReady && xTaskCreate(hardwareWatchdog,"hydroguard-safety",3072,nullptr,2,nullptr)!=pdPASS)pwmReady=false;
   sensors.begin();sensors.setResolution(12);nvsReady=journal.begin("hydroguard",false);
   char id[24];snprintf(id,sizeof(id),"%08lx%08lx",(unsigned long)esp_random(),(unsigned long)esp_random());bootId=id;
