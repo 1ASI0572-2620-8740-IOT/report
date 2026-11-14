@@ -6309,82 +6309,198 @@ Los resultados se utilizarán para contrastar las hipótesis del proyecto y prio
 
 #### 6.3.3. Evaluaciones según heurísticas
 
-La evaluación de experiencia de usuario de HydroGuard se realizará tomando como referencia el formato de evaluación heurística establecido en el Anexo D de la rúbrica del proyecto. Se considerarán heurísticas de usabilidad, principios de diseño inclusivo y criterios de arquitectura de información.
+##### 6.3.3.1. Identificación de la auditoría
 
-El análisis se sustentará en las dificultades observadas durante los flujos de interacción y en los comentarios de los participantes. Cada problema identificado se documentará con su descripción, principio afectado, severidad, evidencia visual y recomendación.
+La presente sección documenta la **auditoría heurística independiente del proyecto IceTrack**, desarrollado por la startup **Frostshield**, como parte de la revisión académica de soluciones IoT. El objeto de análisis es **IceTrack**, no HydroGuard. Se recoge la auditoría original realizada el **13 de noviembre de 2026** y su **revisión diferencial del 14 de noviembre de 2026**, con el propósito de identificar problemas de usabilidad, accesibilidad y coherencia entre el estado representado en la interfaz y el comportamiento de los componentes IoT.
 
-**UX Heuristics & Principles Evaluation**
-
-*Usability – Inclusive Design – Information Architecture*
-
-| Campo | Información |
+| Campo | Descripción |
 |:--|:--|
-| Carrera | Ingeniería de Software |
-| Curso | Desarrollo de Soluciones IoT |
-| Sección | 1ASI0572 |
-| Auditor | HydroLink |
-| Clientes | Participantes de las entrevistas de validación (pendientes de registrar) |
-| Sitios o aplicaciones a evaluar | Landing Page HydroGuard, aplicación administrativa Angular y aplicación móvil Flutter |
-| Segmentos | Industria textil y producción hidropónica |
-| Estado de evaluación | Pendiente de ejecución y consolidación |
+| Proyecto evaluado | IceTrack |
+| Startup | Frostshield |
+| Curso | Desarrollo de Soluciones IoT — UPC |
+| Tipo de evaluación | Auditoría heurística de código e interfaces, con pruebas locales y revisión diferencial |
+| Auditoría original | 13/11/2026 (22:05–22:27, hora de Lima) |
+| Revisión diferencial | 14/11/2026 |
+| Referentes | Diez heurísticas de Jakob Nielsen; criterios pertinentes de WCAG 2.2 AA; coherencia de los estados IoT |
+| Componentes analizados | Landing Page, plataforma web, aplicación móvil, servicio Edge y documentación; backend y firmware como referencias de alcance |
+| Alcance de la evidencia | Código y pruebas locales reportadas; sin entrevistas, pruebas físicas de sensores ni validación integral en producción |
 
-**Tareas incluidas en la evaluación**
+> **Nota de trazabilidad:** esta sección organiza los resultados consignados en los documentos de auditoría recibidos. Las pruebas descritas corresponden a las revisiones y entornos declarados en esos documentos; no se presentan como pruebas ejecutadas nuevamente al redactar esta sección. Los identificadores SHA representan revisiones de código y no permiten asumir qué versión está desplegada actualmente.
 
-1. Identificar el problema y los beneficios presentados en la Landing Page.
-2. Localizar el medio de contacto o solicitud de información.
-3. Acceder a las funcionalidades disponibles para el rol correspondiente.
-4. Identificar una unidad o reservorio autorizado.
-5. Consultar e interpretar mediciones de pH y temperatura.
-6. Comprender estados, alertas y acciones correctivas.
-7. Consultar la configuración o el historial, según el rol y segmento.
-8. Observar e interpretar los estados mostrados durante la demostración del prototipo.
+##### 6.3.3.2. Objetivo y alcance
 
-**Fuera del alcance de esta evaluación:** calibración instrumental del sensor de pH, certificación del mecanismo físico de liberación, validación de procesos industriales reales y pruebas de carga o seguridad no ejecutadas durante las sesiones.
+El objetivo fue analizar la **claridad de la navegación**, la **visibilidad y vigencia de las mediciones térmicas**, la **retroalimentación de los estados de operación y sincronización**, la **consistencia del idioma y de los flujos**, la **accesibilidad de los controles** y la **coherencia entre las lecturas de sensores y la información presentada**.
 
-**Escala de severidad**
+La auditoría original comprendió inspección de repositorios, revisión estática de código, compilación y ejecución local de interfaces Angular y Flutter Web, pruebas con datos sintéticos, automatización del navegador y una sonda del servicio Edge con una base SQLite temporal. En esa revisión se reportó la ejecución satisfactoria de **seis pruebas existentes de Edge**. La revisión diferencial incorporó versiones `AV2` y `develop` y reportó pruebas locales específicas de widgets y traducciones.
 
-| Nivel | Descripción |
+**Fuera del alcance:** pruebas de aceptación con usuarios finales, evaluación mediante entrevistas, funcionamiento de sensores físicos y ESP32 en campo, certificación de rangos térmicos, ensayos completos de conectividad real, validación integral de backend en producción y acreditación global de cumplimiento WCAG 2.2 AA.
+
+##### 6.3.3.3. Repositorios y revisiones examinadas
+
+| Artefacto | Revisión original del 13/11/2026 | Revisión diferencial del 14/11/2026 | Consideración |
+|:--|:--|:--|:--|
+| Informe `Report-IceTrack_Iot` | `main` — `004e51d225f04d5bb1138b9d5bca3176d9e85e4f` | `AV2` — `cd21aa6b0a330a9c9c286672b06d848fa5599f42` | Distinguir README AV2 del PDF utilizado como referencia. |
+| Web `Frontend-IceTrack_IoT` | `master` — `adc3a6b4f36135e856c1c0d8de6ed6d82d3feecb` | `develop` — `ca8712e948bffe4cabf6784b348b68a459e00549` | Las pruebas originales de interfaz no representan automáticamente el comportamiento de `develop`. |
+| Móvil `Icetrack-mobile-app` | `main` — `82e06c265126c4d7dbff0935f0632a403ec02ff4` | `develop` — `15efe6aa771f757ff0460f3d50f84506b960c560` | Se reportan pruebas diferenciales para H05, H06 y H07. |
+| Edge `icetrack-edge-service` | `main` — `a9175a0eba1e20f5928214f4e27ad972bb1bd62e` | Mismo SHA reportado | Sin nueva prueba de hardware. |
+| Landing `LandingPage-IceTrack_IoT` | `master` — `dec31f56524007cf24811230235bfb6e0519dbfd` | Mismo SHA reportado | El hallazgo histórico de enlaces conserva el alcance original. |
+| Backend `Platform-IceTrack_IoT` | `master` — `0d4dc801dd5b17c39ca64a5b9e82303e1ad43129` | Sin revisión adicional reportada | Sin nueva prueba de extremo a extremo. |
+| Firmware `Embedded-App-IceTrack_IoT` | `master` — `038c0b5a40c801e78f992833346a26f1deecccc4` | Sin revisión adicional reportada | Sin ensayo con hardware. |
+| Pruebas `Pruebas-Gherkin` | `main` — `1a9179ac23c5246f32d5746974eefb8ca784f955` | Sin revisión adicional reportada | Las especificaciones no equivalen a ejecución de pruebas. |
+
+La auditoría también consultó un **PDF de 262 páginas**, con fecha interna **10/11/2026**. No debe suponerse que esa versión sea idéntica al README de GitHub de la rama `AV2` del 14/11. De igual forma, las capturas del 13/11 documentan las revisiones originales y **no** constituyen capturas de las ramas `develop`.
+
+##### 6.3.3.4. Método de evaluación y escala de severidad
+
+La inspección empleó las **diez heurísticas de Jakob Nielsen** para valorar visibilidad, consistencia, control y prevención de errores. Los aspectos de accesibilidad se examinaron por separado mediante criterios pertinentes de **WCAG 2.2 AA**. Adicionalmente, se revisó la coherencia IoT entre validez del dato, antigüedad de la lectura, conectividad y señalización de sincronización.
+
+Se aplicó la siguiente escala en la auditoría original:
+
+| Nivel | Severidad | Interpretación |
+|:--:|:--|:--|
+| 0 | Sin problema demostrado | No se identificó un defecto concreto en el escenario evaluado. |
+| 1 | Cosmético | Problema de presentación de impacto bajo. |
+| 2 | Menor o moderado | Dificulta la experiencia, pero no necesariamente impide completar el flujo. |
+| 3 | Importante | Puede afectar significativamente la comprensión o ejecución de tareas. |
+| 4 | Crítico | Compromete una función esencial o impide una tarea relevante. |
+
+**La severidad indicada corresponde exclusivamente al hallazgo histórico del 13/11.** No se recalculó automáticamente para `develop`. Se distinguen cuatro tipos de evidencia: **C** (código inspeccionado), **L** (prueba local reportada), **D** (comparación de HTML publicado en la auditoría original) y **P** (prueba pendiente).
+
+##### 6.3.3.5. Resumen ejecutivo de resultados
+
+La auditoría del 13/11 identificó **ocho hallazgos históricos**: **tres de severidad 3** (H01–H03) y **cinco de severidad 2** (H04–H08). La revisión diferencial del 14/11 **no demuestra que los ocho problemas sigan vigentes**:
+
+- **H07:** corregido en el código móvil `develop`, con prueba local de cinco opciones traducidas al inglés; falta validación en dispositivo físico.
+- **H05 y H06:** reproducidos nuevamente mediante pruebas locales de widgets sobre `develop`.
+- **H01 y H03:** conservan el respaldo de las revisiones originales, pues no se reportaron nuevos SHA en Edge y Landing Page.
+- **H02, H04 y H08:** requieren nuevas pruebas completas en las versiones `develop` antes de determinar su estado actual.
+
+Esta clasificación impide presentar una corrección comprobada como error vigente o atribuir a una rama nueva defectos que solo fueron demostrados en una revisión anterior.
+
+##### 6.3.3.6. Matriz consolidada de hallazgos
+
+| ID | Componente y problema observado | Heurística o criterio | Severidad original | Estado diferencial al 14/11 | Mejora recomendada |
+|:--:|:--|:--|:--:|:--|:--|
+| **H01** | Edge agrega una lectura con `sensorValid=false` y pierde su indicador de calidad. | Nielsen 1 — Visibilidad; coherencia IoT | **3** | Hallazgo original respaldado por el mismo SHA reportado; sin prueba física. | Propagar validez y fecha del último dato confiable; excluir lecturas inválidas de estadísticas. |
+| **H02** | La web indica “Within threshold” para una medición de hace 24 horas, aunque también dice “Reported yesterday”. | Nielsen 1 — Visibilidad del estado | **3** | Código relacionado identificado en `develop`; sin reproducción integral nueva. | Mostrar “estado actual desconocido” al vencer el período de frescura. |
+| **H03** | Los CTA finales de la Landing Page para web y móvil utilizan `href="#"`. | Nielsen 4 — Consistencia y estándares | **3** | Sin modificación de SHA reportada para la landing. | Reemplazar destinos ficticios por enlaces funcionales o explicar disponibilidad. |
+| **H04** | La preferencia manual de idioma se pierde al recargar web o móvil. | Nielsen 7 — Flexibilidad y eficiencia | **2** | Se identificó lógica relacionada; falta repetir el flujo completo en `develop`. | Guardar y restaurar la preferencia de idioma en cada canal. |
+| **H05** | En Flutter Web, el campo contraseña carece de un nombre accesible; el correo presenta diferencia entre etiqueta y nombre anunciado. | WCAG 1.3.1, 4.1.2 y 2.5.3 | **2** | **Reproducido en pruebas locales de widgets de `develop`**; nativo pendiente. | Asociar etiquetas programáticas y probar lectores de pantalla. |
+| **H06** | El banner “Todo sincronizado” permanece visible al activar el modo offline simulado. | Nielsen 1 — Visibilidad del estado | **2** | **Reproducido en widgets de `develop`**. | Actualizar el indicador al cambiar conectividad simulada, pendientes e idioma. |
+| **H07** | En `main`, las opciones de intervención siguen en español tras cambiar al inglés. | Nielsen 4 — Consistencia y estándares | **2** | **Corregido en código móvil `develop`**; cinco opciones verificadas localmente en inglés. | Mantener regresiones de traducción y revisar en Android/iOS. |
+| **H08** | Contraste insuficiente en navegación y KPI móvil en `main`: **2,564:1** y **2,148:1**. | WCAG 1.4.3 — Contraste mínimo | **2** | Estilos relacionados presentes en `develop`; sin nueva medición integral. | Medir contraste real del build actual y ajustar colores. |
+
+##### 6.3.3.7. Descripción detallada de los problemas
+
+**H01 — Pérdida de calidad de las mediciones térmicas.** En la sonda original se utilizó una muestra con `sensor_valid=False`, **99 fallos** y una temperatura retenida de **4 °C**. El lote generado presentó `sample_count=1` y estadísticas a 4 °C sin conservar el indicador de invalidez. Esto crea el riesgo de interpretar una lectura retenida como una medición nueva y válida. Se recomienda transportar el estado de calidad a través de Edge y los contratos de consulta, conservar la fecha de la última lectura válida y excluir muestras inválidas de cálculos agregados. **Estado:** hallazgo histórico sin cambio de SHA de Edge reportado; no se evaluó hardware real.
+
+**H02 — Interpretación inadecuada de datos antiguos.** En una prueba con datos sintéticos, la tarjeta web mostró simultáneamente **“4.0°C / Within threshold / Reported yesterday”**. Aunque la antigüedad era visible, el mensaje de conformidad podía interpretarse como un estado térmico actual. La mejora propuesta es separar **valor registrado**, **frescura de la lectura**, **conectividad** y **estado actual conocido o desconocido**. **Estado:** se observó código relacionado en `develop`, pero falta repetir el flujo integral en ese build y en su despliegue.
+
+**H03 — Enlaces no funcionales en la Landing Page.** Los CTA “Register Facility (Web Platform)” y “Download Mobile App” utilizaban `href="#"` en la revisión original. Esto no permite completar las acciones anunciadas. Se recomienda asociar destinos reales o mostrar con claridad la disponibilidad de cada producto. **Estado:** sin cambio de SHA de Landing Page reportado; la comparación con HTML publicado corresponde a la auditoría original.
+
+**H04 — Pérdida de la selección de idioma.** La auditoría original reprodujo el retorno al idioma inicial después de recargar las interfaces web y móvil. Se recomienda persistir la preferencia seleccionada y comprobar su recuperación al recargar y reabrir cada canal. **Estado:** aún se requiere una repetición integral de la prueba en las ramas `develop`.
+
+**H05 — Etiquetas accesibles insuficientes en el login móvil.** En Flutter Web se identificó la falta de nombre accesible del campo de contraseña y una diferencia entre la etiqueta visible y el nombre del correo. Las pruebas de widgets en `develop` reprodujeron el problema de contraseña. Se recomienda definir etiquetas semánticas asociadas a los controles y comprobar el resultado con el árbol de accesibilidad y, posteriormente, con **TalkBack** y **VoiceOver**. **Estado:** reproducido localmente; no validado en Android/iOS.
+
+**H06 — Indicador de sincronización que no refleja el estado offline.** Al activar el modo offline simulado y regresar a Órdenes, el banner continuó indicando “Todo sincronizado”. La revisión diferencial reprodujo el comportamiento en widgets de `develop`. Se recomienda que el banner reaccione inmediatamente a los cambios del estado offline, operaciones pendientes e idioma, sin exigir reiniciar la pantalla. **Estado:** reproducido en modo de simulación; no equivale a una prueba de pérdida real de red.
+
+**H07 — Traducciones incompletas en la intervención móvil.** La revisión `main` mostraba cuatro opciones de intervención en español pese a seleccionar inglés. En la revisión móvil `develop`, el contenido pasó a utilizar traducciones y una prueba local verificó **cinco opciones en inglés**. **Estado:** corrección constatada en código y prueba local reportada. Se mantiene el registro histórico y se recomienda una regresión en ambos idiomas y una comprobación en un dispositivo real; no corresponde clasificarlo como defecto vigente confirmado de `develop`.
+
+**H08 — Contraste visual insuficiente.** En la revisión original del móvil `main`, las etiquetas de navegación inactivas alcanzaron **2,564:1** y un KPI naranja **2,148:1**, frente a referencias aplicables de **4,5:1** para texto normal y **3:1** para el texto grande considerado. Se recomienda evaluar los colores efectivos del build actual, incluidos estados y superficies, antes de corregirlos. **Estado:** el cálculo pertenece a `main`; la continuidad de código en `develop` no sustituye una nueva medición visual.
+
+##### 6.3.3.8. Fortalezas observadas
+
+La revisión original también registró comportamientos favorables dentro de los escenarios evaluados:
+
+- Se solicitaba confirmación al resolver alertas y un motivo al descartarlas.
+- Las alertas `ACKNOWLEDGED` permanecían en el conjunto activo; el historial diferenciaba `RESOLVED` de `DISMISSED`.
+- Algunos formularios web vinculaban etiquetas con mensajes de error.
+- La Landing Page admitía el cierre del menú con la tecla **Escape**.
+- Algunos controles web protegían parcialmente contra acciones repetidas mientras una operación estaba pendiente.
+- La revisión diferencial reconoció la corrección de **H07** y la existencia de llamadas API y cola offline local en el móvil `develop`.
+
+Estas fortalezas se limitan a las pruebas declaradas y no certifican accesibilidad global, persistencia remota o comportamiento productivo.
+
+##### 6.3.3.9. Cobertura de las heurísticas de Nielsen y accesibilidad
+
+| Heurística | Evaluación documentada |
+|:--|:--|
+| **N1. Visibilidad del estado del sistema** | H01, H02 y H06 evidencian la importancia de distinguir validez, antigüedad y sincronización; H06 se reprodujo en `develop`. |
+| **N2. Correspondencia con el mundo real** | Se identificó una discrepancia documental entre refrigeración positiva y referencias a congelación. |
+| **N3. Control y libertad del usuario** | Se observaron confirmaciones y cierre del menú con Escape; la recuperación de borradores no se validó. |
+| **N4. Consistencia y estándares** | H03 afecta destinos de navegación; H07 fue corregido en `develop`. |
+| **N5. Prevención de errores** | Se verificaron validaciones locales; falta demostrar idempotencia de extremo a extremo. |
+| **N6. Reconocimiento antes que recuerdo** | Existen etiquetas y ayudas parciales; no se estudió la carga cognitiva con usuarios. |
+| **N7. Flexibilidad y eficiencia** | H04 requiere revalidación completa de persistencia del idioma. |
+| **N8. Diseño estético y minimalista** | No se identificó otro defecto específico confirmado; el contraste se evalúa aparte mediante WCAG. |
+| **N9. Ayuda a reconocer y recuperarse de errores** | Se observaron mensajes de error y posibilidades parciales de reintento. |
+| **N10. Ayuda y documentación** | Se identificaron ayudas parciales y discrepancias documentales aún por resolver. |
+
+Respecto de **WCAG 2.2 AA**, H05 fue reproducido localmente en widgets de `develop`. H08 dispone de cálculos históricos de `main`, pero no de una nueva medición completa en `develop`. **No se declara conformidad global con WCAG** ni se reportan pruebas nativas con lectores de pantalla.
+
+##### 6.3.3.10. Inconsistencias documentales y aspectos de integración pendientes
+
+**Alcance de temperatura.** La rama del informe `AV2` señala un rango de **0–30 °C** en la historia **US-36**, mientras que la sección de diseño conserva referencias a `FREEZER` y a temperaturas negativas. El problema identificado es una **inconsistencia documental de alcance**, no una prueba de que la aplicación contradiga necesariamente la US vigente. Se recomienda definir si el producto contempla congelación y alinear historias, diseños, mockups, sensores, contratos y ejemplos con esa decisión.
+
+**Implementación móvil offline.** La rama móvil `develop` contiene **llamadas API** y una **cola local almacenada mediante `SharedPreferences`**. Por lo tanto, no es correcto calificar esa rama simplemente como “solo mock”. Sin embargo, esto no acredita que la cola recupere todos los registros tras un cierre forzado, que sincronice correctamente con el backend, que evite duplicados o que confirme la recepción de cada operación.
+
+**Navegación móvil.** La documentación mencionaba menú hamburguesa y barra inferior, mientras que la implementación previamente observada utilizaba una barra inferior sin que se constatara un menú adicional. Esta divergencia debe tratarse como asunto de **trazabilidad del diseño**, no como una infracción automática de las heurísticas.
+
+**Despliegues y versiones.** Los SHA examinados no prueban qué revisión se encuentra actualmente publicada. La auditoría original reportó respuestas HTTP 200 de URLs públicas, pero también un bloqueo de Chromium por confianza de certificados en ese entorno particular; no es válido deducir una caída general de los servicios a partir de ese bloqueo.
+
+##### 6.3.3.11. Riesgos no comprobados y pruebas sugeridas
+
+Los siguientes puntos se registran **como pruebas pendientes**, no como nuevos defectos confirmados ni como nuevas severidades:
+
+| Código | Aspecto pendiente | Comprobación recomendada |
+|:--:|:--|:--|
+| R01 | Persistencia y entrega de cola offline | Crear un registro offline, cerrar el proceso, reiniciar, reconectar y verificar recepción en el backend. |
+| R02 | Duplicaciones y conflictos | Simular timeout, reintento, concurrencia y reordenamiento con identificación idempotente. |
+| R03 | Sensores y cadena IoT real | Ensayar ESP32/gateway, pérdida de sensor y Wi-Fi, y propagación de calidad de la lectura. |
+| R04 | Identidad, permisos y geocodificación | Probar OAuth, roles, revocación y direcciones ambiguas con identidades controladas. |
+| R05 | Notificaciones push | Evaluar permisos denegados, duplicaciones y apertura contextual en dispositivo. |
+| R06 | Accesibilidad nativa | Probar TalkBack, VoiceOver, navegación por teclado, foco y escalado de texto. |
+| R07 | Frescura de telemetría en `develop` | Presentar lecturas antiguas y verificar mensajes, hora de reporte y alertas. |
+| R08 | Correspondencia con despliegues | Identificar SHA desplegado, repetir flujos y adjuntar evidencias fechadas. |
+
+##### 6.3.3.12. Recomendaciones priorizadas
+
+| Prioridad | Acción de mejora | Criterio de verificación |
+|:--:|:--|:--|
+| **P1** | Conservar la validez y antigüedad de los datos desde sensor/Edge hasta web. | Las muestras inválidas no se presentan como actuales y las lecturas vencidas muestran estado desconocido. |
+| **P1** | Corregir los CTA de la Landing Page. | Los enlaces llevan a destinos funcionales y coherentes con su etiqueta. |
+| **P2** | Hacer reactivo el banner de sincronización móvil. | Cambios de offline, pendientes y reconexión se reflejan inmediatamente. |
+| **P2** | Mejorar el nombre accesible de los campos del login. | Correo y contraseña se identifican correctamente mediante semántica y lector de pantalla. |
+| **P2** | Revalidar idioma y contraste en `develop`. | La preferencia de idioma persiste y los contrastes cumplen sus umbrales aplicables. |
+| **P2** | Completar regresión de H07 en dispositivo. | Las opciones de intervención aparecen traducidas en ambos idiomas en Android/iOS. |
+| **P2** | Unificar el rango de temperatura y la terminología de los diseños. | Historias, pantallas y ejemplos no se contradicen respecto de `FREEZER` y 0–30 °C. |
+| **P3** | Verificar sincronización offline de extremo a extremo. | La cola sobrevive al cierre, el backend confirma la entrega y no se duplican operaciones. |
+
+##### 6.3.3.13. Evidencias referenciadas y límites de disponibilidad
+
+Los documentos de auditoría mencionan **69 capturas** del trabajo original y otros archivos JSON; **no se adjuntaron** dentro de los dos documentos recibidos para elaborar esta sección. Los siguientes nombres se incluyen únicamente como **referencias históricas**, no como imágenes insertadas ni pruebas nuevas de `develop`:
+
+| Hallazgo | Evidencias mencionadas en la auditoría original |
 |:--:|:--|
-| 1 | Problema superficial: ocurre con poca frecuencia o es fácil de superar. |
-| 2 | Problema menor: genera dificultades moderadas y puede resolverse con prioridad baja. |
-| 3 | Problema mayor: aparece frecuentemente o dificulta significativamente la tarea; requiere prioridad alta. |
-| 4 | Problema muy grave: impide continuar con una tarea relevante; debe corregirse antes del lanzamiento. |
+| H01 | `H01-evidencia-tecnica.png`, `sensor-probe.json` |
+| H02 | `monitoring-stale.png`, `monitoring-maintenance.png`, `flow-results.json` |
+| H03 | `CTA-destinations.png`, `landing-flows.json` |
+| H04 | `language-reload.png`, `mobile-reload-es.png` |
+| H05 | `mobile-F05-labels.png`, `mobile-results.json` |
+| H06 | `mobile-orders-offline.png`, `mobile-offline-profile.png` |
+| H07 | `mobile-intervention-english.png`, `mobile-i18n-results.json` (evidencia anterior a la corrección) |
+| H08 | `H08-evidencia-tecnica.png`, `contrast.json` |
 
-**Criterios de evaluación**
+En particular, `H01-evidencia-tecnica.png` y `H08-evidencia-tecnica.png` son paneles técnicos de la auditoría y no capturas de las pantallas de IceTrack. **No se incorporan rutas Markdown de imágenes inexistentes.** Para ilustrar la revisión `develop` serían necesarias capturas propias de esas revisiones, con fecha y SHA documentados.
 
-| Categoría | Principios a observar | Aplicación en HydroGuard |
-|:--|:--|:--|
-| Usabilidad | Visibilidad del estado del sistema; consistencia; prevención de errores; reconocimiento antes que recuerdo; libertad y control del usuario. | Claridad de mediciones, estados de conformidad, alertas, navegación y mensajes de error. |
-| Arquitectura de información | Organización, claridad de etiquetas, facilidad de búsqueda y localización de contenidos. | Localización de dispositivos, reservorios, configuración, historial y opciones de contacto. |
-| Diseño inclusivo | Legibilidad, contraste, lenguaje comprensible, navegación accesible y experiencias comparables. | Comprensión de valores, ayudas visuales y estados operativos sin depender únicamente del color. |
+##### 6.3.3.14. Conclusiones de la auditoría heurística
 
-**Tabla resumen de problemas identificados**
+La evaluación revela problemas relevantes para la confianza y comprensión de un sistema IoT: **una lectura inválida puede perder su condición de calidad**, **una medición antigua puede conservar una etiqueta de conformidad**, y **la indicación de sincronización puede no reflejar el estado offline simulado**. Estos hallazgos justifican priorizar la diferenciación explícita entre **dato válido**, **dato antiguo** y **dato sincronizado**.
 
-| # | Problema observado | Heurística o principio vulnerado | Severidad (1-4) | Evidencia |
-|:--:|:--|:--|:--:|:--|
-| 1 | Pendiente de identificar durante la validación | Pendiente | — | Pendiente |
-| 2 | Pendiente de identificar durante la validación | Pendiente | — | Pendiente |
-| 3 | Pendiente de identificar durante la validación | Pendiente | — | Pendiente |
+La revisión del 14/11 también evidencia avances que deben reconocerse: **H07 se corrigió en el código de `develop`** y la aplicación móvil incorpora llamadas API y cola offline local. Al mismo tiempo, **H05 y H06 fueron reproducidos en pruebas locales de widgets**; **H01 y H03 mantienen el respaldo de revisiones sin nuevo SHA reportado**; y **H02, H04 y H08 requieren nueva validación integral** antes de establecer su situación actual.
 
-Las filas anteriores son espacios de registro y no representan problemas confirmados. Se agregarán o eliminarán filas según los hallazgos reales de las sesiones.
+En conclusión, la auditoría permite formular recomendaciones concretas y priorizadas para IceTrack, sin extrapolar pruebas locales a funcionamiento productivo ni presentar hallazgos históricos como fallos actuales confirmados. La siguiente etapa debería obtener las capturas originales, ejecutar las pruebas pendientes sobre las versiones correctas y vincular cada corrección con evidencias reproducibles.
 
-**Descripción detallada de problemas**
-
-Para cada problema confirmado se completará la siguiente estructura:
-
-**Problema # [NÚMERO]: [TÍTULO DEL PROBLEMA]**
-
-- **Severidad:** [1, 2, 3 o 4]
-- **Heurística o principio vulnerado:** [Usabilidad / Arquitectura de información / Diseño inclusivo y principio específico]
-- **Componente evaluado:** [Landing Page / Angular / Flutter]
-- **Segmento y tarea asociada:** [Segmento y código VF correspondiente]
-- **Descripción del problema:** [Qué ocurrió, en qué paso, cómo afectó al participante y qué evidencia lo demuestra]
-- **Captura de pantalla:** [Incorporar imagen real del problema]
-- **Recomendación:** [Cambio específico propuesto para mejorar la experiencia]
-
-**Conclusión de la evaluación heurística**
-
-La evaluación permitirá priorizar mejoras de navegación, comprensión de información y accesibilidad a partir de los problemas efectivamente observados. Los resultados y niveles de severidad se completarán después de realizar las entrevistas y revisar sus grabaciones. Las recomendaciones resultantes servirán como entrada para la mejora continua y la planificación de futuros incrementos de HydroGuard.
 
 # Conclusiones
 
