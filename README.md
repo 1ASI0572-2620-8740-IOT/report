@@ -4573,9 +4573,9 @@ Edge almacena temporalmente las entregas aceptadas en SQLite y reintenta hacia e
 
 Permanecen pendientes la revalidación de la calibración tras cambios eléctricos, la verificación de alimentación bajo carga y el ajuste mecánico/torque de la válvula. No se implementaron bomba dosificadora, enfriamiento físico ni sensor de caudal. Las pruebas integrales acreditan intercambio de datos y decisiones del proceso, no aptitud sanitaria del agua ni dosis químicas controladas.
 
-Referencia de diseño inicial en Cirkit Designer (montaje anterior; no describe el cableado vigente): https://app.cirkitdesigner.com/project/cbdef7ec-8293-4e11-94d1-0bf2247bb2e8
+Referencia de diseño actual en Wowki https://wokwi.com/projects/480452554738836481
 
-[![image.png](https://i.postimg.cc/kMbPnVwb/image.png)](https://postimg.cc/w3gG2jCq)
+[![image.png](https://i.postimg.cc/SKX5S00K/image.png)](https://postimg.cc/8FSw40z8)
 
 # Capítulo VI: Product Implementation, Validation & Deployment
 
