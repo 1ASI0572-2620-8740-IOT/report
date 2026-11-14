@@ -255,6 +255,8 @@ El conteo corresponde al trabajo versionado en el informe. La colaboración tamb
       - [6.2.2.3. Sprint Backlog 2](#6223-sprint-backlog-2)
       - [6.2.2.4. Development Evidence for Sprint Review](#6224-development-evidence-for-sprint-review)
       - [6.2.2.5. Testing Suite Evidence for Sprint Review](#6225-testing-suite-evidence-for-sprint-review)
+      - [6.2.2.6. Execution Evidence for Sprint Review](#6226-execution-evidence-for-sprint-review)
+      - [6.2.2.7. Services Documentation Evidence for Sprint Review](#6227-services-documentation-evidence-for-sprint-review)
       - [6.2.2.8. Software Deployment Evidence for Sprint Review](#6228-software-deployment-evidence-for-sprint-review)
       - [6.2.2.9. Team Collaboration Insights during Sprint](#6229-team-collaboration-insights-during-sprint)
 - [Conclusiones](#conclusiones)
@@ -5684,6 +5686,10 @@ Las pruebas mostradas son pruebas automatizadas JUnit y de integración; no se p
 - **Móvil:** 84 pruebas Flutter aprobadas. P-03 incluye el rechazo al publicar, el mensaje asociado al dispositivo al intentar iniciar y la explicación de una liberación no disponible sin ofrecer la acción ([da11b57](https://github.com/1ASI0572-2620-8740-IOT/hydroguard_operator_mobile_frontend/commit/da11b57947b6aed631a03d649cb399326ba4aab9)).
 
 Estas verificaciones no sustituyen una ejecución de los clientes contra el backend desplegado ni una prueba de actuación con el prototipo físico.
+
+#### 6.2.2.6. Execution Evidence for Sprint Review
+
+#### 6.2.2.7. Services Documentation Evidence for Sprint Review
 
 #### 6.2.2.8. Software Deployment Evidence for Sprint Review
 
