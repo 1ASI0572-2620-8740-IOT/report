@@ -5750,7 +5750,21 @@ Ejemplo de respuesta de `POST /api/v1/authentication/sign-in`:
 
 La respuesta entrega el token y el contexto que el cliente usa en las rutas siguientes; no devuelve la contraseña ni el hash almacenado. El identificador de la organización se deriva de la sesión y no se acepta como parámetro de otras operaciones.
 
-**Espacio reservado para la captura.** Insertar Swagger UI de Human IAM con la operación `sign-in` expandida, el ejemplo de respuesta y `Authorize` visible. Archivo sugerido: `assets/services-evidence/sprint-2/01-human-iam.png`. La captura debe usar datos de muestra y no exponer tokens ni contraseñas reales.
+**Captura de Swagger UI (Human IAM).** La siguiente imagen muestra la operación `GET /api/v1/organizations/current` expandida en Swagger UI:
+
+[![image.png](https://i.postimg.cc/3wmCwQh4/image.png)](https://postimg.cc/Ty2WkSpf)
+
+*Descripción:* Devuelve el contexto de la organización del usuario autenticado (`id`, `name` y `segment`), derivado del token JWT; no recibe parámetros.
+
+**Captura de Swagger UI (Human IAM).** La siguiente imagen muestra la operación `GET /api/v1/operators` expandida en Swagger UI:
+
+[![image.png](https://i.postimg.cc/SxWJ2SXX/image.png)](https://postimg.cc/xX10BS3Y)
+
+*Descripción:* Lista paginada de operarios de la organización, con filtros opcionales (`searchTerm`, `status`, `page`, `pageSize`); devuelve `PageResponse<UserAccountResource>`.
+
+[![image.png](https://i.postimg.cc/k5sGsTFY/image.png)](https://postimg.cc/wtt9TcrD)
+
+*Descripción:* Vista complementaria del mismo endpoint, mostrando parámetros y respuesta esperada.
 
 ##### 2. Device Identity Service
 
