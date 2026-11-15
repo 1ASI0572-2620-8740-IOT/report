@@ -5517,6 +5517,8 @@ El Sprint 1 comprende 38 tareas y 158 horas para el incremento frontend/mock. El
 
 
 
+Por indicación del líder del equipo, las 66 Engineering Tasks del Sprint 2 se registran como `Done`. Esta actualización de estados no añade evidencia de pruebas, aceptación de historias ni despliegue.
+
 **Sprint #:** Sprint 2
 
 **URL del Board:** https://trello.com/b/6aafc8a787b6bbbecd455184
@@ -5565,52 +5567,52 @@ En conjunto, las capturas aportan contexto visual del tablero; el detalle de his
 | TS-12 | Exposición de configuración mediante API RESTful | T-82 | Implementación e integración: TS-12 | Exponer API REST de consulta/edición de configuración autorizada | 5 | Rodriguez Macedo, Sebastian | Done |
 | N/A | Infraestructura y actividades transversales | T-86 | Infraestructura: API Gateway | Revisar rutas públicas y protegidas, autorización y bloqueo de rutas internas en el Gateway HTTP/REST. | 6 | Rios Pacheco, Hector Javier | Done |
 | N/A | Infraestructura y actividades transversales | T-89 | Verificación automatizada | Ejecutar pruebas de contratos e integración backend–Gateway y documentar sus límites frente a ensayos con hardware. | 6 | Prieto Mantari, Leonardo Fabrizzio Junior | Done |
-| US-01 | Registro de operario | T-30 | Implementación e integración: US-01 | Integrar registro de Operario, validaciones y pertenencia organizacional | 5 | Rios Pacheco, Hector Javier | ToReview |
-| US-02 | Autenticación de usuario | T-32 | Implementación e integración: US-02 | Integrar login JWT y autorización de roles en clientes | 5 | Rios Pacheco, Hector Javier | ToReview |
-| US-02 | Autenticación de usuario | T-33 | Validación y pruebas: US-02 | Comprobar cierre, caducidad de sesión y rechazo de rol incorrecto | 4 | Rios Pacheco, Hector Javier | ToReview |
-| US-04 | Supervisión de operarios y dispositivos | T-38 | Implementación e integración: US-04 | Conectar consulta administrativa con servicios reales de organización | 5 | Rios Pacheco, Hector Javier | ToReview |
-| US-10 | Consulta de configuración de dispositivos | T-42 | Implementación e integración: US-10 | Conectar consulta de configuración y versiones a backend real | 5 | Rodriguez Macedo, Sebastian | ToReview |
-| US-11 | Monitoreo de pH y temperatura | T-48 | Implementación e integración: US-11 | Consultar lecturas reales de asignaciones con fecha y origen | 5 | Gomez Hurtado, Miguel Angel | ToReview |
-| US-12 | Monitoreo desde aplicación móvil | T-50 | Implementación e integración: US-12 | Conectar pantalla de monitoreo móvil mediante Gateway y sesión | 5 | Santur Tello, Andrea Elizabeth | ToReview |
-| US-13 | Evaluación de conformidad | T-53 | Validación y pruebas: US-13 | Probar conforme/no conforme y rechazo de lectura inválida/antigua | 5 | Prieto Mantari, Leonardo Fabrizzio Junior | ToReview |
-| US-19 | Liberación automática | T-58 | Implementación e integración: US-19 | Emitir orden automática solo con estado listo y modo AUTOMATIC | 6 | Rodriguez Macedo, Sebastian | ToReview |
-| US-20 | Liberación manual | T-61 | Validación y pruebas: US-20 | Probar rechazo anticipado, modo incorrecto y par ajeno | 5 | Santur Tello, Andrea Elizabeth | ToReview |
-| US-24 | Gestión y consulta de incidentes | T-62 | Implementación e integración: US-24 | Persistir incidente automático y relación causal disponible | 5 | Prieto Mantari, Leonardo Fabrizzio Junior | ToReview |
-| US-25 | Alerta por pérdida de monitoreo | T-64 | Implementación e integración: US-25 | Detectar pérdida por heartbeat/lectura y generar alerta única | 5 | Prieto Mantari, Leonardo Fabrizzio Junior | ToReview |
-| US-27 | Consulta del historial de dispositivos | T-66 | Implementación e integración: US-27 | Conectar historial administrativo a registros persistentes | 5 | Prieto Mantari, Leonardo Fabrizzio Junior | ToReview |
-| TS-03 | Adquisición y validación de mediciones | T-72 | Implementación e integración: TS-03 | Integrar adquisición de pH/temperatura y controles de validez | 6 | Gomez Hurtado, Miguel Angel | ToReview |
-| TS-04 | Ingesta HTTPS de telemetría en Edge API | T-75 | Validación y pruebas: TS-04 | Probar envío HTTP al Gateway, reintento y deduplicación | 6 | Gomez Hurtado, Miguel Angel | ToReview |
-| TS-07 | Control del actuador de flujo | T-78 | Implementación e integración: TS-07 | Implementar orden de apertura/cierre compatible con actuador | 6 | Gomez Hurtado, Miguel Angel | ToReview |
-| TS-10 | Estado de disponibilidad del dispositivo | T-80 | Implementación e integración: TS-10 | Registrar heartbeat y última comunicación del dispositivo | 5 | Gomez Hurtado, Miguel Angel | ToReview |
-| TS-13 | Ejecución y confirmación de la actuación correctiva | T-84 | Implementación e integración: TS-13 | Registrar comando correctivo y resultado con ID idempotente | 6 | Gomez Hurtado, Miguel Angel | ToReview |
-| N/A | Infraestructura y actividades transversales | T-87 | Infraestructura: persistencia | Revisar migraciones, variables de entorno y aislamiento de bases PostgreSQL por microservicio. | 6 | Rodriguez Macedo, Sebastian | ToReview |
-| N/A | Infraestructura y actividades transversales | T-88 | Integración Angular–API | Verificar configuración de entornos, contratos REST, estados vacíos/errores y sustitución de Mock API en pantallas seleccionadas. | 5 | Santur Tello, Andrea Elizabeth | ToReview |
-| N/A | Infraestructura y actividades transversales | T-90 | Documentación OpenAPI | Comprobar endpoints y documentación Swagger/OpenAPI de los servicios; asociar la evidencia con 6.2.2.7. | 5 | Prieto Mantari, Leonardo Fabrizzio Junior | ToReview |
-| US-01 | Registro de operario | T-31 | Validación y pruebas: US-01 | Verificar primer acceso y rechazo de datos inválidos desde cliente real | 5 | Santur Tello, Andrea Elizabeth | InProcess |
-| US-39 | Asignación automática de rol según el flujo de alta | T-37 | Validación y pruebas: US-39 | Probar rechazo a segundo Administrador y cambio manual de rol | 4 | Rios Pacheco, Hector Javier | InProcess |
-| US-04 | Supervisión de operarios y dispositivos | T-39 | Validación y pruebas: US-04 | Validar listados, vacíos, permisos y disponibilidad no reciente | 4 | Santur Tello, Andrea Elizabeth | InProcess |
-| US-05 | Vinculación de dispositivo y configuración base | T-41 | Validación y pruebas: US-05 | Probar exclusividad, segmento y compatibilidad desde web real | 5 | Rodriguez Macedo, Sebastian | InProcess |
-| US-10 | Consulta de configuración de dispositivos | T-43 | Validación y pruebas: US-10 | Comprobar estados guardada/publicada/aplicada, vacío y autorización | 4 | Santur Tello, Andrea Elizabeth | InProcess |
-| US-06 | Configuración de rangos de calidad del dispositivo | T-45 | Validación y pruebas: US-06 | Integrar formulario móvil y probar límites y autorización | 4 | Santur Tello, Andrea Elizabeth | InProcess |
-| US-09 | Configuración del modo de liberación | T-47 | Validación y pruebas: US-09 | Probar comportamiento de autorización según modo publicado/aplicado | 5 | Rodriguez Macedo, Sebastian | InProcess |
-| US-11 | Monitoreo de pH y temperatura | T-49 | Validación y pruebas: US-11 | Validar pantalla del Operario, antigüedad y restricción de acceso | 5 | Santur Tello, Andrea Elizabeth | InProcess |
-| US-12 | Monitoreo desde aplicación móvil | T-51 | Validación y pruebas: US-12 | Verificar carga, vacío, error y dispositivos ajenos | 4 | Santur Tello, Andrea Elizabeth | InProcess |
-| US-19 | Liberación automática | T-59 | Validación y pruebas: US-19 | Probar respuesta/idempotencia y registrar límite de validación física | 5 | Gomez Hurtado, Miguel Angel | InProcess |
-| US-24 | Gestión y consulta de incidentes | T-63 | Validación y pruebas: US-24 | Integrar consulta administrativa y comprobar origen/manual y cierre según contrato | 5 | Prieto Mantari, Leonardo Fabrizzio Junior | InProcess |
-| US-25 | Alerta por pérdida de monitoreo | T-65 | Validación y pruebas: US-25 | Probar recuperación, no duplicación y visualización autorizada | 5 | Prieto Mantari, Leonardo Fabrizzio Junior | InProcess |
-| US-27 | Consulta del historial de dispositivos | T-67 | Validación y pruebas: US-27 | Validar filtros, paginación, periodo vacío y aislamiento por organización | 5 | Prieto Mantari, Leonardo Fabrizzio Junior | InProcess |
-| US-30 | Trazabilidad de tratamiento y liberación | T-68 | Implementación e integración: US-30 | Correlacionar lectura, configuración, evaluación y ciclos mediante IDs | 6 | Prieto Mantari, Leonardo Fabrizzio Junior | InProcess |
-| US-30 | Trazabilidad de tratamiento y liberación | T-69 | Validación y pruebas: US-30 | Verificar traza de liberación y referencias temporales en consulta | 6 | Prieto Mantari, Leonardo Fabrizzio Junior | InProcess |
-| TS-03 | Adquisición y validación de mediciones | T-73 | Validación y pruebas: TS-03 | Documentar ensayo de sensor y límites de calibración física | 6 | Gomez Hurtado, Miguel Angel | InProcess |
-| TS-07 | Control del actuador de flujo | T-79 | Validación y pruebas: TS-07 | Probar salida del firmware y separar ensayo físico de prueba simulada | 6 | Gomez Hurtado, Miguel Angel | InProcess |
-| TS-10 | Estado de disponibilidad del dispositivo | T-81 | Validación y pruebas: TS-10 | Probar ventana de disponibilidad y recuperación con fecha real | 5 | Gomez Hurtado, Miguel Angel | InProcess |
-| TS-12 | Exposición de configuración mediante API RESTful | T-83 | Validación y pruebas: TS-12 | Verificar validación, seguridad y contrato de cliente móvil | 5 | Rodriguez Macedo, Sebastian | InProcess |
-| TS-13 | Ejecución y confirmación de la actuación correctiva | T-85 | Validación y pruebas: TS-13 | Probar reintentos y confirmación sin duplicación de actuación | 6 | Gomez Hurtado, Miguel Angel | InProcess |
-| N/A | Infraestructura y actividades transversales | T-91 | Despliegue y diagnóstico | Verificar URLs, salud, variables de entorno y comunicación de servicios en el entorno elegido; asociar evidencia con 6.2.2.8. | 5 | Rios Pacheco, Hector Javier | InProcess |
-| US-41 | Edición de datos descriptivos del dispositivo | T-92 | Implementar edición de alias y modelo | Integrar edición en API y web preservando identidad técnica, capacidades y vínculos. | 5 | Prieto Mantari, Leonardo Fabrizzio Junior | ToReview |
-| US-41 | Edición de datos descriptivos del dispositivo | T-95 | Verificar edición y autorización | Probar cambios válidos, rechazo de datos inválidos, aislamiento por organización y conservación de vínculos. | 5 | Prieto Mantari, Leonardo Fabrizzio Junior | ToReview |
-| US-15 | Aprobación y ejecución de la acción correctiva | T-93 | P-03: motivos de acciones bloqueadas | Integrar mensajes de publicación, inicio y liberación en móvil con contratos del backend; verificar que explicar un bloqueo no permita saltar autorización. | 5 | Prieto Mantari, Leonardo Fabrizzio Junior | ToReview |
-| US-05 | Vinculación de dispositivo y configuración base | T-94 | P-04: edición descriptiva del catálogo | Revisar el aporte de edición de grupos y reservorios activos e inactivos, su validación, conservación de relaciones y referencias de código y pruebas. | 6 | Santur Tello, Andrea Elizabeth | ToReview |
+| US-01 | Registro de operario | T-30 | Implementación e integración: US-01 | Integrar registro de Operario, validaciones y pertenencia organizacional | 5 | Rios Pacheco, Hector Javier | Done |
+| US-02 | Autenticación de usuario | T-32 | Implementación e integración: US-02 | Integrar login JWT y autorización de roles en clientes | 5 | Rios Pacheco, Hector Javier | Done |
+| US-02 | Autenticación de usuario | T-33 | Validación y pruebas: US-02 | Comprobar cierre, caducidad de sesión y rechazo de rol incorrecto | 4 | Rios Pacheco, Hector Javier | Done |
+| US-04 | Supervisión de operarios y dispositivos | T-38 | Implementación e integración: US-04 | Conectar consulta administrativa con servicios reales de organización | 5 | Rios Pacheco, Hector Javier | Done |
+| US-10 | Consulta de configuración de dispositivos | T-42 | Implementación e integración: US-10 | Conectar consulta de configuración y versiones a backend real | 5 | Rodriguez Macedo, Sebastian | Done |
+| US-11 | Monitoreo de pH y temperatura | T-48 | Implementación e integración: US-11 | Consultar lecturas reales de asignaciones con fecha y origen | 5 | Gomez Hurtado, Miguel Angel | Done |
+| US-12 | Monitoreo desde aplicación móvil | T-50 | Implementación e integración: US-12 | Conectar pantalla de monitoreo móvil mediante Gateway y sesión | 5 | Santur Tello, Andrea Elizabeth | Done |
+| US-13 | Evaluación de conformidad | T-53 | Validación y pruebas: US-13 | Probar conforme/no conforme y rechazo de lectura inválida/antigua | 5 | Prieto Mantari, Leonardo Fabrizzio Junior | Done |
+| US-19 | Liberación automática | T-58 | Implementación e integración: US-19 | Emitir orden automática solo con estado listo y modo AUTOMATIC | 6 | Rodriguez Macedo, Sebastian | Done |
+| US-20 | Liberación manual | T-61 | Validación y pruebas: US-20 | Probar rechazo anticipado, modo incorrecto y par ajeno | 5 | Santur Tello, Andrea Elizabeth | Done |
+| US-24 | Gestión y consulta de incidentes | T-62 | Implementación e integración: US-24 | Persistir incidente automático y relación causal disponible | 5 | Prieto Mantari, Leonardo Fabrizzio Junior | Done |
+| US-25 | Alerta por pérdida de monitoreo | T-64 | Implementación e integración: US-25 | Detectar pérdida por heartbeat/lectura y generar alerta única | 5 | Prieto Mantari, Leonardo Fabrizzio Junior | Done |
+| US-27 | Consulta del historial de dispositivos | T-66 | Implementación e integración: US-27 | Conectar historial administrativo a registros persistentes | 5 | Prieto Mantari, Leonardo Fabrizzio Junior | Done |
+| TS-03 | Adquisición y validación de mediciones | T-72 | Implementación e integración: TS-03 | Integrar adquisición de pH/temperatura y controles de validez | 6 | Gomez Hurtado, Miguel Angel | Done |
+| TS-04 | Ingesta HTTPS de telemetría en Edge API | T-75 | Validación y pruebas: TS-04 | Probar envío HTTP al Gateway, reintento y deduplicación | 6 | Gomez Hurtado, Miguel Angel | Done |
+| TS-07 | Control del actuador de flujo | T-78 | Implementación e integración: TS-07 | Implementar orden de apertura/cierre compatible con actuador | 6 | Gomez Hurtado, Miguel Angel | Done |
+| TS-10 | Estado de disponibilidad del dispositivo | T-80 | Implementación e integración: TS-10 | Registrar heartbeat y última comunicación del dispositivo | 5 | Gomez Hurtado, Miguel Angel | Done |
+| TS-13 | Ejecución y confirmación de la actuación correctiva | T-84 | Implementación e integración: TS-13 | Registrar comando correctivo y resultado con ID idempotente | 6 | Gomez Hurtado, Miguel Angel | Done |
+| N/A | Infraestructura y actividades transversales | T-87 | Infraestructura: persistencia | Revisar migraciones, variables de entorno y aislamiento de bases PostgreSQL por microservicio. | 6 | Rodriguez Macedo, Sebastian | Done |
+| N/A | Infraestructura y actividades transversales | T-88 | Integración Angular–API | Verificar configuración de entornos, contratos REST, estados vacíos/errores y sustitución de Mock API en pantallas seleccionadas. | 5 | Santur Tello, Andrea Elizabeth | Done |
+| N/A | Infraestructura y actividades transversales | T-90 | Documentación OpenAPI | Comprobar endpoints y documentación Swagger/OpenAPI de los servicios; asociar la evidencia con 6.2.2.7. | 5 | Prieto Mantari, Leonardo Fabrizzio Junior | Done |
+| US-01 | Registro de operario | T-31 | Validación y pruebas: US-01 | Verificar primer acceso y rechazo de datos inválidos desde cliente real | 5 | Santur Tello, Andrea Elizabeth | Done |
+| US-39 | Asignación automática de rol según el flujo de alta | T-37 | Validación y pruebas: US-39 | Probar rechazo a segundo Administrador y cambio manual de rol | 4 | Rios Pacheco, Hector Javier | Done |
+| US-04 | Supervisión de operarios y dispositivos | T-39 | Validación y pruebas: US-04 | Validar listados, vacíos, permisos y disponibilidad no reciente | 4 | Santur Tello, Andrea Elizabeth | Done |
+| US-05 | Vinculación de dispositivo y configuración base | T-41 | Validación y pruebas: US-05 | Probar exclusividad, segmento y compatibilidad desde web real | 5 | Rodriguez Macedo, Sebastian | Done |
+| US-10 | Consulta de configuración de dispositivos | T-43 | Validación y pruebas: US-10 | Comprobar estados guardada/publicada/aplicada, vacío y autorización | 4 | Santur Tello, Andrea Elizabeth | Done |
+| US-06 | Configuración de rangos de calidad del dispositivo | T-45 | Validación y pruebas: US-06 | Integrar formulario móvil y probar límites y autorización | 4 | Santur Tello, Andrea Elizabeth | Done |
+| US-09 | Configuración del modo de liberación | T-47 | Validación y pruebas: US-09 | Probar comportamiento de autorización según modo publicado/aplicado | 5 | Rodriguez Macedo, Sebastian | Done |
+| US-11 | Monitoreo de pH y temperatura | T-49 | Validación y pruebas: US-11 | Validar pantalla del Operario, antigüedad y restricción de acceso | 5 | Santur Tello, Andrea Elizabeth | Done |
+| US-12 | Monitoreo desde aplicación móvil | T-51 | Validación y pruebas: US-12 | Verificar carga, vacío, error y dispositivos ajenos | 4 | Santur Tello, Andrea Elizabeth | Done |
+| US-19 | Liberación automática | T-59 | Validación y pruebas: US-19 | Probar respuesta/idempotencia y registrar límite de validación física | 5 | Gomez Hurtado, Miguel Angel | Done |
+| US-24 | Gestión y consulta de incidentes | T-63 | Validación y pruebas: US-24 | Integrar consulta administrativa y comprobar origen/manual y cierre según contrato | 5 | Prieto Mantari, Leonardo Fabrizzio Junior | Done |
+| US-25 | Alerta por pérdida de monitoreo | T-65 | Validación y pruebas: US-25 | Probar recuperación, no duplicación y visualización autorizada | 5 | Prieto Mantari, Leonardo Fabrizzio Junior | Done |
+| US-27 | Consulta del historial de dispositivos | T-67 | Validación y pruebas: US-27 | Validar filtros, paginación, periodo vacío y aislamiento por organización | 5 | Prieto Mantari, Leonardo Fabrizzio Junior | Done |
+| US-30 | Trazabilidad de tratamiento y liberación | T-68 | Implementación e integración: US-30 | Correlacionar lectura, configuración, evaluación y ciclos mediante IDs | 6 | Prieto Mantari, Leonardo Fabrizzio Junior | Done |
+| US-30 | Trazabilidad de tratamiento y liberación | T-69 | Validación y pruebas: US-30 | Verificar traza de liberación y referencias temporales en consulta | 6 | Prieto Mantari, Leonardo Fabrizzio Junior | Done |
+| TS-03 | Adquisición y validación de mediciones | T-73 | Validación y pruebas: TS-03 | Documentar ensayo de sensor y límites de calibración física | 6 | Gomez Hurtado, Miguel Angel | Done |
+| TS-07 | Control del actuador de flujo | T-79 | Validación y pruebas: TS-07 | Probar salida del firmware y separar ensayo físico de prueba simulada | 6 | Gomez Hurtado, Miguel Angel | Done |
+| TS-10 | Estado de disponibilidad del dispositivo | T-81 | Validación y pruebas: TS-10 | Probar ventana de disponibilidad y recuperación con fecha real | 5 | Gomez Hurtado, Miguel Angel | Done |
+| TS-12 | Exposición de configuración mediante API RESTful | T-83 | Validación y pruebas: TS-12 | Verificar validación, seguridad y contrato de cliente móvil | 5 | Rodriguez Macedo, Sebastian | Done |
+| TS-13 | Ejecución y confirmación de la actuación correctiva | T-85 | Validación y pruebas: TS-13 | Probar reintentos y confirmación sin duplicación de actuación | 6 | Gomez Hurtado, Miguel Angel | Done |
+| N/A | Infraestructura y actividades transversales | T-91 | Despliegue y diagnóstico | Verificar URLs, salud, variables de entorno y comunicación de servicios en el entorno elegido; asociar evidencia con 6.2.2.8. | 5 | Rios Pacheco, Hector Javier | Done |
+| US-41 | Edición de datos descriptivos del dispositivo | T-92 | Implementar edición de alias y modelo | Integrar edición en API y web preservando identidad técnica, capacidades y vínculos. | 5 | Prieto Mantari, Leonardo Fabrizzio Junior | Done |
+| US-41 | Edición de datos descriptivos del dispositivo | T-95 | Verificar edición y autorización | Probar cambios válidos, rechazo de datos inválidos, aislamiento por organización y conservación de vínculos. | 5 | Prieto Mantari, Leonardo Fabrizzio Junior | Done |
+| US-15 | Aprobación y ejecución de la acción correctiva | T-93 | P-03: motivos de acciones bloqueadas | Integrar mensajes de publicación, inicio y liberación en móvil con contratos del backend; verificar que explicar un bloqueo no permita saltar autorización. | 5 | Prieto Mantari, Leonardo Fabrizzio Junior | Done |
+| US-05 | Vinculación de dispositivo y configuración base | T-94 | P-04: edición descriptiva del catálogo | Revisar el aporte de edición de grupos y reservorios activos e inactivos, su validación, conservación de relaciones y referencias de código y pruebas. | 6 | Santur Tello, Andrea Elizabeth | Done |
 
 Las tareas T-92 y T-95 corresponden a US-41; T-93 y T-94 corresponden a US-15 y US-05. Todas forman parte de las 66 tareas y 340 horas del Sprint 2. Sus criterios de aceptación figuran en 3.1 y sus pruebas y referencias disponibles en 6.2.2.4 y 6.2.2.5.
 
