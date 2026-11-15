@@ -6245,18 +6245,29 @@ Los intervalos corresponden al resumen de la grabación individual proporcionado
 
 | Campo | Información |
 |:--|:--|
-| Nombre y apellidos | Pendiente de registrar |
-| Edad | Pendiente |
-| Distrito | Pendiente |
-| Ocupación o relación con la hidroponía | Pendiente |
-| Fecha de entrevista | Pendiente |
+| Nombre y apellidos | Diego Alonso Quispe Flores |
+| Edad | 25 |
+| Distrito | Pendiente de registrar |
+| Ocupación o relación con la hidroponía | Supervisor de una planta hidropónica |
+| Fecha de entrevista | 14/11/2026 |
 | URL del video (Microsoft Stream/Clipchamp) | Pendiente |
-| Inicio de la entrevista en el video | Pendiente (hh:mm:ss) |
-| Duración | Pendiente (hh:mm:ss) |
+| Inicio de la entrevista en el video | 0:00 |
+| Duración | 3:30 |
 
 **Captura de la entrevista:** Pendiente de insertar.
 
-**Resumen descriptivo:** Pendiente de redactar después de la entrevista. Se documentarán las opiniones sobre la Landing Page, los rangos de pH y temperatura, las indicaciones correctivas y la utilidad del prototipo para el riego.
+**Resumen descriptivo:** Diego Alonso Quispe Flores, supervisor de una planta hidropónica de 25 años, revisó la Landing Page y la aplicación web y observó el prototipo IoT. La aplicación móvil se había mostrado previamente; esta grabación no acredita por sí sola su interacción con ella.
+
+- **Landing Page (00:23–00:44):** indicó que le quedó claro cómo HydroGuard podría ayudarle a monitorear y controlar las condiciones del agua; valoró la utilidad de revisar las condiciones antes de utilizar el agua en los cultivos para evitar problemas que afecten el crecimiento de las plantas y tener un mejor control de la producción.
+- **Aplicación web — mediciones (01:02–01:23):** consideró fácil consultar los valores de pH y temperatura, lo cual es importante para un supervisor que debe revisar constantemente que el agua esté en buenas condiciones.
+- **Configuración (01:23–01:55):** valoró la posibilidad de configurar los rangos de pH y temperatura según el tipo de cultivo, adaptando el sistema a cada planta.
+- **Alertas (01:55–02:12):** consideró las alertas claras para identificar cuándo el agua está fuera de los valores adecuados; sugirió que las indicaciones expliquen paso a paso qué se debe hacer para corregir el problema.
+- **Prototipo IoT — medición automática (02:12–02:36):** consideró muy útil medir automáticamente el pH y la temperatura, detectar problemas a tiempo y evitar que se afecten los cultivos, frente a la revisión manual que toma mucho tiempo.
+- **Válvula (02:36–03:08):** consideró que el control de la válvula mediante servomotor facilita el proceso de riego porque el agua solo se libera cuando cumple las condiciones establecidas; como mejora, sugirió recibir alertas ante problemas con la válvula o cuando el sistema detecte valores fuera de los rangos permitidos.
+
+Estas afirmaciones representan la percepción del participante, no una validación técnica independiente de la precisión del sensor ni de todas las medidas de seguridad.
+
+Los intervalos corresponden al resumen de la grabación individual proporcionado por el equipo; deben ajustarse si cambia el montaje del video compilado.
 
 **Entrevista EV-H02**
 
