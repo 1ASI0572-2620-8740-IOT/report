@@ -5967,7 +5967,17 @@ Ejemplo de respuesta de `GET /api/v1/telemetry/devices/{id}`:
 
 `availability` distingue `ONLINE`, `OFFLINE` y `UNKNOWN`. Un dispositivo sin heartbeat reciente no se presenta con valores en cero: su última medición se conserva con la marca de tiempo que permite evaluar su vigencia.
 
-**Espacio reservado para la captura.** Insertar Swagger UI de Telemetry con la operación de historial o de última medición expandida y un ejemplo de respuesta. Archivo sugerido: `assets/services-evidence/sprint-2/04-telemetry.png`.
+**Captura de Swagger UI (Telemetry).** La siguiente imagen muestra la operación `GET /api/v1/telemetry/devices` expandida en Swagger UI:
+
+[![image.png](https://i.postimg.cc/Thv5FpLM/image.png)](https://postimg.cc/xNgdbj3t)
+
+*Descripción:* Lista paginada de resúmenes de telemetría por dispositivo, con filtros opcionales (`searchTerm`, `sortBy`, `sortDirection`, `availability`, `operatingEnvironment`, `deviceId`); devuelve `PageResponse<DeviceTelemetrySummaryResource>`.
+
+[![image.png](https://i.postimg.cc/pV47G8Cv/image.png)](https://postimg.cc/w35031n4)
+
+*Descripción:* Vista complementaria del mismo endpoint, mostrando parámetros y respuesta esperada.
+
+Archivo sugerido: `assets/services-evidence/sprint-2/04-telemetry.png`. La captura debe usar datos de muestra y no exponer tokens ni contraseñas reales.
 
 ##### 5. Treatment Service
 
