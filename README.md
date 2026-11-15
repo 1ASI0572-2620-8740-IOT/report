@@ -114,17 +114,17 @@ Durante TB1 (del **3 al 9 de octubre de 2026**), el informe evolucionó mediante
 
 ### AV2 — Project Report Collaboration Insights
 
-En AV2 (del **10 de octubre al 14 de noviembre de 2026**), el equipo actualizó el informe para documentar la evolución de HydroGuard desde el incremento web con Mock API hacia los microservicios persistentes con PostgreSQL, la aplicación móvil Flutter para el Operario, el servicio Edge en Python y los prototipos ESP32 físico y simulado en Wokwi, además de las entrevistas de validación y la auditoría heurística.
+En AV2 (del **10 de octubre al 15 de noviembre de 2026**), el equipo actualizó el informe para documentar la evolución de HydroGuard desde el incremento web con Mock API hacia los microservicios persistentes con PostgreSQL, la aplicación móvil Flutter para el Operario, el servicio Edge en Python y los prototipos ESP32 físico y simulado en Wokwi. También registró las entrevistas de validación, la auditoría heurística y las evidencias para la revisión del Sprint 2. El conteo corresponde a la rama `develop` de `report`, hasta [`61c0299`](https://github.com/1ASI0572-2620-8740-IOT/report/commit/61c029995308fd814d356eed4dae884a67a7285d), con el mismo método del [análisis de colaboración del Sprint 2](#6229-team-collaboration-insights-during-sprint).
 
 | Integrante | Commits de AV2 en `report` | Contribución principal al informe |
 |:--|--:|:--|
-| Gomez Hurtado, Miguel Angel | 40 | Refinamiento de dominio, componentes, contratos y esquemas de BD (IAM, Configuration, Telemetry, Treatment y Monitoring), enlace Wokwi y servicios del Sprint 2. |
-| Rios Pacheco, Hector Javier | 14 | Alineación de contratos backend, prototipos ESP32 físico y Wokwi, arquitectura, UX/UI, Landing Page, evidencias del Sprint 2 y entrevista de validación textil. |
-| Prieto Mantari, Leonardo Fabrizzio Junior  | 9 | Evidencias de desarrollo y colaboración del Sprint 2, US-41 y P-03, Student Outcome y conclusiones/recomendaciones de AV2. |
-| Santur Tello, Andrea Elizabeth | 7 | Historias de usuario, backlog y asignaciones del Sprint 2 (incluyendo P-04), secciones de validación, Student Outcome y auditoría heurística de IceTrack. |
-| Rodriguez Macedo, Sebastian | 2 | Wireflows y diagramas de recorrido de las aplicaciones web y móvil. |
-| Olivera Barzola, Eric Marlon | 0 | — |
-| **Total** | **72** | |
+| Gomez Hurtado, Miguel Angel | 49 | Refinamiento de dominio y contratos, documentación de servicios y capturas de Swagger, enlace a Wokwi y registro de la entrevista de validación hidropónica EV-H01. |
+| Rios Pacheco, Hector Javier | 18 | Alineación de contratos, prototipo ESP32, evidencias del Sprint 2, registro de la entrevista de validación textil y enlace del video About-the-Product. |
+| Santur Tello, Andrea Elizabeth | 10 | Historias, backlog y asignaciones del Sprint 2, secciones de validación, Student Outcome y auditoría heurística de IceTrack. |
+| Prieto Mantari, Leonardo Fabrizzio Junior | 9 | Evidencias de desarrollo y colaboración del Sprint 2, US-41 y P-03, Student Outcome, conclusiones y recomendaciones de AV2. |
+| Rodriguez Macedo, Sebastian | 3 | Wireflows de web y móvil, evidencias de ejecución del Sprint 2 y Student Outcome de AV2. |
+| Olivera Barzola, Eric Marlon | 0 | Sin commits registrados en la rama y el periodo consultados. |
+| **Total** | **89** | |
 
 ![Evidencia general de colaboración en GitHub del repositorio report](assets/report-collaboration-insights-github.jpg)
 
@@ -6224,26 +6224,35 @@ La documentación OpenAPI y Swagger UI se incorporó a los servicios; la siguien
 
 El trabajo del Sprint 2 se apoyó en la coordinación entre quienes versionaron cambios en los productos y quienes prepararon el diseño, la planificación y el informe. El historial permite identificar contribuciones y puntos de integración; la [matriz de liderazgo y colaboración](#6222-aspect-leaders-and-collaborators) registra responsabilidades asignadas y no se utiliza para atribuir commits.
 
-**Corte y método.** Se contabilizaron commits únicos sin fusiones por autor y repositorio, según la fecha de registro del commit en hora de Lima (UTC−5). Las columnas por repositorio cubren del **10 de octubre al 12 de noviembre de 2026**, es decir, el ciclo AV2 después del corte TB1. La última columna muestra por separado el subconjunto del **7 al 12 de noviembre**, a partir de la fecha del Sprint Planning. Se revisaron `main` de Landing Page, `develop` del frontend web hasta `b010cb1` y su rama `feature/render-backend-connection`, `develop` del backend hasta `280ba1f`, `develop` del móvil hasta `da11b57`, `develop` y `feature/render-wokwi-deployment` de Edge, `master` de IOT-Prototype y `develop` del informe hasta `2c693b5`. Los commits alcanzables desde dos ramas de un mismo repositorio se contaron una vez. Los commits registrados con el autor `Leonardo Prieto` se atribuyen a Leonardo Prieto Mantari. La presente actualización queda fuera del corte.
+**Corte y método.** Se contabilizaron commits únicos sin fusiones por autor y repositorio, según la fecha de registro del commit en hora de Lima (UTC−5). Las columnas por repositorio cubren del **10 de octubre al corte consultado del 15 de noviembre de 2026**. La última columna muestra el subconjunto del **7 al 15 de noviembre**, desde el Sprint Planning.
 
-| Integrante | Landing | Web | Backend | Móvil | Edge | IoT virtual | Informe | Total AV2 | Desde Planning |
-|:--|--:|--:|--:|--:|--:|--:|--:|--:|--:|
-| Rios Pacheco, Hector Javier (`Khafna09`) | 1 | 7 | 29 | 40 | 9 | 0 | 11 | 97 | 22 |
-| Gomez Hurtado, Miguel Angel (`Miguel26112001`) | 0 | 0 | 0 | 0 | 0 | 4 | 34 | 38 | 4 |
-| Santur Tello, Andrea Elizabeth (`andreli-star`) | 0 | 0 | 2 | 0 | 0 | 0 | 4 | 6 | 6 |
-| Rodriguez Macedo, Sebastian (`Shiftinnnnn`) | 0 | 0 | 0 | 0 | 0 | 0 | 2 | 2 | 0 |
-| Prieto Mantari, Leonardo Fabrizzio Junior (`Wuux1`) | 0 | 2 | 6 | 3 | 0 | 0 | 3 | 14 | 14 |
-| **Total** | **1** | **9** | **37** | **43** | **9** | **4** | **54** | **155** | **46** |
+Se usaron las siguientes ramas y revisiones: Landing Page `main` (`de83bae`), web administrativa `develop` (`b010cb1`) y `feature/render-backend-connection` (`7d4345f`), backend `develop` (`280ba1f`) y `feature/edit-groups-reservoirs` (`11ae250`), móvil `develop` (`5521dd8`), Edge `develop` (`9edcf30`) y `feature/render-wokwi-deployment` (`91127ea`), IoT virtual `master` (`4f5d94e`), Mock API `master` (`3876ac6`) e informe `develop` (`61c0299`). Los commits alcanzables desde varias ramas de un mismo repositorio se contaron una vez. Se consolidaron los nombres de autor registrados en Git con las cuentas de los integrantes. La presente actualización queda fuera del corte.
 
-El conteo refleja la autoría registrada en las ramas consultadas. Un cero indica que no se encontró un commit de esa persona en el corte; no descarta aportes en revisión, coordinación, pruebas, reuniones o trabajo aún no integrado. Los conteos tampoco permiten comparar esfuerzo ni calidad.
+| Integrante | Landing | Web | Backend | Móvil | Edge | IoT virtual | Mock API | Informe | Total AV2 | Desde Planning |
+|:--|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|
+| Rios Pacheco, Hector Javier (`Khafna09`) | 2 | 7 | 29 | 40 | 9 | 0 | 1 | 18 | 106 | 30 |
+| Gomez Hurtado, Miguel Angel (`Miguel26112001`) | 0 | 0 | 0 | 0 | 0 | 4 | 0 | 49 | 53 | 19 |
+| Prieto Mantari, Leonardo Fabrizzio Junior (`Wuux1`) | 0 | 2 | 6 | 4 | 0 | 0 | 0 | 9 | 21 | 21 |
+| Santur Tello, Andrea Elizabeth (`andreli-star`) | 1 | 0 | 2 | 0 | 0 | 0 | 0 | 10 | 13 | 13 |
+| Rodriguez Macedo, Sebastian (`Shiftinnnnn`) | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 3 | 5 | 3 |
+| Olivera Barzola, Eric Marlon (`EricMOB-afk`) | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| **Total** | **5** | **9** | **37** | **44** | **9** | **4** | **1** | **89** | **198** | **86** |
 
-**Evidencias de colaboración e integración.** El historial concentra en Hector el versionado de los servicios, la web, el móvil y Edge. Miguel aportó al prototipo virtual y al informe, Andrea actualizó el backlog y añadió el diseño de validación, y Sebastian incorporó los wireflows. Estos aportes se pueden contrastar en el [historial del prototipo](https://github.com/1ASI0572-2620-8740-IOT/IOT-Prototype/commits/master/), el [ab7cba7](https://github.com/1ASI0572-2620-8740-IOT/report/commit/ab7cba79c498a49b12b46bca113d9f8afce21396) de validación y el [2b4039e](https://github.com/1ASI0572-2620-8740-IOT/report/commit/2b4039ea208ace59e01d36008b08768f1b663ddd) de wireflows. La integración del informe también quedó registrada en el [PR #7](https://github.com/1ASI0572-2620-8740-IOT/report/pull/7), anterior al Sprint Planning. Dicho PR es evidencia de integración y no se contabilizó como un commit de contribución en la tabla.
+El informe concentró la mayor actividad del AV2 (**89 commits**), seguido por el móvil (**44**) y el backend (**37**). Desde el Sprint Planning se registraron **86 commits**, de los cuales **52** correspondieron al informe. Del **13 al 15 de noviembre** se registraron **34 commits** en el corte: **30** en el informe y **4** en la Landing Page. Los conteos reflejan la autoría en las ramas consultadas. Para identificar responsabilidades y aportes de coordinación, se complementan con la [matriz de liderazgo y colaboración](#6222-aspect-leaders-and-collaborators). Los dos commits de Andrea en backend corresponden a P-04 y permanecían en `feature/edit-groups-reservoirs` al corte.
+
+**Evidencias de colaboración e integración**
+
+- **Hector** concentró sus commits en el móvil, el backend y el informe. En el cierre incorporó evidencia de las aplicaciones a la Landing Page y completó el registro de la entrevista textil y el enlace al video del producto. [Evidencia en la Landing Page](https://github.com/1ASI0572-2620-8740-IOT/LandingPage/commit/cf9148488413eaf999d224b8b2a50bab2dbb319c), [entrevista textil](https://github.com/1ASI0572-2620-8740-IOT/report/commit/1d992b177b8037daf5dd223ce9280a7825df8bd7), [video del producto](https://github.com/1ASI0572-2620-8740-IOT/report/commit/61c029995308fd814d356eed4dae884a67a7285d).
+- **Miguel** concentró sus commits en el informe. Documentó los servicios y endpoints, añadió capturas de Swagger y la evidencia de la entrevista hidropónica EV-H01. También versionó la autenticación técnica y la telemetría del prototipo virtual. [Servicios](https://github.com/1ASI0572-2620-8740-IOT/report/commit/0f943cb4f792cdee7ec9c3878b3c683c99d1e207), [entrevista EV-H01](https://github.com/1ASI0572-2620-8740-IOT/report/commit/edc1c28ca29d4897f6b992480bf892b232fad274), [prototipo virtual](https://github.com/1ASI0572-2620-8740-IOT/IOT-Prototype/commits/master/).
+- **Leonardo** documentó las evidencias de desarrollo y colaboración, implementó US-41 en backend y web y P-03 en backend y móvil. Añadió un botón para abrir el menú lateral del Operario y completó sus conclusiones y recomendaciones de AV2. [Evidencias de desarrollo](#6224-development-evidence-for-sprint-review), [menú lateral](https://github.com/1ASI0572-2620-8740-IOT/hydroguard_operator_mobile_frontend/commit/5521dd88085888647a5c8383d12950eb97f97828), [conclusiones](https://github.com/1ASI0572-2620-8740-IOT/report/commit/4257ca40d7ae537124d825003917edb257803432).
+- **Andrea** concentró sus commits en el informe, donde actualizó el backlog y documentó la auditoría heurística. Integró el formulario de contacto en la Landing Page y versionó los cambios y pruebas de P-04 en una rama del backend. [Backlog](https://github.com/1ASI0572-2620-8740-IOT/report/commit/d01883ad0af981c78767ee087c6c659bc0b52176), [formulario de contacto](https://github.com/1ASI0572-2620-8740-IOT/LandingPage/commit/dc84f07b5c20eb178979c795b42a647635854434), [pruebas de P-04](https://github.com/1ASI0572-2620-8740-IOT/hydroguard_backend/commit/11ae2508db3410d4be9254c0d3c77f3460c19709).
+- **Sebastian** incorporó al informe los wireflows, la evidencia de ejecución del Sprint 2 y su Student Outcome. En la Landing Page incrustó el video del producto y actualizó sus estilos. [Informe](https://github.com/1ASI0572-2620-8740-IOT/report/commit/87d9ade7d6b5b0d0af5edac84b92145d84a54100), [video en la Landing Page](https://github.com/1ASI0572-2620-8740-IOT/LandingPage/commit/16a1106944c3f16ff6648223cd288b4abb319e67).
+
+El [PR #7 del informe](https://github.com/1ASI0572-2620-8740-IOT/report/pull/7) documenta una integración anterior al Sprint Planning. El conteo de la tabla incluye los commits individuales que quedaron en la rama consultada.
 
 ![GitHub: historial de report en develop filtrado del 7 al 12 de noviembre](assets/development-sprint-2/03-colaboracion-report-develop.jpg)
 
-*Figura: historial de la rama `develop` de `report`, filtrado del 7 al 12 de noviembre. La captura se tomó antes de publicar las secciones de evidencia, colaboración y Student Outcome; muestra solo el informe e incluye fusiones, a diferencia del conteo de la tabla. GitHub puede agrupar las fechas en una zona horaria distinta al corte de Lima.*
-
-Leonardo complementó el trabajo de documentación con la implementación de US-41 en backend y web y de P-03 en backend y móvil. Los aportes incluyen código, contrato y pruebas, enlazados en las [evidencias de desarrollo](#6224-development-evidence-for-sprint-review) y [pruebas](#6225-testing-suite-evidence-for-sprint-review).
+*Figura: captura histórica de la rama `develop` del informe del 7 al 12 de noviembre. El [historial del informe al corte del 15 de noviembre](https://github.com/1ASI0572-2620-8740-IOT/report/commits/61c029995308fd814d356eed4dae884a67a7285d/) amplía esta evidencia con los commits del cierre.*
 
 **Aprendizaje del sprint.** El punto de coordinación más visible fue mantener los contratos compatibles entre web, Gateway, servicios y Edge. Por ejemplo, la ruta publicada del frontend se ajustó en [7ad7a0c](https://github.com/1ASI0572-2620-8740-IOT/hydroguard-admin-web-frontend/commit/7ad7a0ceec836c9ae8e81d2c22afa983c1d7163b) y la confirmación de órdenes académicas requirió cambios relacionados en Edge ([cde7f54](https://github.com/1ASI0572-2620-8740-IOT/hydroguard-edge-service/commit/cde7f5464bcfe781c1d3cd0743b9b859ecb74e11)) y en el sketch ([44e9fc1](https://github.com/1ASI0572-2620-8740-IOT/report/commit/44e9fc1b2b0bbf414ca1881b3f2b663c94117bdd)). Para el siguiente sprint se recomienda vincular las tareas de Trello con sus commits y evidencias de aceptación, documentar las revisiones entre repositorios y anotar si cada verificación se realizó en local, en nube o con hardware.
 
