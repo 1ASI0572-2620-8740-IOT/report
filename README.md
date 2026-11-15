@@ -5824,7 +5824,11 @@ Ejemplo de respuesta de `POST /edge/v1/device-auth/token`:
 
 El token se emite para un dispositivo concreto y no reemplaza al JWT humano: un token técnico no permite ejecutar acciones de Administrador u Operario.
 
-**Espacio reservado para la captura.** Insertar Swagger UI de Device Identity con `device-auth/token` expandido y el esquema de seguridad visible. Archivo sugerido: `assets/services-evidence/sprint-2/02-device-identity.png`. La captura debe usar una credencial de muestra, nunca una credencial vigente.
+**Captura de Swagger UI (Device Identity).** La siguiente imagen muestra la operación `GET /api/v1/device-identities/{device}/status` expandida en Swagger UI:
+
+[![image.png](https://i.postimg.cc/ncN3Vkmd/image.png)](https://postimg.cc/56qBn8nv)
+
+*Descripción:* Devuelve el estado de identidad del dispositivo (`deviceId`, `organizationId`, `status`, `credentialVersion`, `createdAt`, `updatedAt`) para un dispositivo dado; requiere JWT de Administrador.
 
 ##### 3. Configuration Service
 
