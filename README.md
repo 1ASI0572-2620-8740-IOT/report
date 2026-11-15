@@ -5897,7 +5897,26 @@ Ejemplo de configuración aceptada por `PUT /api/v1/operator/assignments/{id}/co
 
 La respuesta conserva el número de versión y su estado; publicar no implica que el dispositivo ya la haya aplicado, condición que se confirma con la ruta de acknowledgements de Telemetry.
 
-**Espacio reservado para la captura.** Insertar Swagger UI de Configuration con el detalle de dispositivo (operación 14) o la edición descriptiva P-02 (operación 16) expandida, con una respuesta de muestra. Archivo sugerido: `assets/services-evidence/sprint-2/03-configuration.png`.
+**Captura de Swagger UI (Configuration).** La siguiente imagen muestra la operación `GET /api/v1/devices` expandida en Swagger UI:
+
+[![image.png](https://i.postimg.cc/SR6xXVs7/image.png)](https://postimg.cc/y3NHtm0k)
+
+*Descripción:* Lista paginada de dispositivos de la organización, con filtros opcionales (`searchTerm`, `status`, `availability`, `operatingEnvironment`, `configurationStatus`, `unlinked`, `page`, `pageSize`, `sortBy`, `sortDirection`); devuelve `PageResponse<DeviceResource>`.
+
+[![image.png](https://i.postimg.cc/L6Vs2yGq/image.png)](https://postimg.cc/566Jmm41)
+
+*Descripción:* Vista complementaria del mismo endpoint, mostrando parámetros y respuesta esperada.
+
+**Captura de Swagger UI (Configuration).** La siguiente imagen muestra la operación `GET /api/v1/operator-profiles` expandida en Swagger UI:
+
+[![image.png](https://i.postimg.cc/Qxd2K0H1/image.png)](https://postimg.cc/3WzSPjjx)
+
+*Descripción:* Lista paginada de perfiles de operario de la organización, con filtros opcionales (`searchTerm`, `status`, `page`, `pageSize`, `sortBy`, `sortDirection`); devuelve `PageResponse<OperatorProfileResource>`.
+
+[![image.png](https://i.postimg.cc/02XLYDwF/image.png)](https://postimg.cc/yk9QBJny)
+
+*Descripción:* Vista complementaria del mismo endpoint, mostrando parámetros y respuesta esperada.
+
 
 ##### 4. Telemetry Service
 
