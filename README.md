@@ -132,57 +132,107 @@ En AV2 (del **10 de octubre al 14 de noviembre de 2026**), el equipo actualizó 
 
 ## Tabla de Contenidos
 
-- [Registro de Versiones del Informe](#registro-de-versiones-del-informe)
-- [Project Report Collaboration Insights](#project-report-collaboration-insights)
-  - [AV1 — Project Report Collaboration Insights](#av1--project-report-collaboration-insights)
-  - [TB1 — Project Report Collaboration Insights](#tb1--project-report-collaboration-insights)
-  - [AV2 — Project Report Collaboration Insights](#av2--project-report-collaboration-insights)
-- [Student Outcome](#student-outcome)
 - [Capítulo I: Introducción](#capítulo-i-introducción)
   - [1.1. Startup Profile](#11-startup-profile)
     - [1.1.1. Descripción de la startup](#111-descripción-de-la-startup)
     - [1.1.2. Perfiles de integrantes del equipo](#112-perfiles-de-integrantes-del-equipo)
   - [1.2. Solution Profile](#12-solution-profile)
     - [1.2.1. Antecedentes y problemática](#121-antecedentes-y-problemática)
+      - [Análisis mediante 5W2H](#análisis-mediante-5w2h)
     - [1.2.2. Lean UX Process](#122-lean-ux-process)
       - [1.2.2.1. Lean UX Problem Statements](#1221-lean-ux-problem-statements)
       - [1.2.2.2. Lean UX Assumptions](#1222-lean-ux-assumptions)
+      - [Business Assumptions](#business-assumptions)
+      - [Business Outcome Assumptions](#business-outcome-assumptions)
+      - [User Assumptions](#user-assumptions)
+      - [User Outcome and Benefit Assumptions](#user-outcome-and-benefit-assumptions)
+      - [Feature Assumptions](#feature-assumptions)
       - [1.2.2.3. Lean UX Hypothesis Statements](#1223-lean-ux-hypothesis-statements)
+      - [H-01. Perfiles configurables](#h-01-perfiles-configurables)
+      - [H-02. Panel de telemetría y estado](#h-02-panel-de-telemetría-y-estado)
+      - [H-03. Estados, ciclos y alerta](#h-03-estados-ciclos-y-alerta)
+      - [H-04. Liberación segura y emergencia](#h-04-liberación-segura-y-emergencia)
       - [1.2.2.4. Lean UX Canvas](#1224-lean-ux-canvas)
   - [1.3. Segmentos objetivo](#13-segmentos-objetivo)
-    - [Segmento 1: micro y pequeñas empresas textiles](#segmento-1-micro-y-pequeñas-empresas-textiles-con-teñido-o-acabado)
+    - [Segmento 1: micro y pequeñas empresas textiles con teñido o acabado](#segmento-1-micro-y-pequeñas-empresas-textiles-con-teñido-o-acabado)
     - [Segmento 2: pequeños productores y microempresas hidropónicas](#segmento-2-pequeños-productores-y-microempresas-hidropónicas)
-- [Capítulo II: Requirements Elicitation & Analysis](#capítulo-ii-requirements-elicitation--analysis)
+- [Capítulo II: Requirements Elicitation \& Analysis](#capítulo-ii-requirements-elicitation--analysis)
   - [2.1. Competidores](#21-competidores)
     - [2.1.1. Análisis competitivo](#211-análisis-competitivo)
     - [2.1.2. Estrategias y tácticas frente a competidores](#212-estrategias-y-tácticas-frente-a-competidores)
   - [2.2. Entrevistas](#22-entrevistas)
     - [2.2.1. Diseño de entrevistas](#221-diseño-de-entrevistas)
+      - [Preguntas generales](#preguntas-generales)
+      - [Preguntas segmento textil](#preguntas-segmento-textil)
+      - [Preguntas segmento hidropónico](#preguntas-segmento-hidropónico)
     - [2.2.2. Registro de entrevistas](#222-registro-de-entrevistas)
+      - [Segmento 1: Micro y pequeñas empresas textiles con teñido o acabado](#segmento-1-micro-y-pequeñas-empresas-textiles-con-teñido-o-acabado-1)
+        - [Entrevista 1 - Sector Textil](#entrevista-1---sector-textil)
+        - [Entrevista 2 - Sector Textil](#entrevista-2---sector-textil)
+        - [Entrevista 3 - Sector Textil](#entrevista-3---sector-textil)
+      - [Segmento 2: Pequeños productores y microempresas hidropónicas](#segmento-2-pequeños-productores-y-microempresas-hidropónicas-1)
+        - [Entrevista 4 - Sector Hidropónico](#entrevista-4---sector-hidropónico)
+        - [Entrevista 5 - Sector Hidropónico](#entrevista-5---sector-hidropónico)
+        - [Entrevista 6 - Sector Hidropónico](#entrevista-6---sector-hidropónico)
     - [2.2.3. Análisis de entrevistas](#223-análisis-de-entrevistas)
-      - [2.2.3.1. Análisis del Segmento 1](#2231-análisis-del-segmento-1-micro-y-pequeñas-empresas-textiles-con-teñido-o-acabado)
-      - [2.2.3.2. Análisis del Segmento 2](#2232-análisis-del-segmento-2-pequeños-productores-y-microempresas-hidropónicas)
-      - [2.2.3.3. Matriz Comparativa Inter-Segmentos y Hallazgos Globales](#2233-matriz-comparativa-inter-segmentos-y-hallazgos-globales-n6)
+      - [2.2.3.1. Análisis del Segmento 1: Micro y pequeñas empresas textiles con teñido o acabado](#2231-análisis-del-segmento-1-micro-y-pequeñas-empresas-textiles-con-teñido-o-acabado)
+        - [A. Características Objetivas (Sustento Estadístico)](#a-características-objetivas-sustento-estadístico)
+        - [B. Características Subjetivas (Sustento Estadístico)](#b-características-subjetivas-sustento-estadístico)
+        - [C. Tabla Síntesis Estadística: Segmento 1 (Textil)](#c-tabla-síntesis-estadística-segmento-1-textil)
+        - [D. Vinculación con la Construcción del Arquetipo (User Persona: Marcelino Valencia)](#d-vinculación-con-la-construcción-del-arquetipo-user-persona-marcelino-valencia)
+      - [2.2.3.2. Análisis del Segmento 2: Pequeños productores y microempresas hidropónicas](#2232-análisis-del-segmento-2-pequeños-productores-y-microempresas-hidropónicas)
+        - [A. Características Objetivas (Sustento Estadístico)](#a-características-objetivas-sustento-estadístico-1)
+        - [B. Características Subjetivas (Sustento Estadístico)](#b-características-subjetivas-sustento-estadístico-1)
+        - [C. Tabla Síntesis Estadística: Segmento 2 (Hidroponía)](#c-tabla-síntesis-estadística-segmento-2-hidroponía)
+        - [D. Vinculación con la Construcción del Arquetipo (User Persona: Lucía Paredes)](#d-vinculación-con-la-construcción-del-arquetipo-user-persona-lucía-paredes)
+      - [2.2.3.3. Matriz Comparativa Inter-Segmentos y Hallazgos Globales ($N=6$)](#2233-matriz-comparativa-inter-segmentos-y-hallazgos-globales-n6)
   - [2.3. Needfinding](#23-needfinding)
     - [2.3.1. User Personas](#231-user-personas)
+    - [Segmento 1:](#segmento-1)
+    - [Segmento 2:](#segmento-2)
     - [2.3.2. User Task Matrix](#232-user-task-matrix)
     - [2.3.3. User Journey Mapping](#233-user-journey-mapping)
+    - [Segmento 1:](#segmento-1-1)
+    - [Segmento 2:](#segmento-2-1)
     - [2.3.4. Empathy Mapping](#234-empathy-mapping)
+    - [Segmento 1:](#segmento-1-2)
+    - [Segmento 2:](#segmento-2-2)
   - [2.4. Big Picture EventStorming](#24-big-picture-eventstorming)
   - [2.5. Ubiquitous Language](#25-ubiquitous-language)
 - [Capítulo III: Requirements Specification](#capítulo-iii-requirements-specification)
   - [3.1. User Stories](#31-user-stories)
     - [Reglas verificables compartidas](#reglas-verificables-compartidas)
-  - [3.2. Impact Mapping](#32-impact-mapping)
-  - [3.3. Product Backlog](#33-product-backlog)
+  - [3.2. Impact Mapping.](#32-impact-mapping)
+  - [3.3. Product Backlog.](#33-product-backlog)
 - [Capítulo IV: Solution Software Design](#capítulo-iv-solution-software-design)
   - [4.1. Strategic-Level Domain-Driven Design](#41-strategic-level-domain-driven-design)
     - [4.1.1. Design-Level EventStorming](#411-design-level-eventstorming)
-      - [4.1.1.1. Candidate Context Discovery](#4111-candidate-context-discovery)
-      - [4.1.1.2. Domain Message Flows Modeling](#4112-domain-message-flows-modeling)
-      - [4.1.1.3. Bounded Context Canvases](#4113-bounded-context-canvases)
+      - [4.1.1.1 Candidate Context Discovery](#4111-candidate-context-discovery)
+      - [4.1.1.2 Domain Message Flows Modeling](#4112-domain-message-flows-modeling)
+        - [Caso 0: Registro y autenticación técnica del dispositivo](#caso-0-registro-y-autenticación-técnica-del-dispositivo)
+        - [Caso 1: Configuración y sincronización del dispositivo](#caso-1-configuración-y-sincronización-del-dispositivo)
+        - [Caso 2: Recepción y evaluación de una medición](#caso-2-recepción-y-evaluación-de-una-medición)
+        - [Caso 3: Selección, aprobación única y primera actuación](#caso-3-selección-aprobación-única-y-primera-actuación)
+        - [Caso 4: Confirmación de la corrección e inicio de espera](#caso-4-confirmación-de-la-corrección-e-inicio-de-espera)
+        - [Caso 5: Liberación del agua tratada](#caso-5-liberación-del-agua-tratada)
+        - [Caso 6: Fallo, emergencia y restablecimiento](#caso-6-fallo-emergencia-y-restablecimiento)
+      - [4.1.1.3 Bounded Context Canvases](#4113-bounded-context-canvases)
+        - [Human Identity and Access Management](#human-identity-and-access-management)
+        - [Device and Operational Configuration](#device-and-operational-configuration)
+        - [IoT Telemetry and Device Integration](#iot-telemetry-and-device-integration)
+        - [Water Quality Treatment and Release](#water-quality-treatment-and-release)
+        - [Operational Monitoring and Traceability](#operational-monitoring-and-traceability)
+        - [Device Identity and Access](#device-identity-and-access)
     - [4.1.2. Context Mapping](#412-context-mapping)
       - [4.1.2.1. Línea base de implementación](#4121-línea-base-de-implementación)
+        - [Estados y transiciones del proceso](#estados-y-transiciones-del-proceso)
+        - [Inicio y cierre de un ciclo correctivo](#inicio-y-cierre-de-un-ciclo-correctivo)
+        - [Contrato común de mensajes](#contrato-común-de-mensajes)
+        - [Entornos y capacidades del dispositivo](#entornos-y-capacidades-del-dispositivo)
+        - [Reglas de seguridad obligatorias](#reglas-de-seguridad-obligatorias)
+        - [Propiedad de datos e integración](#propiedad-de-datos-e-integración)
+        - [Manejadores de integración entre contextos](#manejadores-de-integración-entre-contextos)
+        - [Contratos HTTPS/REST para dispositivos](#contratos-httpsrest-para-dispositivos)
     - [4.1.3. Software Architecture](#413-software-architecture)
       - [4.1.3.1. Software Architecture System Landscape Diagram](#4131-software-architecture-system-landscape-diagram)
       - [4.1.3.2. Software Architecture Context Level Diagrams](#4132-software-architecture-context-level-diagrams)
@@ -192,45 +242,122 @@ En AV2 (del **10 de octubre al 14 de noviembre de 2026**), el equipo actualizó 
   - [4.2. Tactical-Level Domain-Driven Design](#42-tactical-level-domain-driven-design)
     - [4.2.1. Bounded Context: Human Identity and Access Management](#421-bounded-context-human-identity-and-access-management)
       - [4.2.1.1. Domain Layer](#4211-domain-layer)
+        - [A. Aggregates (Agregados)](#a-aggregates-agregados)
+        - [B. Value Objects (Objetos de Valor)](#b-value-objects-objetos-de-valor)
+        - [C. Commands (Comandos - CQRS)](#c-commands-comandos---cqrs)
+        - [D. Queries (Consultas - CQRS)](#d-queries-consultas---cqrs)
+        - [E. Services (Servicios de Comando y Consulta)](#e-services-servicios-de-comando-y-consulta)
       - [4.2.1.2. Interface Layer](#4212-interface-layer)
+        - [A. Controllers (Controladores REST)](#a-controllers-controladores-rest)
+        - [B. Resources / DTOs (Objetos de Transferencia de Datos)](#b-resources--dtos-objetos-de-transferencia-de-datos)
+        - [C. Transformers / Mappers](#c-transformers--mappers)
       - [4.2.1.3. Application Layer](#4213-application-layer)
+        - [A. Command Services \& Handlers (Servicios de Comandos)](#a-command-services--handlers-servicios-de-comandos)
+        - [B. Query Services \& Handlers (Servicios de Consulta)](#b-query-services--handlers-servicios-de-consulta)
+        - [C. Outbound Services / Ports (Servicios de Salida)](#c-outbound-services--ports-servicios-de-salida)
       - [4.2.1.4. Infrastructure Layer](#4214-infrastructure-layer)
+        - [A. Persistence \& Repositories (Persistencia y Repositorios)](#a-persistence--repositories-persistencia-y-repositorios)
+        - [B. Security \& Cryptography Adapters (Adaptadores de Seguridad)](#b-security--cryptography-adapters-adaptadores-de-seguridad)
+        - [C. Configuration \& OpenAPI (Configuración de Infraestructura)](#c-configuration--openapi-configuración-de-infraestructura)
       - [4.2.1.5. Bounded Context Software Architecture Component Level Diagrams](#4215-bounded-context-software-architecture-component-level-diagrams)
       - [4.2.1.6. Bounded Context Software Architecture Code Level Diagrams](#4216-bounded-context-software-architecture-code-level-diagrams)
         - [4.2.1.6.1. Bounded Context Domain Layer Class Diagrams](#42161-bounded-context-domain-layer-class-diagrams)
         - [4.2.1.6.2. Bounded Context Database Design Diagram](#42162-bounded-context-database-design-diagram)
     - [4.2.2. Bounded Context: Configuration](#422-bounded-context-configuration)
       - [4.2.2.1. Domain Layer](#4221-domain-layer)
+        - [A. Aggregates (Agregados)](#a-aggregates-agregados-1)
+        - [B. Entities (Entidades dentro de Agregados)](#b-entities-entidades-dentro-de-agregados)
+        - [C. Value Objects (Objetos de Valor)](#c-value-objects-objetos-de-valor)
+        - [D. Commands (Comandos - CQRS)](#d-commands-comandos---cqrs)
+        - [E. Queries (Consultas - CQRS)](#e-queries-consultas---cqrs)
+        - [F. Services (Servicios de Comando y Consulta)](#f-services-servicios-de-comando-y-consulta)
       - [4.2.2.2. Interface Layer](#4222-interface-layer)
+        - [A. Controllers (Controladores REST)](#a-controllers-controladores-rest-1)
+        - [B. Resources / DTOs (Objetos de Transferencia de Datos)](#b-resources--dtos-objetos-de-transferencia-de-datos-1)
+        - [C. Transformers / Mappers](#c-transformers--mappers-1)
       - [4.2.2.3. Application Layer](#4223-application-layer)
+        - [A. Command Services \& Handlers (Servicios de Comandos)](#a-command-services--handlers-servicios-de-comandos-1)
+        - [B. Query Services \& Handlers (Servicios de Consulta)](#b-query-services--handlers-servicios-de-consulta-1)
+        - [C. Outbound Services / Ports (Servicios de Salida)](#c-outbound-services--ports-servicios-de-salida-1)
       - [4.2.2.4. Infrastructure Layer](#4224-infrastructure-layer)
+        - [A. Persistence \& Repositories (Persistencia y Repositorios)](#a-persistence--repositories-persistencia-y-repositorios-1)
+        - [B. Device Identity HTTP Adapter (Adaptador de integración con identidad de dispositivo)](#b-device-identity-http-adapter-adaptador-de-integración-con-identidad-de-dispositivo)
+        - [C. Catalog Adapters (Adaptadores de Catálogo Operativo)](#c-catalog-adapters-adaptadores-de-catálogo-operativo)
+        - [D. Configuration \& OpenAPI (Configuración de Infraestructura)](#d-configuration--openapi-configuración-de-infraestructura)
       - [4.2.2.5. Bounded Context Software Architecture Component Level Diagrams](#4225-bounded-context-software-architecture-component-level-diagrams)
       - [4.2.2.6. Bounded Context Software Architecture Code Level Diagrams](#4226-bounded-context-software-architecture-code-level-diagrams)
         - [4.2.2.6.1. Bounded Context Domain Layer Class Diagrams](#42261-bounded-context-domain-layer-class-diagrams)
         - [4.2.2.6.2. Bounded Context Database Design Diagram](#42262-bounded-context-database-design-diagram)
     - [4.2.3. Bounded Context: IOT Telemetry](#423-bounded-context-iot-telemetry)
       - [4.2.3.1. Domain Layer](#4231-domain-layer)
+        - [A. Aggregates (Agregados)](#a-aggregates-agregados-2)
+        - [B. Value Objects (Objetos de Valor)](#b-value-objects-objetos-de-valor-1)
+        - [C. Commands (Comandos - CQRS)](#c-commands-comandos---cqrs-1)
+        - [D. Queries (Consultas - CQRS)](#d-queries-consultas---cqrs-1)
+        - [E. Services (Servicios de Comando y Consulta)](#e-services-servicios-de-comando-y-consulta-1)
+        - [F. Read Models (Modelos de Lectura)](#f-read-models-modelos-de-lectura)
       - [4.2.3.2. Interface Layer](#4232-interface-layer)
+        - [A. Controllers (Controladores REST)](#a-controllers-controladores-rest-2)
+        - [B. Resources / DTOs (Objetos de Transferencia de Datos)](#b-resources--dtos-objetos-de-transferencia-de-datos-2)
+        - [C. Transformers / Mappers](#c-transformers--mappers-2)
       - [4.2.3.3. Application Layer](#4233-application-layer)
+        - [A. Command Services \& Handlers (Servicios de Comandos)](#a-command-services--handlers-servicios-de-comandos-2)
+        - [B. Query Services \& Handlers (Servicios de Consulta)](#b-query-services--handlers-servicios-de-consulta-2)
+        - [C. Outbound Services / Ports (Servicios de Salida)](#c-outbound-services--ports-servicios-de-salida-2)
       - [4.2.3.4. Infrastructure Layer](#4234-infrastructure-layer)
+        - [A. Persistence \& Repositories (Persistencia y Repositorios)](#a-persistence--repositories-persistencia-y-repositorios-2)
+        - [B. Edge REST Adapter (Adaptador de Edge)](#b-edge-rest-adapter-adaptador-de-edge)
+        - [C. Telemetry Ingestion Adapter (Adaptador de Ingesta)](#c-telemetry-ingestion-adapter-adaptador-de-ingesta)
+        - [D. Configuration \& OpenAPI (Configuración de Infraestructura)](#d-configuration--openapi-configuración-de-infraestructura-1)
       - [4.2.3.5. Bounded Context Software Architecture Component Level Diagrams](#4235-bounded-context-software-architecture-component-level-diagrams)
       - [4.2.3.6. Bounded Context Software Architecture Code Level Diagrams](#4236-bounded-context-software-architecture-code-level-diagrams)
         - [4.2.3.6.1. Bounded Context Domain Layer Class Diagrams](#42361-bounded-context-domain-layer-class-diagrams)
         - [4.2.3.6.2. Bounded Context Database Design Diagram](#42362-bounded-context-database-design-diagram)
     - [4.2.4. Bounded Context: Treatment](#424-bounded-context-treatment)
       - [4.2.4.1. Domain Layer](#4241-domain-layer)
+        - [A. Aggregates (Agregados)](#a-aggregates-agregados-3)
+        - [B. Entities (Entidades)](#b-entities-entidades)
+        - [C. Value Objects (Objetos de Valor)](#c-value-objects-objetos-de-valor-1)
+        - [D. Commands (Comandos - CQRS)](#d-commands-comandos---cqrs-1)
+        - [E. Queries (Consultas - CQRS)](#e-queries-consultas---cqrs-1)
+        - [F. Services (Servicios de Comando y Consulta)](#f-services-servicios-de-comando-y-consulta-1)
       - [4.2.4.2. Interface Layer](#4242-interface-layer)
+        - [A. Controllers (Controladores REST)](#a-controllers-controladores-rest-3)
+        - [B. Resources / DTOs (Objetos de Transferencia de Datos)](#b-resources--dtos-objetos-de-transferencia-de-datos-3)
+        - [C. Transformers / Mappers](#c-transformers--mappers-3)
       - [4.2.4.3. Application Layer](#4243-application-layer)
+        - [A. Command Services \& Handlers (Servicios de Comandos)](#a-command-services--handlers-servicios-de-comandos-3)
+        - [B. Query Services \& Handlers (Servicios de Consulta)](#b-query-services--handlers-servicios-de-consulta-3)
+        - [C. Outbound Services / Ports (Servicios de Salida)](#c-outbound-services--ports-servicios-de-salida-3)
       - [4.2.4.4. Infrastructure Layer](#4244-infrastructure-layer)
+        - [A. Persistence \& Repositories (Persistencia y Repositorios)](#a-persistence--repositories-persistencia-y-repositorios-3)
+        - [B. Configuration Context Adapters (Adaptadores hacia Configuration)](#b-configuration-context-adapters-adaptadores-hacia-configuration)
+        - [C. Configuration \& OpenAPI (Configuración de Infraestructura)](#c-configuration--openapi-configuración-de-infraestructura-1)
       - [4.2.4.5. Bounded Context Software Architecture Component Level Diagrams](#4245-bounded-context-software-architecture-component-level-diagrams)
       - [4.2.4.6. Bounded Context Software Architecture Code Level Diagrams](#4246-bounded-context-software-architecture-code-level-diagrams)
         - [4.2.4.6.1. Bounded Context Domain Layer Class Diagrams](#42461-bounded-context-domain-layer-class-diagrams)
         - [4.2.4.6.2. Bounded Context Database Design Diagram](#42462-bounded-context-database-design-diagram)
     - [4.2.5. Bounded Context: Monitoring](#425-bounded-context-monitoring)
       - [4.2.5.1. Domain Layer](#4251-domain-layer)
+        - [A. Aggregates (Agregados)](#a-aggregates-agregados-4)
+        - [B. Value Objects (Objetos de Valor)](#b-value-objects-objetos-de-valor-2)
+        - [C. Commands (Comandos - CQRS)](#c-commands-comandos---cqrs-2)
+        - [D. Queries (Consultas - CQRS)](#d-queries-consultas---cqrs-2)
+        - [E. Services (Servicios de Comando y Consulta)](#e-services-servicios-de-comando-y-consulta-2)
       - [4.2.5.2. Interface Layer](#4252-interface-layer)
+        - [A. Controllers (Controladores REST)](#a-controllers-controladores-rest-4)
+        - [B. Resources / DTOs (Objetos de Transferencia de Datos)](#b-resources--dtos-objetos-de-transferencia-de-datos-4)
+        - [C. Transformers / Mappers](#c-transformers--mappers-4)
       - [4.2.5.3. Application Layer](#4253-application-layer)
+        - [A. Command Services \& Handlers (Servicios de Comandos)](#a-command-services--handlers-servicios-de-comandos-4)
+        - [B. Query Services \& Handlers (Servicios de Consulta)](#b-query-services--handlers-servicios-de-consulta-4)
+        - [C. Outbound Services / Ports (Servicios de Salida)](#c-outbound-services--ports-servicios-de-salida-4)
       - [4.2.5.4. Infrastructure Layer](#4254-infrastructure-layer)
+        - [A. Persistence \& Repositories (Persistencia y Repositorios)](#a-persistence--repositories-persistencia-y-repositorios-4)
+        - [B. Configuration Context Adapter (Adaptador hacia Configuration)](#b-configuration-context-adapter-adaptador-hacia-configuration)
+        - [C. Telemetry Context Adapter (Adaptador hacia Telemetry)](#c-telemetry-context-adapter-adaptador-hacia-telemetry)
+        - [D. Treatment Context Adapter (Adaptador hacia Treatment)](#d-treatment-context-adapter-adaptador-hacia-treatment)
+        - [E. Configuration \& OpenAPI (Configuración de Infraestructura)](#e-configuration--openapi-configuración-de-infraestructura)
       - [4.2.5.5. Bounded Context Software Architecture Component Level Diagrams](#4255-bounded-context-software-architecture-component-level-diagrams)
       - [4.2.5.6. Bounded Context Software Architecture Code Level Diagrams](#4256-bounded-context-software-architecture-code-level-diagrams)
         - [4.2.5.6.1. Bounded Context Domain Layer Class Diagrams](#42561-bounded-context-domain-layer-class-diagrams)
@@ -243,35 +370,121 @@ En AV2 (del **10 de octubre al 14 de noviembre de 2026**), el equipo actualizó 
 - [Capítulo V: Solution UI/UX Design](#capítulo-v-solution-uiux-design)
   - [5.1. Style Guidelines](#51-style-guidelines)
     - [5.1.1. General Style Guidelines](#511-general-style-guidelines)
+      - [Identidad y principios](#identidad-y-principios)
+      - [Logotipo y marca](#logotipo-y-marca)
+      - [Tipografía](#tipografía)
+      - [Paleta cromática de las aplicaciones operativas](#paleta-cromática-de-las-aplicaciones-operativas)
+      - [Espaciado, formas e iconografía](#espaciado-formas-e-iconografía)
+      - [Voz, tono y redacción](#voz-tono-y-redacción)
+      - [Accesibilidad y estados de interacción](#accesibilidad-y-estados-de-interacción)
     - [5.1.2. Web, Mobile and IoT Style Guidelines](#512-web-mobile-and-iot-style-guidelines)
+      - [Landing Page: variante comercial responsive](#landing-page-variante-comercial-responsive)
+      - [Aplicación web administrativa](#aplicación-web-administrativa)
+      - [Aplicación móvil del operario](#aplicación-móvil-del-operario)
+      - [Dispositivo IoT e interfaz física](#dispositivo-iot-e-interfaz-física)
   - [5.2. Information Architecture](#52-information-architecture)
     - [5.2.1. Organization Systems](#521-organization-systems)
     - [5.2.2. Labeling Systems](#522-labeling-systems)
+      - [Etiquetas principales por experiencia](#etiquetas-principales-por-experiencia)
+      - [Etiquetas de estado](#etiquetas-de-estado)
     - [5.2.3. SEO Tags and Meta Tags](#523-seo-tags-and-meta-tags)
+      - [Landing Page](#landing-page)
+      - [Aplicación web administrativa](#aplicación-web-administrativa-1)
+      - [ASO de la aplicación móvil](#aso-de-la-aplicación-móvil)
     - [5.2.4. Searching Systems](#524-searching-systems)
     - [5.2.5. Navigation Systems](#525-navigation-systems)
+      - [Landing Page](#landing-page-1)
+      - [Aplicación web del Administrador](#aplicación-web-del-administrador)
+      - [Aplicación móvil del Operario](#aplicación-móvil-del-operario-1)
   - [5.3. Landing Page UI Design](#53-landing-page-ui-design)
     - [5.3.1. Landing Page Wireframe](#531-landing-page-wireframe)
+      - [Wireframe 01 - Hero y Propuesta de Solución](#wireframe-01---hero-y-propuesta-de-solución)
+      - [Wireframe 02 - Producto y Segmentación por Sectores](#wireframe-02---producto-y-segmentación-por-sectores)
+      - [Wireframe 03 - Capacidades Operativas y Equipo](#wireframe-03---capacidades-operativas-y-equipo)
+      - [Wireframe 04 - Contacto y Pie de Página](#wireframe-04---contacto-y-pie-de-página)
     - [5.3.2. Landing Page Mock-up](#532-landing-page-mock-up)
-  - [5.4. Applications UX/UI Design](#54-applications-uxui-design)
-    - [5.4.1. Applications Wireframes](#541-applications-wireframes)
-    - [5.4.2. Applications Wireflow Diagrams](#542-applications-wireflow-diagrams)
-    - [5.4.3. Applications Mock-ups](#543-applications-mock-ups)
-    - [5.4.4. Applications User Flow Diagrams](#544-applications-user-flow-diagrams)
-  - [5.5. Applications Prototyping](#55-applications-prototyping)
+      - [Mock-up 01 - Hero y Propuesta de Solución](#mock-up-01---hero-y-propuesta-de-solución)
+      - [Mock-up 02 - Producto y Segmentación por Sectores](#mock-up-02---producto-y-segmentación-por-sectores)
+      - [Mock-up 03 - Capacidades Operativas y Equipo](#mock-up-03---capacidades-operativas-y-equipo)
+      - [Mock-up 04 - Contacto y Pie de Página](#mock-up-04---contacto-y-pie-de-página)
+  - [5.4. Applications UX/UI Design.](#54-applications-uxui-design)
+    - [5.4.1. Applications Wireframes.](#541-applications-wireframes)
+      - [Web Application Wireframes - Administrator](#web-application-wireframes---administrator)
+      - [W01 - Iniciar sesión](#w01---iniciar-sesión)
+      - [W02 - Registrar empresa](#w02---registrar-empresa)
+      - [W03 - Resumen](#w03---resumen)
+      - [W04 - Operarios](#w04---operarios)
+      - [W05 - Asignar Operario](#w05---asignar-operario)
+      - [W06 - Estructura operativa](#w06---estructura-operativa)
+      - [W07 - Detalle de dispositivo](#w07---detalle-de-dispositivo)
+      - [W08 - Telemetría](#w08---telemetría)
+      - [W09 - Alertas e Incidentes](#w09---alertas-e-incidentes)
+      - [W10 - Historial y reportes](#w10---historial-y-reportes)
+      - [Mobile Application Wireframes - Operator](#mobile-application-wireframes---operator)
+        - [M01 - Primer acceso](#m01---primer-acceso)
+        - [M02 - Iniciar sesión](#m02---iniciar-sesión)
+        - [M03 - Inicio](#m03---inicio)
+        - [M04 - Mis reservorios](#m04---mis-reservorios)
+        - [M05 - Detalle de reservorio](#m05---detalle-de-reservorio)
+        - [M06 - Configuración operativa](#m06---configuración-operativa)
+        - [M07 - Proceso actual](#m07---proceso-actual)
+        - [M08 - Alertas](#m08---alertas)
+        - [M09 - Historial](#m09---historial)
+        - [M10 - Perfil y cuenta](#m10---perfil-y-cuenta)
+    - [5.4.2. Applications Wireflow Diagrams.](#542-applications-wireflow-diagrams)
+    - [Aplicación web — Administrador](#aplicación-web--administrador)
+      - [**WF-WEB-01 · Inicio de sesión y registro de empresa**](#wf-web-01--inicio-de-sesión-y-registro-de-empresa)
+      - [**WF-WEB-02 · Registro y asignación de operarios**](#wf-web-02--registro-y-asignación-de-operarios)
+      - [**WF-WEB-03 · Supervisión de dispositivos y revisión de incidencias**](#wf-web-03--supervisión-de-dispositivos-y-revisión-de-incidencias)
+    - [Aplicación móvil — Operario](#aplicación-móvil--operario)
+      - [**WF-MOB-01 · Primer acceso e inicio de sesión**](#wf-mob-01--primer-acceso-e-inicio-de-sesión)
+      - [**WF-MOB-02 · Consulta del estado de reservorios**](#wf-mob-02--consulta-del-estado-de-reservorios)
+      - [**WF-MOB-03 · Supervisión del tratamiento y liberación segura del agua**](#wf-mob-03--supervisión-del-tratamiento-y-liberación-segura-del-agua)
+      - [**WF-MOB-04 · Atención de alertas y consulta de trazabilidad**](#wf-mob-04--atención-de-alertas-y-consulta-de-trazabilidad)
+    - [5.4.3. Applications Mock-ups.](#543-applications-mock-ups)
+      - [Inicio de sesión:](#inicio-de-sesión)
+      - [Operarios:](#operarios)
+      - [Grupos:](#grupos)
+      - [Reservorios:](#reservorios)
+      - [Dispositivos:](#dispositivos)
+      - [Perfiles:](#perfiles)
+      - [Estado Operacional:](#estado-operacional)
+      - [Alertas:](#alertas)
+      - [Incidentes:](#incidentes)
+      - [Trazabilidad:](#trazabilidad)
+      - [Mobile:](#mobile)
+    - [5.4.4. Applications User Flow Diagrams.](#544-applications-user-flow-diagrams)
+      - [Incio de sesión:](#incio-de-sesión)
+      - [Secciones:](#secciones)
+      - [Operarios:](#operarios-1)
+      - [Grupos:](#grupos-1)
+      - [Reservorios:](#reservorios-1)
+      - [Dispositivos:](#dispositivos-1)
+      - [Perfiles:](#perfiles-1)
+      - [Monitoreo:](#monitoreo)
+      - [Alertas:](#alertas-1)
+      - [Incidentes:](#incidentes-1)
+      - [Trazabilidad:](#trazabilidad-1)
+  - [5.5. Applications Prototyping.](#55-applications-prototyping)
   - [5.6. IoT Device Design](#56-iot-device-design)
     - [5.6.1. Montaje y conexiones vigentes](#561-montaje-y-conexiones-vigentes)
     - [5.6.2. Adquisición y conversión de lecturas](#562-adquisición-y-conversión-de-lecturas)
     - [5.6.3. Indicadores y flujo integrado](#563-indicadores-y-flujo-integrado)
     - [5.6.4. Configuración, memoria y límites pendientes](#564-configuración-memoria-y-límites-pendientes)
-- [Capítulo VI: Product Implementation, Validation & Deployment](#capítulo-vi-product-implementation-validation--deployment)
+- [Capítulo VI: Product Implementation, Validation \& Deployment](#capítulo-vi-product-implementation-validation--deployment)
   - [6.1. Software Configuration Management](#61-software-configuration-management)
-    - [6.1.1. Software Development Environment Configuration](#611-software-development-environment-configuration)
+    - [6.1.1. Software Development Environment Configuration.](#611-software-development-environment-configuration)
     - [6.1.2. Source Code Management](#612-source-code-management)
-    - [6.1.3. Source Code Style Guide & Conventions](#613-source-code-style-guide--conventions)
+    - [6.1.3. Source Code Style Guide \& Conventions](#613-source-code-style-guide--conventions)
+      - [Convenciones comunes](#convenciones-comunes)
+      - [TypeScript y Angular](#typescript-y-angular)
+      - [HTML y CSS](#html-y-css)
+      - [JavaScript, JSON y API REST](#javascript-json-y-api-rest)
+      - [Java/Spring y software embebido](#javaspring-y-software-embebido)
+      - [Gherkin, pruebas y commits](#gherkin-pruebas-y-commits)
     - [6.1.4. Software Deployment Configuration](#614-software-deployment-configuration)
       - [Frontend Web Applications](#frontend-web-applications)
-  - [6.2. Landing Page, Services & Applications Implementation](#62-landing-page-services--applications-implementation)
+  - [6.2. Landing Page, Services \& Applications Implementation](#62-landing-page-services--applications-implementation)
     - [6.2.1. Sprint 1](#621-sprint-1)
       - [6.2.1.1. Sprint Planning 1](#6211-sprint-planning-1)
       - [6.2.1.2. Aspect Leaders and Collaborators](#6212-aspect-leaders-and-collaborators)
@@ -292,15 +505,37 @@ En AV2 (del **10 de octubre al 14 de noviembre de 2026**), el equipo actualizó 
       - [6.2.2.5. Testing Suite Evidence for Sprint Review](#6225-testing-suite-evidence-for-sprint-review)
       - [6.2.2.6. Execution Evidence for Sprint Review](#6226-execution-evidence-for-sprint-review)
       - [6.2.2.7. Services Documentation Evidence for Sprint Review](#6227-services-documentation-evidence-for-sprint-review)
+        - [Convenciones de las rutas documentadas](#convenciones-de-las-rutas-documentadas)
+        - [1. Human IAM Service](#1-human-iam-service)
+        - [2. Device Identity Service](#2-device-identity-service)
+        - [3. Configuration Service](#3-configuration-service)
+        - [4. Telemetry Service](#4-telemetry-service)
+        - [5. Treatment Service](#5-treatment-service)
+        - [6. Monitoring Service](#6-monitoring-service)
+        - [7. HydroGuard Edge Service](#7-hydroguard-edge-service)
+        - [Rutas internas entre microservicios](#rutas-internas-entre-microservicios)
       - [6.2.2.8. Software Deployment Evidence for Sprint Review](#6228-software-deployment-evidence-for-sprint-review)
       - [6.2.2.9. Team Collaboration Insights during Sprint](#6229-team-collaboration-insights-during-sprint)
+    - [6.3. Validation Interviews](#63-validation-interviews)
+      - [6.3.1. Diseño de Entrevistas](#631-diseño-de-entrevistas)
+      - [6.3.2. Registro de Entrevistas](#632-registro-de-entrevistas)
+      - [6.3.3. Evaluaciones según heurísticas](#633-evaluaciones-según-heurísticas)
+        - [6.3.3.1. Identificación de la auditoría](#6331-identificación-de-la-auditoría)
+        - [6.3.3.2. Objetivo y alcance](#6332-objetivo-y-alcance)
+        - [6.3.3.3. Repositorios y revisiones examinadas](#6333-repositorios-y-revisiones-examinadas)
+        - [6.3.3.4. Método de evaluación y escala de severidad](#6334-método-de-evaluación-y-escala-de-severidad)
+        - [6.3.3.5. Resumen ejecutivo de resultados](#6335-resumen-ejecutivo-de-resultados)
+        - [6.3.3.6. Matriz consolidada de hallazgos](#6336-matriz-consolidada-de-hallazgos)
+        - [6.3.3.7. Descripción detallada de los problemas](#6337-descripción-detallada-de-los-problemas)
+        - [6.3.3.8. Fortalezas observadas](#6338-fortalezas-observadas)
+        - [6.3.3.9. Cobertura de las heurísticas de Nielsen y accesibilidad](#6339-cobertura-de-las-heurísticas-de-nielsen-y-accesibilidad)
+        - [6.3.3.10. Inconsistencias documentales y aspectos de integración pendientes](#63310-inconsistencias-documentales-y-aspectos-de-integración-pendientes)
+        - [6.3.3.11. Riesgos no comprobados y pruebas sugeridas](#63311-riesgos-no-comprobados-y-pruebas-sugeridas)
+        - [6.3.3.12. Recomendaciones priorizadas](#63312-recomendaciones-priorizadas)
+        - [6.3.3.14. Conclusiones de la auditoría heurística](#63314-conclusiones-de-la-auditoría-heurística)
 - [Conclusiones](#conclusiones)
   - [Conclusiones y recomendaciones](#conclusiones-y-recomendaciones)
 - [Bibliografía](#bibliografía)
-- [Anexos](#anexos)
-  - [Final Project Keynote](#final-project-keynote)
-  - [Final Project Individual Member Performance Report (by Team Leader)](#final-project-individual-member-performance-report-by-team-leader)
-  - [Archivos complementarios (.zip)](#archivos-complementarios-zip)
 ## Student Outcome
 
 **ABET – EAC - Student Outcome 5.** La capacidad de funcionar efectivamente en un equipo cuyos miembros juntos proporcionan liderazgo, crean un entorno de colaboración e inclusivo, establecen objetivos, planifican tareas y cumplen objetivos.
@@ -5515,13 +5750,30 @@ El Sprint Backlog 2 registra 29 historias, con 106 Story Points planificados y 6
 
 El Sprint 1 comprende 38 tareas y 158 horas para el incremento frontend/mock. El Sprint 2 registra las tareas de backend persistente, integración móvil e IoT, sin volver a contabilizar aquel trabajo frontend. US-37 mantiene pendiente la recepción efectiva de solicitudes de contacto.
 
+
+
 **Sprint #:** Sprint 2
 
 **URL del Board:** https://trello.com/b/6aafc8a787b6bbbecd455184
 
 **Screenshot del Board — Sprint 2:**
 
-<!-- Insertar aquí la captura real del tablero de Sprint 2 -->
+
+**Vista general del tablero**
+
+![Vista general del tablero Trello: Sprint 1, integración posterior y Product Backlog](assets/development-sprint-2/04-board-sprint-2.png)
+
+*Vista general del tablero; muestra las listas de Sprint 1, integración posterior y Product Backlog.*
+
+**Estado del Sprint Backlog 2**
+
+![Tablero Trello HydroGuard — Sprint Backlog 2](assets/development-sprint-2/05-trello-sprint-backlog-2.png)
+
+*Vista específica de Sprint Backlog 2: 66 tarjetas en `Done` y cero en `To Do`, `In Process` y `To Review`.*
+
+En conjunto, las capturas aportan contexto visual del tablero; el detalle de historias, tareas, responsables y estimaciones se presenta en la tabla siguiente.
+
+
 
 **Tabla de control de estado del Sprint 2:**
 
@@ -5599,6 +5851,7 @@ Las tareas T-92 y T-95 corresponden a US-41; T-93 y T-94 corresponden a US-15 y 
 
 Las condiciones de espera, límite de ciclos y parada segura también se relacionan con US-15 a US-18 y TS-07/TS-13. Que un comportamiento aparezca como dependencia en una tarea seleccionada no incorpora automáticamente las historias US-16 y US-17 al Sprint Backlog ni demuestra su aceptación integral. Su selección y evidencia deben conciliarse explícitamente si el equipo decide incluirlas.
 
+**Aporte P-04 — La tarea T-94 registra la edición descriptiva de grupos y reservorios. La implementación agrega `PATCH /api/v1/groups/{id}/description` para actualizar nombre, propósito y clasificación, y `PATCH /api/v1/reservoirs/{id}/description` para actualizar nombre y ubicación. El backend limita ambas operaciones al Administrador de la organización y conserva la identidad y las relaciones de los recursos. Los cambios y pruebas están en [606e6ea](https://github.com/1ASI0572-2620-8740-IOT/hydroguard_backend/commit/606e6eaedf225bcb7e0b5931cb1f6a991b2807ee) y [11ae250](https://github.com/1ASI0572-2620-8740-IOT/hydroguard_backend/commit/11ae2508db3410d4be9254c0d3c77f3460c19709). Ambos commits están en `feature/edit-groups-reservoirs`; no se encontraron integrados en `develop`. El segundo commit añade pruebas HTTP y de persistencia, pero su presencia no acredita que se hayan ejecutado. 
 
 #### 6.2.2.4. Development Evidence for Sprint Review
 
@@ -6265,7 +6518,7 @@ Las fichas restantes mantienen los mismos datos y evidencias: registrar el enlac
 | Entrevista | Segmento objetivo | Entrevistado | Fecha | Inicio en video | Duración | Estado |
 |:--|:--|:--|:--|:--|:--|:--|
 | EV-T01 | Industria textil | David Ramírez | Pendiente de confirmar | Pendiente en video compilado | Pendiente de confirmar | Realizada; compilación pendiente |
-| EV-T02 | Industria textil | Pendiente | Pendiente | Pendiente | Pendiente | Por realizar |
+| EV-T02 | Industria textil | Oscar Antayhua Castillo | 14/11/2026 | 00:00 | 04:58 | Realizada |
 | EV-T03 | Industria textil | Pendiente | Pendiente | Pendiente | Pendiente | Por realizar |
 | EV-H01 | Producción hidropónica | Diego Alonso | 14/11/2026 | 0:00 | 3:30 | Realizada |
 | EV-H02 | Producción hidropónica | Pendiente | Pendiente | Pendiente | Pendiente | Por realizar |
@@ -6303,18 +6556,29 @@ Los intervalos corresponden al resumen de la grabación individual proporcionado
 
 | Campo | Información |
 |:--|:--|
-| Nombre y apellidos | Pendiente de registrar |
-| Edad | Pendiente |
-| Distrito | Pendiente |
-| Ocupación o relación con el sector textil | Pendiente |
-| Fecha de entrevista | Pendiente |
-| URL del video (Microsoft Stream/Clipchamp) | Pendiente |
-| Inicio de la entrevista en el video | Pendiente (hh:mm:ss) |
-| Duración | Pendiente (hh:mm:ss) |
+| Nombre y apellidos | Oscar Antayhua Castillo |
+| Edad | 28 años  |
+| Distrito | Lima  |
+| Ocupación o relación con el sector textil | Dueño y supervisor de un taller textil |
+| Entrevistadora | Andrea Elizabeth Santur Tello |
+| Fecha de entrevista | 14/11/2026 |
+| URL del video (Microsoft Stream/Clipchamp) | https://upcedupe-my.sharepoint.com/:v:/g/personal/u202310988_upc_edu_pe/IQCQbDmSb8bGQorANB16epzWASEVRwbfK-rKSGO7TmDp3VM?e=aTWIZP&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifSwicGxheWJhY2tPcHRpb25zIjp7fX0%3D |
+| Inicio de la entrevista en el video | 00:00 |
+| Duración | 04:58 |
 
-**Captura de la entrevista:** Pendiente de insertar.
+**Captura de la entrevista:**
 
-**Resumen descriptivo:** Pendiente de redactar después de la entrevista, considerando la comprensión de la solución, la utilidad del monitoreo y las recomendaciones del participante.
+![Captura de la entrevista de validación EV-T02 con Oscar Antayhua Castillo](assets/validation-interviews/ev-t02-oscar-antayhua-castillo.png)
+
+**Resumen descriptivo:** Oscar Antayhua Castillo revisó la Landing Page y la aplicación web, y observó un video del prototipo físico.
+
+- **Landing Page:** señaló que comprendió el problema del monitoreo y control del agua residual textil. Consideró importante medir pH y temperatura antes de liberar el agua y valoró que la página explicara de forma sencilla el funcionamiento y sus beneficios.
+- **Aplicación web:** indicó que le resultó sencillo encontrar y comprender las mediciones. Consideró que las alertas y los estados del agua ayudan a identificar problemas, y valoró que se presenten recomendaciones de acciones correctivas.
+- **Historial:** destacó que consultar mediciones, tratamientos y liberaciones ayuda a controlar el proceso, identificar problemas recurrentes y verificar si las correcciones fueron efectivas.
+- **Prototipo físico:** consideró confiable el proceso observado de medición, evaluación y control de la válvula; valoró la automatización y que la liberación dependa de las condiciones del agua.
+- **Utilidad y mejora solicitada:** estimó que el sistema ayudaría a evitar descargas fuera de rango y ahorrar tiempo al personal. Sugirió agregar notificaciones automáticas cuando el agua esté fuera de rango y permitir supervisar desde un celular el estado de la válvula.
+
+Las opiniones corresponden a la percepción del participante durante la sesión; no constituyen una validación técnica independiente de los sensores ni de la actuación física de la válvula.
 
 **Entrevista EV-T03**
 
@@ -6416,7 +6680,7 @@ Los resultados se utilizarán para contrastar las hipótesis del proyecto y prio
 
 ##### 6.3.3.1. Identificación de la auditoría
 
-La presente sección documenta la **auditoría heurística independiente del proyecto IceTrack**, desarrollado por la startup **Frostshield**, como parte de la revisión académica de soluciones IoT. El objeto de análisis es **IceTrack**, no HydroGuard. Se recoge la auditoría original realizada el **13 de noviembre de 2026** y su **revisión diferencial del 14 de noviembre de 2026**, con el propósito de identificar problemas de usabilidad, accesibilidad y coherencia entre el estado representado en la interfaz y el comportamiento de los componentes IoT.
+La presente sección documenta la **auditoría heurística independiente del proyecto IceTrack**, desarrollado por la startup **Frostshield**, como parte de la revisión académica de soluciones IoT. El objeto de análisis es **IceTrack**. Se recoge la auditoría original realizada el **13 de noviembre de 2026** y su **revisión diferencial del 14 de noviembre de 2026**, con el propósito de identificar problemas de usabilidad, accesibilidad y coherencia entre el estado representado en la interfaz y el comportamiento de los componentes IoT.
 
 | Campo | Descripción |
 |:--|:--|
@@ -6424,19 +6688,23 @@ La presente sección documenta la **auditoría heurística independiente del pro
 | Startup | Frostshield |
 | Curso | Desarrollo de Soluciones IoT — UPC |
 | Tipo de evaluación | Auditoría heurística de código e interfaces, con pruebas locales y revisión diferencial |
+| Auditor | Andrea Santur Tello  |
+| Participantes o clientes | No se reportan participantes en la auditoría; las entrevistas de HydroGuard se documentan por separado |
 | Auditoría original | 13/11/2026 (22:05–22:27, hora de Lima) |
 | Revisión diferencial | 14/11/2026 |
 | Referentes | Diez heurísticas de Jakob Nielsen; criterios pertinentes de WCAG 2.2 AA; coherencia de los estados IoT |
 | Componentes analizados | Landing Page, plataforma web, aplicación móvil, servicio Edge y documentación; backend y firmware como referencias de alcance |
 | Alcance de la evidencia | Código y pruebas locales reportadas; sin entrevistas, pruebas físicas de sensores ni validación integral en producción |
 
-> **Nota de trazabilidad:** esta sección organiza los resultados consignados en los documentos de auditoría recibidos. Las pruebas descritas corresponden a las revisiones y entornos declarados en esos documentos; no se presentan como pruebas ejecutadas nuevamente al redactar esta sección. Los identificadores SHA representan revisiones de código y no permiten asumir qué versión está desplegada actualmente.
+> **Nota de trazabilidad:** los documentos fuente `Auditoria-IceTrack-diferencial-14-11-2026.md` y `AV2-6.3.3-IceTrack-diferencial-14-11-2026.md` no están disponibles en los archivos recibidos para esta actualización. El contenido y los SHA descritos abajo se conservan del README actual, pero no pudieron contrastarse con esos originales ni repetirse las pruebas. Los SHA identifican revisiones de código; no demuestran qué versión está desplegada.
 
 ##### 6.3.3.2. Objetivo y alcance
 
 El objetivo fue analizar la **claridad de la navegación**, la **visibilidad y vigencia de las mediciones térmicas**, la **retroalimentación de los estados de operación y sincronización**, la **consistencia del idioma y de los flujos**, la **accesibilidad de los controles** y la **coherencia entre las lecturas de sensores y la información presentada**.
 
-La auditoría original comprendió inspección de repositorios, revisión estática de código, compilación y ejecución local de interfaces Angular y Flutter Web, pruebas con datos sintéticos, automatización del navegador y una sonda del servicio Edge con una base SQLite temporal. En esa revisión se reportó la ejecución satisfactoria de **seis pruebas existentes de Edge**. La revisión diferencial incorporó versiones `AV2` y `develop` y reportó pruebas locales específicas de widgets y traducciones.
+La auditoría original comprendió inspección de repositorios, revisión estática de código, compilación y ejecución local de interfaces Angular y Flutter Web, pruebas con datos sintéticos, automatización del navegador y una sonda del servicio Edge con una base SQLite temporal. En esa revisión se reportó la ejecución satisfactoria de **seis pruebas existentes de Edge**. 
+
+Los escenarios descritos en el informe se desarrollan por hallazgo en H01–H08. La documentación disponible no especifica una lista independiente de tareas realizadas por participantes ni acredita una evaluación sistemática de arquitectura de información o de principios de diseño inclusivo; estos aspectos quedan como brechas documentales, no como resultados negativos inferidos.
 
 **Fuera del alcance:** pruebas de aceptación con usuarios finales, evaluación mediante entrevistas, funcionamiento de sensores físicos y ESP32 en campo, certificación de rangos térmicos, ensayos completos de conectividad real, validación integral de backend en producción y acreditación global de cumplimiento WCAG 2.2 AA.
 
@@ -6444,7 +6712,7 @@ La auditoría original comprendió inspección de repositorios, revisión estát
 
 | Artefacto | Revisión original del 13/11/2026 | Revisión diferencial del 14/11/2026 | Consideración |
 |:--|:--|:--|:--|
-| Informe `Report-IceTrack_Iot` | `main` — `004e51d225f04d5bb1138b9d5bca3176d9e85e4f` | `AV2` — `cd21aa6b0a330a9c9c286672b06d848fa5599f42` | Distinguir README AV2 del PDF utilizado como referencia. |
+| Informe `Report-IceTrack_Iot` | `main` — `004e51d225f04d5bb1138b9d5bca3176d9e85e4f` | `AV2` — de `cd21aa6` a `5fb1e966` (5 commits) | La versión nueva incorpora una evaluación de Edifika; sus seis observaciones no son hallazgos de IceTrack. |
 | Web `Frontend-IceTrack_IoT` | `master` — `adc3a6b4f36135e856c1c0d8de6ed6d82d3feecb` | `develop` — `ca8712e948bffe4cabf6784b348b68a459e00549` | Las pruebas originales de interfaz no representan automáticamente el comportamiento de `develop`. |
 | Móvil `Icetrack-mobile-app` | `main` — `82e06c265126c4d7dbff0935f0632a403ec02ff4` | `develop` — `15efe6aa771f757ff0460f3d50f84506b960c560` | Se reportan pruebas diferenciales para H05, H06 y H07. |
 | Edge `icetrack-edge-service` | `main` — `a9175a0eba1e20f5928214f4e27ad972bb1bd62e` | Mismo SHA reportado | Sin nueva prueba de hardware. |
@@ -6453,23 +6721,21 @@ La auditoría original comprendió inspección de repositorios, revisión estát
 | Firmware `Embedded-App-IceTrack_IoT` | `master` — `038c0b5a40c801e78f992833346a26f1deecccc4` | Sin revisión adicional reportada | Sin ensayo con hardware. |
 | Pruebas `Pruebas-Gherkin` | `main` — `1a9179ac23c5246f32d5746974eefb8ca784f955` | Sin revisión adicional reportada | Las especificaciones no equivalen a ejecución de pruebas. |
 
-La auditoría también consultó un **PDF de 262 páginas**, con fecha interna **10/11/2026**. No debe suponerse que esa versión sea idéntica al README de GitHub de la rama `AV2` del 14/11. De igual forma, las capturas del 13/11 documentan las revisiones originales y **no** constituyen capturas de las ramas `develop`.
+
 
 ##### 6.3.3.4. Método de evaluación y escala de severidad
 
 La inspección empleó las **diez heurísticas de Jakob Nielsen** para valorar visibilidad, consistencia, control y prevención de errores. Los aspectos de accesibilidad se examinaron por separado mediante criterios pertinentes de **WCAG 2.2 AA**. Adicionalmente, se revisó la coherencia IoT entre validez del dato, antigüedad de la lectura, conectividad y señalización de sincronización.
 
-Se aplicó la siguiente escala en la auditoría original:
+Para presentar los hallazgos según la escala 1–4 del Anexo D, se utiliza la siguiente interpretación:
 
 | Nivel | Severidad | Interpretación |
 |:--:|:--|:--|
-| 0 | Sin problema demostrado | No se identificó un defecto concreto en el escenario evaluado. |
 | 1 | Cosmético | Problema de presentación de impacto bajo. |
 | 2 | Menor o moderado | Dificulta la experiencia, pero no necesariamente impide completar el flujo. |
 | 3 | Importante | Puede afectar significativamente la comprensión o ejecución de tareas. |
 | 4 | Crítico | Compromete una función esencial o impide una tarea relevante. |
 
-**La severidad indicada corresponde exclusivamente al hallazgo histórico del 13/11.** No se recalculó automáticamente para `develop`. Se distinguen cuatro tipos de evidencia: **C** (código inspeccionado), **L** (prueba local reportada), **D** (comparación de HTML publicado en la auditoría original) y **P** (prueba pendiente).
 
 ##### 6.3.3.5. Resumen ejecutivo de resultados
 
@@ -6493,17 +6759,29 @@ Esta clasificación impide presentar una corrección comprobada como error vigen
 | **H05** | En Flutter Web, el campo contraseña carece de un nombre accesible; el correo presenta diferencia entre etiqueta y nombre anunciado. | WCAG 1.3.1, 4.1.2 y 2.5.3 | **2** | **Reproducido en pruebas locales de widgets de `develop`**; nativo pendiente. | Asociar etiquetas programáticas y probar lectores de pantalla. |
 | **H06** | El banner “Todo sincronizado” permanece visible al activar el modo offline simulado. | Nielsen 1 — Visibilidad del estado | **2** | **Reproducido en widgets de `develop`**. | Actualizar el indicador al cambiar conectividad simulada, pendientes e idioma. |
 | **H07** | En `main`, las opciones de intervención siguen en español tras cambiar al inglés. | Nielsen 4 — Consistencia y estándares | **2** | **Corregido en código móvil `develop`**; cinco opciones verificadas localmente en inglés. | Mantener regresiones de traducción y revisar en Android/iOS. |
-| **H08** | Contraste insuficiente en navegación y KPI móvil en `main`: **2,564:1** y **2,148:1**. | WCAG 1.4.3 — Contraste mínimo | **2** | Estilos relacionados presentes en `develop`; sin nueva medición integral. | Medir contraste real del build actual y ajustar colores. |
+
 
 ##### 6.3.3.7. Descripción detallada de los problemas
 
 **H01 — Pérdida de calidad de las mediciones térmicas.** En la sonda original se utilizó una muestra con `sensor_valid=False`, **99 fallos** y una temperatura retenida de **4 °C**. El lote generado presentó `sample_count=1` y estadísticas a 4 °C sin conservar el indicador de invalidez. Esto crea el riesgo de interpretar una lectura retenida como una medición nueva y válida. Se recomienda transportar el estado de calidad a través de Edge y los contratos de consulta, conservar la fecha de la última lectura válida y excluir muestras inválidas de cálculos agregados. **Estado:** hallazgo histórico sin cambio de SHA de Edge reportado; no se evaluó hardware real.
 
+![Mockup del dashboard web del informe AV2](assets/ice-track/D02_web_dashboard.png)
+
+*Figura D02. Mockup del dashboard web incluido en el PDF AV2. Es contexto de diseño; no acredita la frescura de datos ni la reproducción de H02.*
+
 **H02 — Interpretación inadecuada de datos antiguos.** En una prueba con datos sintéticos, la tarjeta web mostró simultáneamente **“4.0°C / Within threshold / Reported yesterday”**. Aunque la antigüedad era visible, el mensaje de conformidad podía interpretarse como un estado térmico actual. La mejora propuesta es separar **valor registrado**, **frescura de la lectura**, **conectividad** y **estado actual conocido o desconocido**. **Estado:** se observó código relacionado en `develop`, pero falta repetir el flujo integral en ese build y en su despliegue.
+
+![Mockup de la landing page del informe AV2](assets/ice-track/D01_landing_mockup.png)
+
+*Figura D01. Mockup de la landing page incluido en el PDF AV2. Es contexto de diseño y no demuestra el funcionamiento ni los destinos de los CTA descritos en H03.*
 
 **H03 — Enlaces no funcionales en la Landing Page.** Los CTA “Register Facility (Web Platform)” y “Download Mobile App” utilizaban `href="#"` en la revisión original. Esto no permite completar las acciones anunciadas. Se recomienda asociar destinos reales o mostrar con claridad la disponibilidad de cada producto. **Estado:** sin cambio de SHA de Landing Page reportado; la comparación con HTML publicado corresponde a la auditoría original.
 
 **H04 — Pérdida de la selección de idioma.** La auditoría original reprodujo el retorno al idioma inicial después de recargar las interfaces web y móvil. Se recomienda persistir la preferencia seleccionada y comprobar su recuperación al recargar y reabrir cada canal. **Estado:** aún se requiere una repetición integral de la prueba en las ramas `develop`.
+
+![Prototipo móvil de creación de cuenta incluido en el informe AV2](assets/ice-track/D04_movil_login.png)
+
+*Figura D04. Prototipo móvil de IceTrack (PDF AV2, p. 187). Contextualiza la interfaz; no acredita el árbol semántico de Flutter Web ni la reproducción de H05.*
 
 **H05 — Etiquetas accesibles insuficientes en el login móvil.** En Flutter Web se identificó la falta de nombre accesible del campo de contraseña y una diferencia entre la etiqueta visible y el nombre del correo. Las pruebas de widgets en `develop` reprodujeron el problema de contraseña. Se recomienda definir etiquetas semánticas asociadas a los controles y comprobar el resultado con el árbol de accesibilidad y, posteriormente, con **TalkBack** y **VoiceOver**. **Estado:** reproducido localmente; no validado en Android/iOS.
 
@@ -6511,7 +6789,7 @@ Esta clasificación impide presentar una corrección comprobada como error vigen
 
 **H07 — Traducciones incompletas en la intervención móvil.** La revisión `main` mostraba cuatro opciones de intervención en español pese a seleccionar inglés. En la revisión móvil `develop`, el contenido pasó a utilizar traducciones y una prueba local verificó **cinco opciones en inglés**. **Estado:** corrección constatada en código y prueba local reportada. Se mantiene el registro histórico y se recomienda una regresión en ambos idiomas y una comprobación en un dispositivo real; no corresponde clasificarlo como defecto vigente confirmado de `develop`.
 
-**H08 — Contraste visual insuficiente.** En la revisión original del móvil `main`, las etiquetas de navegación inactivas alcanzaron **2,564:1** y un KPI naranja **2,148:1**, frente a referencias aplicables de **4,5:1** para texto normal y **3:1** para el texto grande considerado. Se recomienda evaluar los colores efectivos del build actual, incluidos estados y superficies, antes de corregirlos. **Estado:** el cálculo pertenece a `main`; la continuidad de código en `develop` no sustituye una nueva medición visual.
+
 
 ##### 6.3.3.8. Fortalezas observadas
 
@@ -6541,7 +6819,7 @@ Estas fortalezas se limitan a las pruebas declaradas y no certifican accesibilid
 | **N9. Ayuda a reconocer y recuperarse de errores** | Se observaron mensajes de error y posibilidades parciales de reintento. |
 | **N10. Ayuda y documentación** | Se identificaron ayudas parciales y discrepancias documentales aún por resolver. |
 
-Respecto de **WCAG 2.2 AA**, H05 fue reproducido localmente en widgets de `develop`. H08 dispone de cálculos históricos de `main`, pero no de una nueva medición completa en `develop`. **No se declara conformidad global con WCAG** ni se reportan pruebas nativas con lectores de pantalla.
+
 
 ##### 6.3.3.10. Inconsistencias documentales y aspectos de integración pendientes
 
@@ -6566,7 +6844,7 @@ Los siguientes puntos se registran **como pruebas pendientes**, no como nuevos d
 | R05 | Notificaciones push | Evaluar permisos denegados, duplicaciones y apertura contextual en dispositivo. |
 | R06 | Accesibilidad nativa | Probar TalkBack, VoiceOver, navegación por teclado, foco y escalado de texto. |
 | R07 | Frescura de telemetría en `develop` | Presentar lecturas antiguas y verificar mensajes, hora de reporte y alertas. |
-| R08 | Correspondencia con despliegues | Identificar SHA desplegado, repetir flujos y adjuntar evidencias fechadas. |
+
 
 ##### 6.3.3.12. Recomendaciones priorizadas
 
@@ -6581,30 +6859,13 @@ Los siguientes puntos se registran **como pruebas pendientes**, no como nuevos d
 | **P2** | Unificar el rango de temperatura y la terminología de los diseños. | Historias, pantallas y ejemplos no se contradicen respecto de `FREEZER` y 0–30 °C. |
 | **P3** | Verificar sincronización offline de extremo a extremo. | La cola sobrevive al cierre, el backend confirma la entrega y no se duplican operaciones. |
 
-##### 6.3.3.13. Evidencias referenciadas y límites de disponibilidad
-
-Los documentos de auditoría mencionan **69 capturas** del trabajo original y otros archivos JSON; **no se adjuntaron** dentro de los dos documentos recibidos para elaborar esta sección. Los siguientes nombres se incluyen únicamente como **referencias históricas**, no como imágenes insertadas ni pruebas nuevas de `develop`:
-
-| Hallazgo | Evidencias mencionadas en la auditoría original |
-|:--:|:--|
-| H01 | `H01-evidencia-tecnica.png`, `sensor-probe.json` |
-| H02 | `monitoring-stale.png`, `monitoring-maintenance.png`, `flow-results.json` |
-| H03 | `CTA-destinations.png`, `landing-flows.json` |
-| H04 | `language-reload.png`, `mobile-reload-es.png` |
-| H05 | `mobile-F05-labels.png`, `mobile-results.json` |
-| H06 | `mobile-orders-offline.png`, `mobile-offline-profile.png` |
-| H07 | `mobile-intervention-english.png`, `mobile-i18n-results.json` (evidencia anterior a la corrección) |
-| H08 | `H08-evidencia-tecnica.png`, `contrast.json` |
-
-En particular, `H01-evidencia-tecnica.png` y `H08-evidencia-tecnica.png` son paneles técnicos de la auditoría y no capturas de las pantallas de IceTrack. **No se incorporan rutas Markdown de imágenes inexistentes.** Para ilustrar la revisión `develop` serían necesarias capturas propias de esas revisiones, con fecha y SHA documentados.
 
 ##### 6.3.3.14. Conclusiones de la auditoría heurística
 
 La evaluación revela problemas relevantes para la confianza y comprensión de un sistema IoT: **una lectura inválida puede perder su condición de calidad**, **una medición antigua puede conservar una etiqueta de conformidad**, y **la indicación de sincronización puede no reflejar el estado offline simulado**. Estos hallazgos justifican priorizar la diferenciación explícita entre **dato válido**, **dato antiguo** y **dato sincronizado**.
 
-La revisión del 14/11 también evidencia avances que deben reconocerse: **H07 se corrigió en el código de `develop`** y la aplicación móvil incorpora llamadas API y cola offline local. Al mismo tiempo, **H05 y H06 fueron reproducidos en pruebas locales de widgets**; **H01 y H03 mantienen el respaldo de revisiones sin nuevo SHA reportado**; y **H02, H04 y H08 requieren nueva validación integral** antes de establecer su situación actual.
+En conclusión, la auditoría permite formular recomendaciones concretas y priorizadas para IceTrack, sin extrapolar pruebas locales a funcionamiento productivo ni presentar hallazgos históricos como fallos actuales confirmados. 
 
-En conclusión, la auditoría permite formular recomendaciones concretas y priorizadas para IceTrack, sin extrapolar pruebas locales a funcionamiento productivo ni presentar hallazgos históricos como fallos actuales confirmados. La siguiente etapa debería obtener las capturas originales, ejecutar las pruebas pendientes sobre las versiones correctas y vincular cada corrección con evidencias reproducibles.
 
 
 # Conclusiones
