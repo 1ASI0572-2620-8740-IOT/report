@@ -6335,7 +6335,7 @@ Las fichas restantes mantienen los mismos datos y evidencias: registrar el enlac
 
 | Entrevista | Segmento objetivo | Entrevistado | Fecha | Inicio en video | Duración | Estado |
 |:--|:--|:--|:--|:--|:--|:--|
-| EV-T01 | Industria textil | David Ramírez | Pendiente de confirmar | Pendiente en video compilado | Pendiente de confirmar | Realizada; compilación pendiente |
+| EV-T01 | Industria textil | David Ramírez | 14/11/2026 | 0:02 | 4::41 | Realizada |
 | EV-T02 | Industria textil | Oscar Antayhua Castillo | 14/11/2026 | 00:00 | 04:58 | Realizada |
 | EV-T03 | Industria textil | Pendiente | Pendiente | Pendiente | Pendiente | Por realizar |
 | EV-H01 | Producción hidropónica | Diego Alonso | 14/11/2026 | 0:00 | 3:30 | Realizada |
@@ -6758,5 +6758,5 @@ World Wide Web Consortium. (2024). *Web Content Accessibility Guidelines (WCAG) 
 
 El video presenta un recorrido por la aplicación administrativa web, la aplicación móvil del Operario y la demostración del prototipo físico de HydroGuard.
 
-**Video:** https://www.youtube.com/watch?v=_bPGl8n0KaQ.
+**Video:** https://upcedupe-my.sharepoint.com/:v:/g/personal/u20231c540_upc_edu_pe/IQAG_N-7vvhqR6FDT2qA1-1EAYiSJL3G2LMSRlQWmC8-usg?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D&e=49BnSZ
 
