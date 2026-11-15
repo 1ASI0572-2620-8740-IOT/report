@@ -5977,8 +5977,6 @@ Ejemplo de respuesta de `GET /api/v1/telemetry/devices/{id}`:
 
 *Descripción:* Vista complementaria del mismo endpoint, mostrando parámetros y respuesta esperada.
 
-Archivo sugerido: `assets/services-evidence/sprint-2/04-telemetry.png`. La captura debe usar datos de muestra y no exponer tokens ni contraseñas reales.
-
 ##### 5. Treatment Service
 
 Documentación desplegada: [Swagger UI](https://hg-8740-treatment-service.onrender.com/swagger-ui/index.html) · [OpenAPI JSON](https://hg-8740-treatment-service.onrender.com/v3/api-docs). Gestiona los procesos de tratamiento, la aprobación de la estrategia, los ciclos automáticos y la liberación. Las operaciones humanas del Administrador son de solo lectura; las acciones del proceso corresponden al Operario y están condicionadas por el estado.
@@ -6010,7 +6008,15 @@ Ejemplo de proceso devuelto al Operario:
 
 `allowedActions` evita ofrecer acciones fuera de estado y `manualReleaseBlockReason` explica el bloqueo con `PROCESS_NOT_READY`, `AUTOMATIC_RELEASE`, `READING_NOT_RECENT` o `READING_OUT_OF_RANGE` cuando la liberación manual no está disponible.
 
-**Espacio reservado para la captura.** Insertar Swagger UI de Treatment con la operación de comandos del Operario expandida y un ejemplo de proceso. Archivo sugerido: `assets/services-evidence/sprint-2/05-treatment.png`.
+**Captura de Swagger UI (Treatment).** La siguiente imagen muestra la operación `GET /api/v1/treatments` expandida en Swagger UI:
+
+[![image.png](https://i.postimg.cc/dQbHmFQ8/image.png)](https://postimg.cc/mhSyB0HD)
+
+*Descripción:* Lista paginada de procesos de tratamiento de la organización, con filtros opcionales (`page`, `pageSize`, `status`, `deviceId`); devuelve `PageResponse<TreatmentProcessResource>`.
+
+[![image.png](https://i.postimg.cc/vH5P0KcR/image.png)](https://postimg.cc/rKFCmQ1g)
+
+*Descripción:* Vista complementaria del mismo endpoint, mostrando parámetros y respuesta esperada.
 
 ##### 6. Monitoring Service
 
