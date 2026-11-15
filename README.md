@@ -3742,7 +3742,7 @@ La landing se implementa como sitio estático con `index.html`, `terms.html`, `s
 | Adaptación responsive | Reorganización principal a 800 px y ajustes compactos a 490 px; ajuste adicional de cabecera entre 801 y 1100 px |
 | Formas | Botón principal y selector con radio de 4 px; panel ilustrativo con 6 px; llamadas de navegación redondeadas tipo píldora |
 
-El recorrido conserva `Inicio → Solución → Producto → Sectores → Capacidades → Equipo → Contacto`. Cada segmento tiene un CTA al mismo login administrativo porque ambos utilizan la plataforma compartida. La presentación detallada de las aplicaciones y el acceso móvil quedan pendientes de sus evidencias; los videos About-the-Product y About-the-Team conservan espacios identificados como próximos, sin presentarse como videos ya incrustados.
+El recorrido conserva `Inicio → Solución → Producto → Sectores → Capacidades → Equipo → Contacto`. Cada segmento tiene un CTA al mismo login administrativo porque ambos utilizan la plataforma compartida. La presentación detallada de las aplicaciones y el acceso móvil quedan pendientes de sus evidencias; la versión local de la landing incorpora el video About-the-Team y conserva el espacio del video About-the-Product.
 
 La interfaz y los mensajes se ofrecen en **inglés de Estados Unidos (`en-US`)**, predeterminado sin preferencia guardada, y **español latinoamericano (`es-419`)**. El selector conserva la preferencia en almacenamiento local cuando el navegador lo permite y la comparte con la página de términos. Se traducen contenido, etiquetas, textos alternativos, mensajes y metadatos; `lang` cambia con el idioma. Las anclas internas mantienen identificadores estables entre idiomas.
 
@@ -6700,6 +6700,12 @@ En conclusión, la auditoría permite formular recomendaciones concretas y prior
 
 * **Recomendaciones para el siguiente avance:** Priorizar una prueba de extremo a extremo con web, móvil, backend, Edge y ESP32 que cubra configuración, ingesta, autorización, liberación y recuperación ante fallos de comunicación. Revalidar la calibración de pH tras los cambios de entrada analógica y comprobar la alimentación bajo carga y la mecánica de la válvula. Completar las entrevistas y la evaluación heurística, y vincular cada resultado con su criterio de aceptación antes de cerrar las historias del sprint.
 
+# Video About-the-Team
+
+El video presenta a los integrantes de HydroLink, el equipo responsable del desarrollo de HydroGuard, y sus aportes al proyecto.
+
+https://upcedupe-my.sharepoint.com/:v:/g/personal/u20231c540_upc_edu_pe/IQCAUgi__edOSbdU8mg5Q-6iAe-wIHZhHBXoWMw9BAE6Tj4?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D&e=6gJmsS
+
 # Bibliografía
 
 Autoridad Nacional del Agua. (s. f.). *Solicitar la autorización de vertimiento de aguas residuales tratadas a los cuerpos naturales de agua*. Plataforma Digital Única del Estado Peruano. Recuperado el 1 de septiembre de 2026, de <https://www.gob.pe/10822-solicitar-la-autorizacion-de-vertimiento-de-aguas-residuales-tratadas-a-los-cuerpos-naturales-de-agua>
@@ -6753,6 +6759,24 @@ Vercel. (s. f.). *Project configuration*. Recuperado el 9 de octubre de 2026, de
 World Wide Web Consortium. (2024). *Web Content Accessibility Guidelines (WCAG) 2.2*. <https://www.w3.org/TR/WCAG22/>
 
 # Anexos
+
+## About the Team
+
+El video presenta al equipo HydroLink y a los integrantes que participaron en el desarrollo de HydroGuard.
+
+<p align="center">
+  <img src="assets/videoaboutteam.jpg" alt="Presentación del video About the Team de HydroLink." width="500">
+</p>
+
+**Video en Microsoft Stream:** https://upcedupe-my.sharepoint.com/:v:/g/personal/u20231c540_upc_edu_pe/IQCAUgi__edOSbdU8mg5Q-6iAe-wIHZhHBXoWMw9BAE6Tj4?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D&e=6gJmsS
+
+## Acceso a los productos digitales
+
+- Landing Page de HydroGuard: https://1asi0572-2620-8740-iot.github.io/LandingPage/
+- Aplicación web administrativa: https://hydroguard-admin-web-frontend.vercel.app/
+- Repositorio de la aplicación móvil del Operario: https://github.com/1ASI0572-2620-8740-IOT/hydroguard_operator_mobile_frontend
+- Repositorio del backend: https://github.com/1ASI0572-2620-8740-IOT/hydroguard_backend
+- Repositorio del servicio Edge: https://github.com/1ASI0572-2620-8740-IOT/hydroguard-edge-service
 
 ## About the Product
 
