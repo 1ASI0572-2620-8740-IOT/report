@@ -6052,7 +6052,15 @@ Ejemplo de respuesta de `GET /api/v1/monitoring/overview`:
 
 Los conteos se calculan con el estado registrado; un dispositivo sin heartbeat reciente incrementa `devicesRequiringAttention` y `statusView` pasa a `OUTDATED` sin borrar la última lectura conocida.
 
-**Espacio reservado para la captura.** Insertar Swagger UI de Monitoring con el resumen operacional o la generación de reporte expandida y una respuesta de muestra. Archivo sugerido: `assets/services-evidence/sprint-2/06-monitoring.png`.
+**Captura de Swagger UI (Monitoring).** La siguiente imagen muestra la operación `GET /api/v1/monitoring/incidents` expandida en Swagger UI:
+
+[![image.png](https://i.postimg.cc/pLqJ7MvG/image.png)](https://postimg.cc/WdqZFKhg)
+
+*Descripción:* Lista paginada de incidentes de la organización, con filtros opcionales (`page`, `pageSize`, `status`, `severity`); devuelve `PageResponse<IncidentResource>`.
+
+[![image.png](https://i.postimg.cc/Dz0P3py2/image.png)](https://postimg.cc/67svd0vS)
+
+*Descripción:* Vista complementaria del mismo endpoint, mostrando parámetros y respuesta esperada.
 
 ##### 7. HydroGuard Edge Service
 
@@ -6082,8 +6090,6 @@ Ejemplo de respuesta de `GET /health`:
 ```
 
 Los endpoints 5, 6 y 7 son de paso: el Edge transporta el cuerpo y el código del backend sin definir un contrato propio de salida. Los endpoints 4, 8 y 9 validan y persisten localmente en SQLite antes de responder, por lo que un `202` acredita la aceptación local y no la entrega al backend.
-
-**Espacio reservado para la captura.** Insertar evidencia de la interacción con el Edge: `GET /health`, una medición enviada y su confirmación con datos de muestra. Archivo sugerido: `assets/services-evidence/sprint-2/07-edge.png`. La captura debe indicar si corresponde a la instancia desplegada o a la ejecución local y no debe mostrar credenciales.
 
 ##### Rutas internas entre microservicios
 
