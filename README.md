@@ -6250,11 +6250,11 @@ Los intervalos corresponden al resumen de la grabación individual proporcionado
 | Distrito | Pendiente de registrar |
 | Ocupación o relación con la hidroponía | Supervisor de una planta hidropónica |
 | Fecha de entrevista | 14/11/2026 |
-| URL del video (Microsoft Stream/Clipchamp) | Pendiente |
+| URL del video (Microsoft Stream/Clipchamp) | https://upcedupe-my.sharepoint.com/:v:/g/personal/u202220294_upc_edu_pe/IQCZydJA45IGTrlP8X2-qTFAAb1a_-18Utvj74RFmLsSXUY?e=51KTsg&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D |
 | Inicio de la entrevista en el video | 0:00 |
 | Duración | 3:30 |
 
-**Captura de la entrevista:** Pendiente de insertar.
+**Captura de la entrevista:** [![image.png](https://i.postimg.cc/HLh8wStP/image.png)](https://postimg.cc/wtDBHQZh)
 
 **Resumen descriptivo:** Diego Alonso Quispe Flores, supervisor de una planta hidropónica de 25 años, revisó la Landing Page y la aplicación web y observó el prototipo IoT. La aplicación móvil se había mostrado previamente; esta grabación no acredita por sí sola su interacción con ella.
 
