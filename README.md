@@ -6173,7 +6173,7 @@ Las fichas restantes mantienen los mismos datos y evidencias: registrar el enlac
 | EV-T01 | Industria textil | David Ramírez | Pendiente de confirmar | Pendiente en video compilado | Pendiente de confirmar | Realizada; compilación pendiente |
 | EV-T02 | Industria textil | Pendiente | Pendiente | Pendiente | Pendiente | Por realizar |
 | EV-T03 | Industria textil | Pendiente | Pendiente | Pendiente | Pendiente | Por realizar |
-| EV-H01 | Producción hidropónica | Pendiente | Pendiente | Pendiente | Pendiente | Por realizar |
+| EV-H01 | Producción hidropónica | Diego Alonso | 14/11/2026 | 0:00 | 3:30 | Realizada |
 | EV-H02 | Producción hidropónica | Pendiente | Pendiente | Pendiente | Pendiente | Por realizar |
 | EV-H03 | Producción hidropónica | Pendiente | Pendiente | Pendiente | Pendiente | Por realizar |
 
